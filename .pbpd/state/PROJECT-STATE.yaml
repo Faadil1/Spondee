@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R014-G3-COMPACT-COMMITMENT-RETRY-READY
+revision: STATE-R015-G3-FUNDED-948-RECOVERY-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_MEGAFUEL_LIVE_E2E_RETRY_READY_AFTER_COMPACT_COMMITMENT_FIX
+  status: G3_FUNDED_JOB_948_DELIVERABLE_RECOVERY_READY
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -30,119 +30,106 @@ build:
   parent_branch: build/g3-health-factor
   merge_to_main: NOT_AUTHORIZED
   backend_status: CI_VERIFIED
-  evidence_class: SIMULATION_PLUS_RUNTIME_INFRASTRUCTURE_PROOF_UNTIL_HEALTH_FACTOR_LIVE_E2E
-megafuel:
-  status: RUNTIME_PROVEN_ZERO_BALANCE_ERC8183_WRITES
-  proof_run: '33802027942'
-  network: bsc-testnet
-  chain_id: 97
-  primary_for_current_retry: true
-  tBNB_required_before_retry: false
-  limitation: Relay accepts bounded zero-balance ERC-8183 writes but can reject oversized createJob transactions.
+  evidence_class: LIVE_CHAIN_PARTIAL_PLUS_SIMULATION_UNTIL_JOB_948_SUBMIT_AND_RECEIPT_VERIFY
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   local_signing_check: PASS
-  recreate_for_retry: false
+  recreate_for_recovery: false
   password_or_key_chat_exposure: FORBIDDEN
+megafuel:
+  status: RUNTIME_PROVEN_IN_COMPLETE_SPONDEE_FLOW_THROUGH_FUND
+  network: bsc-testnet
+  chain_id: 97
+  tBNB_required: false
+  compact_description_fix: VERIFIED_LIVE_CREATE_JOB_ACCEPTED
 live_attempt_history:
   first_attempt:
-    at: '2026-09-03T20:39:58Z'
     result: FAIL_CLOSED_PRE_WRITE
-    progress_events: 0
-    transaction_count: 0
-    error: seller returned an invalid ERC-8183 quote envelope
-    root_cause: buyer incorrectly required non-standard provider_address
-    resolution: verify provider identity cryptographically with verifyQuoteSignature
-    validation_runs: ['33806097273', '33806096975']
+    root_cause: buyer required non-standard provider_address
+    resolution: verify provider identity cryptographically
   second_attempt:
-    started_at: '2026-09-03T22:37:13.916Z'
-    failed_at: '2026-09-03T22:37:15.505Z'
     result: FAIL_CLOSED_PRE_WRITE
-    buyer_address: '0xC70fd5b6c59027592917dA0e118B1f20eC0E5629'
-    progress_events: 0
-    transaction_count: 0
-    error: signed quote is missing terms.spondee_promise
-    root_cause: official SDK TermSpecification drops arbitrary custom term keys before signed serialization
-    resolution: move Promise provenance into SDK-preserved success_criteria
-    validation_runs: ['33816310524', '33816544907']
+    root_cause: custom terms.spondee_promise removed by SDK serialization
+    resolution: SDK-preserved success_criteria carrier
   third_attempt:
-    started_at: '2026-09-03T23:21:16.823Z'
-    failed_at: '2026-09-03T23:21:21.084Z'
     result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE
-    buyer_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
-    progress_events: 0
-    mined_transaction_count: 0
+    root_cause: full Promise Card made createJob transaction too large
+    resolution: compact signed Promise commitment plus Base64URL task carrier and 1600-byte description guard
+  fourth_attempt:
+    started_at: '2026-09-03T23:38:40.406Z'
+    failed_at: '2026-09-03T23:41:03.555Z'
+    classification: LIVE_CHAIN_PARTIAL_SUCCESS__DELIVERABLE_URL_CONFIGURATION_BLOCKER
+    buyer_address: '0xA7ceB00B63F911fB76BD6d5616093586de757139'
+    job_id: '948'
     user_funds_used: false
-    megafuel_primary_error: 'RPC error [-32000]: tx size is too large'
-    automatic_fallback: SELF_PAY_ATTEMPTED_BY_SDK
-    fallback_result: REJECTED_ZERO_BALANCE_BEFORE_MINING
-    fallback_error_class: INSUFFICIENT_FUNDS_FOR_GAS
-    observed_description_bytes: 2223
-    root_cause: Full Promise Card JSON inside signed success_criteria inflated the createJob description/raw transaction beyond the MegaFuel relay acceptance envelope.
-    secondary_hazard_discovered: Official SDK claim sanitizer replaces square brackets, so raw JSON Health Factor task arrays would not survive byte-for-byte in the on-chain task string.
-compact_commitment_fix:
-  status: CI_VERIFIED_RETRY_READY
-  promise_design:
-    full_promise_location: READ_ONLY_PREVIEW_OFF_CHAIN
-    signed_carrier_field: success_criteria
-    signed_carrier_prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
-    commitment_fields:
-      - promise_id
-      - scenario_id
-      - price_raw
-      - promise_sha256
-    wire_keys: [p, s, r, h]
-    verification:
-      - full Promise preview is validated before activation
-      - provider signature, chain and Commerce contract are verified before commitment trust
-      - signed request and response require exactly one identical commitment carrier
-      - preview Promise id/scenario/price/SHA-256 must match commitment before createJob
-      - seller reconstructs the deterministic Promise from signed task plus committed price before Outcome Receipt
-      - reconstructed Promise id/SHA-256 must match commitment or fulfillment fails closed
-  task_design:
-    signed_task_prefix: 'SPONDEE_TASK_B64_V1:'
-    encoding: BASE64URL_JSON
-    reason: Preserve Health Factor array structure through SDK claim sanitizer.
-  megafuel_size_guard:
-    sdk_description_cap_bytes: 4096
-    spondee_conservative_cap_bytes: 1600
-    behavior: buildJobDescription must pass the 1600-byte application cap before createJob is attempted.
-  commits:
-    health_factor_compact_commitment: afdab100a598e0a9bfecfc0b75b56f8541d78ec9
-    live_driver_compaction: 109d2cfed109838aa209c4cd6d716dbae1cdca01
-    backend_size_regression: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
-    seller_task_roundtrip_tests: da7cee8a8c688fee102c3782f6d868d9b7efcf60
-    seller_notify_roundtrip_tests: 2c86096949c27b354bef68154e93c54abb016ab9
-validation:
-  backend_ci:
-    run: '33817822355'
-    head: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
-    result: PASS_28_OF_28
-    megafuel_description_budget_test: PASS
-    sanitizer_safe_task_test: PASS
-    compact_commitment_guards: PASS
-    typescript_build: PASS
-    bsc_read_only_probe: PASS
-    artifact_id: '9917173773'
-    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
-  g3_ci:
-    run: '33817846752'
-    head: 2c86096949c27b354bef68154e93c54abb016ab9
+    progress:
+      create_job:
+        tx: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
+      register_job:
+        tx: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
+      set_budget:
+        tx: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
+      fund:
+        tx: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
+    provider_submit_tx: null
+    seller_generated_deliverable_file: '.agent-data/erc8183-job-948.json'
+    blocker: LocalStorage returned file:// and ERC8183_AGENT_URL was unset, so submitWorkflow refused to publish a deliverable URL.
+    job_state_for_recovery: FUNDED_PENDING_PROVIDER_SUBMIT
+verified_live_properties:
+  - compact Promise commitment survived signed negotiation and createJob
+  - sanitizer-safe Base64URL Health Factor task survived the chain description path
+  - MegaFuel sponsored createJob in the complete Spondee flow
+  - MegaFuel sponsored registerJob in the complete Spondee flow
+  - MegaFuel sponsored setBudget(0) in the complete Spondee flow
+  - MegaFuel sponsored fund(0) in the complete Spondee flow
+  - seller reconstructed work and generated the deliverable manifest locally
+not_yet_verified:
+  - provider submit transaction for job 948
+  - on-chain deliverable URL for job 948
+  - manifest hash verification against the on-chain deliverable hash
+  - verified Spondee Outcome Receipt from the live job
+  - observed Agent Advantage
+  - public judging deployment
+funded_job_recovery:
+  target_job_id: '948'
+  status: CI_VERIFIED_ONE_LOCAL_RECOVERY_READY
+  strategy: RESUME_EXISTING_FUNDED_JOB_NO_NEW_ACTIVATION
+  deliverable_url_mode:
+    storage: LocalStorageProvider
+    local_base_url: 'http://127.0.0.1:9100/erc8183'
+    sdk_env: ERC8183_AGENT_URL
+    expected_url_shape: 'http://127.0.0.1:9100/erc8183/job/948/response'
+  artifacts:
+    recovery_decision: work/G3-FUNDED-948-RECOVERY-READY.md
+    local_deliverable_server: scripts/local-erc8183-deliverable-server.mjs
+    recovery_verifier: backend/src/resume-g3-funded.ts
+    local_runner: scripts/g3-resume-funded-job.ps1
+    ci_workflow: .github/workflows/g3-funded-recovery-ci.yml
+  validation:
+    github_actions_run: '33819012423'
     result: PASS
-    ubuntu_verify: PASS
-    deterministic_tests: PASS
-    typescript_build: PASS
-    evidence_export: PASS
-    agent_studio_diagnostics: PASS
+    ubuntu_powershell_parse: PASS
+    local_response_route: PASS
+    backend_tests: PASS
+    backend_typescript_build: PASS
     windows_powershell_parse: PASS
-    windows_node24_wallet_roundtrip: PASS
+    windows_node24_server_syntax: PASS
+  execution_contract:
+    new_create_job: FORBIDDEN
+    new_register_job: FORBIDDEN
+    new_set_budget: FORBIDDEN
+    new_fund: FORBIDDEN
+    provider_submit_for_job_948: ALLOWED_ONCE
+    blind_retry_after_failure: FORBIDDEN
+    new_seller_wallet: FORBIDDEN
+    tBNB_acquisition: NOT_REQUIRED
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: THIRD_ATTEMPT_FAIL_CLOSED_PREWRITE_COMPACT_COMMITMENT_FIX_CI_VERIFIED_ONE_NEW_RETRY_READY
+    live_testnet: JOB_948_FUNDED_CHAIN_PATH_VERIFIED_SUBMIT_RECOVERY_PENDING
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -152,23 +139,7 @@ category_depth:
   yield:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
-live_activation:
-  status: ONE_NEW_LOCAL_RETRY_READY
-  sequence: PREVIEW_PROMISE -> ENCODE_TASK -> SIGNED_COMMITMENT_QUOTE -> VERIFY_PROVIDER_AND_COMMITMENT -> ENFORCE_DESCRIPTION_BUDGET -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
-  buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
-  live_env_gate_default: false
-  retry_policy:
-    previous_retry_consumed_by_third_attempt: true
-    newly_authorized_attempts_now: 1
-    authority_basis: EXISTING_HUMAN_TESTNET_GO_PLUS_CI_VERIFIED_DETERMINISTIC_REMEDIATION
-    blind_retry_after_failure: false
-    tBNB_before_retry: DO_NOT_ACQUIRE
-  not_yet_claimed:
-    - full createJob/registerJob/setBudget(0)/fund(0) Health Factor sequence
-    - provider on-chain submit transaction
-    - live verified Outcome Receipt/deliverable evidence
-    - observed Agent Advantage
-    - four deployed live reference agents
 next_action:
-  primary: Human performs exactly one new local rerun of scripts/g3-megafuel-live-e2e.ps1 after git pull, reusing the existing encrypted seller wallet. Enter the seller password only into the masked prompt. Do not acquire tBNB first. Return the complete public PASS block or new failure.v1 block and stop.
-next_gate: SPONDEE_G3_MEGAFUEL_COMPACT_COMMITMENT_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+  owner: HUMAN_LOCAL_RUNTIME
+  primary: Pull build/backend-complete and execute scripts/g3-resume-funded-job.ps1 exactly once. Reuse the existing encrypted seller wallet and enter its password only in the masked prompt. Do not run g3-megafuel-live-e2e.ps1 again and do not create another job. Return only the public PASS or recovery failure block.
+next_gate: SPONDEE_G3_FUNDED_JOB_948_DELIVERABLE_RECOVERY_LOCAL_EXECUTION_REQUIRED

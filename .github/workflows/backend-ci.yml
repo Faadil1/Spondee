@@ -42,7 +42,7 @@ jobs:
 
       - name: Four-category Promise/Receipt smoke
         working-directory: backend
-        run: npm run smoke > backend-smoke.json
+        run: npm run --silent smoke > backend-smoke.json
 
       - name: Verify smoke claim boundary
         working-directory: backend

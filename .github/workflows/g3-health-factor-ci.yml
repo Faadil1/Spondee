@@ -43,6 +43,18 @@ jobs:
         working-directory: reference-agents/health-factor/app/agent
         run: pnpm build
 
+      - name: Export reproducible Promise and Receipt evidence
+        working-directory: reference-agents/health-factor/app/agent
+        run: pnpm demo:evidence
+
+      - name: Upload deterministic demo evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-g3-health-factor-demo-evidence
+          path: reference-agents/health-factor/demo-output/
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Agent Studio diagnostics
         shell: bash
         run: |

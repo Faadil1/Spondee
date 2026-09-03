@@ -3,7 +3,7 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_SOFTWARE_PATH_LIVE_E2E_PENDING_TBNB
+    status: PARTIALLY_VERIFIED_SOFTWARE_AND_GAS_PATH_FULL_SELLER_E2E_PENDING
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
     truth_class: FACT
@@ -59,7 +59,11 @@ claims:
   - id: CLM-015
     claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
     truth_class: FACT
-    status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_LIVE_WRITE_UNEXECUTED
+    status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_FULL_SELLER_E2E_UNEXECUTED
+  - id: CLM-016
+    claim: MegaFuel can sponsor ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
+    truth_class: FACT
+    status: VERIFIED_RUNTIME_ZERO_BALANCE_CREATE_AND_CANCEL
 
 evidence:
   - id: EV-001
@@ -133,9 +137,9 @@ evidence:
   - id: EV-009
     type: full_backend_ci
     artifact: evidence/backend-ci-001/README.md
-    workflow_run_id: 33800450806
-    artifact_id: 9910843880
-    artifact_digest: sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49
+    workflow_run_id: 33801590780
+    artifact_id: 9911265991
+    artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
     supports:
       - all four backend category paths
       - REST marketplace API
@@ -144,7 +148,21 @@ evidence:
       - Agent Advantage report logic
       - calibration exclusion rules
       - fail-closed live ERC-8183 driver
+      - live deliverable manifest/identity guardrails
       - read-only BSC contract readiness
+    status: VERIFIED
+  - id: EV-010
+    type: megafuel_runtime_sponsorship_probe
+    artifact: evidence/megafuel-smoke-001/README.md
+    workflow_run_id: 33802027942
+    artifact_id: 9911428783
+    artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+    supports:
+      - BSC Testnet chain 97 MegaFuel runtime sponsorship
+      - zero-balance ERC-8183 createJob write
+      - zero-balance ERC-8183 cancelOpen write
+      - ephemeral non-persisted key handling
+      - tBNB not required for the next paymaster-first attempt
     status: VERIFIED
 
 verification_events:
@@ -176,29 +194,34 @@ verification_events:
     result: PASS
     evidence: artifact 9892600637
   - id: VER-007
-    at: '2026-09-03T20:08:18Z'
-    event: Full Spondee backend unit and API integration suite completed 15/15 tests.
+    at: '2026-09-03T20:19:58Z'
+    event: Hardened Spondee backend unit and API integration suite completed 18/18 tests.
     result: PASS
-    evidence: GitHub Actions run 33800450806
+    evidence: GitHub Actions run 33801590780
   - id: VER-008
-    at: '2026-09-03T20:08:21Z'
+    at: '2026-09-03T20:20:00Z'
     event: Four-category backend smoke produced four zero-price Promise/Receipt pairs with null confidence and simulation evidence exclusion.
     result: PASS
-    evidence: artifact 9910843880
+    evidence: artifact 9911265991
   - id: VER-009
-    at: '2026-09-03T20:08:22Z'
+    at: '2026-09-03T20:20:01Z'
     event: Read-only BSC Testnet probe confirmed chain 97 and deployed code at AgenticCommerce, EvaluatorRouter and OptimisticPolicy anchors.
     result: PASS
-    evidence: artifact 9910843880
+    evidence: artifact 9911265991
   - id: VER-010
-    at: '2026-09-03T20:08:22Z'
-    event: Same read-only probe reconfirmed Spondee provider balance remains zero and no live write was attempted.
-    result: PASS_WITH_TBNB_BLOCKER
-    evidence: artifact 9910843880
+    at: '2026-09-03T20:20:01Z'
+    event: Read-only probe reconfirmed Spondee provider balance remains zero while the pinned SDK marks chain 97 paymaster-capable.
+    result: PASS_CAPABILITY_ONLY
+    evidence: artifact 9911265991
+  - id: VER-011
+    at: '2026-09-03T20:24:31Z'
+    event: MegaFuel runtime smoke used an ephemeral client with zero wei before and after to mine ERC-8183 createJob and cancelOpen transactions successfully.
+    result: PASS_ZERO_BALANCE_SPONSORSHIP_PROVEN
+    evidence: GitHub Actions run 33802027942 / artifact 9911428783
 
 contradictions:
   - id: CON-001
     topic: testnet_gas_sponsorship
-    observation: Agent Studio v2 blog describes paymaster-covered testnet gas broadly, while current Studio demo and SDK network docs explicitly require tBNB for general testnet operations and scope gas-free sponsorship to ERC-8004 registration.
-    handling: Preserve conservative operational rule; live E2E remains blocked until a nonzero testnet balance or an actual sponsored-write probe proves gas sponsorship for this specific ERC-8183 path.
-    status: PRESERVED
+    observation: Earlier documentation/signals were inconsistent about whether tBNB was required for general ERC-8183 operations versus paymaster coverage.
+    handling: Runtime evidence takes precedence. GitHub Actions run 33802027942 proved createJob and cancelOpen from a zero-tBNB wallet with paymaster enabled; use MegaFuel first and retain tBNB only as a fallback if relay availability degrades.
+    status: RESOLVED_BY_RUNTIME_PROBE

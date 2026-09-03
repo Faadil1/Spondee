@@ -119,6 +119,34 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Report anchored BSC-testnet wallet balance
+        shell: bash
+        env:
+          SPONDEE_WALLET_ADDRESS: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+          BSC_TESTNET_RPC: 'https://bsc-testnet-dataseed.bnbchain.org'
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          const address = process.env.SPONDEE_WALLET_ADDRESS;
+          const rpc = process.env.BSC_TESTNET_RPC;
+          const response = await fetch(rpc, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [address, 'latest'] }),
+          });
+          if (!response.ok) throw new Error(`RPC HTTP ${response.status}`);
+          const payload = await response.json();
+          if (payload.error) throw new Error(JSON.stringify(payload.error));
+          const wei = BigInt(payload.result);
+          const whole = wei / 10n ** 18n;
+          const fraction = (wei % 10n ** 18n).toString().padStart(18, '0').replace(/0+$/, '');
+          const tbnb = fraction ? `${whole}.${fraction}` : `${whole}`;
+          console.log(`SPONDEE_PUBLIC_WALLET=${address}`);
+          console.log(`BSC_TESTNET_BALANCE_WEI=${wei}`);
+          console.log(`BSC_TESTNET_BALANCE_TBNB=${tbnb}`);
+          console.log(`BSC_TESTNET_FUNDED=${wei > 0n ? 'true' : 'false'}`);
+          NODE
+
       - name: Agent Studio project diagnostics without global CLI
         working-directory: reference-agents/health-factor/app/agent
         shell: bash
@@ -129,5 +157,6 @@ jobs:
           const toml = readFileSync('studio.toml', 'utf8');
           if (!toml.includes('default = "bsc-testnet"')) throw new Error('bsc-testnet not configured');
           if (!toml.includes('price = "0"')) throw new Error('G3 ERC-8183 price must remain zero');
+          if (!toml.includes('address = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8"')) throw new Error('verified G3 wallet address not anchored');
           console.log('Studio config safety checks: PASS');
           NODE

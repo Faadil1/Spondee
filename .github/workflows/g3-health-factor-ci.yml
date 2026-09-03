@@ -15,13 +15,17 @@ permissions:
   contents: read
 
 jobs:
-  windows-powershell-parse:
+  windows-wallet-bootstrap:
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
-      - name: Parse wallet helper with Windows PowerShell
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Parse local helper with Windows PowerShell
         shell: powershell
         run: |
           $path = 'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1'
@@ -37,6 +41,26 @@ jobs:
             exit 1
           }
           Write-Host 'Windows PowerShell wallet helper syntax: PASS'
+
+      - name: Install frozen workspace dependencies with the same pnpm route used locally
+        shell: powershell
+        working-directory: reference-agents/health-factor
+        run: |
+          npx --yes pnpm@10.24.0 install --frozen-lockfile
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Create and reload encrypted BNB SDK wallet on Windows Node 24
+        shell: powershell
+        working-directory: reference-agents/health-factor/app/agent
+        env:
+          WALLET_PASSWORD: Spondee-CI-Windows-Only-Password-2026
+          SPONDEE_WALLETS_DIR: ${{ runner.temp }}\spondee-wallets
+        run: |
+          npx --yes pnpm@10.24.0 wallet:create
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npx --yes pnpm@10.24.0 wallet:verify
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Write-Host 'Windows Node 24 CLI-free BNB SDK wallet roundtrip: PASS'
 
   verify:
     runs-on: ubuntu-latest
@@ -57,29 +81,6 @@ jobs:
       - name: Install workspace dependencies
         working-directory: reference-agents/health-factor
         run: pnpm install --frozen-lockfile
-
-      - name: Inspect installed BNB wallet APIs
-        working-directory: reference-agents/health-factor/app/agent
-        shell: bash
-        run: |
-          set -euo pipefail
-          node --input-type=module - <<'NODE'
-          const runtime = await import('@bnbagent/studio-runtime/wallet');
-          const sdk = await import('@bnbagent/sdk/wallets');
-          console.log('runtime wallet exports:', Object.keys(runtime).sort().join(', '));
-          console.log('sdk wallet exports:', Object.keys(sdk).sort().join(', '));
-          NODE
-          echo '--- EVMWalletProvider declaration ---'
-          FILE=$(grep -R -l 'declare class EVMWalletProvider' node_modules/@bnbagent/sdk/dist | head -n 1)
-          if [ -n "$FILE" ]; then
-            LINE=$(grep -n 'declare class EVMWalletProvider' "$FILE" | head -n1 | cut -d: -f1)
-            START=$((LINE-35)); if [ "$START" -lt 1 ]; then START=1; fi
-            END=$((LINE+115))
-            sed -n "${START},${END}p" "$FILE"
-          else
-            echo 'EVMWalletProvider declaration not found' >&2
-            exit 1
-          fi
 
       - name: Validate local PowerShell wallet helper syntax
         shell: pwsh

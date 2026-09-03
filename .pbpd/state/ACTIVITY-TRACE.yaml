@@ -32,4 +32,23 @@ entries:
     action: validate_prd_v0_1
     result: PRD_VALIDATED; no unresolved product-definition blocker; PRD_READY withheld pending actual build-runtime preflight.
     artifact: work/PRD-VALIDATION-001.md
-next_action: Run Agent Studio build-runtime preflight and record environment evidence. Promote to PRD_READY only if preflight passes or route to bounded remediation if it fails.
+  - id: ACT-007
+    at: '2026-09-03T07:52:25-04:00'
+    actor: PBPD_orchestrator
+    action: launch_reproducible_agent_studio_runtime_preflight
+    result: GitHub Actions workflow committed and triggered without secrets or funded wallet.
+    artifact: .github/workflows/bnb-agent-studio-preflight.yml
+  - id: ACT-008
+    at: '2026-09-03T07:53:12-04:00'
+    actor: github_actions
+    action: complete_agent_studio_runtime_preflight
+    result: PASS; Node 22, pnpm 10, Studio CLI 0.0.13, BSC testnet 0x61, bag init, bag scan and bag doctor all succeeded.
+    external_run: 33752070626
+    artifact: evidence/runtime-preflight-001/README.md
+  - id: ACT-009
+    at: '2026-09-03T07:54:00-04:00'
+    actor: PBPD_orchestrator
+    action: promote_prd_ready
+    result: PRD_READY; consequential product build authority opened within existing scope; protected actions remain protected.
+    artifact: work/PRD-READY-DECLARATION.md
+next_action: Begin SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT with secure testnet wallet onboarding, local bag dev smoke, task-specific Promise Card, bounded activation and first Outcome Receipt evidence.

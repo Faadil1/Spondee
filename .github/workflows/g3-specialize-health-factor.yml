@@ -1,0 +1,117 @@
+name: G3 Specialize Health Factor Reference Agent
+
+on:
+  push:
+    branches: ['build/g3-health-factor']
+    paths:
+      - '.github/workflows/g3-specialize-health-factor.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  specialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout build branch
+        uses: actions/checkout@v4
+        with:
+          ref: build/g3-health-factor
+          fetch-depth: 0
+
+      - name: Patch generated Studio seams only
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          root = Path('reference-agents/health-factor/app/agent')
+
+          # sellerCore.ts — add a free deterministic preview skill and bind the
+          # same Promise Card into the ERC-8183 request before fixed-code signing.
+          p = root / 'src/sellerCore.ts'
+          s = p.read_text()
+          needle = 'import * as defaultSigning from "./signing.js";'
+          assert needle in s
+          s = s.replace(
+              needle,
+              'import { enrichHealthFactorNegotiation, previewHealthFactorFromEnvelope } from "./healthFactor.js";\n' + needle,
+              1,
+          )
+          old = '''  // ── skills ──────────────────────────────────────────────────────────────\n\n  /**\n   * Rule-based quote → SDK `NegotiationResult` envelope (no LLM).'''
+          new = '''  // ── skills ──────────────────────────────────────────────────────────────\n\n  /**\n   * Free, read-only Spondee preview. No signing, no LLM, no payment.\n   * Confidence deliberately remains UNSCORED until observed calibration exists.\n   */\n  async previewHealthFactor(\n    data: Record<string, unknown>,\n  ): Promise<Record<string, unknown>> {\n    const clamped = this.signing.clampPrice(this.signing.listPrice());\n    const promise = previewHealthFactorFromEnvelope(data, clamped);\n    if (promise === null) {\n      return {\n        status: "rejected",\n        error: "expected a spondee.health-factor.task.v1 task or task_description",\n      };\n    }\n    return { status: "ok", promise };\n  }\n\n  /**\n   * Rule-based quote → SDK `NegotiationResult` envelope (no LLM).'''
+          assert old in s
+          s = s.replace(old, new, 1)
+          old = '''    const clamped = this.signing.clampPrice(this.signing.listPrice());\n    return this.signing.signQuote(request as Record<string, unknown>, clamped);\n  }\n\n  /** The seller's two advertised skills. */\n  skills(): string[] {\n    return this.commerceSkills ? ["negotiate", "notify_funded"] : [];\n  }'''
+          new = '''    const clamped = this.signing.clampPrice(this.signing.listPrice());\n    const enriched = enrichHealthFactorNegotiation(\n      request as Record<string, unknown>,\n      clamped,\n    );\n    return this.signing.signQuote(enriched.request, clamped);\n  }\n\n  /** Spondee preview is always available; commerce skills follow the configured rail. */\n  skills(): string[] {\n    return this.commerceSkills\n      ? ["preview_health_factor", "negotiate", "notify_funded"]\n      : ["preview_health_factor"];\n  }'''
+          assert old in s
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+
+          # executor.ts — route preview over the existing structured DataPart wire.
+          p = root / 'src/executor.ts'
+          s = p.read_text()
+          old = '''    try {\n      if (skill === "negotiate") {\n        return await this.negotiate(data);\n      }'''
+          new = '''    try {\n      if (skill === "preview_health_factor") {\n        return await this.previewHealthFactor(data);\n      }\n      if (skill === "negotiate") {\n        return await this.negotiate(data);\n      }'''
+          assert old in s
+          s = s.replace(old, new, 1)
+          old = '''    try {\n      if (skill === "negotiate") {\n        result = await this.negotiate(data);\n      } else if (skill === "notify_funded") {'''
+          new = '''    try {\n      if (skill === "preview_health_factor") {\n        result = await this.previewHealthFactor(data);\n      } else if (skill === "negotiate") {\n        result = await this.negotiate(data);\n      } else if (skill === "notify_funded") {'''
+          assert old in s
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+
+          # agentCard.ts — make the Promise Card a first-class outward skill.
+          p = root / 'src/agentCard.ts'
+          s = p.read_text()
+          marker = 'const NEGOTIATE: AgentSkill = {'
+          assert marker in s
+          preview = '''const PREVIEW_HEALTH_FACTOR: AgentSkill = {\n  id: "preview_health_factor",\n  name: "Preview a Spondee Health Factor promise",\n  description:\n    'Send {"skill":"preview_health_factor","task":{...}} with a ' +\n    '`spondee.health-factor.task.v1` simulation. Returns a deterministic ' +\n    'Promise Card before activation. Confidence is explicitly UNSCORED until ' +\n    'observed calibration history exists; no payment, signing, or LLM call occurs.',\n  tags: ["health-factor", "spondee", "promise-card", "bnb-chain"],\n  inputModes: ["application/json"],\n  outputModes: ["application/json"],\n};\n\n'''
+          s = s.replace(marker, preview + marker, 1)
+          old = '    description: `ERC-8183 seller agent (${name}) — negotiate + notify_funded over A2A.`,'
+          new = '    description: `Spondee Health Factor agent (${name}) — preview measurable promises, then negotiate + deliver over ERC-8183.`,'
+          assert old in s
+          s = s.replace(old, new, 1)
+          old = '''    skills:\n      opts.commerceSkills === false ? [] : [NEGOTIATE, NOTIFY_FUNDED],'''
+          new = '''    skills:\n      opts.commerceSkills === false\n        ? [PREVIEW_HEALTH_FACTOR]\n        : [PREVIEW_HEALTH_FACTOR, NEGOTIATE, NOTIFY_FUNDED],'''
+          assert old in s
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+
+          # dualMain.ts — intercept structured Spondee jobs before model creation.
+          # This makes the Health Factor core deterministic and usable without an
+          # LLM key; generic seller work still falls through to the generated LLM path.
+          p = root / 'src/dualMain.ts'
+          s = p.read_text()
+          needle = 'import { buildModel } from "./model.js";'
+          assert needle in s
+          s = s.replace(
+              needle,
+              needle + '\nimport { buildHealthFactorOutcomeFromWorkPrompt } from "./healthFactor.js";',
+              1,
+          )
+          old = '''  return async (prompt, { abortSignal }) => {\n    model ??= buildModel(); // managed model with the auto-renew hook (delivery only)'''
+          new = '''  return async (prompt, { abortSignal }) => {\n    const deterministic = buildHealthFactorOutcomeFromWorkPrompt(prompt);\n    if (deterministic !== null) {\n      return JSON.stringify(deterministic, null, 2);\n    }\n    model ??= buildModel(); // generic fallback only; Spondee HF work stays deterministic'''
+          assert old in s
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+
+          # package.json — add a built-in Node test command; no extra test dependency.
+          p = root / 'package.json'
+          pkg = json.loads(p.read_text())
+          pkg['scripts']['test'] = 'node --import tsx --test src/*.test.ts'
+          p.write_text(json.dumps(pkg, indent=2) + '\n')
+          PY
+
+      - name: Commit specialization
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'spondee-build-bot'
+          git config user.email 'spondee-build-bot@users.noreply.github.com'
+          git add reference-agents/health-factor/app/agent
+          git diff --cached --check
+          git commit -m 'Specialize Health Factor agent for Spondee Promise Cards'
+          git push origin HEAD:build/g3-health-factor

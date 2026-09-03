@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R006-G3-WALLET-VERIFIED
+revision: STATE-R007-G3-TBNB-PENDING
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_TESTNET_WALLET_VERIFIED
+  status: G3_TESTNET_WALLET_VERIFIED_TBNB_REQUIRED
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -46,7 +46,7 @@ verified_build_properties:
   - deterministic tests pass
   - credential-free configuration diagnostics pass
 live_activation:
-  status: TESTNET_WALLET_VERIFIED_TBNB_PENDING
+  status: TESTNET_WALLET_VERIFIED_TBNB_BALANCE_ZERO
   authorization:
     granted_at: '2026-09-03T09:08:00-04:00'
     phrase: GO wallet testnet + tBNB
@@ -68,6 +68,14 @@ live_activation:
     password_exposed_to_chat: false
     private_key_exposed_to_chat: false
     address_anchored_in_studio_toml: true
+  balance_check:
+    checked_via: BSC_TESTNET_PUBLIC_JSON_RPC
+    rpc: https://bsc-testnet-dataseed.bnbchain.org
+    checked_at: '2026-09-03T18:04:06Z'
+    balance_wei: '0'
+    balance_tbnb: '0'
+    funded: false
+    ci_run: '33788242671'
   not_yet_claimed:
     - nonzero tBNB balance
     - live wallet-backed ERC-8183 signature
@@ -75,5 +83,5 @@ live_activation:
     - on-chain submit transaction
     - observed Agent Advantage
 next_action:
-  primary: Fund only the verified public address with minimal tBNB from the official BSC Testnet faucet, verify a nonzero balance, then execute the first zero-service-price bounded ERC-8183 testnet activation.
+  primary: Fund only the verified public address with tBNB from an approved BSC Testnet faucet route, verify a nonzero balance, then execute the first zero-service-price bounded ERC-8183 testnet activation.
 next_gate: SPONDEE_G3_TBNB_BALANCE_REQUIRED

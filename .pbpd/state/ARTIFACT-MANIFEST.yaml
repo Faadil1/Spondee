@@ -49,7 +49,7 @@ artifacts:
   - id: ART-012
     path: reference-agents/health-factor
     type: specialized_agent_studio_reference_agent
-    status: CI_VERIFIED_SIMULATION_LIVE_E2E_PENDING
+    status: CI_VERIFIED_SIGNED_PROMISE_CARRIER_LIVE_E2E_RETRY_READY
   - id: ART-013
     path: evidence/g3-health-factor-ci-001/README.md
     type: g3_health_factor_build_evidence
@@ -83,7 +83,7 @@ artifacts:
   - id: ART-020
     path: backend/src/erc8183.ts
     type: signed_zero_price_erc8183_live_driver
-    status: CI_VERIFIED_FAIL_CLOSED_FULL_SELLER_E2E_NOT_EXECUTED
+    status: SIGNED_PROMISE_CARRIER_CI_VERIFIED_ONE_LOCAL_RETRY_READY
   - id: ART-021
     path: .github/workflows/backend-ci.yml
     type: complete_backend_ci
@@ -117,3 +117,35 @@ artifacts:
     external_run: 33802027942
     artifact_id: 9911428783
     artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+  - id: ART-027
+    path: reference-agents/health-factor/app/agent/src/healthFactor.ts
+    type: signed_promise_success_criteria_carrier
+    status: CI_VERIFIED
+    carrier_prefix: 'SPONDEE_PROMISE_CARD_V1:'
+  - id: ART-028
+    path: backend/src/erc8183.test.ts
+    type: signed_promise_carrier_regression_tests
+    status: PASS
+    external_run: 33816310524
+  - id: ART-029
+    path: .github/workflows/g3-health-factor-ci.yml
+    type: g3_signed_promise_carrier_validation
+    status: PASS
+    external_run: 33816544907
+  - id: ART-030
+    path: reference-agents/health-factor/app/agent/src/demoEvidence.ts
+    type: deterministic_evidence_export_using_protocol_preserved_carrier
+    status: PASS
+    external_run: 33816544907
+  - id: ART-031
+    path: scripts/g3-megafuel-live-e2e.ps1
+    type: human_local_live_e2e_runner
+    status: ONE_LOCAL_RETRY_AUTHORIZED
+  - id: ART-032
+    path: .pbpd/state/HANDOVER.yaml
+    type: canonical_handover
+    status: CURRENT_RETRY_READY
+  - id: ART-033
+    path: .pbpd/state/PROJECT-STATE.yaml
+    type: canonical_project_state
+    status: CURRENT_RETRY_READY

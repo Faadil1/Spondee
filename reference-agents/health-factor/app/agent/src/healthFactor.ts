@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { z } from "zod";
 
 export const SPONDEE_PROMISE_COMMITMENT_PREFIX = "SPONDEE_PROMISE_COMMITMENT_V1:";
+export const SPONDEE_TASK_B64_PREFIX = "SPONDEE_TASK_B64_V1:";
 
 const StressPointSchema = z.object({
   at_seconds: z.number().int().nonnegative(),
@@ -162,9 +163,27 @@ export function analyzeHealthFactorTask(task: HealthFactorTask): Analysis {
   };
 }
 
+export function encodeHealthFactorTaskForChain(task: HealthFactorTask): string {
+  return `${SPONDEE_TASK_B64_PREFIX}${Buffer.from(
+    JSON.stringify(task),
+    "utf8",
+  ).toString("base64url")}`;
+}
+
 function parseMaybeJson(value: unknown): unknown {
   if (typeof value !== "string") return value;
   const trimmed = value.trim();
+  if (trimmed.startsWith(SPONDEE_TASK_B64_PREFIX)) {
+    try {
+      const decoded = Buffer.from(
+        trimmed.slice(SPONDEE_TASK_B64_PREFIX.length),
+        "base64url",
+      ).toString("utf8");
+      return JSON.parse(decoded);
+    } catch {
+      return value;
+    }
+  }
   if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) return value;
   try {
     return JSON.parse(trimmed);
@@ -241,9 +260,13 @@ export function buildHealthFactorPromiseCommitment(
 export function encodeHealthFactorPromiseCommitmentCriterion(
   promise: HealthFactorPromiseCard,
 ): string {
-  return `${SPONDEE_PROMISE_COMMITMENT_PREFIX}${JSON.stringify(
-    buildHealthFactorPromiseCommitment(promise),
-  )}`;
+  const commitment = buildHealthFactorPromiseCommitment(promise);
+  return `${SPONDEE_PROMISE_COMMITMENT_PREFIX}${JSON.stringify({
+    p: commitment.promise_id,
+    s: commitment.scenario_id,
+    r: commitment.price_raw,
+    h: commitment.promise_sha256,
+  })}`;
 }
 
 export function decodeHealthFactorPromiseCommitmentCriterion(
@@ -264,17 +287,22 @@ export function decodeHealthFactorPromiseCommitmentCriterion(
     }
     const c = candidate as Record<string, unknown>;
     if (
-      c.schema !== "spondee.promise-commitment.v1" ||
-      typeof c.promise_id !== "string" ||
-      typeof c.scenario_id !== "string" ||
-      typeof c.price_raw !== "string" ||
-      !/^\d+$/.test(c.price_raw) ||
-      typeof c.promise_sha256 !== "string" ||
-      !/^[a-f0-9]{64}$/.test(c.promise_sha256)
+      typeof c.p !== "string" ||
+      typeof c.s !== "string" ||
+      typeof c.r !== "string" ||
+      !/^\d+$/.test(c.r) ||
+      typeof c.h !== "string" ||
+      !/^[a-f0-9]{64}$/.test(c.h)
     ) {
       return null;
     }
-    return candidate as HealthFactorPromiseCommitment;
+    return {
+      schema: "spondee.promise-commitment.v1",
+      promise_id: c.p,
+      scenario_id: c.s,
+      price_raw: c.r,
+      promise_sha256: c.h,
+    };
   } catch {
     return null;
   }

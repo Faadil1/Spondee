@@ -11,7 +11,9 @@
     "dev": "tsx src/dualMain.ts",
     "build": "tsc -p tsconfig.json",
     "test": "node --import tsx --test src/*.test.ts",
-    "demo:evidence": "tsx src/demoEvidence.ts"
+    "demo:evidence": "tsx src/demoEvidence.ts",
+    "wallet:create": "tsx src/localWalletCli.ts create",
+    "wallet:verify": "tsx src/localWalletCli.ts verify"
   },
   "dependencies": {
     "@bnbagent/studio-runtime": "0.0.13",

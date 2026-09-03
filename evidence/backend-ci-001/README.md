@@ -6,22 +6,24 @@ Evidence class: `SIMULATION / CI / READ-ONLY-CHAIN`
 
 ## Result
 
-GitHub Actions run: `33800450806`
-Verified head: `e08b623dac2f80a96b944c4b0075fc1d20b090e3`
+GitHub Actions run: `33801590780`
+Verified backend-code head: `b415fbab33416b32fd75dac12515a502c29be14c`
 Conclusion: **SUCCESS**
 
 Artifact:
-- ID: `9910843880`
+- ID: `9911265991`
 - name: `spondee-backend-ci-evidence`
-- digest: `sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49`
+- digest: `sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56`
 
 ## Passed gates
 
-- 15/15 unit + API integration tests;
+- 18/18 unit + API integration tests;
 - strict TypeScript compilation;
 - four-category Promise/Receipt smoke;
 - claim-boundary assertions;
+- live-deliverable Promise/scenario/evidence-class guardrails;
 - read-only BSC Testnet chain probe;
+- pinned SDK reports ERC-8183 paymaster support for chain 97;
 - AgenticCommerce contract code present;
 - EvaluatorRouter contract code present;
 - OptimisticPolicy contract code present;
@@ -57,11 +59,14 @@ chain_id = 97
 provider = 0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8
 provider_balance_wei = 0
 funded_for_gas = false
+sdk_erc8183_paymaster_supported = true
 AgenticCommerce code = present
 EvaluatorRouter code = present
 OptimisticPolicy code = present
 live_write_attempted = false
 ```
+
+The pinned `@bnbagent/sdk` marks BSC Testnet chain 97 as ERC-8183 paymaster-supported. This means MegaFuel sponsorship is an available runtime path; it is **not** treated as a guarantee that the relay will be available for a particular write. A small tBNB balance remains a useful fallback.
 
 ## Backend surfaces verified
 
@@ -80,9 +85,26 @@ live_write_attempted = false
 
 ## Live ERC-8183 path prepared but NOT claimed
 
-The driver is coded to preserve the current BNB SDK signed-quote path:
+The prepared driver now preserves the complete evidence path:
 
-`signed A2A quote -> verify quote/provider/currency -> buildJobDescription(same signed terms) -> createJob -> registerJob -> setBudget(0) -> fund(0) -> notify_funded -> poll SUBMITTED -> deliverable URL`
+`signed A2A quote`
+`-> verify provider/currency/signature`
+`-> buildJobDescription(same signed terms)`
+`-> createJob`
+`-> registerJob`
+`-> setBudget(0)`
+`-> fund(0)`
+`-> notify_funded`
+`-> poll SUBMITTED/COMPLETED`
+`-> locate JobSubmitted event`
+`-> capture create/register/budget/fund/submit tx hashes`
+`-> get on-chain deliverable_url`
+`-> fetch DeliverableManifest`
+`-> verify manifest hash against job.deliverable`
+`-> verify Spondee receipt promise_id + scenario_id + SIMULATION truth class`
+`-> persist normalized Outcome Receipt in the backend`
+
+Progress is persisted after each live stage, so a later manifest or transport failure does not erase already-landed transaction evidence.
 
 It cannot execute unless the explicit live environment gate and a separate local buyer keystore are present.
 
@@ -98,4 +120,6 @@ The following remain **unverified**:
 
 `SPONDEE_BACKEND_COMPLETE_LIVE_TESTNET_E2E_PENDING_TBNB`
 
-Once tBNB is available, create/verify a separate throwaway buyer testnet wallet locally, run the Health Factor signed zero-price ERC-8183 path, preserve job/tx/deliverable evidence, and only then promote the live G3 requirement.
+The human has chosen to defer the first live write until the next tBNB attempt. Technically, the pinned SDK also supports the ERC-8183 paymaster on chain 97, so tBNB is a fallback rather than a claim that sponsorship is impossible.
+
+At the live gate: create/verify a separate throwaway buyer testnet wallet locally, start the Health Factor seller endpoint, run the signed zero-price ERC-8183 path, preserve job/tx/deliverable evidence, and only then promote the live G3 requirement.

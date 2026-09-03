@@ -22,9 +22,9 @@ $studioDir = Join-Path $workspaceRoot '.studio'
 $walletDir = Join-Path $studioDir 'wallets'
 $studioToml = Join-Path $agentDir 'studio.toml'
 
-Write-Host "Spondee G3 — local BSC-testnet wallet setup" -ForegroundColor Green
-Write-Host "This script NEVER prints, commits, or uploads your wallet password/private key."
-Write-Host "This wallet is testnet-only. Never reuse it on mainnet." -ForegroundColor Yellow
+Write-Host 'Spondee G3 - local BSC-testnet wallet setup' -ForegroundColor Green
+Write-Host 'This script NEVER prints, commits, or uploads your wallet password/private key.'
+Write-Host 'This wallet is testnet-only. Never reuse it on mainnet.' -ForegroundColor Yellow
 
 if (-not (Test-Path $studioToml)) {
     Fail "studio.toml not found at $studioToml. Use the Spondee build/g3-health-factor checkout."
@@ -82,10 +82,11 @@ try {
         exit 2
     }
 
-    $prompt = if ($VerifyOnly) {
-        'Existing wallet password'
-    } else {
-        'NEW throwaway wallet password'
+    if ($VerifyOnly) {
+        $prompt = 'Existing wallet password'
+    }
+    else {
+        $prompt = 'NEW throwaway wallet password'
     }
 
     Write-Step "Enter $prompt"
@@ -141,12 +142,12 @@ try {
     Write-Host '============================================================' -ForegroundColor Green
 
     if ($doctorExit -ne 0) {
-        Write-Warning 'bag doctor returned non-zero. Before funding, a missing/zero tBNB balance can be expected. Share only the public address and non-secret warning text if needed.'
+        Write-Warning 'bag doctor returned non-zero. Before funding, a missing or zero tBNB balance can be expected. Share only the public address and non-secret warning text if needed.'
     }
 
     Write-Host "`nOfficial BSC testnet faucet:"
     Write-Host 'https://testnet.bnbchain.org/faucet-smart'
-    Write-Host "After funding, rerun this same script with -VerifyOnly to re-check the wallet and diagnostics."
+    Write-Host 'After funding, rerun this same script with -VerifyOnly to re-check the wallet and diagnostics.'
 }
 finally {
     Remove-Item Env:WALLET_PASSWORD -ErrorAction SilentlyContinue

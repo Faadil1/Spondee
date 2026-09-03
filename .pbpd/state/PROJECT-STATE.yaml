@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R011-G3-LIVE-QUOTE-PARSER-FIXED
+revision: STATE-R012-G3-SIGNED-PROMISE-CARRIER-CI-PENDING
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_MEGAFUEL_LIVE_E2E_RETRY_READY_AFTER_FAIL_CLOSED_PREWRITE_FIX
+  status: G3_SIGNED_PROMISE_CARRIER_FIX_APPLIED_CI_PENDING
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -57,6 +57,7 @@ verified_backend_properties:
   - live deliverable verification preserves promise_id/scenario_id and simulation truth class
   - official BNB SDK NegotiationResult envelope is accepted without a non-standard provider_address field
   - provider identity remains cryptographically verified against the canonical Spondee provider via verifyQuoteSignature
+  - Promise Card carrier is now constrained to official SDK-preserved success_criteria rather than arbitrary custom terms
 megafuel:
   status: RUNTIME_PROVEN_ZERO_BALANCE_ERC8183_WRITES
   evidence: evidence/megafuel-smoke-001/README.md
@@ -77,7 +78,7 @@ megafuel:
   user_funds_used: false
   operational_rule: MegaFuel is primary for bounded BSC-testnet ERC-8183 writes; tBNB remains fallback if the relay is unavailable.
 live_runner:
-  status: RETRY_READY_AFTER_PROTOCOL_SHAPE_FIX
+  status: SIGNED_PROMISE_CARRIER_FIX_APPLIED_CI_PENDING
   powershell: scripts/g3-megafuel-live-e2e.ps1
   backend_entrypoint: backend/src/live-g3.ts
   canonical_task: reference-agents/health-factor/demo/health-factor-scenario.json
@@ -92,14 +93,46 @@ live_runner:
     megafuel_failure: false
     seller_signing_failure: false
     user_funds_used: false
-  fix:
-    commit: '7c6e304342b951decf6f165940724c09907157ed'
-    behavior: Validate the official SDK envelope shape and prove provider identity cryptographically with verifyQuoteSignature(expectedProvider) instead of trusting a non-standard provider_address field.
+  first_fix:
+    commit: f19a51deb39c37ab2c5b25d7d88c5d75f7514292
+    behavior: Validate official SDK envelope shape and prove provider identity cryptographically with verifyQuoteSignature(expectedProvider).
     backend_ci_run: '33806097273'
     backend_ci: PASS
     g3_ci_run: '33806096975'
     g3_ci: PASS
     windows_wallet_roundtrip: PASS
+  second_attempt:
+    started_at: '2026-09-03T22:37:13.916Z'
+    failed_at: '2026-09-03T22:37:15.505Z'
+    result: FAIL_CLOSED_PRE_WRITE
+    buyer_address: '0xC70fd5b6c59027592917dA0e118B1f20eC0E5629'
+    progress_events: 0
+    transaction_count: 0
+    error: signed quote is missing terms.spondee_promise
+    root_cause: Official SDK TermSpecification drops arbitrary custom terms including spondee_promise before signed NegotiationResult serialization.
+    megafuel_failure: false
+    user_funds_used: false
+  second_fix:
+    carrier: success_criteria
+    carrier_prefix: 'SPONDEE_PROMISE_CARD_V1:'
+    seller_commit: ed74abdcf8496c8beb34dd9751deaaeca4d52250
+    buyer_commit: 05191e522507b71858c8a43b96dca802a4a5eb90
+    backend_test_commit: 58e1df6e80debd6b9aace3d07d8f3cfd73183aad
+    seller_test_commit: 1ecc3aed89af6d367e2f692946ea88e375aa95bd
+    health_factor_test_alignment_commit: 6e1b29335fef448da502be08c769821a5415fe27
+    demo_evidence_alignment_commit: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
+    behavior:
+      - carry Promise Card inside SDK-preserved success_criteria
+      - require exactly one Spondee carrier in request and response
+      - require exact request/response carrier equality
+      - verify provider signature/chain/Commerce before trusting Promise Card
+      - recover same Promise carrier from on-chain job terms for deterministic Outcome Receipt
+      - fail closed before createJob on missing, malformed, duplicate or mismatched carrier
+    backend_ci_run: '33816310524'
+    backend_ci: PASS
+    g3_ci_final_run: '33816544907'
+    g3_ci: PENDING
+    local_retry_authorized: false
   behavior:
     - unlock existing seller keystore locally only
     - verify seller address equals canonical Spondee provider
@@ -114,7 +147,7 @@ category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: FIRST_ATTEMPT_FAIL_CLOSED_PREWRITE_PROTOCOL_FIX_VERIFIED_RETRY_READY
+    live_testnet: SECOND_ATTEMPT_FAIL_CLOSED_PREWRITE_SIGNED_PROMISE_CARRIER_FIX_CI_PENDING
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -125,7 +158,7 @@ category_depth:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
 live_activation:
-  status: GAS_PATH_PROVEN_RETRY_READY_NO_LIVE_JOB_YET
+  status: GAS_PATH_PROVEN_SIGNED_PROMISE_CARRIER_FIX_CI_PENDING
   authorization:
     granted_at: '2026-09-03T09:08:00-04:00'
     phrase: GO wallet testnet + tBNB
@@ -154,8 +187,8 @@ live_activation:
     fallback: TBNB_SELF_PAY
     fallback_status: NOT_CURRENTLY_REQUIRED_FOR_NEXT_ATTEMPT
   live_driver:
-    status: CODED_FAIL_CLOSED_PROTOCOL_SHAPE_FIX_CI_VERIFIED_RETRY_READY
-    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_SIGNATURE_AND_CURRENCY -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
+    status: CODED_FAIL_CLOSED_SIGNED_PROMISE_CARRIER_FIX_CI_PENDING
+    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_SIGNATURE_AND_CURRENCY -> EXTRACT_SIGNED_PROMISE_CARRIER -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
     buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
     live_env_gate_default: false
   not_yet_claimed:
@@ -165,5 +198,5 @@ live_activation:
     - observed Agent Advantage
     - four deployed live reference agents
 next_action:
-  primary: On the user's Windows machine, git pull build/backend-complete and rerun scripts/g3-megafuel-live-e2e.ps1. Enter the existing seller wallet password only into the masked local prompt. Preserve and return only public PASS/fail-closed evidence.
-next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+  primary: Complete G3 Health Factor CI run 33816544907. Do not ask the human to retry locally unless that run and its Windows wallet/PowerShell job pass. If green, promote to retry-ready and reuse the existing seller wallet without requesting tBNB.
+next_gate: SPONDEE_G3_SIGNED_PROMISE_CARRIER_CI_VALIDATION

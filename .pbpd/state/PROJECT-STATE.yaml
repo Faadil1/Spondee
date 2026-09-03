@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R012-G3-SIGNED-PROMISE-CARRIER-CI-PENDING
+revision: STATE-R013-G3-SIGNED-PROMISE-CARRIER-RETRY-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_SIGNED_PROMISE_CARRIER_FIX_APPLIED_CI_PENDING
+  status: G3_MEGAFUEL_LIVE_E2E_RETRY_READY_AFTER_SIGNED_PROMISE_CARRIER_FIX
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -57,7 +57,9 @@ verified_backend_properties:
   - live deliverable verification preserves promise_id/scenario_id and simulation truth class
   - official BNB SDK NegotiationResult envelope is accepted without a non-standard provider_address field
   - provider identity remains cryptographically verified against the canonical Spondee provider via verifyQuoteSignature
-  - Promise Card carrier is now constrained to official SDK-preserved success_criteria rather than arbitrary custom terms
+  - Promise Card carrier is constrained to official SDK-preserved success_criteria rather than arbitrary custom terms
+  - request and response must carry exactly one identical versioned Promise Card carrier
+  - provider signature, chain and Commerce contract are verified before the buyer trusts the signed Promise Card
 megafuel:
   status: RUNTIME_PROVEN_ZERO_BALANCE_ERC8183_WRITES
   evidence: evidence/megafuel-smoke-001/README.md
@@ -78,7 +80,7 @@ megafuel:
   user_funds_used: false
   operational_rule: MegaFuel is primary for bounded BSC-testnet ERC-8183 writes; tBNB remains fallback if the relay is unavailable.
 live_runner:
-  status: SIGNED_PROMISE_CARRIER_FIX_APPLIED_CI_PENDING
+  status: RETRY_READY_CI_VERIFIED_SIGNED_PROMISE_CARRIER
   powershell: scripts/g3-megafuel-live-e2e.ps1
   backend_entrypoint: backend/src/live-g3.ts
   canonical_task: reference-agents/health-factor/demo/health-factor-scenario.json
@@ -108,6 +110,7 @@ live_runner:
     buyer_address: '0xC70fd5b6c59027592917dA0e118B1f20eC0E5629'
     progress_events: 0
     transaction_count: 0
+    create_job_sent: false
     error: signed quote is missing terms.spondee_promise
     root_cause: Official SDK TermSpecification drops arbitrary custom terms including spondee_promise before signed NegotiationResult serialization.
     megafuel_failure: false
@@ -131,8 +134,21 @@ live_runner:
     backend_ci_run: '33816310524'
     backend_ci: PASS
     g3_ci_final_run: '33816544907'
-    g3_ci: PENDING
-    local_retry_authorized: false
+    g3_ci: PASS
+    g3_ci_head: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
+    ubuntu_verify: PASS
+    windows_powershell_parse: PASS
+    windows_node24_wallet_roundtrip: PASS
+    local_retry_authorized: true
+  ci_discovery_history:
+    - run: '33816337200'
+      result: FAIL_EXPECTED_STALE_FIXTURE_FOUND
+      finding: healthFactor.test.ts still asserted the removed custom spondee_promise field
+      remediation_commit: 6e1b29335fef448da502be08c769821a5415fe27
+    - run: '33816479581'
+      result: FAIL_EXPECTED_STALE_EVIDENCE_FIXTURE_FOUND
+      finding: demoEvidence.ts still constructed deterministic job terms with the removed custom spondee_promise field
+      remediation_commit: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
   behavior:
     - unlock existing seller keystore locally only
     - verify seller address equals canonical Spondee provider
@@ -147,7 +163,7 @@ category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: SECOND_ATTEMPT_FAIL_CLOSED_PREWRITE_SIGNED_PROMISE_CARRIER_FIX_CI_PENDING
+    live_testnet: SECOND_ATTEMPT_FAIL_CLOSED_PREWRITE_FIX_CI_VERIFIED_ONE_LOCAL_RETRY_READY
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -158,7 +174,7 @@ category_depth:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
 live_activation:
-  status: GAS_PATH_PROVEN_SIGNED_PROMISE_CARRIER_FIX_CI_PENDING
+  status: GAS_PATH_AND_SIGNED_PROMISE_CARRIER_CI_VERIFIED_ONE_LOCAL_RETRY_READY
   authorization:
     granted_at: '2026-09-03T09:08:00-04:00'
     phrase: GO wallet testnet + tBNB
@@ -181,16 +197,22 @@ live_activation:
     private_key_exposed_to_chat: false
     address_anchored_in_studio_toml: true
     balance_tbnb: '0'
+    recreate_for_retry: false
   gas_strategy:
     primary: MEGAFUEL_PAYMASTER
     primary_status: PROVEN_WITH_ZERO_BALANCE_CREATE_AND_CANCEL_WRITES
     fallback: TBNB_SELF_PAY
     fallback_status: NOT_CURRENTLY_REQUIRED_FOR_NEXT_ATTEMPT
   live_driver:
-    status: CODED_FAIL_CLOSED_SIGNED_PROMISE_CARRIER_FIX_CI_PENDING
+    status: CODED_FAIL_CLOSED_CI_VERIFIED_ONE_LOCAL_RETRY_READY
     sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_SIGNATURE_AND_CURRENCY -> EXTRACT_SIGNED_PROMISE_CARRIER -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
     buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
     live_env_gate_default: false
+  retry_policy:
+    authorized_attempts_now: 1
+    blind_retry_after_failure: false
+    success_evidence_required: COMPLETE_PUBLIC_PASS_BLOCK
+    failure_evidence_required: NEW_PUBLIC_FAILURE_V1_BLOCK_ONLY
   not_yet_claimed:
     - full createJob/registerJob/setBudget(0)/fund(0) Health Factor sequence
     - provider on-chain submit transaction
@@ -198,5 +220,5 @@ live_activation:
     - observed Agent Advantage
     - four deployed live reference agents
 next_action:
-  primary: Complete G3 Health Factor CI run 33816544907. Do not ask the human to retry locally unless that run and its Windows wallet/PowerShell job pass. If green, promote to retry-ready and reuse the existing seller wallet without requesting tBNB.
-next_gate: SPONDEE_G3_SIGNED_PROMISE_CARRIER_CI_VALIDATION
+  primary: Human performs exactly one local rerun of scripts/g3-megafuel-live-e2e.ps1 after git pull, reusing the existing encrypted seller wallet and entering its password only into the masked local prompt. Do not acquire tBNB first. Return only the public PASS block or new failure.v1 block.
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED

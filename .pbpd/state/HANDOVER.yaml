@@ -83,6 +83,17 @@ handover:
       merge_sha: e6cdb63db938939006e8b147c2add793c687a829
       stable_package_mutated: false
 
+  external_nonblocking_findings:
+    - id: PBPD_LEGACY_WORKFLOW_VERSION_DRIFT
+      classification: EXTERNAL_SYSTEM_TECH_DEBT_NONBLOCKING_FOR_SPONDEE
+      detail: Two non-required PBPD workflows still assert stable pbpd-builder 0.4.0 although the repository runtime is 0.5.0; they fail on that stale version assertion.
+      runs:
+        - 33815125119
+        - 33815125150
+      spondee_pointer_regression_detected: false
+      required_validate_workflow: PASS
+      remediation_scope: PBPD_MAINTENANCE_NOT_SPONDEE_G3
+
   G3_pass_definition:
     - one Spondee Health Factor reference-agent path runs locally/BSC-testnet-compatibly
     - task-specific Promise Card is persisted before activation

@@ -23,6 +23,7 @@ export const BSC_TESTNET = {
 } as const;
 
 const DEFAULT_PROVIDER = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8";
+const SPONDEE_PROMISE_CRITERION_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
 
 interface RpcReply {
   error?: { message?: string };
@@ -35,18 +36,28 @@ interface RpcReply {
  * Important: the SDK envelope does NOT contain provider_address. Provider
  * identity is proven cryptographically by verifyQuoteSignature() against the
  * configured expected provider address and Commerce verifying contract.
+ *
+ * Spondee-specific Promise data rides inside `success_criteria`, one of the
+ * TermSpecification fields that the SDK actually preserves in request and
+ * response hashes/signatures. Arbitrary custom term keys are intentionally
+ * not relied on because NegotiationRequest.fromDict() drops them.
  */
 export interface SignedQuote extends Record<string, unknown> {
   request: {
     terms?: {
-      spondee_promise?: Record<string, unknown>;
+      success_criteria?: unknown;
       [key: string]: unknown;
     };
     [key: string]: unknown;
   };
   response: {
     accepted: boolean;
-    terms: { price: string; currency?: string; [key: string]: unknown };
+    terms: {
+      price: string;
+      currency?: string;
+      success_criteria?: unknown;
+      [key: string]: unknown;
+    };
     [key: string]: unknown;
   };
   request_hash?: string;
@@ -192,6 +203,62 @@ export function validateSignedQuoteEnvelope(value: unknown): SignedQuote {
   return quote as SignedQuote;
 }
 
+function uniquePromiseCarrier(value: unknown, side: "request" | "response"): string {
+  if (!Array.isArray(value)) {
+    throw new Error(`signed ${side} is missing success_criteria Promise Card carrier`);
+  }
+  const matches = value.filter(
+    (entry): entry is string =>
+      typeof entry === "string" && entry.startsWith(SPONDEE_PROMISE_CRITERION_PREFIX),
+  );
+  if (matches.length !== 1) {
+    throw new Error(
+      `signed ${side} must contain exactly one Spondee Promise Card carrier; found ${matches.length}`,
+    );
+  }
+  return matches[0];
+}
+
+function decodePromiseCarrier(carrier: string): Record<string, unknown> {
+  let promise: unknown;
+  try {
+    promise = JSON.parse(carrier.slice(SPONDEE_PROMISE_CRITERION_PREFIX.length));
+  } catch {
+    throw new Error("signed Spondee Promise Card carrier is not valid JSON");
+  }
+  const parsed = objectOrNull(promise);
+  if (!parsed || parsed.schema !== "spondee.promise-card.v1") {
+    throw new Error("signed success_criteria carrier is not a Spondee Promise Card");
+  }
+  if (typeof parsed.promise_id !== "string" || parsed.promise_id.length === 0) {
+    throw new Error("signed Promise Card is missing promise_id");
+  }
+  if (typeof parsed.scenario_id !== "string" || parsed.scenario_id.length === 0) {
+    throw new Error("signed Promise Card is missing scenario_id");
+  }
+  return parsed;
+}
+
+/**
+ * Extract the Spondee Promise only from terms preserved by the official SDK.
+ * Request and response must carry the exact same versioned criterion string,
+ * so the Promise is covered consistently by both sides of the signed quote.
+ */
+export function signedSpondeePromiseFromQuote(quote: SignedQuote): Record<string, unknown> {
+  const requestCarrier = uniquePromiseCarrier(
+    quote.request?.terms?.success_criteria,
+    "request",
+  );
+  const responseCarrier = uniquePromiseCarrier(
+    quote.response?.terms?.success_criteria,
+    "response",
+  );
+  if (requestCarrier !== responseCarrier) {
+    throw new Error("signed request/response Spondee Promise Card carriers do not match");
+  }
+  return decodePromiseCarrier(requestCarrier);
+}
+
 export function validateLiveSpondeeReceipt(
   value: unknown,
   expectedPromiseId: string,
@@ -237,17 +304,6 @@ async function fetchManifest(
   }
   const parsed = JSON.parse(raw) as Record<string, unknown>;
   return DeliverableManifest.fromDict(parsed);
-}
-
-function signedPromiseFromQuote(quote: SignedQuote): Record<string, unknown> {
-  const promise = objectOrNull(quote.request?.terms?.spondee_promise);
-  if (!promise || promise.schema !== "spondee.promise-card.v1") {
-    throw new Error("signed quote is missing terms.spondee_promise");
-  }
-  if (typeof promise.promise_id !== "string") {
-    throw new Error("signed Promise Card is missing promise_id");
-  }
-  return promise;
 }
 
 export type LiveProgressStage =
@@ -332,11 +388,6 @@ export async function runSignedZeroPriceTestnetActivation(
     if (quote.response.terms.price !== "0") {
       throw new Error(`G3 live activation refuses non-zero service price: ${quote.response.terms.price}`);
     }
-    const signedPromise = signedPromiseFromQuote(quote);
-    if (signedPromise.scenario_id !== task.scenario_id) {
-      throw new Error("signed Promise Card scenario does not match the live activation task");
-    }
-    const promiseId = String(signedPromise.promise_id);
 
     const client = await ERC8183Client.create({
       walletProvider: wallet,
@@ -355,6 +406,14 @@ export async function runSignedZeroPriceTestnetActivation(
       expectedVerifyingContract: client.commerce.address,
     });
     if (!verdict.valid) throw new Error(`provider quote rejected: ${verdict.reason}`);
+
+    // Only trust the Promise after the complete official quote envelope has
+    // passed provider/chain/Commerce signature verification.
+    const signedPromise = signedSpondeePromiseFromQuote(quote);
+    if (signedPromise.scenario_id !== task.scenario_id) {
+      throw new Error("signed Promise Card scenario does not match the live activation task");
+    }
+    const promiseId = String(signedPromise.promise_id);
 
     const description = buildJobDescription(quote);
     const disputeWindow = await client.policy.disputeWindow();

@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R001
+revision: STATE-R002
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: PRD_PREBUILD
-  status: PRD_DRAFTED
+  status: PRD_VALIDATED
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -21,6 +21,15 @@ hero_demo:
 product:
   tagline: Agents, measured by what they deliver.
   concept: Calibrated Outcome Marketplace + Intervention Advantage
+prd:
+  path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
+  version: '0.1'
+  validation_artifact: work/PRD-VALIDATION-001.md
+  validation_status: PASS
+  ready_status: BLOCKED_BY_RUNTIME_PREFLIGHT
+prebuild_recon:
+  status: PASS_FOR_ARCHITECTURE
+  artifact: references/EXTERNAL-RECON-2026-09-03.md
 next_action:
-  primary: Validate PRD v0.1, reconcile canonical ledgers, then decide PRD_READY vs PRD_VALIDATION_BLOCKED.
-next_gate: SPONDEE_PRD_VALIDATION_AND_RECONCILIATION
+  primary: Run the Agent Studio build-runtime preflight, record bag doctor/environment results, then promote to PRD_READY or block on environment remediation.
+next_gate: SPONDEE_RUNTIME_PREFLIGHT_FOR_PRD_READY

@@ -15,6 +15,29 @@ permissions:
   contents: read
 
 jobs:
+  windows-powershell-parse:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse wallet helper with Windows PowerShell
+        shell: powershell
+        run: |
+          $path = 'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+          Write-Host 'Windows PowerShell wallet helper syntax: PASS'
+
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -78,8 +101,6 @@ jobs:
           set -euo pipefail
           npm install --global @bnbagent/studio-cli
           cd reference-agents/health-factor
-          # Git cannot preserve the empty runtime wallet directory emitted by
-          # bag init. Recreate the directory only; do not create/import a key.
           mkdir -p .studio/wallets
           bag scan
           bag doctor

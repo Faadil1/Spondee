@@ -1,0 +1,31 @@
+schema: PBPD-DECISION-LOG-v0.1
+decisions:
+  - id: DEC-001
+    date: '2026-09-03'
+    decision: Product name locked as Spondee.
+    status: ACCEPTED
+    authority: human
+    evidence:
+      - HOI PR #55
+  - id: DEC-002
+    date: '2026-09-03'
+    decision: Product concept locked as Calibrated Outcome Marketplace + Intervention Advantage.
+    status: ACCEPTED
+    authority: human_project_go_plus_judge_first_council
+    evidence:
+      - HOI PR #55
+  - id: DEC-003
+    date: '2026-09-03'
+    decision: Health Factor Monitoring is the preferred first vertical; all four categories remain first-class.
+    status: ACCEPTED
+    authority: PRD
+  - id: DEC-004
+    date: '2026-09-03'
+    decision: 8004scan is reused as identity/discovery substrate; generic directory/reputation is not the product.
+    status: ACCEPTED
+    authority: PRD
+  - id: DEC-005
+    date: '2026-09-03'
+    decision: No consequential implementation before PRD_READY.
+    status: ACCEPTED
+    authority: PBPD_PREBUILD_STANDARD

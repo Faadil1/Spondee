@@ -1,0 +1,119 @@
+name: BNB Agent Studio Runtime Preflight
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bnb-agent-studio-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Record base runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p preflight-evidence
+          {
+            echo "# Spondee BNB Agent Studio Runtime Preflight"
+            echo
+            echo "## Base runtime"
+            echo "node=$(node --version)"
+            echo "npm=$(npm --version)"
+            echo "python=$(python3 --version 2>&1)"
+          } | tee preflight-evidence/runtime.txt
+
+      - name: Enable Corepack and pnpm 10
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@10 --activate
+          pnpm --version | tee -a preflight-evidence/runtime.txt
+
+      - name: Install current BNB Agent Studio CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm view @bnbagent/studio-cli version | tee preflight-evidence/npm-package-version.txt
+          npm install --global @bnbagent/studio-cli
+          command -v bag | tee preflight-evidence/bag-path.txt
+          bag --help > preflight-evidence/bag-help.txt
+          head -n 12 preflight-evidence/bag-help.txt
+
+      - name: Probe official BSC testnet RPC
+        shell: bash
+        run: |
+          set -euo pipefail
+          RPC=https://bsc-testnet-dataseed.bnbchain.org
+          curl --fail --silent --show-error \
+            -H 'content-type: application/json' \
+            --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+            "$RPC" | tee preflight-evidence/bsc-testnet-chainid.json
+          grep -qi '0x61' preflight-evidence/bsc-testnet-chainid.json
+
+      - name: Scaffold credential-free reference-agent probe
+        id: scaffold
+        shell: bash
+        run: |
+          set +e
+          mkdir -p "$RUNNER_TEMP/spondee-preflight"
+          cd "$RUNNER_TEMP/spondee-preflight"
+          bag init spondeehealth \
+            --network bsc-testnet \
+            --wallet-kind evm-local \
+            --protocols A2A,MCP,X402 \
+            --storage-provider local \
+            --no-onboard \
+            --ide both \
+            > "$GITHUB_WORKSPACE/preflight-evidence/bag-init.txt" 2>&1
+          code=$?
+          echo "exit_code=$code" | tee "$GITHUB_WORKSPACE/preflight-evidence/bag-init-exit.txt"
+          find . -maxdepth 4 -type f | sort > "$GITHUB_WORKSPACE/preflight-evidence/scaffold-files.txt"
+          exit $code
+
+      - name: Run scan and doctor on scaffold
+        if: success()
+        shell: bash
+        run: |
+          set +e
+          cd "$RUNNER_TEMP/spondee-preflight/spondeehealth"
+          bag scan > "$GITHUB_WORKSPACE/preflight-evidence/bag-scan.txt" 2>&1
+          scan_code=$?
+          echo "scan_exit_code=$scan_code" >> "$GITHUB_WORKSPACE/preflight-evidence/bag-scan.txt"
+
+          # Doctor is expected to identify onboarding/funding/LLM gaps in this credential-free probe.
+          # We capture the complete result without granting secrets or funding authority.
+          bag doctor > "$GITHUB_WORKSPACE/preflight-evidence/bag-doctor.txt" 2>&1
+          doctor_code=$?
+          echo "doctor_exit_code=$doctor_code" >> "$GITHUB_WORKSPACE/preflight-evidence/bag-doctor.txt"
+
+          test -f app/agent/studio.toml
+          grep -R "bsc-testnet" -n app/agent/studio.toml > "$GITHUB_WORKSPACE/preflight-evidence/network-config.txt"
+
+          # Credential-free PRD gate only requires a valid scaffold + diagnostics.
+          # Onboarding/funding/LLM execution remains the next bounded build-runtime step.
+          exit $scan_code
+
+      - name: Upload preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-bnb-agent-studio-preflight
+          path: preflight-evidence/
+          if-no-files-found: error
+          retention-days: 14

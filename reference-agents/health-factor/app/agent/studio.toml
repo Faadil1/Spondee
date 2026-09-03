@@ -21,7 +21,7 @@ platform_artifact = "zip"
 kind = "evm-local"
 signer = "local"
 keystore_dir = "../../.studio/wallets"
-# address = "0x..."   # filled only by human-local `bag wallet new`
+address = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8"
 
 [llm]
 # The Spondee Health Factor path is deterministic and does not need an LLM.

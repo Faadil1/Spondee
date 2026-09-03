@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BSC_TESTNET, liveGateStatus, validateLiveSpondeeReceipt } from "./erc8183.js";
+import {
+  BSC_TESTNET,
+  liveGateStatus,
+  validateLiveSpondeeReceipt,
+  validateSignedQuoteEnvelope,
+} from "./erc8183.js";
 
 test("live ERC-8183 execution is disabled by default", () => {
   const gate = liveGateStatus({});
@@ -24,6 +29,54 @@ test("BSC testnet contract anchors are explicit and chain id is 97", () => {
   ]) {
     assert.match(address, /^0x[a-fA-F0-9]{40}$/);
   }
+});
+
+test("official BNB NegotiationResult envelope is accepted without provider_address", () => {
+  const quote = validateSignedQuoteEnvelope({
+    request: {
+      task_description: "health factor task",
+      terms: {
+        deliverables: "Spondee Outcome Receipt",
+        quality_standards: "preserve promise",
+        spondee_promise: {
+          schema: "spondee.promise-card.v1",
+          promise_id: "sp_test",
+          scenario_id: "scenario-test",
+        },
+      },
+    },
+    request_hash: "0xrequest",
+    response: {
+      accepted: true,
+      terms: {
+        deliverables: "Spondee Outcome Receipt",
+        quality_standards: "preserve promise",
+        price: "0",
+        currency: "0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565",
+      },
+    },
+    response_hash: "0xresponse",
+    negotiation_hash: "0xnegotiation",
+    provider_sig: "0xsignature",
+    chain_id: 97,
+    verifying_contract: BSC_TESTNET.commerce,
+  });
+
+  assert.equal(quote.response.accepted, true);
+  assert.equal(quote.response.terms.price, "0");
+  assert.equal("provider_address" in quote, false);
+});
+
+test("accepted quote without provider signature fails closed", () => {
+  assert.throws(
+    () =>
+      validateSignedQuoteEnvelope({
+        request: { terms: {} },
+        response: { accepted: true, terms: { price: "0" } },
+        negotiation_hash: "0xnegotiation",
+      }),
+    /provider_sig/i,
+  );
 });
 
 test("live deliverable validation accepts only the signed simulation receipt", () => {

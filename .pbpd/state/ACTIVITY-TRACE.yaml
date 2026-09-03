@@ -72,5 +72,18 @@ entries:
     at: '2026-09-03T18:43:00-04:00'
     actor: PBPD_orchestrator
     action: reconcile_spec_kit_pilot_into_canonical_state
-    result: PROJECT-STATE, decisions, artifact pointers, evidence pointers and README reconciliation scheduled/completed as part of the pilot-start milestone.
+    result: PROJECT-STATE, decisions, artifact pointers, evidence pointers and README reconciled for the pilot-start milestone.
+  - id: ACT-014
+    at: '2026-09-03T18:53:00-04:00'
+    actor: PBPD_orchestrator
+    action: activate_pbpd_spec_kit_pointer_via_protected_pr
+    result: Direct main write correctly failed closed under branch protection; PR #80 used instead. Required Validate PBPD check passed and the first-pilot pointer was squash-merged without mutating the PBPD stable package.
+    external_reference: Faadil1/pbpd-cowork-system#80
+    validation_run: 33815125056
+    merge_sha: e6cdb63db938939006e8b147c2add793c687a829
+  - id: ACT-015
+    at: '2026-09-03T18:54:00-04:00'
+    actor: PBPD_orchestrator
+    action: close_first_pilot_activation_coherence_milestone
+    result: Spondee, Spec Kit Orchestration, central router and PBPD pointer agree on active first pilot, PBPD production ownership and G3 as the next product gate.
 next_action: Execute SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT with secure testnet wallet onboarding, local bag dev smoke, task-specific Promise Card, bounded activation, first Outcome Receipt evidence, negative-path test and living-PRD discovery reconciliation.

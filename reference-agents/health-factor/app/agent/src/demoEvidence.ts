@@ -3,10 +3,9 @@ import { dirname, resolve } from "node:path";
 import {
   buildHealthFactorOutcomeFromWorkPrompt,
   buildHealthFactorPromise,
+  encodeHealthFactorPromiseCommitmentCriterion,
   HealthFactorTaskSchema,
 } from "./healthFactor.js";
-
-const PROMISE_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
 
 function arg(name: string, fallback: string): string {
   const index = process.argv.indexOf(name);
@@ -27,7 +26,7 @@ const prompt =
   JSON.stringify({
     task: JSON.stringify(task),
     terms: {
-      success_criteria: [`${PROMISE_PREFIX}${JSON.stringify(promise)}`],
+      success_criteria: [encodeHealthFactorPromiseCommitmentCriterion(promise)],
     },
   });
 const receipt = buildHealthFactorOutcomeFromWorkPrompt(prompt);

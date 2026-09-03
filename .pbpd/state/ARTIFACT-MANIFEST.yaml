@@ -36,12 +36,12 @@ artifacts:
   - id: ART-009
     path: .github/workflows/bnb-agent-studio-preflight.yml
     type: reproducible_runtime_preflight
-    status: PRESENT
+    status: PASS
+    external_run: 33752070626
   - id: ART-010
     path: evidence/runtime-preflight-001/README.md
     type: runtime_preflight_evidence
     status: PASS
-    external_run: 33752070626
   - id: ART-011
     path: work/PRD-READY-DECLARATION.md
     type: prd_ready_declaration
@@ -49,16 +49,15 @@ artifacts:
   - id: ART-012
     path: reference-agents/health-factor
     type: specialized_agent_studio_reference_agent
-    status: CI_VERIFIED_SIGNED_PROMISE_CARRIER_LIVE_E2E_RETRY_READY
+    status: CI_VERIFIED_COMPACT_COMMITMENT_LIVE_E2E_RETRY_READY
   - id: ART-013
     path: evidence/g3-health-factor-ci-001/README.md
     type: g3_health_factor_build_evidence
     status: PASS_SIMULATION_ONLY
-    external_run: 33753788773
   - id: ART-014
     path: backend
     type: marketplace_backend
-    status: CI_VERIFIED_OFFCHAIN_READ_ONLY_AND_PAYMASTER_INFRA_PROBE
+    status: CI_VERIFIED
     branch: build/backend-complete
   - id: ART-015
     path: backend/src/app.ts
@@ -83,19 +82,16 @@ artifacts:
   - id: ART-020
     path: backend/src/erc8183.ts
     type: signed_zero_price_erc8183_live_driver
-    status: SIGNED_PROMISE_CARRIER_CI_VERIFIED_ONE_LOCAL_RETRY_READY
+    status: COMPACT_COMMITMENT_AND_1600_BYTE_GUARD_CI_VERIFIED_ONE_NEW_LOCAL_RETRY_READY
   - id: ART-021
     path: .github/workflows/backend-ci.yml
     type: complete_backend_ci
     status: PASS
-    external_run: 33801590780
+    external_run: 33817822355
   - id: ART-022
     path: evidence/backend-ci-001/README.md
-    type: complete_backend_evidence
-    status: PASS
-    external_run: 33801590780
-    artifact_id: 9911265991
-    artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
+    type: backend_evidence_path
+    status: PRESENT
   - id: ART-023
     external_reference: Faadil1/Spondee#1
     type: draft_backend_review_pull_request
@@ -115,37 +111,66 @@ artifacts:
     type: megafuel_zero_balance_sponsorship_evidence
     status: PASS
     external_run: 33802027942
-    artifact_id: 9911428783
-    artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
   - id: ART-027
     path: reference-agents/health-factor/app/agent/src/healthFactor.ts
-    type: signed_promise_success_criteria_carrier
+    type: compact_promise_commitment_and_task_carrier
     status: CI_VERIFIED
-    carrier_prefix: 'SPONDEE_PROMISE_CARD_V1:'
+    promise_carrier_prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
+    task_carrier_prefix: 'SPONDEE_TASK_B64_V1:'
   - id: ART-028
     path: backend/src/erc8183.test.ts
-    type: signed_promise_carrier_regression_tests
-    status: PASS
-    external_run: 33816310524
+    type: compact_commitment_and_megafuel_size_regression_tests
+    status: PASS_28_OF_28_SUITE
+    external_run: 33817822355
   - id: ART-029
     path: .github/workflows/g3-health-factor-ci.yml
-    type: g3_signed_promise_carrier_validation
+    type: g3_compact_commitment_validation
     status: PASS
-    external_run: 33816544907
+    external_run: 33817846752
   - id: ART-030
     path: reference-agents/health-factor/app/agent/src/demoEvidence.ts
-    type: deterministic_evidence_export_using_protocol_preserved_carrier
+    type: deterministic_evidence_export_using_compact_commitment
     status: PASS
-    external_run: 33816544907
+    external_run: 33817846752
   - id: ART-031
     path: scripts/g3-megafuel-live-e2e.ps1
     type: human_local_live_e2e_runner
-    status: ONE_LOCAL_RETRY_AUTHORIZED
+    status: ONE_NEW_LOCAL_RETRY_AUTHORIZED
   - id: ART-032
     path: .pbpd/state/HANDOVER.yaml
     type: canonical_handover
-    status: CURRENT_RETRY_READY
+    status: CURRENT_COMPACT_RETRY_READY
   - id: ART-033
     path: .pbpd/state/PROJECT-STATE.yaml
     type: canonical_project_state
-    status: CURRENT_RETRY_READY
+    status: CURRENT_COMPACT_RETRY_READY
+  - id: ART-034
+    external_reference: human_local_runtime_failure_v1_2026-09-03T23:21:21.084Z
+    type: third_live_e2e_fail_closed_evidence
+    status: VERIFIED_PUBLIC_OUTPUT
+    classification: MEGAFUEL_TX_SIZE_PRE_WRITE
+  - id: ART-035
+    external_reference: GitHub Actions run 33817822355
+    type: compact_commitment_backend_ci
+    status: PASS
+    artifact_id: 9917173773
+    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
+  - id: ART-036
+    external_reference: GitHub Actions run 33817846752
+    type: compact_commitment_g3_ci
+    status: PASS
+    head: 2c86096949c27b354bef68154e93c54abb016ab9
+  - id: ART-037
+    path: reference-agents/health-factor/app/agent/src/healthFactor.test.ts
+    type: sanitizer_safe_task_and_commitment_tests
+    status: PASS
+    external_run: 33817846752
+  - id: ART-038
+    path: reference-agents/health-factor/app/agent/src/executorSpondee.test.ts
+    type: encoded_task_notify_funded_roundtrip_tests
+    status: PASS
+    external_run: 33817846752
+  - id: ART-039
+    path: .pbpd/state/DECISION-LOG.yaml
+    type: protocol_decision_record
+    status: CURRENT_COMPACT_COMMITMENT

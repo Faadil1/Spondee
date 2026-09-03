@@ -5,15 +5,13 @@ decisions:
     decision: Product name locked as Spondee.
     status: ACCEPTED
     authority: human
-    evidence:
-      - HOI PR #55
+    evidence: [HOI PR #55]
   - id: DEC-002
     date: '2026-09-03'
     decision: Product concept locked as Calibrated Outcome Marketplace + Intervention Advantage.
     status: ACCEPTED
     authority: human_project_go_plus_judge_first_council
-    evidence:
-      - HOI PR #55
+    evidence: [HOI PR #55]
   - id: DEC-003
     date: '2026-09-03'
     decision: Health Factor Monitoring is the preferred first vertical; all four categories remain first-class.
@@ -34,58 +32,70 @@ decisions:
     decision: Promote Spondee PRD v0.1 to PRD_READY after successful credential-free Agent Studio runtime preflight.
     status: ACCEPTED
     authority: PBPD
-    evidence:
-      - work/PRD-VALIDATION-001.md
-      - work/PRD-READY-DECLARATION.md
-      - evidence/runtime-preflight-001/README.md
-      - GitHub Actions run 33752070626
+    evidence: [work/PRD-VALIDATION-001.md, work/PRD-READY-DECLARATION.md, GitHub Actions run 33752070626]
   - id: DEC-007
     date: '2026-09-03'
     decision: Treat wallet creation, LLM activation, pricing clamp, local bag dev smoke and deployment tooling as G3 implementation onboarding rather than PRD-definition blockers.
     status: ACCEPTED
     authority: PBPD
-    evidence:
-      - bag doctor exit code 0
-      - runtime preflight evidence
   - id: DEC-008
     date: '2026-09-03'
     decision: Use the existing encrypted BSC-testnet seller keystore at 0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8 for bounded G3 retries; do not recreate it and do not expose its password or key material to chat.
     status: ACCEPTED
     authority: HUMAN_TESTNET_GO_PLUS_PBPD_SAFETY_BOUNDARY
-    evidence:
-      - local EIP-191 signing verification PASS
-      - G3 Windows Node 24 wallet roundtrip PASS
   - id: DEC-009
     date: '2026-09-03'
-    decision: MegaFuel is the primary gas path for the bounded BSC-testnet ERC-8183 G3 flow; tBNB is fallback-only and is not required before the current retry.
+    decision: MegaFuel is the primary gas path for bounded BSC-testnet ERC-8183 G3 writes; tBNB is fallback-only and is not required before a paymaster-first retry.
     status: ACCEPTED
     authority: PBPD_RUNTIME_EVIDENCE
-    evidence:
-      - evidence/megafuel-smoke-001/README.md
-      - GitHub Actions run 33802027942
+    evidence: [evidence/megafuel-smoke-001/README.md, GitHub Actions run 33802027942]
   - id: DEC-010
     date: '2026-09-03'
-    decision: Carry the Spondee Promise Card through the official ERC-8183 TermSpecification success_criteria field using the versioned SPONDEE_PROMISE_CARD_V1 prefix; arbitrary custom terms such as terms.spondee_promise are forbidden for signed provenance.
+    decision: Use official TermSpecification success_criteria rather than arbitrary custom terms for Spondee signed provenance.
+    status: SUPERSEDED_IN_WIRE_FORMAT_BY_DEC_012
+    authority: PBPD_PROTOCOL_RECONCILIATION
+    note: The field choice remains valid, but embedding the full Promise Card caused an oversized MegaFuel createJob transaction.
+  - id: DEC-011
+    date: '2026-09-03'
+    decision: After Backend CI 33816310524 and G3 CI 33816544907 passed, authorize exactly one local MegaFuel-backed Health Factor E2E retry using the existing seller keystore.
+    status: CONSUMED_BY_THIRD_ATTEMPT_FAIL_CLOSED
+    authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
+  - id: DEC-012
+    date: '2026-09-03'
+    decision: Keep the full Spondee Promise Card off-chain as a read-only preview and carry only a compact signed SHA-256 commitment in ERC-8183 success_criteria using SPONDEE_PROMISE_COMMITMENT_V1.
     status: ACCEPTED
     authority: PBPD_PROTOCOL_RECONCILIATION
     constraints:
-      - exactly one Spondee carrier in signed request
-      - exactly one Spondee carrier in signed response
-      - exact request/response carrier equality
-      - verify provider signature, chain and Commerce contract before trusting Promise data
-      - seller fulfillment must recover the same carrier from the job terms
-      - missing, malformed, duplicate or mismatched carrier fails closed before createJob
+      - commitment carries promise_id, scenario_id, raw price and canonical Promise SHA-256
+      - compact wire keys are p, s, r and h
+      - signed request and response each contain exactly one identical commitment
+      - provider signature, chain and Commerce contract are verified before commitment trust
+      - preview Promise id/scenario/price/hash must match commitment before createJob
+      - seller reconstructs the deterministic Promise and rechecks id/hash before Outcome Receipt
+      - buildJobDescription must fit a 1600-byte Spondee MegaFuel application cap before createJob
     evidence:
       - backend/src/erc8183.ts
+      - backend/src/erc8183.test.ts
       - reference-agents/health-factor/app/agent/src/healthFactor.ts
-      - GitHub Actions run 33816310524
-      - GitHub Actions run 33816544907
-  - id: DEC-011
+      - GitHub Actions run 33817822355
+      - GitHub Actions run 33817846752
+  - id: DEC-013
     date: '2026-09-03'
-    decision: After Backend CI 33816310524 and G3 CI 33816544907 passed, authorize exactly one local MegaFuel-backed Health Factor E2E retry using the existing seller keystore; any new failure closes the retry gate again until deterministic diagnosis.
+    decision: Encode the signed Health Factor task as versioned Base64URL JSON using SPONDEE_TASK_B64_V1 so stress_path arrays survive the official SDK claim sanitizer byte-for-byte.
+    status: ACCEPTED
+    authority: PBPD_PROTOCOL_RECONCILIATION
+    evidence:
+      - reference-agents/health-factor/app/agent/src/healthFactor.ts
+      - backend/src/erc8183.ts
+      - GitHub Actions run 33817822355
+      - GitHub Actions run 33817846752
+  - id: DEC-014
+    date: '2026-09-03'
+    decision: After compact commitment, sanitizer-safe task and 1600-byte budget CI passed, authorize exactly one new human-local MegaFuel Health Factor E2E retry under the existing testnet authority; any new failure closes the gate again.
     status: ACCEPTED
     authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
     evidence:
+      - GitHub Actions run 33817822355
+      - GitHub Actions run 33817846752
       - .pbpd/state/PROJECT-STATE.yaml
       - .pbpd/state/HANDOVER.yaml
-      - GitHub Actions run 33816544907

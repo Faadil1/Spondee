@@ -1,50 +1,33 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: BACKEND_CORE_PASS_MEGAFUEL_RUNTIME_PROVEN_SIGNED_PROMISE_CARRIER_CI_PASS_ONE_LOCAL_RETRY_READY
+preflight_status: BACKEND_AND_G3_COMPACT_COMMITMENT_CI_PASS_ONE_NEW_LOCAL_RETRY_READY
 capabilities:
   github_repository_access: AVAILABLE
-  web_research: AVAILABLE
-  external_architecture_recon: PASS
   consequential_product_build: ALLOWED_AFTER_PRD_READY
   node_22: PASS
   pnpm_10: PASS
-  bnb_agent_studio_cli: HISTORICAL_PREFLIGHT_PASS_CURRENT_NPM_PUBLICATION_DRIFT
   bnb_agent_sdk_wallet_provider: PASS_WINDOWS_NODE24_AND_GITHUB_ACTIONS
   bsc_testnet_rpc: PASS
   reference_agent_scaffold: PASS
   health_factor_specialization: PASS_SIMULATION_CI
-  complete_backend_ci: PASS_18_OF_18
+  complete_backend_ci: PASS
   four_category_backend_smoke: PASS
-  postgres_persistence_code: PRESENT_NOT_DEPLOYED
-  erc8183_live_driver: CODED_FAIL_CLOSED_SIGNED_PROMISE_CARRIER_CI_VERIFIED
-  megafuel_erc8183_paymaster: PASS_ZERO_BALANCE_CREATE_AND_CANCEL_WRITES
+  erc8183_live_driver: CODED_FAIL_CLOSED_COMPACT_COMMITMENT_CI_VERIFIED
+  megafuel_erc8183_paymaster: PASS_ZERO_BALANCE_BOUNDED_WRITES_WITH_SIZE_LIMITATION
 connectors:
   github:
     status: CONNECTED
     repository: Faadil1/Spondee
   bnb_external_runtime:
-    status: GAS_PATH_AND_SIGNED_PROMISE_CARRIER_CI_VERIFIED_FULL_HEALTH_FACTOR_RETRY_REQUIRED
-    historical_preflight_run_id: 33752070626
-    backend_ci_run_id: 33801590780
-    signed_promise_backend_ci_run_id: 33816310524
-    signed_promise_g3_ci_run_id: 33816544907
-    megafuel_smoke_run_id: 33802027942
-    cli_package: '@bnbagent/studio-cli'
-    cli_historical_version: 0.0.13
-    cli_current_note: Global CLI installation currently encounters upstream npm publication drift; current backend and wallet path use the pinned @bnbagent/sdk instead of depending on global bag installation.
+    status: COMPACT_COMMITMENT_AND_SANITIZER_SAFE_TASK_CI_VERIFIED_FULL_HEALTH_FACTOR_RETRY_REQUIRED
     sdk_package: '@bnbagent/sdk'
     sdk_version: 0.5.5
     network: bsc-testnet
     chain_id: 97
     seller_provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
     seller_balance_wei: '0'
-    agentic_commerce_code: PRESENT
-    evaluator_router_code: PRESENT
-    optimistic_policy_code: PRESENT
-    megafuel_paymaster_supported_by_sdk: true
-    megafuel_paymaster_runtime_proof: PASS
-    signed_promise_carrier: 'success_criteria / SPONDEE_PROMISE_CARD_V1:'
-    backend_evidence: evidence/backend-ci-001/README.md
-    megafuel_evidence: evidence/megafuel-smoke-001/README.md
+    megafuel_smoke_run_id: 33802027942
+    compact_backend_ci_run_id: 33817822355
+    compact_g3_ci_run_id: 33817846752
 wallets:
   seller:
     address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
@@ -53,97 +36,77 @@ wallets:
     network_scope: bsc-testnet-only
     balance_tbnb: '0'
     recreate_for_next_retry: false
-  megafuel_probe_client:
-    address: '0x6582Fe02B03a4E345A4e7597F4B1264d044f3026'
-    type: ephemeral_in_memory_only
-    balance_before_wei: '0'
-    balance_after_wei: '0'
-    private_key_persisted: false
-    purpose: PAYMASTER_INFRASTRUCTURE_PROBE_ONLY
   full_e2e_buyer:
-    status: EPHEMERAL_PER_RUN_ZERO_BALANCE
-    previous_second_attempt_address: '0xC70fd5b6c59027592917dA0e118B1f20eC0E5629'
-    persistence: DESTROY_AFTER_RUN
+    strategy: EPHEMERAL_ZERO_BALANCE_PER_RUN_DESTROY_AFTER_RUN
+    third_attempt_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
     password_and_keystore_chat_exposure: FORBIDDEN
-backend:
-  branch: build/backend-complete
-  path: backend
-  test_result: 18_OF_18_PASS
-  typescript_build: PASS
-  four_category_smoke: PASS
-  memory_store: PASS
-  postgres_store: CODE_PRESENT_NOT_LIVE_DEPLOYED
-  api_integration: PASS
-  live_deliverable_guardrails: PASS
-  signed_quote_provider_validation: PASS
-  signed_promise_carrier_regression_ci: PASS_33816310524
-  claim_boundary: PASS
-  artifact_id: 9911265991
-  artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
 megafuel_probe:
   status: PASS
   workflow_run_id: 33802027942
-  artifact_id: 9911428783
-  artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
-  chain_id: 97
-  balance_before_wei: '0'
-  balance_after_wei: '0'
-  job_id: '942'
-  create_job_tx: '0x1017e9f592bd84e9d433ad311f473e2e92bc24260c7a6d7e464970ae1f0f6f85'
-  cancel_open_tx: '0x893899a7d4c8c5b905765e2f3aada4be82cf3e0f8096f5c5fe73a8589616337c'
-  proof_statement: Two mined ERC-8183 writes from a zero-tBNB ephemeral client prove actual paymaster sponsorship in the pinned runtime.
-g3_signed_promise_validation:
-  status: PASS
-  backend_ci_run: 33816310524
-  g3_ci_run: 33816544907
-  g3_ci_head: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
-  ubuntu:
-    deterministic_tests: PASS_9_OF_9
+  proof_statement: Zero-balance ERC-8183 createJob and cancelOpen mined successfully in the pinned runtime.
+  limitation: Third full E2E proved an oversized 2223-byte JobDescription can exceed relay raw-transaction size acceptance even when paymaster sponsorship is otherwise available.
+third_live_attempt:
+  result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE
+  progress_events: 0
+  mined_transaction_count: 0
+  user_funds_used: false
+  relay_error: 'tx size is too large'
+  sdk_self_pay_fallback: REJECTED_ZERO_BALANCE_BEFORE_MINING
+  description_bytes_observed: 2223
+compact_protocol:
+  status: CI_VERIFIED
+  full_promise: OFF_CHAIN_READ_ONLY_PREVIEW
+  signed_promise_commitment:
+    carrier: success_criteria
+    prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
+    fields: [promise_id, scenario_id, price_raw, promise_sha256]
+    compact_wire_keys: [p, s, r, h]
+  signed_task:
+    prefix: 'SPONDEE_TASK_B64_V1:'
+    encoding: BASE64URL_JSON
+    sanitizer_safe: true
+  description_budget:
+    sdk_cap_bytes: 4096
+    spondee_cap_bytes: 1600
+    enforcement: BEFORE_CREATE_JOB
+  guards:
+    provider_signature_before_commitment_trust: true
+    chain_and_commerce_verification_before_commitment_trust: true
+    exact_request_response_commitment_equality: true
+    preview_hash_matches_commitment_before_create_job: true
+    seller_reconstruction_hash_matches_before_delivery: true
+validation:
+  backend_ci:
+    run: 33817822355
+    result: PASS_28_OF_28
+    typescript: PASS
+    sanitizer_safe_task: PASS
+    compact_commitment: PASS
+    representative_description_under_1600_bytes: PASS
+    bsc_read_only_probe: PASS
+    artifact_id: 9917173773
+    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
+  g3_ci:
+    run: 33817846752
+    head: 2c86096949c27b354bef68154e93c54abb016ab9
+    result: PASS
+    ubuntu_verify: PASS
+    deterministic_tests: PASS
     typescript_build: PASS
-    powershell_syntax: PASS
     evidence_export: PASS
     agent_studio_diagnostics: PASS
-  windows:
-    node_version_family: '24'
-    powershell_parse: PASS
-    encrypted_wallet_create_reload_roundtrip: PASS
-  carrier_guards:
-    request_exactly_one: true
-    response_exactly_one: true
-    exact_request_response_equality: true
-    provider_signature_before_trust: true
-    chain_and_commerce_verification_before_trust: true
-    seller_fulfillment_recovers_same_job_terms_carrier: true
-live_attempts:
-  first:
-    result: FAIL_CLOSED_PRE_WRITE
-    progress_events: 0
-    transaction_count: 0
-    root_cause: non-standard provider_address assumption
-    status: RESOLVED_CI_VERIFIED
-  second:
-    result: FAIL_CLOSED_PRE_WRITE
-    progress_events: 0
-    transaction_count: 0
-    create_job_sent: false
-    root_cause: custom terms.spondee_promise removed by official SDK TermSpecification
-    status: RESOLVED_CI_VERIFIED_WITH_SUCCESS_CRITERIA_CARRIER
+    windows_powershell_parse: PASS
+    windows_node24_wallet_roundtrip: PASS
 live_write_gate:
   default_enabled: false
-  required_env:
-    - SPONDEE_LIVE_TESTNET_ENABLED=true
-    - SPONDEE_SELLER_A2A_URL
-    - BUYER_WALLET_ADDRESS
-    - BUYER_WALLETS_DIR
-    - BUYER_WALLET_PASSWORD
   current_ready_for_full_health_factor_e2e: true
-  readiness_scope: ONE_HUMAN_LOCAL_RETRY_ONLY
+  readiness_scope: ONE_NEW_HUMAN_LOCAL_RETRY_ONLY
   local_runner: scripts/g3-megafuel-live-e2e.ps1
   seller_wallet_rule: REUSE_EXISTING_ENCRYPTED_KEYSTORE
   buyer_rule: CREATE_EPHEMERAL_ZERO_BALANCE_BUYER_AND_DESTROY_AFTER_RUN
   gas_requirement:
-    primary: MEGAFUEL_RUNTIME_PROVEN
-    fallback: TBNB_IF_RELAY_UNAVAILABLE
+    primary: MEGAFUEL
+    fallback: TBNB_ONLY_IF_NEW_VERIFIED_RELAY_AVAILABILITY_BLOCKER
     tBNB_required_before_next_attempt: false
   expected_progress_if_write_path_advances:
     - CREATE_JOB
@@ -153,15 +116,14 @@ live_write_gate:
     - SUBMIT_OBSERVED
     - DELIVERABLE_VERIFIED
 limitations:
-  - MegaFuel proof covers zero-balance ERC-8183 createJob and cancelOpen separately; the complete Spondee seller flow still requires the one authorized local retry.
-  - No provider on-chain submit transaction from the complete Health Factor path has landed yet.
-  - No on-chain verified Spondee Outcome Receipt/deliverable evidence exists yet.
+  - Full seller-backed Health Factor E2E has not passed yet.
+  - No provider submit transaction or live verified Outcome Receipt exists yet.
   - No observed Agent Advantage evidence exists yet.
-  - Grid, Rebalancing and Yield reference agents are backend-simulation ready but not deployed as live Agent Studio agents.
-  - Public judging deployment and durable production database remain later gates.
+  - Grid, Rebalancing and Yield live reference agents remain later gates.
+  - Public judging deployment and final submission remain protected later gates.
 next_required_checks:
   - human pulls build/backend-complete
-  - human runs scripts/g3-megafuel-live-e2e.ps1 exactly once with existing masked seller password prompt
-  - preserve public create/register/budget/fund/submit/deliverable evidence if successful
+  - human runs scripts/g3-megafuel-live-e2e.ps1 exactly once using the existing masked seller password prompt
+  - preserve complete public PASS evidence if successful
   - if failure occurs, stop and return only failure.v1 without another blind retry
-next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+next_gate: SPONDEE_G3_MEGAFUEL_COMPACT_COMMITMENT_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED

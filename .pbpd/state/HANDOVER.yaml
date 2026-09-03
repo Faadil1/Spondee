@@ -13,7 +13,7 @@ handover:
     Faadil1/spec-kit-orchestration/state/CURRENT.yaml, its HANDOVER, then projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml.
     Canonical GitHub state outranks chat memory.
 
-  current_milestone: PRD_READY__SPEC_KIT_FIRST_PILOT_SPEC_PLAN_TASKS_READY
+  current_milestone: PRD_READY__SPEC_KIT_FIRST_PILOT_ACTIVE__PBPD_POINTER_VALIDATED
   lifecycle_status: BUILD_READY__G3_IMPLEMENTATION_NOT_YET_EXECUTED
 
   authority:
@@ -76,6 +76,12 @@ handover:
     tasks: projects/bnb_agent_studio_build_the_era_2026/tasks.md
     convergence: projects/bnb_agent_studio_build_the_era_2026/convergence.md
     living_prd_loop: CAPTURE -> CLASSIFY -> UPDATE_PRODUCT_SOURCE_IF_REQUIRED -> RECONCILE -> CONTINUE
+    pbpd_pointer_activation:
+      repository: Faadil1/pbpd-cowork-system
+      pull_request: 80
+      required_validate: PASS
+      merge_sha: e6cdb63db938939006e8b147c2add793c687a829
+      stable_package_mutated: false
 
   G3_pass_definition:
     - one Spondee Health Factor reference-agent path runs locally/BSC-testnet-compatibly

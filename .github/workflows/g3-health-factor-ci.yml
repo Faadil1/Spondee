@@ -58,17 +58,19 @@ jobs:
         working-directory: reference-agents/health-factor
         run: pnpm install --frozen-lockfile
 
-      - name: Inspect installed Studio runtime wallet API
+      - name: Inspect installed BNB wallet APIs
         working-directory: reference-agents/health-factor/app/agent
         shell: bash
         run: |
           set -euo pipefail
           node --input-type=module - <<'NODE'
-          const wallet = await import('@bnbagent/studio-runtime/wallet');
-          console.log('wallet exports:', Object.keys(wallet).sort().join(', '));
+          const runtime = await import('@bnbagent/studio-runtime/wallet');
+          const sdk = await import('@bnbagent/sdk/wallets');
+          console.log('runtime wallet exports:', Object.keys(runtime).sort().join(', '));
+          console.log('sdk wallet exports:', Object.keys(sdk).sort().join(', '));
           NODE
-          RUNTIME_DIR=$(node --input-type=module -e "import.meta.resolve('@bnbagent/studio-runtime/wallet').then?.(console.log)" 2>/dev/null || true)
-          grep -R -n -E 'keystore|decrypt|encrypt|WALLET_PASSWORD|wallets' node_modules/@bnbagent/studio-runtime 2>/dev/null | head -n 120 || true
+          echo '--- SDK wallet declarations/source hits ---'
+          grep -R -n -E 'create|generate|keystore|encrypt|decrypt|privateKey|LocalWallet|Evm' node_modules/@bnbagent/sdk/dist 2>/dev/null | head -n 220 || true
 
       - name: Validate local PowerShell wallet helper syntax
         shell: pwsh

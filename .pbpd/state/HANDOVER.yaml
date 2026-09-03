@@ -8,21 +8,20 @@ handover:
   branch: build/backend-complete
 
   resume_rule: >-
-    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, AUTHORITY-STATE.yaml,
-    REQUIREMENTS-LEDGER.yaml, EVIDENCE-LEDGER.yaml, RUNTIME-STATUS.yaml and ACTIVITY-TRACE.yaml.
-    Canonical GitHub state outranks chat memory. Never ask the human to recreate the seller wallet,
-    expose wallet secrets, or obtain tBNB unless a newly verified blocker requires it.
+    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the existing authority,
+    requirements, evidence, runtime and activity ledgers. Canonical GitHub state outranks chat memory.
+    Never ask the human to recreate the seller wallet, expose wallet secrets, obtain tBNB, or create
+    another G3 job unless a later explicit gate authorizes it.
 
-  current_milestone: G3_MEGAFUEL_COMPACT_COMMITMENT_FIX_CI_VERIFIED__ONE_NEW_LOCAL_RETRY_READY
-  lifecycle_status: RETRY_READY__LOCAL_EXECUTION_REQUIRED
+  current_milestone: G3_JOB_948_FUNDED_CHAIN_PATH_VERIFIED__DELIVERABLE_RECOVERY_CI_READY
+  lifecycle_status: FUNDED_JOB_RECOVERY_READY__LOCAL_EXECUTION_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
-    testnet_write_scope: AUTHORIZED
+    bounded_bsc_testnet_provider_submit: AUTHORIZED
     production_owner: PBPD
     final_submission: HUMAN
-    meaningful_mainnet_or_user_capital: HUMAN_ONLY
-    material_paid_spend: HUMAN_ONLY
+    mainnet_or_meaningful_user_capital: HUMAN_ONLY
 
   canonical_seller:
     network: bsc-testnet
@@ -31,125 +30,105 @@ handover:
     existing_encrypted_keystore_reuse_required: true
     password_chat_exposure: FORBIDDEN
     recreate_wallet: false
-    tBNB_required_for_current_retry: false
+    tBNB_required: false
 
-  third_live_attempt:
-    started_at: '2026-09-03T23:21:16.823Z'
-    failed_at: '2026-09-03T23:21:21.084Z'
-    result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE
-    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    ephemeral_buyer_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
-    progress_events: 0
-    mined_transactions: 0
+  fourth_live_attempt:
+    started_at: '2026-09-03T23:38:40.406Z'
+    failed_at: '2026-09-03T23:41:03.555Z'
+    classification: LIVE_CHAIN_PARTIAL_SUCCESS__DELIVERABLE_URL_CONFIGURATION_BLOCKER
+    ephemeral_buyer_address: '0xA7ceB00B63F911fB76BD6d5616093586de757139'
+    job_id: '948'
+    chain_progress:
+      create_job: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
+      register_job: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
+      set_budget: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
+      fund: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
     user_funds_used: false
-    relay_error: 'RPC error [-32000]: tx size is too large'
-    fallback_behavior: SDK automatically attempted self-pay after relay rejection.
-    fallback_result: rejected before mining because buyer balance was zero
-    observed_description_bytes: 2223
+    seller_work_generated: true
+    local_deliverable_file: '.agent-data/erc8183-job-948.json'
+    provider_submit_tx: null
+    root_cause: >-
+      LocalStorageProvider returned a file:// URL. The pinned BNB runtime requires ERC8183_AGENT_URL
+      so it can publish an HTTP deliverable URL of the form {ERC8183_AGENT_URL}/job/{id}/response.
+      The local seller did not expose such a base URL during the fourth attempt, so submitWorkflow
+      failed before broadcasting provider submit and job 948 remained FUNDED.
 
-  root_cause:
-    classification: MEGAFUEL_RAW_TRANSACTION_SIZE
-    finding: >-
-      The full Spondee Promise Card had been embedded verbatim in signed success_criteria. That made
-      the ERC-8183 JobDescription 2223 bytes before ABI/RLP overhead. MegaFuel rejected the resulting
-      createJob raw transaction as too large, then the SDK self-pay fallback correctly failed because
-      the ephemeral buyer had zero tBNB. MegaFuel sponsorship itself remains previously runtime-proven.
-    secondary_protocol_hazard: >-
-      The official SDK claim sanitizer replaces square brackets. A raw JSON Health Factor task contains
-      stress_path arrays, so storing that JSON directly as task_description would corrupt the signed/on-chain
-      task representation even if createJob succeeded.
+  important_proof_now_locked:
+    - compact Promise commitment works in the real signed/chain path
+    - Base64URL task carrier works in the real signed/chain path
+    - MegaFuel accepted createJob in the complete Spondee flow
+    - registerJob succeeded
+    - setBudget(0) succeeded
+    - fund(0) succeeded
+    - seller reconstructed the job and generated a deterministic deliverable locally
+    - no tBNB or user capital was used
 
-  applied_fix:
-    promise_model:
-      full_promise: obtained from read-only preview_health_factor before negotiation
-      signed_carrier: success_criteria
-      carrier_prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
-      compact_wire_fields: [p, s, r, h]
-      semantics:
-        p: promise_id
-        s: scenario_id
-        r: raw service price
-        h: canonical SHA-256 of full Promise Card
-    task_model:
-      carrier_prefix: 'SPONDEE_TASK_B64_V1:'
-      encoding: BASE64URL_JSON
-      purpose: survive SDK claim sanitizer byte-for-byte while preserving stress_path arrays
-    safety_checks:
-      - preview Promise must be a valid SIMULATION Spondee Promise Card
-      - provider signature, chain and Commerce contract verified before commitment trust
-      - request and response require exactly one identical signed commitment
-      - preview promise_id, scenario_id, price and SHA-256 must match signed commitment
-      - signed encoded task must exactly match the task sent by the buyer
-      - seller reconstructs the same deterministic Promise from signed task and committed price
-      - seller refuses fulfillment if reconstructed promise_id or SHA-256 differs
-      - buildJobDescription must fit Spondee 1600-byte application cap before createJob
-    commits:
-      compact_commitment_and_task_carrier: afdab100a598e0a9bfecfc0b75b56f8541d78ec9
-      compact_live_driver: 109d2cfed109838aa209c4cd6d716dbae1cdca01
-      backend_size_regression: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
-      seller_task_roundtrip_tests: da7cee8a8c688fee102c3782f6d868d9b7efcf60
-      seller_notify_roundtrip_tests: 2c86096949c27b354bef68154e93c54abb016ab9
+  recovery_design:
+    target_job_id: '948'
+    mode: RESUME_EXISTING_FUNDED_JOB_ONLY
+    new_activation: FORBIDDEN
+    local_deliverable_server:
+      artifact: scripts/local-erc8183-deliverable-server.mjs
+      storage_root: reference-agents/health-factor/app/agent/.agent-data
+      base_url: 'http://127.0.0.1:9100/erc8183'
+      expected_job_url: 'http://127.0.0.1:9100/erc8183/job/948/response'
+    seller_env:
+      ERC8183_AGENT_URL: 'http://127.0.0.1:9100/erc8183'
+    verifier:
+      artifact: backend/src/resume-g3-funded.ts
+      checks:
+        - job 948 provider equals canonical Spondee seller
+        - status is FUNDED/SUBMITTED/COMPLETED
+        - structured task is canonical SPONDEE_TASK_B64_V1 Health Factor task
+        - signed Promise commitment is unique, zero-price and canonical scenario
+        - notify_funded only when still FUNDED
+        - wait for SUBMITTED or COMPLETED
+        - fetch the on-chain deliverable URL
+        - verify DeliverableManifest hash against on-chain deliverable hash
+        - verify Spondee Outcome Receipt and SIMULATION claim boundary
+    local_runner: scripts/g3-resume-funded-job.ps1
+    recovery_decision: work/G3-FUNDED-948-RECOVERY-READY.md
 
   validation:
-    backend_ci:
-      run: '33817822355'
+    recovery_ci:
+      run: '33819012423'
+      head: 6bc4045cc5efdea946e2226930633bcf3817f4c4
       result: PASS
-      tests: PASS_28_OF_28
-      megafuel_description_budget: PASS
-      sanitizer_safe_task: PASS
-      commitment_tamper_guards: PASS
-      typescript: PASS
-      bsc_read_only_probe: PASS
-      artifact_id: '9917173773'
-      artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
-    g3_ci:
-      run: '33817846752'
-      head: 2c86096949c27b354bef68154e93c54abb016ab9
-      result: PASS
-      ubuntu_verify: PASS
-      deterministic_tests: PASS
-      typescript_build: PASS
-      evidence_export: PASS
-      agent_studio_diagnostics: PASS
+      ubuntu_powershell_parse: PASS
+      local_erc8183_response_route: PASS
+      backend_tests: PASS
+      backend_typescript_build: PASS
       windows_powershell_parse: PASS
-      windows_node24_wallet_roundtrip: PASS
-    local_live_retry: AUTHORIZED_EXACTLY_ONCE_NEW_ATTEMPT
+      windows_node24_server_syntax: PASS
+    local_recovery_authorized: EXACTLY_ONCE
 
-  retry_instructions:
+  recovery_instructions:
     working_directory: 'C:\Users\fboussari\Spondee'
     commands:
       - 'git pull --ff-only'
       - 'git log -1 --oneline'
-      - 'powershell -ExecutionPolicy Bypass -File .\scripts\g3-megafuel-live-e2e.ps1'
+      - 'powershell -ExecutionPolicy Bypass -File .\scripts\g3-resume-funded-job.ps1'
     credential_rule: Enter the existing seller wallet password only into the masked local prompt.
-    wallet_rule: Reuse the existing encrypted seller keystore; do not recreate it.
-    gas_rule: Do not obtain tBNB before this retry; MegaFuel remains primary.
-    expected_progress_if_chain_path_advances:
-      - CREATE_JOB
-      - REGISTER_JOB
-      - SET_BUDGET
-      - FUND
-      - SUBMIT_OBSERVED
-      - DELIVERABLE_VERIFIED
-    success_terminal: 'SPONDEE G3 MEGAFUEL LIVE E2E: PASS'
-    on_success: Return the complete public PASS evidence block only.
-    on_failure: Return the new public failure.v1 block only and stop without another retry.
+    job_rule: The script is bound to job 948 and must not target another job.
+    write_rule: No new createJob/registerJob/setBudget/fund. Only the provider submit for existing funded job 948 may occur.
+    success_terminal: 'SPONDEE G3 FUNDED JOB RECOVERY: PASS'
+    on_success: Return the public PASS block or evidence JSON only.
+    on_failure: Return the recovery failure block only and stop; do not run either recovery or live activation again blindly.
 
   safety_invariants:
-    - exactly one new retry is authorized after the third fail-closed attempt
-    - no blind retry after any new failure
     - no new seller wallet
+    - no new G3 buyer activation
+    - no tBNB acquisition
     - no secret in chat
     - no mainnet activity
     - no meaningful user capital
     - no merge to main
     - no public deployment or final submission from this gate
-    - simulation receipt remains SIMULATION and ineligible for observed Agent Advantage
+    - simulation receipt remains SIMULATION and cannot count as observed Agent Advantage
 
-  exact_next_gate: SPONDEE_G3_MEGAFUEL_COMPACT_COMMITMENT_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+  exact_next_gate: SPONDEE_G3_FUNDED_JOB_948_DELIVERABLE_RECOVERY_LOCAL_EXECUTION_REQUIRED
   exact_next_owner: HUMAN_LOCAL_RUNTIME
   exact_next_action: >-
-    Pull build/backend-complete and execute exactly one run of scripts/g3-megafuel-live-e2e.ps1.
-    Reuse the existing seller keystore and enter its password only in the masked prompt. Do not obtain
-    tBNB first. Return the complete public PASS block if successful, or only the new failure.v1 block
-    if it fails, then stop.
+    Pull build/backend-complete and execute scripts/g3-resume-funded-job.ps1 exactly once. Reuse the
+    existing encrypted seller keystore and enter its password only at the masked local prompt. Do not
+    run g3-megafuel-live-e2e.ps1 again. Return only the public recovery PASS block or recovery failure block.

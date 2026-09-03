@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 
+const SPONDEE_PROMISE_CRITERION_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
+
 const StressPointSchema = z.object({
   at_seconds: z.number().int().nonnegative(),
   collateral_multiplier: z.number().positive(),
@@ -212,6 +214,31 @@ export function buildHealthFactorPromise(
   };
 }
 
+function encodePromiseCriterion(promise: HealthFactorPromiseCard): string {
+  return `${SPONDEE_PROMISE_CRITERION_PREFIX}${JSON.stringify(promise)}`;
+}
+
+function decodePromiseCriterion(value: unknown): HealthFactorPromiseCard | null {
+  if (typeof value !== "string" || !value.startsWith(SPONDEE_PROMISE_CRITERION_PREFIX)) {
+    return null;
+  }
+  try {
+    const candidate = JSON.parse(value.slice(SPONDEE_PROMISE_CRITERION_PREFIX.length)) as unknown;
+    if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) return null;
+    const p = candidate as Record<string, unknown>;
+    if (
+      p.schema !== "spondee.promise-card.v1" ||
+      typeof p.promise_id !== "string" ||
+      typeof p.scenario_id !== "string"
+    ) {
+      return null;
+    }
+    return candidate as HealthFactorPromiseCard;
+  } catch {
+    return null;
+  }
+}
+
 export function previewHealthFactorFromEnvelope(
   data: Record<string, unknown>,
   priceWei: bigint,
@@ -232,13 +259,19 @@ export function enrichHealthFactorNegotiation(
     request.terms !== null && typeof request.terms === "object" && !Array.isArray(request.terms)
       ? (request.terms as Record<string, unknown>)
       : {};
+  const existingCriteria = Array.isArray(existingTerms.success_criteria)
+    ? existingTerms.success_criteria.filter(
+        (entry): entry is string =>
+          typeof entry === "string" && !entry.startsWith(SPONDEE_PROMISE_CRITERION_PREFIX),
+      )
+    : [];
 
   return {
     request: {
       ...request,
       terms: {
         ...existingTerms,
-        spondee_promise: promise,
+        success_criteria: [...existingCriteria, encodePromiseCriterion(promise)],
       },
     },
     promise,
@@ -248,11 +281,11 @@ export function enrichHealthFactorNegotiation(
 function termsPromise(value: unknown): HealthFactorPromiseCard | null {
   if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
   const terms = value as Record<string, unknown>;
-  const candidate = terms.spondee_promise;
-  if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) return null;
-  const p = candidate as Record<string, unknown>;
-  if (p.schema !== "spondee.promise-card.v1" || typeof p.promise_id !== "string") return null;
-  return candidate as HealthFactorPromiseCard;
+  if (!Array.isArray(terms.success_criteria)) return null;
+  const matches = terms.success_criteria
+    .map(decodePromiseCriterion)
+    .filter((candidate): candidate is HealthFactorPromiseCard => candidate !== null);
+  return matches.length === 1 ? matches[0] : null;
 }
 
 export function buildHealthFactorOutcomeFromWorkPrompt(

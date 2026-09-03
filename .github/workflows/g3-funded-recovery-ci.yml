@@ -1,0 +1,92 @@
+name: G3 Funded Recovery CI
+
+on:
+  push:
+    branches:
+      - build/backend-complete
+    paths:
+      - 'scripts/local-erc8183-deliverable-server.mjs'
+      - 'scripts/g3-resume-funded-job.ps1'
+      - 'backend/src/resume-g3-funded.ts'
+      - 'backend/package.json'
+      - '.github/workflows/g3-funded-recovery-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Parse recovery PowerShell
+        shell: pwsh
+        run: |
+          [scriptblock]::Create((Get-Content -Raw 'scripts/g3-resume-funded-job.ps1')) | Out-Null
+          Write-Host 'Recovery PowerShell parse: PASS'
+
+      - name: Check local deliverable server syntax
+        run: node --check scripts/local-erc8183-deliverable-server.mjs
+
+      - name: Prove local ERC-8183 response route
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp-g3-recovery-ci
+          printf '%s\n' '{"schema":"ci.manifest.v1","job_id":948}' > .tmp-g3-recovery-ci/erc8183-job-948.json
+          SPONDEE_LOCAL_DELIVERABLE_DIR="$PWD/.tmp-g3-recovery-ci" \
+          SPONDEE_LOCAL_DELIVERABLE_PORT=19100 \
+            node scripts/local-erc8183-deliverable-server.mjs > /tmp/spondee-deliverable-server.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for _ in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:19100/health >/tmp/health.json; then break; fi
+            sleep 0.25
+          done
+          grep -q 'HEALTHY' /tmp/health.json
+          curl -fsS http://127.0.0.1:19100/erc8183/job/948/response >/tmp/manifest.json
+          grep -q '"job_id":948' /tmp/manifest.json
+          if curl -fsS http://127.0.0.1:19100/erc8183/job/949/response >/dev/null 2>&1; then
+            echo 'unexpected response for missing deliverable' >&2
+            exit 1
+          fi
+          echo 'Local ERC-8183 deliverable route: PASS'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+
+      - name: Backend tests
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+
+      - name: Strict backend TypeScript build including recovery verifier
+        working-directory: backend
+        run: npm run build
+
+  windows-parse:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Parse recovery PowerShell on Windows
+        shell: powershell
+        run: |
+          [scriptblock]::Create((Get-Content -Raw 'scripts/g3-resume-funded-job.ps1')) | Out-Null
+          Write-Host 'Windows recovery PowerShell parse: PASS'
+
+      - name: Check local deliverable server syntax on Windows Node 24
+        shell: powershell
+        run: node --check scripts/local-erc8183-deliverable-server.mjs

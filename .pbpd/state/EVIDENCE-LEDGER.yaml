@@ -3,7 +3,7 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_SOFTWARE_AND_GAS_PATH_FULL_SELLER_E2E_PENDING
+    status: PARTIALLY_VERIFIED_SOFTWARE_GAS_AND_PROTOCOL_FULL_SELLER_E2E_PENDING
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
     truth_class: FACT
@@ -29,13 +29,13 @@ claims:
     truth_class: FACT
     status: VERIFIED
   - id: CLM-008
-    claim: The G3 Health Factor Promise Card is bound into ERC-8183 signable terms before signing.
+    claim: The G3 Health Factor Promise provenance can be bound into ERC-8183 signable terms before signing.
     truth_class: FACT
-    status: VERIFIED_CI_WITH_SDK_PRESERVED_SUCCESS_CRITERIA_CARRIER
+    status: VERIFIED_CI_WITH_COMPACT_SUCCESS_CRITERIA_COMMITMENT
   - id: CLM-009
     claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
     truth_class: FACT
-    status: VERIFIED_CI_WITH_SIGNED_PROMISE_CARRIER_FIX
+    status: VERIFIED_CI_WITH_COMMITMENT_RECONSTRUCTION
   - id: CLM-010
     claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
     truth_class: FACT
@@ -61,220 +61,191 @@ claims:
     truth_class: FACT
     status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_FULL_SELLER_E2E_PENDING
   - id: CLM-016
-    claim: MegaFuel can sponsor ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
+    claim: MegaFuel can sponsor bounded ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
     truth_class: FACT
-    status: VERIFIED_RUNTIME_ZERO_BALANCE_CREATE_AND_CANCEL
+    status: VERIFIED_RUNTIME_ZERO_BALANCE_CREATE_AND_CANCEL_WITH_SIZE_LIMITATION
   - id: CLM-017
-    claim: The Spondee Promise Card survives official SDK negotiation serialization inside success_criteria and is accepted by the buyer only after provider/chain/Commerce signature verification.
+    claim: Spondee can preserve Promise provenance across official SDK negotiation serialization without embedding the full Promise Card on chain.
     truth_class: FACT
-    status: VERIFIED_CI_LIVE_CHAIN_E2E_PENDING
+    status: VERIFIED_CI_COMPACT_SHA256_COMMITMENT_LIVE_E2E_PENDING
+  - id: CLM-018
+    claim: Health Factor stress_path task arrays can survive official SDK claim sanitization without semantic corruption.
+    truth_class: FACT
+    status: VERIFIED_CI_VERSIONED_BASE64URL_TASK_CARRIER
+  - id: CLM-019
+    claim: A representative compact Health Factor live JobDescription fits the Spondee 1600-byte conservative MegaFuel application budget.
+    truth_class: FACT
+    status: VERIFIED_CI_LIVE_RELAY_RETRY_PENDING
 
 evidence:
   - id: EV-001
     type: authorization
     artifact: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
-    supports:
-      - project authority
     status: PRESENT
   - id: EV-002
     type: product_brief
     artifact: incoming/PROJECT-BRIEF.md
-    supports:
-      - product thesis
-      - category scope
     status: PRESENT
   - id: EV-003
     type: prd
     artifact: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
-    supports:
-      - product requirements
-      - evidence burden
     status: PRESENT
   - id: EV-004
     type: source_decision
     reference: Faadil1/hackathon-opportunity-intelligence#55
-    supports:
-      - concept lock
-      - naming lock
     status: EXTERNAL_REFERENCE
   - id: EV-005
     type: pbpd_handoff
     reference: Faadil1/pbpd-cowork-system#78
-    supports:
-      - project routing
     status: EXTERNAL_REFERENCE
   - id: EV-006
     type: runtime_preflight
     artifact: evidence/runtime-preflight-001/README.md
     workflow_run_id: 33752070626
     artifact_id: 9891943363
-    artifact_digest: sha256:aa77d354a2098baa21558ee036665ec09f1f93443a10a956acbc422cb34a656c
-    supports:
-      - Node 22 runtime
-      - pnpm 10 runtime
-      - Agent Studio CLI installation
-      - BSC testnet chain connectivity
-      - credential-free reference-agent scaffold
-      - bag scan
-      - bag doctor
     status: VERIFIED
   - id: EV-007
     type: prd_ready_declaration
     artifact: work/PRD-READY-DECLARATION.md
-    supports:
-      - PRD_READY transition
     status: PRESENT
   - id: EV-008
     type: g3_credential_free_build
     artifact: evidence/g3-health-factor-ci-001/README.md
     workflow_run_id: 33753788773
     artifact_id: 9892600637
-    artifact_digest: sha256:8ca6c0f5ab50e5673ca9f515c1b4bd0b9fce957c1adf7f67beff24017d292b41
-    supports:
-      - Promise Card generation
-      - Promise binding before signing
-      - deterministic Outcome Receipt
-      - zero service price
-      - simulation claim boundary
-      - Agent Studio diagnostics
     status: VERIFIED
   - id: EV-009
     type: full_backend_ci
     artifact: evidence/backend-ci-001/README.md
     workflow_run_id: 33801590780
     artifact_id: 9911265991
-    artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
-    supports:
-      - all four backend category paths
-      - REST marketplace API
-      - Promise and Receipt persistence
-      - observed evidence guardrails
-      - Agent Advantage report logic
-      - calibration exclusion rules
-      - fail-closed live ERC-8183 driver
-      - live deliverable manifest/identity guardrails
-      - read-only BSC contract readiness
     status: VERIFIED
   - id: EV-010
     type: megafuel_runtime_sponsorship_probe
     artifact: evidence/megafuel-smoke-001/README.md
     workflow_run_id: 33802027942
     artifact_id: 9911428783
-    artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
-    supports:
-      - BSC Testnet chain 97 MegaFuel runtime sponsorship
-      - zero-balance ERC-8183 createJob write
-      - zero-balance ERC-8183 cancelOpen write
-      - ephemeral non-persisted key handling
-      - tBNB not required for the next paymaster-first attempt
     status: VERIFIED
   - id: EV-011
-    type: signed_promise_carrier_backend_regression_ci
+    type: full_promise_success_criteria_regression_ci
     workflow_run_id: 33816310524
-    head_commit: 58e1df6e80debd6b9aace3d07d8f3cfd73183aad
-    supports:
-      - official NegotiationResult envelope without provider_address
-      - request/response success_criteria Promise carrier decoding
-      - duplicate/missing/mismatched carrier fail-closed behavior
-      - simulation Receipt guardrails
-    status: VERIFIED_PASS
+    status: SUPERSEDED_BY_COMPACT_COMMITMENT
   - id: EV-012
-    type: signed_promise_carrier_g3_ci
+    type: full_promise_success_criteria_g3_ci
     workflow_run_id: 33816544907
-    head_commit: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
+    status: SUPERSEDED_BY_COMPACT_COMMITMENT
+  - id: EV-013
+    type: third_live_health_factor_attempt_public_failure
+    source: human_local_runtime_public_failure_v1
+    started_at: '2026-09-03T23:21:16.823Z'
+    failed_at: '2026-09-03T23:21:21.084Z'
+    buyer_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
     supports:
-      - seller Promise carrier inside SDK-preserved success_criteria
-      - deterministic Outcome Receipt recovered from job terms
-      - nine deterministic G3 tests
+      - full Promise signed carrier survived negotiation
+      - MegaFuel relay rejected oversized createJob raw transaction
+      - SDK self-pay fallback encountered zero-balance pre-mining rejection
+      - progress remained empty
+      - no transaction mined
+      - no user funds used
+      - observed pre-ABI JobDescription was 2223 bytes
+    status: VERIFIED_PUBLIC_RUNTIME_EVIDENCE
+  - id: EV-014
+    type: compact_commitment_backend_ci
+    workflow_run_id: 33817822355
+    head_commit: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
+    artifact_id: 9917173773
+    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
+    supports:
+      - 28/28 backend tests
+      - compact signed Promise commitment
+      - tampered/missing/duplicate/mismatched commitment fail-closed guards
+      - Base64URL sanitizer-safe Health Factor task carrier
+      - representative live JobDescription within 1600-byte Spondee MegaFuel budget
       - strict TypeScript build
-      - reproducible Promise/Receipt evidence export
-      - Agent Studio diagnostics
-      - Windows PowerShell syntax
-      - Windows Node 24 encrypted BNB SDK wallet create/reload roundtrip
+      - four-category claim boundary
+      - read-only BSC testnet contract readiness
+    status: VERIFIED_PASS
+  - id: EV-015
+    type: compact_commitment_g3_ci
+    workflow_run_id: 33817846752
+    head_commit: 2c86096949c27b354bef68154e93c54abb016ab9
+    supports:
+      - seller compact Promise commitment
+      - encoded task through negotiate and notify_funded
+      - deterministic Promise reconstruction before Outcome Receipt
+      - Ubuntu deterministic tests/build/evidence/diagnostics
+      - Windows PowerShell parse
+      - Windows Node 24 encrypted wallet create/reload roundtrip
     status: VERIFIED_PASS
 
 verification_events:
   - id: VER-001
     at: '2026-09-03T07:53:12-04:00'
-    event: GitHub Actions runtime preflight completed successfully.
+    event: Agent Studio runtime preflight completed successfully.
     result: PASS
     evidence: GitHub Actions run 33752070626
   - id: VER-002
-    at: '2026-09-03T07:53:12-04:00'
-    event: BSC testnet RPC returned chain ID 0x61.
-    result: PASS
-  - id: VER-003
-    at: '2026-09-03T07:53:12-04:00'
-    event: bag init spondeehealth completed with exit code 0.
-    result: PASS
-  - id: VER-004
-    at: '2026-09-03T07:53:12-04:00'
-    event: bag doctor completed with exit code 0; warnings classified as expected pre-onboarding gaps.
-    result: PASS_WITH_WARNINGS
-  - id: VER-005
     at: '2026-09-03T08:12:12-04:00'
-    event: G3 Health Factor credential-free CI completed with tests, TypeScript, demo export and Agent Studio diagnostics all passing.
+    event: G3 credential-free build and deterministic evidence completed successfully.
     result: PASS
     evidence: GitHub Actions run 33753788773
-  - id: VER-006
-    at: '2026-09-03T08:12:12-04:00'
-    event: Demo Promise Card and Outcome Receipt preserved with identical promise_id and explicit SIMULATION evidence class.
-    result: PASS
-    evidence: artifact 9892600637
-  - id: VER-007
-    at: '2026-09-03T20:19:58Z'
-    event: Hardened Spondee backend unit and API integration suite completed 18/18 tests.
+  - id: VER-003
+    at: '2026-09-03T20:20:02Z'
+    event: Hardened full backend CI completed successfully.
     result: PASS
     evidence: GitHub Actions run 33801590780
-  - id: VER-008
-    at: '2026-09-03T20:20:00Z'
-    event: Four-category backend smoke produced four zero-price Promise/Receipt pairs with null confidence and simulation evidence exclusion.
-    result: PASS
-    evidence: artifact 9911265991
-  - id: VER-009
-    at: '2026-09-03T20:20:01Z'
-    event: Read-only BSC Testnet probe confirmed chain 97 and deployed code at AgenticCommerce, EvaluatorRouter and OptimisticPolicy anchors.
-    result: PASS
-    evidence: artifact 9911265991
-  - id: VER-010
-    at: '2026-09-03T20:20:01Z'
-    event: Read-only probe reconfirmed Spondee provider balance remains zero while the pinned SDK marks chain 97 paymaster-capable.
-    result: PASS_CAPABILITY_ONLY
-    evidence: artifact 9911265991
-  - id: VER-011
+  - id: VER-004
     at: '2026-09-03T20:24:31Z'
-    event: MegaFuel runtime smoke used an ephemeral client with zero wei before and after to mine ERC-8183 createJob and cancelOpen transactions successfully.
+    event: MegaFuel zero-balance createJob and cancelOpen mined successfully.
     result: PASS_ZERO_BALANCE_SPONSORSHIP_PROVEN
-    evidence: GitHub Actions run 33802027942 / artifact 9911428783
-  - id: VER-012
+    evidence: GitHub Actions run 33802027942
+  - id: VER-005
+    at: '2026-09-03T20:39:58Z'
+    event: First full local E2E failed before write on quote envelope assumption.
+    result: FAIL_CLOSED_ZERO_TRANSACTIONS
+  - id: VER-006
     at: '2026-09-03T22:37:15.505Z'
-    event: Second full local Health Factor attempt failed before createJob because the official SDK removed custom terms.spondee_promise from the signed quote.
-    result: FAIL_CLOSED_PRE_WRITE_ZERO_TRANSACTIONS
-    evidence: public failure.v1 supplied by human local runtime
-  - id: VER-013
-    at: '2026-09-03T23:09:00Z'
-    event: Backend regression CI verified the official quote envelope and fail-closed signed Promise carrier decoder behavior.
-    result: PASS
-    evidence: GitHub Actions run 33816310524
-  - id: VER-014
-    at: '2026-09-03T23:12:31Z'
-    event: G3 Ubuntu verification passed deterministic tests, TypeScript build, Promise/Receipt evidence export and Agent Studio diagnostics after all stale custom-term fixtures were removed.
-    result: PASS
-    evidence: GitHub Actions run 33816544907
-  - id: VER-015
+    event: Second full local E2E failed before write because custom Promise term was dropped by official SDK.
+    result: FAIL_CLOSED_ZERO_TRANSACTIONS
+  - id: VER-007
     at: '2026-09-03T23:13:11Z'
-    event: G3 Windows validation passed PowerShell parsing and encrypted BNB SDK wallet create/reload roundtrip on Node 24.
+    event: Full-Promise success_criteria carrier fix passed G3 CI.
     result: PASS
     evidence: GitHub Actions run 33816544907
+  - id: VER-008
+    at: '2026-09-03T23:21:21.084Z'
+    event: Third full local E2E reached createJob preparation; MegaFuel rejected the oversized transaction and SDK self-pay fallback failed for zero balance before mining.
+    result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE_ZERO_MINED_TRANSACTIONS
+    evidence: public failure.v1 supplied by human local runtime
+  - id: VER-009
+    at: '2026-09-03T23:29:57Z'
+    event: Compact commitment backend CI passed 28/28 including the representative MegaFuel JobDescription byte-budget regression and sanitizer-safe task roundtrip.
+    result: PASS
+    evidence: GitHub Actions run 33817822355 / artifact 9917173773
+  - id: VER-010
+    at: '2026-09-03T23:31:00Z'
+    event: Compact commitment G3 CI passed Ubuntu verification plus Windows PowerShell and Node 24 wallet roundtrip.
+    result: PASS
+    evidence: GitHub Actions run 33817846752
 
 contradictions:
   - id: CON-001
     topic: testnet_gas_sponsorship
-    observation: Earlier documentation/signals were inconsistent about whether tBNB was required for general ERC-8183 operations versus paymaster coverage.
-    handling: Runtime evidence takes precedence. GitHub Actions run 33802027942 proved createJob and cancelOpen from a zero-tBNB wallet with paymaster enabled; use MegaFuel first and retain tBNB only as a fallback if relay availability degrades.
+    observation: Earlier signals conflicted on whether tBNB was required for ERC-8183 writes.
+    handling: Runtime run 33802027942 proved zero-balance MegaFuel writes; tBNB remains fallback-only.
     status: RESOLVED_BY_RUNTIME_PROBE
   - id: CON-002
     topic: custom_negotiation_term_survival
-    observation: Earlier injected signer tests suggested terms.spondee_promise was available to fulfillment, but the official SDK TermSpecification reconstruction drops arbitrary custom term keys before the signed NegotiationResult is serialized.
-    handling: Carry the versioned Promise Card in success_criteria, require exact request/response carrier equality, verify the provider signature before trusting it, and make all deterministic fixtures use the same protocol-preserved carrier.
+    observation: Injected signer tests suggested custom terms survived, but official TermSpecification drops arbitrary keys.
+    handling: Use official success_criteria as the signed provenance surface.
     status: RESOLVED_BY_PROTOCOL_CONTRACT_AND_CI
+  - id: CON-003
+    topic: full_promise_on_chain_vs_megafuel_size
+    observation: Full Promise Card in success_criteria was cryptographically sound but produced a 2223-byte JobDescription that MegaFuel rejected as an oversized raw transaction.
+    handling: Keep full Promise off-chain, sign only p/s/r/SHA-256 commitment, enforce a 1600-byte Spondee description cap before createJob.
+    status: RESOLVED_BY_COMPACT_COMMITMENT_AND_CI
+  - id: CON-004
+    topic: raw_json_task_vs_sdk_claim_sanitizer
+    observation: Official SDK sanitizer replaces square brackets, which would corrupt Health Factor stress_path JSON arrays in task_description.
+    handling: Encode the signed task as versioned Base64URL JSON and test roundtrip through seller fulfillment.
+    status: RESOLVED_BY_TASK_CARRIER_AND_CI

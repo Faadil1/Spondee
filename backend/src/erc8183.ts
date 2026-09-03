@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import {
@@ -23,27 +23,44 @@ export const BSC_TESTNET = {
 } as const;
 
 const DEFAULT_PROVIDER = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8";
-const SPONDEE_PROMISE_CRITERION_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
+const SPONDEE_PROMISE_COMMITMENT_PREFIX = "SPONDEE_PROMISE_COMMITMENT_V1:";
+const SPONDEE_TASK_B64_PREFIX = "SPONDEE_TASK_B64_V1:";
+
+/**
+ * Conservative application-level ceiling below the SDK's 4096-byte cap.
+ * The third bounded live attempt proved that MegaFuel can reject a valid
+ * SDK description before that protocol cap when the resulting raw createJob
+ * transaction is too large. Keep the Spondee description compact enough to
+ * leave ABI/RLP overhead for the relay rather than falling through to a
+ * zero-balance self-pay attempt.
+ */
+export const SPONDEE_MEGAFUEL_DESCRIPTION_MAX_BYTES = 1600;
 
 interface RpcReply {
   error?: { message?: string };
   result?: { parts?: Array<{ data?: Record<string, unknown> }> };
 }
 
+export interface SpondeePromiseCommitment {
+  schema: "spondee.promise-commitment.v1";
+  promise_id: string;
+  scenario_id: string;
+  price_raw: string;
+  promise_sha256: string;
+}
+
 /**
  * Official @bnbagent/sdk NegotiationResult.toDict() wire shape.
  *
- * Important: the SDK envelope does NOT contain provider_address. Provider
- * identity is proven cryptographically by verifyQuoteSignature() against the
- * configured expected provider address and Commerce verifying contract.
- *
- * Spondee-specific Promise data rides inside `success_criteria`, one of the
- * TermSpecification fields that the SDK actually preserves in request and
- * response hashes/signatures. Arbitrary custom term keys are intentionally
- * not relied on because NegotiationRequest.fromDict() drops them.
+ * Provider identity is proven cryptographically with verifyQuoteSignature().
+ * Spondee binds a compact Promise commitment inside success_criteria, an
+ * official TermSpecification field preserved in both the quote signature and
+ * the on-chain JobDescription. The full Promise Card stays off-chain and is
+ * verified against that signed commitment before any createJob write.
  */
 export interface SignedQuote extends Record<string, unknown> {
   request: {
+    task_description?: unknown;
     terms?: {
       success_criteria?: unknown;
       [key: string]: unknown;
@@ -173,6 +190,29 @@ function objectOrNull(value: unknown): Record<string, unknown> | null {
     : null;
 }
 
+function stable(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`;
+  if (value !== null && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    return `{${Object.keys(obj)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${stable(obj[key])}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+export function hashSpondeePromise(value: unknown): string {
+  return createHash("sha256").update(stable(value)).digest("hex");
+}
+
+export function encodeSpondeeHealthFactorTask(task: SpondeeTask): string {
+  return `${SPONDEE_TASK_B64_PREFIX}${Buffer.from(
+    JSON.stringify(task),
+    "utf8",
+  ).toString("base64url")}`;
+}
+
 /** Validate the protocol shape before any on-chain write is attempted. */
 export function validateSignedQuoteEnvelope(value: unknown): SignedQuote {
   const quote = objectOrNull(value);
@@ -198,65 +238,111 @@ export function validateSignedQuoteEnvelope(value: unknown): SignedQuote {
     throw new Error("accepted ERC-8183 quote is missing provider_sig");
   }
 
-  // The official SDK envelope intentionally has no provider_address field.
-  // Provider identity is verified later with verifyQuoteSignature(expectedProvider).
   return quote as SignedQuote;
 }
 
-function uniquePromiseCarrier(value: unknown, side: "request" | "response"): string {
+function uniqueCommitmentCarrier(value: unknown, side: "request" | "response"): string {
   if (!Array.isArray(value)) {
-    throw new Error(`signed ${side} is missing success_criteria Promise Card carrier`);
+    throw new Error(`signed ${side} is missing success_criteria Promise commitment`);
   }
   const matches = value.filter(
     (entry): entry is string =>
-      typeof entry === "string" && entry.startsWith(SPONDEE_PROMISE_CRITERION_PREFIX),
+      typeof entry === "string" && entry.startsWith(SPONDEE_PROMISE_COMMITMENT_PREFIX),
   );
   if (matches.length !== 1) {
     throw new Error(
-      `signed ${side} must contain exactly one Spondee Promise Card carrier; found ${matches.length}`,
+      `signed ${side} must contain exactly one Spondee Promise commitment; found ${matches.length}`,
     );
   }
   return matches[0];
 }
 
-function decodePromiseCarrier(carrier: string): Record<string, unknown> {
-  let promise: unknown;
+function decodeCommitmentCarrier(carrier: string): SpondeePromiseCommitment {
+  let raw: unknown;
   try {
-    promise = JSON.parse(carrier.slice(SPONDEE_PROMISE_CRITERION_PREFIX.length));
+    raw = JSON.parse(carrier.slice(SPONDEE_PROMISE_COMMITMENT_PREFIX.length));
   } catch {
-    throw new Error("signed Spondee Promise Card carrier is not valid JSON");
+    throw new Error("signed Spondee Promise commitment is not valid JSON");
   }
-  const parsed = objectOrNull(promise);
-  if (!parsed || parsed.schema !== "spondee.promise-card.v1") {
-    throw new Error("signed success_criteria carrier is not a Spondee Promise Card");
+  const parsed = objectOrNull(raw);
+  if (!parsed) throw new Error("signed Spondee Promise commitment is not an object");
+  if (
+    typeof parsed.p !== "string" ||
+    typeof parsed.s !== "string" ||
+    typeof parsed.r !== "string" ||
+    !/^\d+$/.test(parsed.r) ||
+    typeof parsed.h !== "string" ||
+    !/^[a-f0-9]{64}$/.test(parsed.h)
+  ) {
+    throw new Error("signed Spondee Promise commitment has invalid fields");
   }
-  if (typeof parsed.promise_id !== "string" || parsed.promise_id.length === 0) {
-    throw new Error("signed Promise Card is missing promise_id");
-  }
-  if (typeof parsed.scenario_id !== "string" || parsed.scenario_id.length === 0) {
-    throw new Error("signed Promise Card is missing scenario_id");
-  }
-  return parsed;
+  return {
+    schema: "spondee.promise-commitment.v1",
+    promise_id: parsed.p,
+    scenario_id: parsed.s,
+    price_raw: parsed.r,
+    promise_sha256: parsed.h,
+  };
 }
 
-/**
- * Extract the Spondee Promise only from terms preserved by the official SDK.
- * Request and response must carry the exact same versioned criterion string,
- * so the Promise is covered consistently by both sides of the signed quote.
- */
-export function signedSpondeePromiseFromQuote(quote: SignedQuote): Record<string, unknown> {
-  const requestCarrier = uniquePromiseCarrier(
+export function signedSpondeePromiseCommitmentFromQuote(
+  quote: SignedQuote,
+): SpondeePromiseCommitment {
+  const requestCarrier = uniqueCommitmentCarrier(
     quote.request?.terms?.success_criteria,
     "request",
   );
-  const responseCarrier = uniquePromiseCarrier(
+  const responseCarrier = uniqueCommitmentCarrier(
     quote.response?.terms?.success_criteria,
     "response",
   );
   if (requestCarrier !== responseCarrier) {
-    throw new Error("signed request/response Spondee Promise Card carriers do not match");
+    throw new Error("signed request/response Spondee Promise commitments do not match");
   }
-  return decodePromiseCarrier(requestCarrier);
+  return decodeCommitmentCarrier(requestCarrier);
+}
+
+export function validatePreviewPromise(
+  value: unknown,
+  expectedScenarioId: string,
+): Record<string, unknown> {
+  const promise = objectOrNull(value);
+  if (!promise || promise.schema !== "spondee.promise-card.v1") {
+    throw new Error("seller preview did not return a Spondee Promise Card");
+  }
+  if (typeof promise.promise_id !== "string" || promise.promise_id.length === 0) {
+    throw new Error("seller preview Promise Card is missing promise_id");
+  }
+  if (promise.scenario_id !== expectedScenarioId) {
+    throw new Error("seller preview Promise Card scenario does not match the task");
+  }
+  if (promise.evidence_class !== "SIMULATION") {
+    throw new Error("G3 seller preview Promise Card must remain SIMULATION");
+  }
+  const expectedCost = objectOrNull(promise.expected_cost);
+  if (!expectedCost || typeof expectedCost.amount !== "string") {
+    throw new Error("seller preview Promise Card is missing expected_cost.amount");
+  }
+  return promise;
+}
+
+export function validatePromiseAgainstCommitment(
+  promise: Record<string, unknown>,
+  commitment: SpondeePromiseCommitment,
+): void {
+  const expectedCost = objectOrNull(promise.expected_cost);
+  if (promise.promise_id !== commitment.promise_id) {
+    throw new Error("preview Promise Card promise_id does not match signed commitment");
+  }
+  if (promise.scenario_id !== commitment.scenario_id) {
+    throw new Error("preview Promise Card scenario does not match signed commitment");
+  }
+  if (expectedCost?.amount !== commitment.price_raw) {
+    throw new Error("preview Promise Card price does not match signed commitment");
+  }
+  if (hashSpondeePromise(promise) !== commitment.promise_sha256) {
+    throw new Error("preview Promise Card hash does not match signed commitment");
+  }
 }
 
 export function validateLiveSpondeeReceipt(
@@ -270,7 +356,7 @@ export function validateLiveSpondeeReceipt(
     throw new Error("deliverable is not a Spondee Outcome Receipt");
   }
   if (receipt.promise_id !== expectedPromiseId) {
-    throw new Error("deliverable promise_id does not match the signed Promise Card");
+    throw new Error("deliverable promise_id does not match the committed Promise Card");
   }
   if (receipt.scenario_id !== expectedScenarioId) {
     throw new Error("deliverable scenario_id does not match the requested scenario");
@@ -332,6 +418,8 @@ export interface LiveTestnetResult {
   price_raw: "0";
   quote_negotiation_hash: string | null;
   promise_id: string;
+  promise_sha256: string;
+  job_description_bytes: number;
   transactions: {
     create_job: string;
     register_job: string;
@@ -375,13 +463,22 @@ export async function runSignedZeroPriceTestnetActivation(
   });
 
   try {
+    const taskDescription = encodeSpondeeHealthFactorTask(task);
+    const previewRaw = await sendSkill(messageUrl, {
+      skill: "preview_health_factor",
+      task_description: taskDescription,
+    });
+    if (previewRaw.status !== "ok") {
+      throw new Error("seller rejected the read-only Health Factor Promise preview");
+    }
+    const previewPromise = validatePreviewPromise(previewRaw.promise, task.scenario_id);
+
     const quoteRaw = await sendSkill(messageUrl, {
       skill: "negotiate",
-      task_description: JSON.stringify(task),
+      task_description: taskDescription,
       terms: {
         deliverables: "Spondee Outcome Receipt",
-        quality_standards:
-          "Preserve promise_id, scenario_id, evidence class, zero service price and claim guardrails",
+        quality_standards: "Committed Spondee Promise; SIMULATION only",
       },
     });
     const quote = validateSignedQuoteEnvelope(quoteRaw);
@@ -407,15 +504,30 @@ export async function runSignedZeroPriceTestnetActivation(
     });
     if (!verdict.valid) throw new Error(`provider quote rejected: ${verdict.reason}`);
 
-    // Only trust the Promise after the complete official quote envelope has
-    // passed provider/chain/Commerce signature verification.
-    const signedPromise = signedSpondeePromiseFromQuote(quote);
-    if (signedPromise.scenario_id !== task.scenario_id) {
-      throw new Error("signed Promise Card scenario does not match the live activation task");
+    if (quote.request.task_description !== taskDescription) {
+      throw new Error("signed task description does not match the encoded Health Factor task");
     }
-    const promiseId = String(signedPromise.promise_id);
+    const commitment = signedSpondeePromiseCommitmentFromQuote(quote);
+    if (commitment.scenario_id !== task.scenario_id) {
+      throw new Error("signed Promise commitment scenario does not match the live activation task");
+    }
+    if (commitment.price_raw !== quote.response.terms.price) {
+      throw new Error("signed Promise commitment price does not match the ERC-8183 quote price");
+    }
+    validatePromiseAgainstCommitment(previewPromise, commitment);
+    const promiseId = String(previewPromise.promise_id);
 
-    const description = buildJobDescription(quote);
+    const description = buildJobDescription(
+      quote,
+      SPONDEE_MEGAFUEL_DESCRIPTION_MAX_BYTES,
+    );
+    const descriptionBytes = Buffer.byteLength(description, "utf8");
+    if (descriptionBytes > SPONDEE_MEGAFUEL_DESCRIPTION_MAX_BYTES) {
+      throw new Error(
+        `Spondee MegaFuel description budget exceeded: ${descriptionBytes} bytes`,
+      );
+    }
+
     const disputeWindow = await client.policy.disputeWindow();
     const expiredAt = BigInt(Math.floor(Date.now() / 1000)) + disputeWindow + 600n;
     const created = await client.createJob({
@@ -491,8 +603,7 @@ export async function runSignedZeroPriceTestnetActivation(
       });
     }
 
-    const gatewayUrl =
-      env.STORAGE_GATEWAY_URL ?? "https://gateway.pinata.cloud/ipfs/";
+    const gatewayUrl = env.STORAGE_GATEWAY_URL ?? "https://gateway.pinata.cloud/ipfs/";
     const manifest = await fetchManifest(deliverableUrl, gatewayUrl);
     if (!manifest.verify(job.deliverable)) {
       throw new Error("deliverable manifest hash does not match the on-chain job deliverable hash");
@@ -524,6 +635,8 @@ export async function runSignedZeroPriceTestnetActivation(
       quote_negotiation_hash:
         typeof quote.negotiation_hash === "string" ? quote.negotiation_hash : null,
       promise_id: promiseId,
+      promise_sha256: commitment.promise_sha256,
+      job_description_bytes: descriptionBytes,
       transactions: {
         create_job: created.transactionHash,
         register_job: registered.transactionHash,

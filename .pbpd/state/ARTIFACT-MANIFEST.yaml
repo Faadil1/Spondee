@@ -58,7 +58,7 @@ artifacts:
   - id: ART-014
     path: backend
     type: marketplace_backend
-    status: CI_VERIFIED_OFFCHAIN_AND_READ_ONLY_CHAIN
+    status: CI_VERIFIED_OFFCHAIN_READ_ONLY_AND_PAYMASTER_INFRA_PROBE
     branch: build/backend-complete
   - id: ART-015
     path: backend/src/app.ts
@@ -83,20 +83,37 @@ artifacts:
   - id: ART-020
     path: backend/src/erc8183.ts
     type: signed_zero_price_erc8183_live_driver
-    status: CI_VERIFIED_FAIL_CLOSED_LIVE_WRITE_NOT_EXECUTED
+    status: CI_VERIFIED_FAIL_CLOSED_FULL_SELLER_E2E_NOT_EXECUTED
   - id: ART-021
     path: .github/workflows/backend-ci.yml
     type: complete_backend_ci
     status: PASS
-    external_run: 33800450806
+    external_run: 33801590780
   - id: ART-022
     path: evidence/backend-ci-001/README.md
     type: complete_backend_evidence
     status: PASS
-    external_run: 33800450806
-    artifact_id: 9910843880
-    artifact_digest: sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49
+    external_run: 33801590780
+    artifact_id: 9911265991
+    artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
   - id: ART-023
     external_reference: Faadil1/Spondee#1
     type: draft_backend_review_pull_request
     status: DRAFT_DO_NOT_MERGE_BEFORE_LIVE_E2E_REVIEW
+  - id: ART-024
+    path: backend/src/megafuel-smoke.ts
+    type: bounded_zero_balance_paymaster_probe
+    status: PASS_RUNTIME_EXECUTED
+    external_run: 33802027942
+  - id: ART-025
+    path: .github/workflows/megafuel-smoke.yml
+    type: reproducible_megafuel_runtime_probe
+    status: PASS
+    external_run: 33802027942
+  - id: ART-026
+    path: evidence/megafuel-smoke-001/README.md
+    type: megafuel_zero_balance_sponsorship_evidence
+    status: PASS
+    external_run: 33802027942
+    artifact_id: 9911428783
+    artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94

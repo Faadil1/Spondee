@@ -6,6 +6,8 @@ import {
   HealthFactorTaskSchema,
 } from "./healthFactor.js";
 
+const PROMISE_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
+
 function arg(name: string, fallback: string): string {
   const index = process.argv.indexOf(name);
   return index >= 0 && process.argv[index + 1] ? process.argv[index + 1] : fallback;
@@ -24,7 +26,9 @@ const prompt =
   "JOB CONTEXT:\n" +
   JSON.stringify({
     task: JSON.stringify(task),
-    terms: { spondee_promise: promise },
+    terms: {
+      success_criteria: [`${PROMISE_PREFIX}${JSON.stringify(promise)}`],
+    },
   });
 const receipt = buildHealthFactorOutcomeFromWorkPrompt(prompt);
 if (receipt === null) {

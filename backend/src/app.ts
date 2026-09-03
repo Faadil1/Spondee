@@ -5,6 +5,7 @@ import {
   EvidenceRunInputSchema,
   TaskSchema,
   type ActivationRecord,
+  type OutcomeReceipt,
 } from "./contracts.js";
 import { getAgent, listAgents, referenceAgentForCategory } from "./catalog.js";
 import { buildPromiseCard, buildSimulationReceipt, taskCategory } from "./engines.js";
@@ -13,11 +14,24 @@ import {
   liveGateStatus,
   publicTestnetReadiness,
   runSignedZeroPriceTestnetActivation,
+  type LiveActivationProgress,
 } from "./erc8183.js";
 import type { SpondeeStore } from "./store.js";
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function objectOrEmpty(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function appendTx(activation: ActivationRecord, tx?: string): void {
+  if (tx && !activation.chain.tx_hashes.includes(tx)) {
+    activation.chain.tx_hashes.push(tx);
+  }
 }
 
 export function createApp(store: SpondeeStore) {
@@ -172,15 +186,67 @@ export function createApp(store: SpondeeStore) {
       if (activation.mode !== "LIVE_TESTNET") {
         return res.status(409).json({ error: "activation was not prepared for LIVE_TESTNET" });
       }
-      const result = await runSignedZeroPriceTestnetActivation(activation.task);
+
+      const onProgress = async (progress: LiveActivationProgress) => {
+        activation.chain.job_id = progress.job_id;
+        appendTx(activation, progress.transaction_hash);
+        if (progress.deliverable_url) activation.chain.deliverable_url = progress.deliverable_url;
+        if (progress.stage === "FUND") activation.status = "CHAIN_FUNDED";
+        if (progress.stage === "SUBMIT_OBSERVED" || progress.stage === "DELIVERABLE_VERIFIED") {
+          activation.status = "CHAIN_SUBMITTED";
+        }
+        activation.updated_at = new Date().toISOString();
+        await store.putActivation(activation);
+      };
+
+      const result = await runSignedZeroPriceTestnetActivation(
+        activation.task,
+        process.env,
+        onProgress,
+      );
+      if (result.promise_id !== activation.promise_id) {
+        throw new Error("live signed Promise Card does not match the stored activation Promise Card");
+      }
+
+      const rawReceipt = result.deliverable.receipt;
+      const rawCalibration = objectOrEmpty(rawReceipt.calibration);
+      const receipt: OutcomeReceipt = {
+        schema: "spondee.outcome-receipt.v1",
+        receipt_id: `sr_chain_${result.job_id}`,
+        category: activation.category,
+        promise_id: activation.promise_id,
+        scenario_id: activation.scenario_id,
+        agent_id: activation.agent_id,
+        evidence_class: "SIMULATION",
+        actual_outcome: objectOrEmpty(rawReceipt.outcome),
+        actual_cost: { currency: "raw_erc8183_wei", amount: "0" },
+        tx_hashes: Object.values(result.transactions).filter(
+          (value): value is string => typeof value === "string" && value.length > 0,
+        ),
+        created_at: new Date().toISOString(),
+        calibration: {
+          eligible_for_observed_agent_advantage: false,
+          status: "NOT_OBSERVED_MARKET_EVIDENCE",
+        },
+        claim_guardrail:
+          typeof rawReceipt.claim_guardrail === "string"
+            ? rawReceipt.claim_guardrail
+            : "Live ERC-8183 transport was observed on BSC Testnet, but the declared Health Factor scenario remains simulation evidence and is excluded from observed Agent Advantage.",
+      };
+      if (rawCalibration.eligible_for_observed_agent_advantage !== false) {
+        throw new Error("verified live deliverable violated the simulation Agent Advantage guardrail");
+      }
+
+      await store.putReceipt(receipt);
+      activation.receipt_id = receipt.receipt_id;
       activation.status = result.status === "COMPLETED" ? "COMPLETED" : "CHAIN_SUBMITTED";
       activation.chain.job_id = result.job_id;
-      activation.chain.tx_hashes = result.create_job_tx ? [result.create_job_tx] : [];
-      activation.chain.deliverable_url = result.deliverable_url;
+      activation.chain.tx_hashes = receipt.tx_hashes;
+      activation.chain.deliverable_url = result.deliverable.url;
       activation.updated_at = new Date().toISOString();
       activation.failure_reason = null;
       await store.putActivation(activation);
-      return res.json({ activation, live_result: result });
+      return res.json({ activation, receipt, live_result: result });
     } catch (error) {
       const activation = await store.getActivation(req.params.id).catch(() => null);
       if (activation) {

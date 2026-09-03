@@ -4,6 +4,8 @@ import { SellerAgentExecutor } from "./executor.js";
 import { buildHealthFactorOutcomeFromWorkPrompt } from "./healthFactor.js";
 import type { SigningApi } from "./sellerCore.js";
 
+const PROMISE_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
+
 const task = {
   schema: "spondee.health-factor.task.v1",
   scenario_id: "executor-preview-001",
@@ -47,6 +49,15 @@ function executor(opts: {
   });
 }
 
+function decodePromiseCarrier(criteria: unknown): Record<string, unknown> {
+  assert.ok(Array.isArray(criteria));
+  const carriers = criteria.filter(
+    (entry): entry is string => typeof entry === "string" && entry.startsWith(PROMISE_PREFIX),
+  );
+  assert.equal(carriers.length, 1);
+  return JSON.parse(carriers[0].slice(PROMISE_PREFIX.length)) as Record<string, unknown>;
+}
+
 test("real SellerAgentExecutor dispatch exposes the free Promise Card skill", async () => {
   const result = await executor().dispatch({
     skill: "preview_health_factor",
@@ -61,7 +72,7 @@ test("real SellerAgentExecutor dispatch exposes the free Promise Card skill", as
   assert.equal(promise.confidence_status, "UNSCORED_UNTIL_OBSERVED_CALIBRATION");
 });
 
-test("the previewed Promise Card is the one bound into the ERC-8183 signable request", async () => {
+test("the previewed Promise Card is carried in the ERC-8183 signable success_criteria", async () => {
   let signedRequest: Record<string, unknown> | undefined;
   const signing = baseSigning({
     signQuote: async (request, price) => {
@@ -83,19 +94,23 @@ test("the previewed Promise Card is the one bound into the ERC-8183 signable req
     terms: {
       deliverables: "Spondee Health Factor Outcome Receipt",
       quality_standards: "Preserve the Spondee promise and simulation evidence class",
+      success_criteria: ["existing non-Spondee criterion"],
     },
   });
 
   assert.equal(negotiated.accepted, true);
   assert.ok(signedRequest);
   const signedTerms = signedRequest.terms as Record<string, unknown>;
-  const signedPromise = signedTerms.spondee_promise as Record<string, unknown>;
+  const criteria = signedTerms.success_criteria as unknown[];
+  assert.ok(criteria.includes("existing non-Spondee criterion"));
+  const signedPromise = decodePromiseCarrier(criteria);
   assert.equal(signedPromise.promise_id, previewPromise.promise_id);
   assert.equal(signedPromise.scenario_id, previewPromise.scenario_id);
   assert.equal(signedPromise.confidence, null);
+  assert.equal("spondee_promise" in signedTerms, false);
 });
 
-test("notify_funded drives the deterministic Spondee receipt through SellerCore submission", async () => {
+test("notify_funded drives the deterministic Spondee receipt through signed success_criteria", async () => {
   let submittedContent = "";
   const previewAgent = executor();
   const preview = await previewAgent.dispatch({
@@ -107,7 +122,10 @@ test("notify_funded drives the deterministic Spondee receipt through SellerCore 
   const signing = baseSigning({
     jobSpec: async (jobId) => ({
       task: JSON.stringify(task),
-      terms: { spondee_promise: promise, test_job_id: jobId },
+      terms: {
+        success_criteria: [`${PROMISE_PREFIX}${JSON.stringify(promise)}`],
+        test_job_id: jobId,
+      },
     }),
     submitResult: async (_jobId, responseContent) => {
       submittedContent = responseContent;

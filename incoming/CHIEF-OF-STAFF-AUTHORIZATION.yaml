@@ -1,0 +1,53 @@
+schema: PBPD-PROJECT-AUTHORIZATION-v0.1
+project_id: bnb_agent_studio_build_the_era_2026
+project_name: Spondee
+project_type: HACKATHON
+authorization_state: PROJECT_AUTHORIZED
+authorized_by: human
+authorized_at: '2026-09-03T06:45:02-04:00'
+authorization_source:
+  type: HUMAN_PROJECT_GO
+  evidence:
+    hoi_repository: Faadil1/hackathon-opportunity-intelligence
+    hoi_pull_request: 55
+    pbpd_intake_issue: Faadil1/pbpd-cowork-system#78
+    human_go_phrase: ok allons tu peux y aller
+authority_ceiling:
+  objective: Build Spondee for the BNB Agent Studio / Build the Era hackathon under the locked calibrated-outcome-marketplace concept.
+  permitted:
+    - build and test Spondee
+    - use BSC testnet
+    - integrate public or authorized APIs and SDKs
+    - create test/reference agents
+    - collect experimental evidence
+    - deploy a public judging build
+    - perform bounded reconnaissance required to resolve implementation unknowns
+  prohibited_without_new_human_authority:
+    - move meaningful real user or mainnet funds
+    - incur material paid spend
+    - take on legal or financial guarantees
+    - expose secrets or private keys
+    - make unsupported return or safety claims
+    - materially change the product objective
+    - perform the final hackathon submission action
+protected_actions:
+  final_submission_owner: human
+  material_mainnet_capital_action: human_required
+  material_paid_spend: human_required
+  unsupported_public_claims: prohibited
+product_lock:
+  name: Spondee
+  tagline: Agents, measured by what they deliver.
+  concept: Calibrated Outcome Marketplace + Intervention Advantage
+  hero_vertical: Health Factor Monitoring
+competition:
+  deadline: '2026-09-09'
+  deadline_timezone: UTC
+  exact_cutoff_hour_verified: false
+  required_categories:
+    - Rebalancing
+    - Grid Trading
+    - Yield Optimisation
+    - Health Factor Monitoring
+next_owner: PBPD
+next_gate: SPONDEE_PRD_VALIDATION_AND_RECONCILIATION

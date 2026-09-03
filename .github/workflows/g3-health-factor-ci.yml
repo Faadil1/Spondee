@@ -1,0 +1,52 @@
+name: G3 Health Factor CI
+
+on:
+  push:
+    branches: ['build/g3-health-factor']
+    paths:
+      - 'reference-agents/health-factor/**'
+      - '.github/workflows/g3-health-factor-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'reference-agents/health-factor/**'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.24.0 --activate
+
+      - name: Install workspace dependencies
+        working-directory: reference-agents/health-factor
+        run: pnpm install --frozen-lockfile
+
+      - name: Run deterministic Spondee tests
+        working-directory: reference-agents/health-factor/app/agent
+        run: pnpm test
+
+      - name: TypeScript build
+        working-directory: reference-agents/health-factor/app/agent
+        run: pnpm build
+
+      - name: Agent Studio diagnostics
+        shell: bash
+        run: |
+          npm install --global @bnbagent/studio-cli
+          cd reference-agents/health-factor
+          bag scan
+          bag doctor

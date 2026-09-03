@@ -1,6 +1,7 @@
 name: Spondee Backend CI
 
 on:
+  workflow_dispatch:
   push:
     branches: ['build/backend-complete']
     paths:

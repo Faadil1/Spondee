@@ -3,19 +3,19 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_SCAFFOLD_AND_NETWORK_ONLY
+    status: PARTIALLY_VERIFIED_SOFTWARE_PATH_LIVE_WALLET_PENDING
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
-    truth_class: HYPOTHESIS
-    status: UNVERIFIED_G3
+    truth_class: FACT
+    status: VERIFIED_SIMULATION_AND_EXECUTOR_PATH
   - id: CLM-003
     claim: Promise-to-actual calibration can be measured from preserved evidence.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED_G3
+    status: PARTIALLY_VERIFIED_PROMISE_RECEIPT_BINDING_ONLY
   - id: CLM-004
     claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED_G3
+    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION
   - id: CLM-005
     claim: Three observed Agent Advantage paired experiments can be completed before submission.
     truth_class: HYPOTHESIS
@@ -28,6 +28,18 @@ claims:
     claim: The current Agent Studio runtime can install, reach BSC testnet, scaffold and diagnose a Spondee reference-agent workspace without secrets.
     truth_class: FACT
     status: VERIFIED
+  - id: CLM-008
+    claim: The G3 Health Factor Promise Card is bound into ERC-8183 signable terms before signing.
+    truth_class: FACT
+    status: VERIFIED_WITH_INJECTED_TEST_SIGNER
+  - id: CLM-009
+    claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
+    truth_class: FACT
+    status: VERIFIED_WITH_INJECTED_TEST_SIGNER
+  - id: CLM-010
+    claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
+    truth_class: FACT
+    status: VERIFIED_CONFIGURATION_AND_CI
 
 evidence:
   - id: EV-001
@@ -84,6 +96,20 @@ evidence:
     supports:
       - PRD_READY transition
     status: PRESENT
+  - id: EV-008
+    type: g3_credential_free_build
+    artifact: evidence/g3-health-factor-ci-001/README.md
+    workflow_run_id: 33753788773
+    artifact_id: 9892600637
+    artifact_digest: sha256:8ca6c0f5ab50e5673ca9f515c1b4bd0b9fce957c1adf7f67beff24017d292b41
+    supports:
+      - Promise Card generation
+      - Promise binding before signing
+      - deterministic Outcome Receipt
+      - zero service price
+      - simulation claim boundary
+      - Agent Studio diagnostics
+    status: VERIFIED
 
 verification_events:
   - id: VER-001
@@ -103,5 +129,20 @@ verification_events:
     at: '2026-09-03T07:53:12-04:00'
     event: bag doctor completed with exit code 0; warnings classified as expected pre-onboarding gaps.
     result: PASS_WITH_WARNINGS
+  - id: VER-005
+    at: '2026-09-03T08:12:12-04:00'
+    event: G3 Health Factor credential-free CI completed with tests, TypeScript, demo export and Agent Studio diagnostics all passing.
+    result: PASS
+    evidence: GitHub Actions run 33753788773
+  - id: VER-006
+    at: '2026-09-03T08:12:12-04:00'
+    event: Demo Promise Card and Outcome Receipt preserved with identical promise_id and explicit SIMULATION evidence class.
+    result: PASS
+    evidence: artifact 9892600637
 
-contradictions: []
+contradictions:
+  - id: CON-001
+    topic: testnet_gas_sponsorship
+    observation: Agent Studio v2 blog describes paymaster-covered testnet gas broadly, while current Studio demo and SDK network docs explicitly require tBNB for general testnet operations and scope gas-free sponsorship to ERC-8004 registration.
+    handling: Use conservative operational rule; assume tBNB required for ERC-8183/general operations until installed CLI proves otherwise.
+    status: PRESERVED

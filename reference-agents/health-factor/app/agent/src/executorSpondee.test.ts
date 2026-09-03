@@ -6,6 +6,7 @@ import {
   buildHealthFactorPromiseCommitment,
   decodeHealthFactorPromiseCommitmentCriterion,
   encodeHealthFactorPromiseCommitmentCriterion,
+  encodeHealthFactorTaskForChain,
   hashHealthFactorPromise,
   SPONDEE_PROMISE_COMMITMENT_PREFIX,
 } from "./healthFactor.js";
@@ -26,7 +27,7 @@ const task = {
     { at_seconds: 0, collateral_multiplier: 1 },
     { at_seconds: 600, collateral_multiplier: 0.7 },
   ],
-};
+} as const;
 
 function baseSigning(overrides: Partial<SigningApi> = {}): SigningApi {
   return {
@@ -98,7 +99,7 @@ test("the previewed Promise Card is committed compactly in ERC-8183 signable suc
 
   const negotiated = await agent.dispatch({
     skill: "negotiate",
-    task_description: JSON.stringify(task),
+    task_description: encodeHealthFactorTaskForChain(task as any),
     terms: {
       deliverables: "Spondee Health Factor Outcome Receipt",
       quality_standards: "Preserve the Spondee promise and simulation evidence class",
@@ -130,7 +131,7 @@ test("notify_funded reconstructs and verifies the deterministic Promise from the
 
   const signing = baseSigning({
     jobSpec: async (jobId) => ({
-      task: JSON.stringify(task),
+      task: encodeHealthFactorTaskForChain(task as any),
       terms: {
         success_criteria: [encodeHealthFactorPromiseCommitmentCriterion(promise)],
         test_job_id: jobId,

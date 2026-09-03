@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R015-G3-FUNDED-948-RECOVERY-READY
+revision: STATE-R016-G3-LOCALSTORAGE-30D-RETRY-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_FUNDED_JOB_948_DELIVERABLE_RECOVERY_READY
+  status: G3_NEW_LIVE_E2E_READY_AFTER_LOCALSTORAGE_AND_30D_EXPIRY_FIX
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -30,19 +30,19 @@ build:
   parent_branch: build/g3-health-factor
   merge_to_main: NOT_AUTHORIZED
   backend_status: CI_VERIFIED
-  evidence_class: LIVE_CHAIN_PARTIAL_PLUS_SIMULATION_UNTIL_JOB_948_SUBMIT_AND_RECEIPT_VERIFY
+  evidence_class: LIVE_CHAIN_PARTIAL_PLUS_SIMULATION_UNTIL_COMPLETE_SUBMIT_AND_RECEIPT_VERIFY
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   local_signing_check: PASS
-  recreate_for_recovery: false
+  recreate_for_retry: false
   password_or_key_chat_exposure: FORBIDDEN
 megafuel:
   status: RUNTIME_PROVEN_IN_COMPLETE_SPONDEE_FLOW_THROUGH_FUND
   network: bsc-testnet
   chain_id: 97
-  tBNB_required: false
+  tBNB_required_before_next_attempt: false
   compact_description_fix: VERIFIED_LIVE_CREATE_JOB_ACCEPTED
 live_attempt_history:
   first_attempt:
@@ -65,18 +65,22 @@ live_attempt_history:
     job_id: '948'
     user_funds_used: false
     progress:
-      create_job:
-        tx: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
-      register_job:
-        tx: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
-      set_budget:
-        tx: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
-      fund:
-        tx: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
+      create_job: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
+      register_job: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
+      set_budget: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
+      fund: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
     provider_submit_tx: null
-    seller_generated_deliverable_file: '.agent-data/erc8183-job-948.json'
-    blocker: LocalStorage returned file:// and ERC8183_AGENT_URL was unset, so submitWorkflow refused to publish a deliverable URL.
-    job_state_for_recovery: FUNDED_PENDING_PROVIDER_SUBMIT
+    blocker: LocalStorage returned file:// and ERC8183_AGENT_URL was unset.
+  funded_job_948_recovery:
+    started_at: '2026-09-03T23:50:58.062Z'
+    failed_at: '2026-09-03T23:53:03.692Z'
+    result: FAIL_CLOSED_SUBMISSION_DEADLINE_PASSED
+    job_id: '948'
+    provider_submit_tx: null
+    error: 'Submission deadline has passed (expiredAt - disputeWindow = 1788479322).'
+    classification: JOB_TERMINALLY_UNRECOVERABLE_FOR_PROVIDER_SUBMIT
+    retry_job_948: FORBIDDEN
+    finding: The prior quickstart-style 600-second submission slack expired before deterministic recovery could execute.
 verified_live_properties:
   - compact Promise commitment survived signed negotiation and createJob
   - sanitizer-safe Base64URL Health Factor task survived the chain description path
@@ -86,50 +90,47 @@ verified_live_properties:
   - MegaFuel sponsored fund(0) in the complete Spondee flow
   - seller reconstructed work and generated the deliverable manifest locally
 not_yet_verified:
-  - provider submit transaction for job 948
-  - on-chain deliverable URL for job 948
+  - provider submit transaction from a non-expired complete Spondee job
+  - on-chain deliverable URL from the complete path
   - manifest hash verification against the on-chain deliverable hash
   - verified Spondee Outcome Receipt from the live job
   - observed Agent Advantage
   - public judging deployment
-funded_job_recovery:
-  target_job_id: '948'
-  status: CI_VERIFIED_ONE_LOCAL_RECOVERY_READY
-  strategy: RESUME_EXISTING_FUNDED_JOB_NO_NEW_ACTIVATION
-  deliverable_url_mode:
-    storage: LocalStorageProvider
-    local_base_url: 'http://127.0.0.1:9100/erc8183'
-    sdk_env: ERC8183_AGENT_URL
-    expected_url_shape: 'http://127.0.0.1:9100/erc8183/job/948/response'
-  artifacts:
-    recovery_decision: work/G3-FUNDED-948-RECOVERY-READY.md
-    local_deliverable_server: scripts/local-erc8183-deliverable-server.mjs
-    recovery_verifier: backend/src/resume-g3-funded.ts
-    local_runner: scripts/g3-resume-funded-job.ps1
-    ci_workflow: .github/workflows/g3-funded-recovery-ci.yml
+localstorage_and_expiry_fix:
+  status: CI_VERIFIED_ONE_NEW_LIVE_ATTEMPT_READY
+  delivery:
+    server: scripts/local-erc8183-deliverable-server.mjs
+    wrapper: scripts/g3-megafuel-live-e2e-localstorage.ps1
+    agent_url: 'http://127.0.0.1:9100/erc8183'
+    behavior: Start the HTTP bridge before the seller so submitWorkflow can publish a fetchable deliverable URL immediately.
+  expiry:
+    submission_window_seconds: 2592000
+    submission_window_days: 30
+    formula: expiredAt = now + disputeWindow + 30_days
+    protocol_rule: submit must occur before or at expiredAt - disputeWindow
+    source_guidance: official BNB SDK protocol documentation recommends a long-lived job around 30 days
   validation:
-    github_actions_run: '33819012423'
+    workflow: G3 Live LocalStorage Preflight
+    github_actions_run: '33819854509'
+    head: '1c4b83b92524808731271e132981e4c48c3b62e3'
     result: PASS
-    ubuntu_powershell_parse: PASS
-    local_response_route: PASS
-    backend_tests: PASS
+    ubuntu_wrapper_parse: PASS
+    local_http_bridge_health: PASS
+    backend_regression_suite: PASS
     backend_typescript_build: PASS
-    windows_powershell_parse: PASS
+    windows_wrapper_parse: PASS
     windows_node24_server_syntax: PASS
   execution_contract:
-    new_create_job: FORBIDDEN
-    new_register_job: FORBIDDEN
-    new_set_budget: FORBIDDEN
-    new_fund: FORBIDDEN
-    provider_submit_for_job_948: ALLOWED_ONCE
-    blind_retry_after_failure: FORBIDDEN
-    new_seller_wallet: FORBIDDEN
-    tBNB_acquisition: NOT_REQUIRED
+    one_new_live_attempt_authorized: true
+    reuse_existing_seller_wallet: REQUIRED
+    acquire_tbnb_first: false
+    mainnet: FORBIDDEN
+    blind_retry_after_new_failure: FORBIDDEN
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: JOB_948_FUNDED_CHAIN_PATH_VERIFIED_SUBMIT_RECOVERY_PENDING
+    live_testnet: FOUR_CHAIN_WRITES_VERIFIED_NEW_COMPLETE_E2E_RETRY_READY
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -141,5 +142,5 @@ category_depth:
     reference_agent: NOT_YET_DEPLOYED_LIVE
 next_action:
   owner: HUMAN_LOCAL_RUNTIME
-  primary: Pull build/backend-complete and execute scripts/g3-resume-funded-job.ps1 exactly once. Reuse the existing encrypted seller wallet and enter its password only in the masked prompt. Do not run g3-megafuel-live-e2e.ps1 again and do not create another job. Return only the public PASS or recovery failure block.
-next_gate: SPONDEE_G3_FUNDED_JOB_948_DELIVERABLE_RECOVERY_LOCAL_EXECUTION_REQUIRED
+  primary: Pull build/backend-complete and execute scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once. Reuse the existing encrypted seller wallet and enter its password only in the masked prompt. Do not retry job 948 and do not acquire tBNB first. Return only the public PASS block or a new failure block, then stop.
+next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED

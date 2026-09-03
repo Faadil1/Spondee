@@ -1,0 +1,62 @@
+schema: PBPD-EVIDENCE-LEDGER-v0.1
+claims:
+  - id: CLM-001
+    claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED
+  - id: CLM-002
+    claim: A task-specific Promise Card can be generated before activation.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED
+  - id: CLM-003
+    claim: Promise-to-actual calibration can be measured from preserved evidence.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED
+  - id: CLM-004
+    claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED
+  - id: CLM-005
+    claim: Three observed Agent Advantage paired experiments can be completed before submission.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED
+  - id: CLM-006
+    claim: All four required categories can reach comparable find-understand-activate depth.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED
+evidence:
+  - id: EV-001
+    type: authorization
+    artifact: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
+    supports:
+      - project authority
+    status: PRESENT
+  - id: EV-002
+    type: product_brief
+    artifact: incoming/PROJECT-BRIEF.md
+    supports:
+      - product thesis
+      - category scope
+    status: PRESENT
+  - id: EV-003
+    type: prd
+    artifact: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
+    supports:
+      - product requirements
+      - evidence burden
+    status: PRESENT
+  - id: EV-004
+    type: source_decision
+    reference: Faadil1/hackathon-opportunity-intelligence#55
+    supports:
+      - concept lock
+      - naming lock
+    status: EXTERNAL_REFERENCE
+  - id: EV-005
+    type: pbpd_handoff
+    reference: Faadil1/pbpd-cowork-system#78
+    supports:
+      - project routing
+    status: EXTERNAL_REFERENCE
+verification_events: []
+contradictions: []

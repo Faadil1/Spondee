@@ -60,3 +60,10 @@ artifacts:
     path: .pbpd/state/HANDOVER.yaml
     type: canonical_handover
     status: CURRENT
+  - id: ART-014
+    external_reference: Faadil1/pbpd-cowork-system#80
+    type: pbpd_spec_kit_first_pilot_pointer_activation
+    status: VALIDATED_AND_MERGED
+    required_validate: PASS
+    validation_run: 33815125056
+    merge_sha: e6cdb63db938939006e8b147c2add793c687a829

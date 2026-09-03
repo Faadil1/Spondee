@@ -1,5 +1,4 @@
 param(
-    [switch]$SkipCliInstall,
     [switch]$VerifyOnly
 )
 
@@ -18,17 +17,18 @@ $initialLocation = Get-Location
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $workspaceRoot = (Resolve-Path (Join-Path $scriptDir '..')).Path
 $agentDir = Join-Path $workspaceRoot 'app\agent'
-$studioDir = Join-Path $workspaceRoot '.studio'
-$walletDir = Join-Path $studioDir 'wallets'
-$studioToml = Join-Path $agentDir 'studio.toml'
-$studioCliVersion = '0.0.13'
+$walletDir = Join-Path $workspaceRoot '.studio\wallets'
+$packageJson = Join-Path $agentDir 'package.json'
+$pnpmVersion = '10.24.0'
 
 Write-Host 'Spondee G3 - local BSC-testnet wallet setup' -ForegroundColor Green
+Write-Host 'Uses the official @bnbagent/sdk wallet provider already pinned by Spondee.'
+Write-Host 'No global Agent Studio CLI installation is required.' -ForegroundColor Green
 Write-Host 'This script NEVER prints, commits, or uploads your wallet password/private key.'
 Write-Host 'This wallet is testnet-only. Never reuse it on mainnet.' -ForegroundColor Yellow
 
-if (-not (Test-Path $studioToml)) {
-    Fail "studio.toml not found at $studioToml. Use the Spondee build/g3-health-factor checkout."
+if (-not (Test-Path $packageJson)) {
+    Fail "package.json not found at $packageJson. Use the Spondee build/g3-health-factor checkout."
 }
 
 Write-Step 'Checking Node.js 22+'
@@ -38,53 +38,24 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 $nodeRaw = (& node --version)
 $nodeMajor = [int](($nodeRaw -replace '^v','').Split('.')[0])
 if ($nodeMajor -lt 22) {
-    Fail "Node.js $nodeRaw detected; Agent Studio requires Node.js 22+."
+    Fail "Node.js $nodeRaw detected; Spondee requires Node.js 22+."
 }
 Write-Host "Node $nodeRaw"
 
-$bag = Get-Command bag -ErrorAction SilentlyContinue
-if (-not $bag) {
-    if ($SkipCliInstall) {
-        Fail 'bag CLI not found and -SkipCliInstall was supplied.'
-    }
-    if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-        Fail 'npm is not available; install Node.js 22+ with npm first.'
-    }
-
-    Write-Step "Installing BNB Agent Studio CLI $studioCliVersion"
-    Write-Host 'Using --legacy-peer-deps to bypass a temporary upstream AI SDK peer-version mismatch.' -ForegroundColor DarkGray
-    & npm install --global "@bnbagent/studio-cli@$studioCliVersion" --legacy-peer-deps
-    if ($LASTEXITCODE -ne 0) {
-        Fail "npm install --global @bnbagent/studio-cli@$studioCliVersion --legacy-peer-deps failed. Do not create a wallet yet."
-    }
+if (-not (Get-Command npx -ErrorAction SilentlyContinue)) {
+    Fail 'npx is not available. Reinstall Node.js with npm/npx support.'
 }
 
-Write-Step 'Checking Agent Studio CLI'
-& bag --version
+Write-Step "Installing frozen Spondee workspace dependencies with pnpm $pnpmVersion"
+Set-Location $workspaceRoot
+& npx --yes "pnpm@$pnpmVersion" install --frozen-lockfile
 if ($LASTEXITCODE -ne 0) {
-    Fail 'bag --version failed.'
+    Fail 'Frozen workspace dependency installation failed. No wallet was created.'
 }
 
 New-Item -ItemType Directory -Force -Path $walletDir | Out-Null
-Set-Location $agentDir
 
 try {
-    $existingToml = Get-Content -Raw $studioToml
-    $existingAddressMatch = [regex]::Match(
-        $existingToml,
-        '(?m)^address\s*=\s*"(0x[a-fA-F0-9]{40})"\s*$'
-    )
-    $existingKeystores = @(Get-ChildItem -Path $walletDir -Filter '*.json' -File -ErrorAction SilentlyContinue)
-
-    if (-not $VerifyOnly -and ($existingAddressMatch.Success -or $existingKeystores.Count -gt 0)) {
-        Write-Host 'An existing local wallet was detected. Refusing to create another one.' -ForegroundColor Yellow
-        Write-Host 'Use -VerifyOnly to inspect the existing throwaway wallet.' -ForegroundColor Yellow
-        if ($existingAddressMatch.Success) {
-            Write-Host "Existing public address: $($existingAddressMatch.Groups[1].Value)"
-        }
-        exit 2
-    }
-
     if ($VerifyOnly) {
         $prompt = 'Existing wallet password'
     }
@@ -111,46 +82,48 @@ try {
         Remove-Variable plain -ErrorAction SilentlyContinue
     }
 
+    Set-Location $agentDir
+
     if (-not $VerifyOnly) {
-        Write-Step 'Creating throwaway BSC-testnet wallet with bag wallet new'
-        & bag wallet new
-        if ($LASTEXITCODE -ne 0) {
-            Fail 'bag wallet new failed.'
+        Write-Step 'Creating encrypted Keystore V3 with the official BNB SDK'
+        $createOutput = @(& npx --yes "pnpm@$pnpmVersion" wallet:create 2>&1)
+        $createExit = $LASTEXITCODE
+        $createOutput | ForEach-Object { Write-Host $_ }
+        if ($createExit -ne 0) {
+            Fail 'BNB SDK wallet creation failed. Do not fund any address unless this script reaches VERIFIED.'
         }
+
+        Write-Step 'Reloading the encrypted keystore and proving local signing'
+    }
+    else {
+        Write-Step 'Reloading the encrypted keystore and proving local signing'
     }
 
-    Write-Step 'Verifying public wallet identity'
-    & bag wallet show
-    if ($LASTEXITCODE -ne 0) {
-        Fail 'bag wallet show failed. Check that the password matches the local keystore.'
+    $verifyOutput = @(& npx --yes "pnpm@$pnpmVersion" wallet:verify 2>&1)
+    $verifyExit = $LASTEXITCODE
+    $verifyOutput | ForEach-Object { Write-Host $_ }
+    if ($verifyExit -ne 0) {
+        Fail 'Wallet verification failed. Check the local password; do not send it to ChatGPT.'
     }
 
-    $toml = Get-Content -Raw $studioToml
-    $match = [regex]::Match($toml, '(?m)^address\s*=\s*"(0x[a-fA-F0-9]{40})"\s*$')
-    if (-not $match.Success) {
-        Fail '[wallet].address was not found in studio.toml after wallet verification.'
+    $addressLine = $verifyOutput | Where-Object { $_ -match '^public_address=0x[a-fA-F0-9]{40}$' } | Select-Object -Last 1
+    if (-not $addressLine) {
+        Fail 'Wallet verified but the public address could not be parsed from the SDK output.'
     }
-    $address = $match.Groups[1].Value
-
-    Write-Step 'Running Agent Studio diagnostics'
-    & bag doctor
-    $doctorExit = $LASTEXITCODE
+    $address = ($addressLine -replace '^public_address=', '').Trim()
 
     Write-Host "`n============================================================" -ForegroundColor Green
     Write-Host 'SPONDEE G3 TESTNET WALLET VERIFIED' -ForegroundColor Green
     Write-Host "Public address: $address" -ForegroundColor White
-    Write-Host "Keystore directory: $walletDir" -ForegroundColor DarkGray
+    Write-Host "Encrypted keystore directory: $walletDir" -ForegroundColor DarkGray
+    Write-Host 'Local EIP-191 signing check: PASS (no transaction sent)' -ForegroundColor Green
     Write-Host 'Do NOT send the password, keystore, seed phrase, or private key.' -ForegroundColor Yellow
     Write-Host 'Send ChatGPT ONLY the public 0x address above.' -ForegroundColor Yellow
     Write-Host '============================================================' -ForegroundColor Green
 
-    if ($doctorExit -ne 0) {
-        Write-Warning 'bag doctor returned non-zero. Before funding, a missing or zero tBNB balance can be expected. Share only the public address and non-secret warning text if needed.'
-    }
-
     Write-Host "`nOfficial BSC testnet faucet:"
     Write-Host 'https://testnet.bnbchain.org/faucet-smart'
-    Write-Host 'After funding, rerun this same script with -VerifyOnly to re-check the wallet and diagnostics.'
+    Write-Host 'After funding, you may rerun this script with -VerifyOnly. It will not create a second wallet.'
 }
 finally {
     Remove-Item Env:WALLET_PASSWORD -ErrorAction SilentlyContinue

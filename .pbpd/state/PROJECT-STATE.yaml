@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R009-MEGAFUEL-PROVEN
+revision: STATE-R010-G3-LIVE-RUNNER-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: BACKEND_CORE_CI_VERIFIED_MEGAFUEL_PROVEN_LIVE_E2E_PENDING
+  status: G3_MEGAFUEL_LIVE_E2E_RUNNER_READY_LOCAL_SECRET_BOUND_EXECUTION_PENDING
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -31,9 +31,6 @@ build:
   merge_to_main: NOT_AUTHORIZED
   backend_status: CI_VERIFIED
   backend_path: backend
-  backend_ci_run: '33801590780'
-  backend_ci_artifact: '9911265991'
-  backend_ci_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
   backend_evidence: evidence/backend-ci-001/README.md
   evidence_class: SIMULATION_PLUS_RUNTIME_INFRASTRUCTURE_PROOF_UNTIL_HEALTH_FACTOR_LIVE_E2E
 verified_backend_properties:
@@ -78,11 +75,33 @@ megafuel:
   private_key_persisted: false
   user_funds_used: false
   operational_rule: MegaFuel is primary for bounded BSC-testnet ERC-8183 writes; tBNB remains fallback if the relay is unavailable.
+live_runner:
+  status: CI_VERIFIED_READY_FOR_LOCAL_SECRET_BOUND_EXECUTION
+  powershell: scripts/g3-megafuel-live-e2e.ps1
+  backend_entrypoint: backend/src/live-g3.ts
+  canonical_task: reference-agents/health-factor/demo/health-factor-scenario.json
+  validation:
+    backend_ci_run: '33803147139'
+    backend_typescript: PASS
+    g3_ci_run: '33803147120'
+    powershell_core_syntax: PASS
+    windows_powershell_5_1_syntax: PASS
+    windows_node24_wallet_roundtrip: PASS
+  behavior:
+    - unlock existing seller keystore locally only
+    - verify seller address equals canonical Spondee provider
+    - start local Health Factor A2A seller with MegaFuel enabled
+    - create temporary buyer wallet with zero tBNB
+    - execute signed zero-price Health Factor ERC-8183 sequence
+    - verify on-chain deliverable manifest and Outcome Receipt
+    - preserve public hashes/evidence only
+    - destroy temporary buyer wallet after run
+    - stop local seller and clear sensitive environment variables
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: PAYMASTER_PROVEN_FULL_E2E_PENDING
+    live_testnet: LOCAL_RUNNER_READY_FULL_E2E_PENDING
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -93,7 +112,7 @@ category_depth:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
 live_activation:
-  status: GAS_PATH_PROVEN_SELLER_E2E_PENDING
+  status: GAS_PATH_PROVEN_LOCAL_SECRET_BOUND_E2E_READY
   authorization:
     granted_at: '2026-09-03T09:08:00-04:00'
     phrase: GO wallet testnet + tBNB
@@ -122,12 +141,11 @@ live_activation:
     fallback: TBNB_SELF_PAY
     fallback_status: NOT_CURRENTLY_REQUIRED_FOR_NEXT_ATTEMPT
   live_driver:
-    status: CODED_FAIL_CLOSED_FULL_E2E_NOT_EXECUTED
+    status: CODED_FAIL_CLOSED_FULL_E2E_LOCAL_RUNNER_READY
     sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_AND_CURRENCY -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
-    requires_separate_buyer_testnet_wallet: true
+    buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
     live_env_gate_default: false
   not_yet_claimed:
-    - dedicated buyer testnet wallet readiness for the full Health Factor E2E
     - seller-signed live Spondee Promise Card quote
     - full createJob/registerJob/setBudget(0)/fund(0) Health Factor sequence
     - provider on-chain submit transaction
@@ -135,5 +153,5 @@ live_activation:
     - observed Agent Advantage
     - four deployed live reference agents
 next_action:
-  primary: Start the specialized Health Factor seller A2A endpoint with the verified seller wallet, create/verify a separate throwaway buyer wallet, and execute the complete zero-price ERC-8183 Health Factor E2E using MegaFuel first; use tBNB only if the paymaster relay fails.
-next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E
+  primary: On the user's Windows machine, pull build/backend-complete and run scripts/g3-megafuel-live-e2e.ps1. Enter the existing seller wallet password only into the masked local prompt. Return only the public PASS/evidence output to the orchestrator for canonical reconciliation.
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_LOCAL_EXECUTION_REQUIRED

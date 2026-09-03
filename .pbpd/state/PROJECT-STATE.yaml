@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R013-G3-SIGNED-PROMISE-CARRIER-RETRY-READY
+revision: STATE-R014-G3-COMPACT-COMMITMENT-RETRY-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_MEGAFUEL_LIVE_E2E_RETRY_READY_AFTER_SIGNED_PROMISE_CARRIER_FIX
+  status: G3_MEGAFUEL_LIVE_E2E_RETRY_READY_AFTER_COMPACT_COMMITMENT_FIX
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -30,79 +30,32 @@ build:
   parent_branch: build/g3-health-factor
   merge_to_main: NOT_AUTHORIZED
   backend_status: CI_VERIFIED
-  backend_path: backend
-  backend_evidence: evidence/backend-ci-001/README.md
   evidence_class: SIMULATION_PLUS_RUNTIME_INFRASTRUCTURE_PROOF_UNTIL_HEALTH_FACTOR_LIVE_E2E
-verified_backend_properties:
-  - shared Task -> Promise Card -> Activation -> Outcome Receipt contract exists
-  - Health Factor Monitoring deterministic backend path passes
-  - Grid Trading deterministic backend path passes without PnL claims
-  - Rebalancing deterministic backend path passes with bounded reset timing/cost
-  - Yield Optimisation deterministic backend path passes with declared risk ceiling
-  - confidence remains null/UNSCORED until observed calibration exists
-  - all four simulation receipts are excluded from observed Agent Advantage
-  - marketplace category and agent APIs pass integration tests
-  - 8004scan/ERC-8004 data is constrained to identity/capability substrate
-  - memory store supports CI and local demo
-  - PostgreSQL durable store and migration are implemented
-  - evidence ingestion preserves observed vs simulation truth class
-  - Agent Advantage report requires explicit observed baseline pairs
-  - calibration summary ignores simulation evidence
-  - signed zero-price ERC-8183 buyer driver is implemented and fail-closed
-  - BSC Testnet chain ID 97 read probe passes
-  - AgenticCommerce contract code is present on configured BSC Testnet address
-  - EvaluatorRouter contract code is present on configured BSC Testnet address
-  - OptimisticPolicy contract code is present on configured BSC Testnet address
-  - strict TypeScript backend build passes
-  - live deliverable verification preserves promise_id/scenario_id and simulation truth class
-  - official BNB SDK NegotiationResult envelope is accepted without a non-standard provider_address field
-  - provider identity remains cryptographically verified against the canonical Spondee provider via verifyQuoteSignature
-  - Promise Card carrier is constrained to official SDK-preserved success_criteria rather than arbitrary custom terms
-  - request and response must carry exactly one identical versioned Promise Card carrier
-  - provider signature, chain and Commerce contract are verified before the buyer trusts the signed Promise Card
 megafuel:
   status: RUNTIME_PROVEN_ZERO_BALANCE_ERC8183_WRITES
-  evidence: evidence/megafuel-smoke-001/README.md
-  workflow_run: '33802027942'
-  artifact_id: '9911428783'
-  artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+  proof_run: '33802027942'
   network: bsc-testnet
   chain_id: 97
-  ephemeral_client: '0x6582Fe02B03a4E345A4e7597F4B1264d044f3026'
-  balance_before_wei: '0'
-  balance_after_wei: '0'
-  job_id: '942'
-  create_job_tx: '0x1017e9f592bd84e9d433ad311f473e2e92bc24260c7a6d7e464970ae1f0f6f85'
-  cancel_open_tx: '0x893899a7d4c8c5b905765e2f3aada4be82cf3e0f8096f5c5fe73a8589616337c'
-  create_status: 1
-  cancel_status: 1
-  private_key_persisted: false
-  user_funds_used: false
-  operational_rule: MegaFuel is primary for bounded BSC-testnet ERC-8183 writes; tBNB remains fallback if the relay is unavailable.
-live_runner:
-  status: RETRY_READY_CI_VERIFIED_SIGNED_PROMISE_CARRIER
-  powershell: scripts/g3-megafuel-live-e2e.ps1
-  backend_entrypoint: backend/src/live-g3.ts
-  canonical_task: reference-agents/health-factor/demo/health-factor-scenario.json
+  primary_for_current_retry: true
+  tBNB_required_before_retry: false
+  limitation: Relay accepts bounded zero-balance ERC-8183 writes but can reject oversized createJob transactions.
+canonical_seller:
+  address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+  network_scope: bsc-testnet-only
+  keystore: encrypted_v3_local_only
+  local_signing_check: PASS
+  recreate_for_retry: false
+  password_or_key_chat_exposure: FORBIDDEN
+live_attempt_history:
   first_attempt:
     at: '2026-09-03T20:39:58Z'
     result: FAIL_CLOSED_PRE_WRITE
-    buyer_address: '0x2D6B83193f9Dad830A7ACF4a8210D6F4A13c8601'
     progress_events: 0
     transaction_count: 0
     error: seller returned an invalid ERC-8183 quote envelope
-    root_cause: Buyer incorrectly required provider_address in the seller NegotiationResult envelope even though official @bnbagent/sdk NegotiationResult.toDict does not emit that field.
-    megafuel_failure: false
-    seller_signing_failure: false
-    user_funds_used: false
-  first_fix:
-    commit: f19a51deb39c37ab2c5b25d7d88c5d75f7514292
-    behavior: Validate official SDK envelope shape and prove provider identity cryptographically with verifyQuoteSignature(expectedProvider).
-    backend_ci_run: '33806097273'
-    backend_ci: PASS
-    g3_ci_run: '33806096975'
-    g3_ci: PASS
-    windows_wallet_roundtrip: PASS
+    root_cause: buyer incorrectly required non-standard provider_address
+    resolution: verify provider identity cryptographically with verifyQuoteSignature
+    validation_runs: ['33806097273', '33806096975']
   second_attempt:
     started_at: '2026-09-03T22:37:13.916Z'
     failed_at: '2026-09-03T22:37:15.505Z'
@@ -110,60 +63,86 @@ live_runner:
     buyer_address: '0xC70fd5b6c59027592917dA0e118B1f20eC0E5629'
     progress_events: 0
     transaction_count: 0
-    create_job_sent: false
     error: signed quote is missing terms.spondee_promise
-    root_cause: Official SDK TermSpecification drops arbitrary custom terms including spondee_promise before signed NegotiationResult serialization.
-    megafuel_failure: false
+    root_cause: official SDK TermSpecification drops arbitrary custom term keys before signed serialization
+    resolution: move Promise provenance into SDK-preserved success_criteria
+    validation_runs: ['33816310524', '33816544907']
+  third_attempt:
+    started_at: '2026-09-03T23:21:16.823Z'
+    failed_at: '2026-09-03T23:21:21.084Z'
+    result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE
+    buyer_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
+    progress_events: 0
+    mined_transaction_count: 0
     user_funds_used: false
-  second_fix:
-    carrier: success_criteria
-    carrier_prefix: 'SPONDEE_PROMISE_CARD_V1:'
-    seller_commit: ed74abdcf8496c8beb34dd9751deaaeca4d52250
-    buyer_commit: 05191e522507b71858c8a43b96dca802a4a5eb90
-    backend_test_commit: 58e1df6e80debd6b9aace3d07d8f3cfd73183aad
-    seller_test_commit: 1ecc3aed89af6d367e2f692946ea88e375aa95bd
-    health_factor_test_alignment_commit: 6e1b29335fef448da502be08c769821a5415fe27
-    demo_evidence_alignment_commit: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
-    behavior:
-      - carry Promise Card inside SDK-preserved success_criteria
-      - require exactly one Spondee carrier in request and response
-      - require exact request/response carrier equality
-      - verify provider signature/chain/Commerce before trusting Promise Card
-      - recover same Promise carrier from on-chain job terms for deterministic Outcome Receipt
-      - fail closed before createJob on missing, malformed, duplicate or mismatched carrier
-    backend_ci_run: '33816310524'
-    backend_ci: PASS
-    g3_ci_final_run: '33816544907'
-    g3_ci: PASS
-    g3_ci_head: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
+    megafuel_primary_error: 'RPC error [-32000]: tx size is too large'
+    automatic_fallback: SELF_PAY_ATTEMPTED_BY_SDK
+    fallback_result: REJECTED_ZERO_BALANCE_BEFORE_MINING
+    fallback_error_class: INSUFFICIENT_FUNDS_FOR_GAS
+    observed_description_bytes: 2223
+    root_cause: Full Promise Card JSON inside signed success_criteria inflated the createJob description/raw transaction beyond the MegaFuel relay acceptance envelope.
+    secondary_hazard_discovered: Official SDK claim sanitizer replaces square brackets, so raw JSON Health Factor task arrays would not survive byte-for-byte in the on-chain task string.
+compact_commitment_fix:
+  status: CI_VERIFIED_RETRY_READY
+  promise_design:
+    full_promise_location: READ_ONLY_PREVIEW_OFF_CHAIN
+    signed_carrier_field: success_criteria
+    signed_carrier_prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
+    commitment_fields:
+      - promise_id
+      - scenario_id
+      - price_raw
+      - promise_sha256
+    wire_keys: [p, s, r, h]
+    verification:
+      - full Promise preview is validated before activation
+      - provider signature, chain and Commerce contract are verified before commitment trust
+      - signed request and response require exactly one identical commitment carrier
+      - preview Promise id/scenario/price/SHA-256 must match commitment before createJob
+      - seller reconstructs the deterministic Promise from signed task plus committed price before Outcome Receipt
+      - reconstructed Promise id/SHA-256 must match commitment or fulfillment fails closed
+  task_design:
+    signed_task_prefix: 'SPONDEE_TASK_B64_V1:'
+    encoding: BASE64URL_JSON
+    reason: Preserve Health Factor array structure through SDK claim sanitizer.
+  megafuel_size_guard:
+    sdk_description_cap_bytes: 4096
+    spondee_conservative_cap_bytes: 1600
+    behavior: buildJobDescription must pass the 1600-byte application cap before createJob is attempted.
+  commits:
+    health_factor_compact_commitment: afdab100a598e0a9bfecfc0b75b56f8541d78ec9
+    live_driver_compaction: 109d2cfed109838aa209c4cd6d716dbae1cdca01
+    backend_size_regression: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
+    seller_task_roundtrip_tests: da7cee8a8c688fee102c3782f6d868d9b7efcf60
+    seller_notify_roundtrip_tests: 2c86096949c27b354bef68154e93c54abb016ab9
+validation:
+  backend_ci:
+    run: '33817822355'
+    head: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
+    result: PASS_28_OF_28
+    megafuel_description_budget_test: PASS
+    sanitizer_safe_task_test: PASS
+    compact_commitment_guards: PASS
+    typescript_build: PASS
+    bsc_read_only_probe: PASS
+    artifact_id: '9917173773'
+    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
+  g3_ci:
+    run: '33817846752'
+    head: 2c86096949c27b354bef68154e93c54abb016ab9
+    result: PASS
     ubuntu_verify: PASS
+    deterministic_tests: PASS
+    typescript_build: PASS
+    evidence_export: PASS
+    agent_studio_diagnostics: PASS
     windows_powershell_parse: PASS
     windows_node24_wallet_roundtrip: PASS
-    local_retry_authorized: true
-  ci_discovery_history:
-    - run: '33816337200'
-      result: FAIL_EXPECTED_STALE_FIXTURE_FOUND
-      finding: healthFactor.test.ts still asserted the removed custom spondee_promise field
-      remediation_commit: 6e1b29335fef448da502be08c769821a5415fe27
-    - run: '33816479581'
-      result: FAIL_EXPECTED_STALE_EVIDENCE_FIXTURE_FOUND
-      finding: demoEvidence.ts still constructed deterministic job terms with the removed custom spondee_promise field
-      remediation_commit: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
-  behavior:
-    - unlock existing seller keystore locally only
-    - verify seller address equals canonical Spondee provider
-    - start local Health Factor A2A seller with MegaFuel enabled
-    - create temporary buyer wallet with zero tBNB
-    - execute signed zero-price Health Factor ERC-8183 sequence
-    - verify on-chain deliverable manifest and Outcome Receipt
-    - preserve public hashes/evidence only
-    - destroy temporary buyer wallet after run
-    - stop local seller and clear sensitive environment variables
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: SECOND_ATTEMPT_FAIL_CLOSED_PREWRITE_FIX_CI_VERIFIED_ONE_LOCAL_RETRY_READY
+    live_testnet: THIRD_ATTEMPT_FAIL_CLOSED_PREWRITE_COMPACT_COMMITMENT_FIX_CI_VERIFIED_ONE_NEW_RETRY_READY
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -174,45 +153,16 @@ category_depth:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
 live_activation:
-  status: GAS_PATH_AND_SIGNED_PROMISE_CARRIER_CI_VERIFIED_ONE_LOCAL_RETRY_READY
-  authorization:
-    granted_at: '2026-09-03T09:08:00-04:00'
-    phrase: GO wallet testnet + tBNB
-    scope:
-      - create throwaway BSC-testnet wallet locally
-      - acquire minimal tBNB testnet gas if required
-      - perform first bounded live ERC-8183 testnet activation after local wallet verification
-    exclusions:
-      - no private key, seed phrase, keystore or wallet password in chat
-      - no mainnet activity
-      - no merge to main
-      - no public deployment
-      - no final submission
-  seller_wallet:
-    public_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    network_scope: bsc-testnet-only
-    keystore: encrypted_v3_local_only
-    local_signing_check: PASS
-    password_exposed_to_chat: false
-    private_key_exposed_to_chat: false
-    address_anchored_in_studio_toml: true
-    balance_tbnb: '0'
-    recreate_for_retry: false
-  gas_strategy:
-    primary: MEGAFUEL_PAYMASTER
-    primary_status: PROVEN_WITH_ZERO_BALANCE_CREATE_AND_CANCEL_WRITES
-    fallback: TBNB_SELF_PAY
-    fallback_status: NOT_CURRENTLY_REQUIRED_FOR_NEXT_ATTEMPT
-  live_driver:
-    status: CODED_FAIL_CLOSED_CI_VERIFIED_ONE_LOCAL_RETRY_READY
-    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_SIGNATURE_AND_CURRENCY -> EXTRACT_SIGNED_PROMISE_CARRIER -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
-    buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
-    live_env_gate_default: false
+  status: ONE_NEW_LOCAL_RETRY_READY
+  sequence: PREVIEW_PROMISE -> ENCODE_TASK -> SIGNED_COMMITMENT_QUOTE -> VERIFY_PROVIDER_AND_COMMITMENT -> ENFORCE_DESCRIPTION_BUDGET -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
+  buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
+  live_env_gate_default: false
   retry_policy:
-    authorized_attempts_now: 1
+    previous_retry_consumed_by_third_attempt: true
+    newly_authorized_attempts_now: 1
+    authority_basis: EXISTING_HUMAN_TESTNET_GO_PLUS_CI_VERIFIED_DETERMINISTIC_REMEDIATION
     blind_retry_after_failure: false
-    success_evidence_required: COMPLETE_PUBLIC_PASS_BLOCK
-    failure_evidence_required: NEW_PUBLIC_FAILURE_V1_BLOCK_ONLY
+    tBNB_before_retry: DO_NOT_ACQUIRE
   not_yet_claimed:
     - full createJob/registerJob/setBudget(0)/fund(0) Health Factor sequence
     - provider on-chain submit transaction
@@ -220,5 +170,5 @@ live_activation:
     - observed Agent Advantage
     - four deployed live reference agents
 next_action:
-  primary: Human performs exactly one local rerun of scripts/g3-megafuel-live-e2e.ps1 after git pull, reusing the existing encrypted seller wallet and entering its password only into the masked local prompt. Do not acquire tBNB first. Return only the public PASS block or new failure.v1 block.
-next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+  primary: Human performs exactly one new local rerun of scripts/g3-megafuel-live-e2e.ps1 after git pull, reusing the existing encrypted seller wallet. Enter the seller password only into the masked prompt. Do not acquire tBNB first. Return the complete public PASS block or new failure.v1 block and stop.
+next_gate: SPONDEE_G3_MEGAFUEL_COMPACT_COMMITMENT_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED

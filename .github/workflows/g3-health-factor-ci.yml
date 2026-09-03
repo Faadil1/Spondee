@@ -2,14 +2,17 @@ name: G3 Health Factor CI
 
 on:
   push:
-    branches: ['build/g3-health-factor']
+    branches: ['build/g3-health-factor', 'build/backend-complete']
     paths:
       - 'reference-agents/health-factor/**'
+      - 'scripts/g3-megafuel-live-e2e.ps1'
       - '.github/workflows/g3-health-factor-ci.yml'
   pull_request:
     branches: [main]
     paths:
       - 'reference-agents/health-factor/**'
+      - 'scripts/g3-megafuel-live-e2e.ps1'
+      - '.github/workflows/g3-health-factor-ci.yml'
 
 permissions:
   contents: read
@@ -25,22 +28,27 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Parse local helper with Windows PowerShell
+      - name: Parse local PowerShell helpers with Windows PowerShell
         shell: powershell
         run: |
-          $path = 'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1'
-          $tokens = $null
-          $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path $path),
-            [ref]$tokens,
-            [ref]$errors
-          ) | Out-Null
-          if ($errors.Count -gt 0) {
-            $errors | ForEach-Object { Write-Error $_.Message }
-            exit 1
+          $paths = @(
+            'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1',
+            'scripts/g3-megafuel-live-e2e.ps1'
+          )
+          foreach ($path in $paths) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $path),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+              exit 1
+            }
+            Write-Host "$path syntax: PASS"
           }
-          Write-Host 'Windows PowerShell wallet helper syntax: PASS'
 
       - name: Install frozen workspace dependencies with the same pnpm route used locally
         shell: powershell
@@ -82,22 +90,27 @@ jobs:
         working-directory: reference-agents/health-factor
         run: pnpm install --frozen-lockfile
 
-      - name: Validate local PowerShell wallet helper syntax
+      - name: Validate local PowerShell helpers syntax
         shell: pwsh
         run: |
-          $path = 'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1'
-          $tokens = $null
-          $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path $path),
-            [ref]$tokens,
-            [ref]$errors
-          ) | Out-Null
-          if ($errors.Count -gt 0) {
-            $errors | ForEach-Object { Write-Error $_.Message }
-            exit 1
+          $paths = @(
+            'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1',
+            'scripts/g3-megafuel-live-e2e.ps1'
+          )
+          foreach ($path in $paths) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $path),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+              exit 1
+            }
+            Write-Host "$path syntax: PASS"
           }
-          Write-Host 'PowerShell wallet helper syntax: PASS'
 
       - name: Run deterministic Spondee tests
         working-directory: reference-agents/health-factor/app/agent

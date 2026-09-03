@@ -31,11 +31,11 @@ claims:
   - id: CLM-008
     claim: The G3 Health Factor Promise Card is bound into ERC-8183 signable terms before signing.
     truth_class: FACT
-    status: VERIFIED_WITH_INJECTED_TEST_SIGNER
+    status: VERIFIED_CI_WITH_SDK_PRESERVED_SUCCESS_CRITERIA_CARRIER
   - id: CLM-009
     claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
     truth_class: FACT
-    status: VERIFIED_WITH_INJECTED_TEST_SIGNER
+    status: VERIFIED_CI_WITH_SIGNED_PROMISE_CARRIER_FIX
   - id: CLM-010
     claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
     truth_class: FACT
@@ -59,11 +59,15 @@ claims:
   - id: CLM-015
     claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
     truth_class: FACT
-    status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_FULL_SELLER_E2E_UNEXECUTED
+    status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_FULL_SELLER_E2E_PENDING
   - id: CLM-016
     claim: MegaFuel can sponsor ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
     truth_class: FACT
     status: VERIFIED_RUNTIME_ZERO_BALANCE_CREATE_AND_CANCEL
+  - id: CLM-017
+    claim: The Spondee Promise Card survives official SDK negotiation serialization inside success_criteria and is accepted by the buyer only after provider/chain/Commerce signature verification.
+    truth_class: FACT
+    status: VERIFIED_CI_LIVE_CHAIN_E2E_PENDING
 
 evidence:
   - id: EV-001
@@ -164,6 +168,30 @@ evidence:
       - ephemeral non-persisted key handling
       - tBNB not required for the next paymaster-first attempt
     status: VERIFIED
+  - id: EV-011
+    type: signed_promise_carrier_backend_regression_ci
+    workflow_run_id: 33816310524
+    head_commit: 58e1df6e80debd6b9aace3d07d8f3cfd73183aad
+    supports:
+      - official NegotiationResult envelope without provider_address
+      - request/response success_criteria Promise carrier decoding
+      - duplicate/missing/mismatched carrier fail-closed behavior
+      - simulation Receipt guardrails
+    status: VERIFIED_PASS
+  - id: EV-012
+    type: signed_promise_carrier_g3_ci
+    workflow_run_id: 33816544907
+    head_commit: d64034bf9d1cd3b1a21a2be7c289f1acad667fc3
+    supports:
+      - seller Promise carrier inside SDK-preserved success_criteria
+      - deterministic Outcome Receipt recovered from job terms
+      - nine deterministic G3 tests
+      - strict TypeScript build
+      - reproducible Promise/Receipt evidence export
+      - Agent Studio diagnostics
+      - Windows PowerShell syntax
+      - Windows Node 24 encrypted BNB SDK wallet create/reload roundtrip
+    status: VERIFIED_PASS
 
 verification_events:
   - id: VER-001
@@ -218,6 +246,26 @@ verification_events:
     event: MegaFuel runtime smoke used an ephemeral client with zero wei before and after to mine ERC-8183 createJob and cancelOpen transactions successfully.
     result: PASS_ZERO_BALANCE_SPONSORSHIP_PROVEN
     evidence: GitHub Actions run 33802027942 / artifact 9911428783
+  - id: VER-012
+    at: '2026-09-03T22:37:15.505Z'
+    event: Second full local Health Factor attempt failed before createJob because the official SDK removed custom terms.spondee_promise from the signed quote.
+    result: FAIL_CLOSED_PRE_WRITE_ZERO_TRANSACTIONS
+    evidence: public failure.v1 supplied by human local runtime
+  - id: VER-013
+    at: '2026-09-03T23:09:00Z'
+    event: Backend regression CI verified the official quote envelope and fail-closed signed Promise carrier decoder behavior.
+    result: PASS
+    evidence: GitHub Actions run 33816310524
+  - id: VER-014
+    at: '2026-09-03T23:12:31Z'
+    event: G3 Ubuntu verification passed deterministic tests, TypeScript build, Promise/Receipt evidence export and Agent Studio diagnostics after all stale custom-term fixtures were removed.
+    result: PASS
+    evidence: GitHub Actions run 33816544907
+  - id: VER-015
+    at: '2026-09-03T23:13:11Z'
+    event: G3 Windows validation passed PowerShell parsing and encrypted BNB SDK wallet create/reload roundtrip on Node 24.
+    result: PASS
+    evidence: GitHub Actions run 33816544907
 
 contradictions:
   - id: CON-001
@@ -225,3 +273,8 @@ contradictions:
     observation: Earlier documentation/signals were inconsistent about whether tBNB was required for general ERC-8183 operations versus paymaster coverage.
     handling: Runtime evidence takes precedence. GitHub Actions run 33802027942 proved createJob and cancelOpen from a zero-tBNB wallet with paymaster enabled; use MegaFuel first and retain tBNB only as a fallback if relay availability degrades.
     status: RESOLVED_BY_RUNTIME_PROBE
+  - id: CON-002
+    topic: custom_negotiation_term_survival
+    observation: Earlier injected signer tests suggested terms.spondee_promise was available to fulfillment, but the official SDK TermSpecification reconstruction drops arbitrary custom term keys before the signed NegotiationResult is serialized.
+    handling: Carry the versioned Promise Card in success_criteria, require exact request/response carrier equality, verify the provider signature before trusting it, and make all deterministic fixtures use the same protocol-preserved carrier.
+    status: RESOLVED_BY_PROTOCOL_CONTRACT_AND_CI

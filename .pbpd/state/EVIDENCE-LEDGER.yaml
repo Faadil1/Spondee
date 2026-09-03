@@ -49,7 +49,7 @@ evidence:
     supports:
       - product requirements
       - evidence burden
-    status: PRESENT
+    status: PRD_READY
   - id: EV-004
     type: source_decision
     reference: Faadil1/hackathon-opportunity-intelligence#55
@@ -84,6 +84,15 @@ evidence:
     supports:
       - PRD_READY transition
     status: PRESENT
+  - id: EV-008
+    type: spec_kit_derived_execution_bundle
+    reference: Faadil1/spec-kit-orchestration/projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml
+    supports:
+      - G3 specification readiness
+      - G3 implementation plan
+      - G3 task decomposition
+      - living PRD reconciliation protocol
+    status: PRESENT_DERIVED_NOT_PRODUCT_EVIDENCE
 
 verification_events:
   - id: VER-001
@@ -103,5 +112,10 @@ verification_events:
     at: '2026-09-03T07:53:12-04:00'
     event: bag doctor completed with exit code 0; warnings classified as expected pre-onboarding gaps.
     result: PASS_WITH_WARNINGS
+  - id: VER-005
+    at: '2026-09-03T18:43:00-04:00'
+    event: PRD document metadata/footer reconciled to the existing PRD_READY canonical state and first Spec Kit pilot bundle registered.
+    result: PASS_CANONICAL_COHERENCE
+    evidence: .pbpd/state/PROJECT-STATE.yaml
 
 contradictions: []

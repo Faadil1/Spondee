@@ -1,0 +1,108 @@
+handover:
+  protocol_version: 1
+  project_id: bnb_agent_studio_build_the_era_2026
+  project_name: Spondee
+  date: 2026-09-03
+  source_of_truth: GITHUB
+  repository: Faadil1/Spondee
+  branch: main
+
+  resume_rule: >-
+    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, AUTHORITY-STATE.yaml, the current living PRD, DECISION-LOG.yaml,
+    REQUIREMENTS-LEDGER.yaml, EVIDENCE-LEDGER.yaml, RISK-REGISTER.yaml and ACTIVITY-TRACE.yaml. For Spec Kit execution context, read
+    Faadil1/spec-kit-orchestration/state/CURRENT.yaml, its HANDOVER, then projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml.
+    Canonical GitHub state outranks chat memory.
+
+  current_milestone: PRD_READY__SPEC_KIT_FIRST_PILOT_SPEC_PLAN_TASKS_READY
+  lifecycle_status: BUILD_READY__G3_IMPLEMENTATION_NOT_YET_EXECUTED
+
+  authority:
+    project: PROJECT_AUTHORIZED
+    production_owner: PBPD
+    spec_kit_authority: NONE
+    design_assurance: TRACE_WHEN_ROUTED
+    terminal_assurance: PROJECT_FINISHER
+    protected_submission: HUMAN
+    meaningful_mainnet_or_user_capital: HUMAN_ONLY
+    material_paid_spend: HUMAN_ONLY
+
+  product:
+    concept: Calibrated Outcome Marketplace + Intervention Advantage
+    tagline: Agents, measured by what they deliver.
+    primary_path: LAND -> CATEGORY -> AGENT -> PROMISE_CARD -> BOUNDED_ACTIVATE -> OUTCOME_RECEIPT
+    hero_vertical: Health Factor Monitoring
+    required_categories:
+      - Rebalancing
+      - Grid Trading
+      - Yield Optimisation
+      - Health Factor Monitoring
+
+  prd:
+    path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
+    version: '0.1'
+    status: PRD_READY
+    living_product_source: true
+    validation: work/PRD-VALIDATION-001.md
+    ready_declaration: work/PRD-READY-DECLARATION.md
+    coherence_reconciliation_2026_09_03: stale PRD_DRAFTED metadata/footer corrected; no product-intent expansion
+
+  runtime_preflight:
+    status: PASS_WITH_EXPECTED_ONBOARDING_GAPS
+    workflow_run_id: 33752070626
+    evidence: evidence/runtime-preflight-001/README.md
+    verified:
+      - Node 22
+      - pnpm 10
+      - '@bnbagent/studio-cli 0.0.13'
+      - BSC testnet chain 0x61
+      - bag init spondeehealth
+      - bag scan
+      - bag doctor
+    pending_for_G3:
+      - secure throwaway/testnet wallet onboarding
+      - selected LLM provider configuration
+      - ERC-8183 max_price configuration
+      - Bun 1.3+ if deployment path needs it
+      - local bag dev smoke
+
+  spec_kit_first_pilot:
+    status: ACTIVE_SPEC_PLAN_TASKS_READY_FOR_PBPD_IMPLEMENTATION
+    human_go: true
+    orchestration_repository: Faadil1/spec-kit-orchestration
+    execution: projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml
+    constitution: projects/bnb_agent_studio_build_the_era_2026/constitution.md
+    specification: projects/bnb_agent_studio_build_the_era_2026/spec.md
+    plan: projects/bnb_agent_studio_build_the_era_2026/plan.md
+    tasks: projects/bnb_agent_studio_build_the_era_2026/tasks.md
+    convergence: projects/bnb_agent_studio_build_the_era_2026/convergence.md
+    living_prd_loop: CAPTURE -> CLASSIFY -> UPDATE_PRODUCT_SOURCE_IF_REQUIRED -> RECONCILE -> CONTINUE
+
+  G3_pass_definition:
+    - one Spondee Health Factor reference-agent path runs locally/BSC-testnet-compatibly
+    - task-specific Promise Card is persisted before activation
+    - activation is visibly bounded
+    - measured result produces Outcome Receipt bound to original promise
+    - warning/event/response timing evidence is preserved where applicable
+    - negative path proves failures cannot fabricate success
+    - discoveries are captured/classified and product changes are reconciled through living PRD before drift
+
+  unresolved_G3:
+    - exact Health Factor protocol/scenario
+    - exact Promise Card field provenance from 8004scan versus task-time agent output
+    - whether Altana fits without jeopardizing core path
+    - later Yield Optimisation metric set
+
+  scope_guards:
+    - do_not_expand_to_optional_sponsor_depth_before_G3_pass
+    - do_not_present_synthetic_performance_as_observed
+    - do_not_claim_guaranteed_profit_safety_or_liquidation_prevention
+    - do_not_use_meaningful_mainnet_user_capital_without_human_GO
+    - do_not_allow_code_to_become_de_facto_product_source
+
+  exact_next_gate: SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT
+  exact_next_owner: PBPD
+  exact_next_action: >-
+    Execute tasks T003-T016 from the Spondee Spec Kit pilot task graph: reproduce the reference-agent workspace, complete secure BSC-testnet
+    onboarding and bag dev smoke, freeze a reproducible Health Factor scenario, implement/persist Promise Card before bounded activation, produce the
+    first Outcome Receipt and negative-path evidence, update PBPD evidence/requirements/activity state, capture/classify discoveries, revise the PRD
+    first if product intent changes, then run Spec Kit convergence. Stop before protected mainnet/spend/submission actions.

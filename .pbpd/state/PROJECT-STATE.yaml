@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R003
+revision: STATE-R011-G3-LIVE-QUOTE-PARSER-FIXED
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -7,8 +7,8 @@ authority:
   project_authority: PROJECT_AUTHORIZED
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
-  phase: BUILD_READY
-  status: PRD_READY
+  phase: CONSEQUENTIAL_BUILD
+  status: G3_MEGAFUEL_LIVE_E2E_RETRY_READY_AFTER_FAIL_CLOSED_PREWRITE_FIX
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -24,17 +24,146 @@ product:
 prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
-  validation_artifact: work/PRD-VALIDATION-001.md
-  ready_declaration: work/PRD-READY-DECLARATION.md
-  validation_status: PASS
   ready_status: PRD_READY
-prebuild_recon:
-  status: PASS_FOR_ARCHITECTURE
-  artifact: references/EXTERNAL-RECON-2026-09-03.md
-runtime_preflight:
-  status: PASS_WITH_EXPECTED_ONBOARDING_GAPS
-  workflow_run_id: 33752070626
-  evidence: evidence/runtime-preflight-001/README.md
+build:
+  active_branch: build/backend-complete
+  parent_branch: build/g3-health-factor
+  merge_to_main: NOT_AUTHORIZED
+  backend_status: CI_VERIFIED
+  backend_path: backend
+  backend_evidence: evidence/backend-ci-001/README.md
+  evidence_class: SIMULATION_PLUS_RUNTIME_INFRASTRUCTURE_PROOF_UNTIL_HEALTH_FACTOR_LIVE_E2E
+verified_backend_properties:
+  - shared Task -> Promise Card -> Activation -> Outcome Receipt contract exists
+  - Health Factor Monitoring deterministic backend path passes
+  - Grid Trading deterministic backend path passes without PnL claims
+  - Rebalancing deterministic backend path passes with bounded reset timing/cost
+  - Yield Optimisation deterministic backend path passes with declared risk ceiling
+  - confidence remains null/UNSCORED until observed calibration exists
+  - all four simulation receipts are excluded from observed Agent Advantage
+  - marketplace category and agent APIs pass integration tests
+  - 8004scan/ERC-8004 data is constrained to identity/capability substrate
+  - memory store supports CI and local demo
+  - PostgreSQL durable store and migration are implemented
+  - evidence ingestion preserves observed vs simulation truth class
+  - Agent Advantage report requires explicit observed baseline pairs
+  - calibration summary ignores simulation evidence
+  - signed zero-price ERC-8183 buyer driver is implemented and fail-closed
+  - BSC Testnet chain ID 97 read probe passes
+  - AgenticCommerce contract code is present on configured BSC Testnet address
+  - EvaluatorRouter contract code is present on configured BSC Testnet address
+  - OptimisticPolicy contract code is present on configured BSC Testnet address
+  - strict TypeScript backend build passes
+  - live deliverable verification preserves promise_id/scenario_id and simulation truth class
+  - official BNB SDK NegotiationResult envelope is accepted without a non-standard provider_address field
+  - provider identity remains cryptographically verified against the canonical Spondee provider via verifyQuoteSignature
+megafuel:
+  status: RUNTIME_PROVEN_ZERO_BALANCE_ERC8183_WRITES
+  evidence: evidence/megafuel-smoke-001/README.md
+  workflow_run: '33802027942'
+  artifact_id: '9911428783'
+  artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+  network: bsc-testnet
+  chain_id: 97
+  ephemeral_client: '0x6582Fe02B03a4E345A4e7597F4B1264d044f3026'
+  balance_before_wei: '0'
+  balance_after_wei: '0'
+  job_id: '942'
+  create_job_tx: '0x1017e9f592bd84e9d433ad311f473e2e92bc24260c7a6d7e464970ae1f0f6f85'
+  cancel_open_tx: '0x893899a7d4c8c5b905765e2f3aada4be82cf3e0f8096f5c5fe73a8589616337c'
+  create_status: 1
+  cancel_status: 1
+  private_key_persisted: false
+  user_funds_used: false
+  operational_rule: MegaFuel is primary for bounded BSC-testnet ERC-8183 writes; tBNB remains fallback if the relay is unavailable.
+live_runner:
+  status: RETRY_READY_AFTER_PROTOCOL_SHAPE_FIX
+  powershell: scripts/g3-megafuel-live-e2e.ps1
+  backend_entrypoint: backend/src/live-g3.ts
+  canonical_task: reference-agents/health-factor/demo/health-factor-scenario.json
+  first_attempt:
+    at: '2026-09-03T20:39:58Z'
+    result: FAIL_CLOSED_PRE_WRITE
+    buyer_address: '0x2D6B83193f9Dad830A7ACF4a8210D6F4A13c8601'
+    progress_events: 0
+    transaction_count: 0
+    error: seller returned an invalid ERC-8183 quote envelope
+    root_cause: Buyer incorrectly required provider_address in the seller NegotiationResult envelope even though official @bnbagent/sdk NegotiationResult.toDict does not emit that field.
+    megafuel_failure: false
+    seller_signing_failure: false
+    user_funds_used: false
+  fix:
+    commit: '7c6e304342b951decf6f165940724c09907157ed'
+    behavior: Validate the official SDK envelope shape and prove provider identity cryptographically with verifyQuoteSignature(expectedProvider) instead of trusting a non-standard provider_address field.
+    backend_ci_run: '33806097273'
+    backend_ci: PASS
+    g3_ci_run: '33806096975'
+    g3_ci: PASS
+    windows_wallet_roundtrip: PASS
+  behavior:
+    - unlock existing seller keystore locally only
+    - verify seller address equals canonical Spondee provider
+    - start local Health Factor A2A seller with MegaFuel enabled
+    - create temporary buyer wallet with zero tBNB
+    - execute signed zero-price Health Factor ERC-8183 sequence
+    - verify on-chain deliverable manifest and Outcome Receipt
+    - preserve public hashes/evidence only
+    - destroy temporary buyer wallet after run
+    - stop local seller and clear sensitive environment variables
+category_depth:
+  health_factor:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: AGENT_STUDIO_SPECIALIZED
+    live_testnet: FIRST_ATTEMPT_FAIL_CLOSED_PREWRITE_PROTOCOL_FIX_VERIFIED_RETRY_READY
+  grid:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: NOT_YET_DEPLOYED_LIVE
+  rebalancing:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: NOT_YET_DEPLOYED_LIVE
+  yield:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: NOT_YET_DEPLOYED_LIVE
+live_activation:
+  status: GAS_PATH_PROVEN_RETRY_READY_NO_LIVE_JOB_YET
+  authorization:
+    granted_at: '2026-09-03T09:08:00-04:00'
+    phrase: GO wallet testnet + tBNB
+    scope:
+      - create throwaway BSC-testnet wallet locally
+      - acquire minimal tBNB testnet gas if required
+      - perform first bounded live ERC-8183 testnet activation after local wallet verification
+    exclusions:
+      - no private key, seed phrase, keystore or wallet password in chat
+      - no mainnet activity
+      - no merge to main
+      - no public deployment
+      - no final submission
+  seller_wallet:
+    public_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    network_scope: bsc-testnet-only
+    keystore: encrypted_v3_local_only
+    local_signing_check: PASS
+    password_exposed_to_chat: false
+    private_key_exposed_to_chat: false
+    address_anchored_in_studio_toml: true
+    balance_tbnb: '0'
+  gas_strategy:
+    primary: MEGAFUEL_PAYMASTER
+    primary_status: PROVEN_WITH_ZERO_BALANCE_CREATE_AND_CANCEL_WRITES
+    fallback: TBNB_SELF_PAY
+    fallback_status: NOT_CURRENTLY_REQUIRED_FOR_NEXT_ATTEMPT
+  live_driver:
+    status: CODED_FAIL_CLOSED_PROTOCOL_SHAPE_FIX_CI_VERIFIED_RETRY_READY
+    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_SIGNATURE_AND_CURRENCY -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
+    buyer_strategy: EPHEMERAL_ZERO_BALANCE_LOCAL_WALLET_DESTROY_AFTER_RUN
+    live_env_gate_default: false
+  not_yet_claimed:
+    - full createJob/registerJob/setBudget(0)/fund(0) Health Factor sequence
+    - provider on-chain submit transaction
+    - live verified Outcome Receipt/deliverable evidence
+    - observed Agent Advantage
+    - four deployed live reference agents
 next_action:
-  primary: Begin SPONDEE_G3 vertical slice with the Health Factor reference agent: secure testnet wallet onboarding, local bag dev smoke, Promise Card contract, bounded activation and first Outcome Receipt evidence.
-next_gate: SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT
+  primary: On the user's Windows machine, git pull build/backend-complete and rerun scripts/g3-megafuel-live-e2e.ps1. Enter the existing seller wallet password only into the masked local prompt. Preserve and return only public PASS/fail-closed evidence.
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED

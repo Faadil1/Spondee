@@ -1,0 +1,175 @@
+name: G3 Health Factor CI
+
+on:
+  push:
+    branches: ['build/g3-health-factor', 'build/backend-complete']
+    paths:
+      - 'reference-agents/health-factor/**'
+      - 'scripts/g3-megafuel-live-e2e.ps1'
+      - '.github/workflows/g3-health-factor-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'reference-agents/health-factor/**'
+      - 'scripts/g3-megafuel-live-e2e.ps1'
+      - '.github/workflows/g3-health-factor-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  windows-wallet-bootstrap:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Parse local PowerShell helpers with Windows PowerShell
+        shell: powershell
+        run: |
+          $paths = @(
+            'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1',
+            'scripts/g3-megafuel-live-e2e.ps1'
+          )
+          foreach ($path in $paths) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $path),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+              exit 1
+            }
+            Write-Host "$path syntax: PASS"
+          }
+
+      - name: Install frozen workspace dependencies with the same pnpm route used locally
+        shell: powershell
+        working-directory: reference-agents/health-factor
+        run: |
+          npx --yes pnpm@10.24.0 install --frozen-lockfile
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Create and reload encrypted BNB SDK wallet on Windows Node 24
+        shell: powershell
+        working-directory: reference-agents/health-factor/app/agent
+        env:
+          WALLET_PASSWORD: Spondee-CI-Windows-Only-Password-2026
+          SPONDEE_WALLETS_DIR: ${{ runner.temp }}\spondee-wallets
+        run: |
+          npx --yes pnpm@10.24.0 wallet:create
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npx --yes pnpm@10.24.0 wallet:verify
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Write-Host 'Windows Node 24 CLI-free BNB SDK wallet roundtrip: PASS'
+
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable pnpm
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.24.0 --activate
+
+      - name: Install workspace dependencies
+        working-directory: reference-agents/health-factor
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate local PowerShell helpers syntax
+        shell: pwsh
+        run: |
+          $paths = @(
+            'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1',
+            'scripts/g3-megafuel-live-e2e.ps1'
+          )
+          foreach ($path in $paths) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $path),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+              exit 1
+            }
+            Write-Host "$path syntax: PASS"
+          }
+
+      - name: Run deterministic Spondee tests
+        working-directory: reference-agents/health-factor/app/agent
+        run: pnpm test
+
+      - name: TypeScript build
+        working-directory: reference-agents/health-factor/app/agent
+        run: pnpm build
+
+      - name: Export reproducible Promise and Receipt evidence
+        working-directory: reference-agents/health-factor/app/agent
+        run: pnpm demo:evidence
+
+      - name: Upload deterministic demo evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-g3-health-factor-demo-evidence
+          path: reference-agents/health-factor/demo-output/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Report anchored BSC-testnet wallet balance
+        shell: bash
+        env:
+          SPONDEE_WALLET_ADDRESS: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+          BSC_TESTNET_RPC: 'https://bsc-testnet-dataseed.bnbchain.org'
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          const address = process.env.SPONDEE_WALLET_ADDRESS;
+          const rpc = process.env.BSC_TESTNET_RPC;
+          const response = await fetch(rpc, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getBalance', params: [address, 'latest'] }),
+          });
+          if (!response.ok) throw new Error(`RPC HTTP ${response.status}`);
+          const payload = await response.json();
+          if (payload.error) throw new Error(JSON.stringify(payload.error));
+          const wei = BigInt(payload.result);
+          const whole = wei / 10n ** 18n;
+          const fraction = (wei % 10n ** 18n).toString().padStart(18, '0').replace(/0+$/, '');
+          const tbnb = fraction ? `${whole}.${fraction}` : `${whole}`;
+          console.log(`SPONDEE_PUBLIC_WALLET=${address}`);
+          console.log(`BSC_TESTNET_BALANCE_WEI=${wei}`);
+          console.log(`BSC_TESTNET_BALANCE_TBNB=${tbnb}`);
+          console.log(`BSC_TESTNET_FUNDED=${wei > 0n ? 'true' : 'false'}`);
+          NODE
+
+      - name: Agent Studio project diagnostics without global CLI
+        working-directory: reference-agents/health-factor/app/agent
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const toml = readFileSync('studio.toml', 'utf8');
+          if (!toml.includes('default = "bsc-testnet"')) throw new Error('bsc-testnet not configured');
+          if (!toml.includes('price = "0"')) throw new Error('G3 ERC-8183 price must remain zero');
+          if (!toml.includes('address = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8"')) throw new Error('verified G3 wallet address not anchored');
+          console.log('Studio config safety checks: PASS');
+          NODE

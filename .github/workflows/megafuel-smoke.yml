@@ -1,0 +1,60 @@
+name: Spondee MegaFuel Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/backend-complete']
+    paths:
+      - 'backend/src/megafuel-smoke.ts'
+      - '.github/workflows/megafuel-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  megafuel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+
+      - name: Execute zero-balance MegaFuel ERC-8183 smoke
+        working-directory: backend
+        env:
+          BNBAGENT_USE_PAYMASTER: '1'
+        run: |
+          set -euo pipefail
+          node --import tsx src/megafuel-smoke.ts | tee megafuel-smoke.json
+
+      - name: Verify proof boundary
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const proof = JSON.parse(readFileSync('megafuel-smoke.json', 'utf8'));
+          if (proof.conclusion !== 'MEGAFUEL_ERC8183_ZERO_BALANCE_SPONSORSHIP_PASS') throw new Error('MegaFuel PASS conclusion missing');
+          if (proof.chain_id !== 97) throw new Error('wrong chain');
+          if (proof.balance_before_wei !== '0' || proof.balance_after_wei !== '0') throw new Error('wallet was not zero-balance throughout');
+          if (proof.create_status !== 1 || proof.cancel_status !== 1) throw new Error('one or more writes failed');
+          if (!/^0x[a-fA-F0-9]{64}$/.test(proof.create_job_tx)) throw new Error('create tx hash missing');
+          if (!/^0x[a-fA-F0-9]{64}$/.test(proof.cancel_open_tx)) throw new Error('cancel tx hash missing');
+          if (proof.private_key_persisted !== false || proof.private_key_printed !== false) throw new Error('key handling boundary violated');
+          console.log('MegaFuel zero-balance sponsorship proof: PASS');
+          NODE
+
+      - name: Upload MegaFuel evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-megafuel-smoke-evidence
+          path: backend/megafuel-smoke.json
+          if-no-files-found: error
+          retention-days: 14

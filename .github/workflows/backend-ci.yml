@@ -1,0 +1,90 @@
+name: Spondee Backend CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/backend-complete']
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+
+      - name: Unit and API integration tests
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+
+      - name: Four-category Promise/Receipt smoke
+        working-directory: backend
+        run: npm run --silent smoke > backend-smoke.json
+
+      - name: Verify smoke claim boundary
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const report = JSON.parse(readFileSync('backend-smoke.json', 'utf8'));
+          if (report.live_write_attempted !== false) throw new Error('smoke attempted live write');
+          if (report.category_count !== 4) throw new Error('all four categories are required');
+          for (const row of report.rows) {
+            if (row.confidence !== null) throw new Error('simulation confidence must remain null');
+            if (row.service_price !== '0') throw new Error('G3 service price must remain zero');
+            if (row.evidence_class !== 'SIMULATION') throw new Error('smoke must remain simulation evidence');
+            if (row.observed_advantage_eligible !== false) throw new Error('simulation cannot count as observed Agent Advantage');
+          }
+          console.log('Spondee four-category claim boundary: PASS');
+          NODE
+
+      - name: Read-only BSC testnet and ERC-8183 contract probe
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --input-type=module - <<'NODE' | tee bsc-readiness.json
+          import { publicTestnetReadiness } from './src/erc8183.ts';
+          const readiness = await publicTestnetReadiness();
+          if (readiness.chain_id !== 97) throw new Error(`expected chain 97, got ${readiness.chain_id}`);
+          if (!readiness.contracts.commerce_has_code) throw new Error('AgenticCommerce code missing');
+          if (!readiness.contracts.evaluator_router_has_code) throw new Error('EvaluatorRouter code missing');
+          if (!readiness.contracts.optimistic_policy_has_code) throw new Error('OptimisticPolicy code missing');
+          if (readiness.live_write_attempted !== false) throw new Error('readiness probe attempted a write');
+          console.log(JSON.stringify(readiness, null, 2));
+          NODE
+
+      - name: Upload backend evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-backend-ci-evidence
+          path: |
+            backend/backend-smoke.json
+            backend/bsc-readiness.json
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,68 @@
+[project]
+name = "spondeehealth-agent"
+
+[stack]
+# G3 keeps only the surfaces required for the BNB marketplace vertical.
+# A2A exposes preview/negotiate/notify_funded; MCP remains read-only support.
+protocols = ["A2A","MCP"]
+runtime = "agentcore"
+
+[network]
+default = "bsc-testnet"
+
+[deploy]
+# Deployment always requires an explicit provider choice. No silent production default.
+destination = "platform"
+platform_artifact = "zip"
+
+[wallet]
+# Throwaway BSC-testnet signer only. The encrypted keystore lives outside
+# app/agent and must never be committed. WALLET_PASSWORD remains external.
+kind = "evm-local"
+signer = "local"
+keystore_dir = "../../.studio/wallets"
+address = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8"
+
+[llm]
+# The Spondee Health Factor path is deterministic and does not need an LLM.
+# Keep the generated provider config for generic compatibility, but no automatic
+# allocation/top-up is permitted in G3.
+provider = "pieverse-llm"
+model = "auto/free"
+
+[llm.pieverse]
+network = "bsc-mainnet"
+initial_allocation_usd = 0
+
+[llm.auto_renew]
+enabled = false
+min_balance_usd = 0.01
+topup_chunk_usd = 1.0
+max_topup_per_day_usd = 0.0
+check_interval_seconds = 60
+
+[payments.erc8183]
+# G3 activation is intentionally FREE. The buyer may still need testnet gas
+# for on-chain job actions, but Spondee charges no service token amount.
+currency = "0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565"
+price = "0"
+min_price = "0"
+max_price = "0"
+quote_ttl_seconds = 900
+default_estimated_completion_seconds = 120
+poll_interval_seconds = 30
+auto_settle = false
+
+[storage]
+# Local only during G3. Public deployment must switch to supported durable
+# storage during the later deployment-readiness gate.
+kind = "local"
+
+[payments.b402_seller]
+# Not needed for the G3 Promise -> Activate -> Outcome Receipt proof.
+# Leave off until the core marketplace path is verified.
+enabled = false
+price_usd = "0"
+assets = ["U"]
+pay_to = ""
+work_timeout_seconds = 60

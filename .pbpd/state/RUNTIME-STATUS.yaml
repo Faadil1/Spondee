@@ -1,5 +1,5 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: PASS_WITH_EXPECTED_ONBOARDING_GAPS
+preflight_status: BACKEND_CORE_PASS_MEGAFUEL_RUNTIME_PROVEN_HEALTH_FACTOR_E2E_PENDING
 capabilities:
   github_repository_access: AVAILABLE
   web_research: AVAILABLE
@@ -7,43 +7,110 @@ capabilities:
   consequential_product_build: ALLOWED_AFTER_PRD_READY
   node_22: PASS
   pnpm_10: PASS
-  bnb_agent_studio_cli: PASS
+  bnb_agent_studio_cli: HISTORICAL_PREFLIGHT_PASS_CURRENT_NPM_PUBLICATION_DRIFT
+  bnb_agent_sdk_wallet_provider: PASS_WINDOWS_NODE24_AND_GITHUB_ACTIONS
   bsc_testnet_rpc: PASS
   reference_agent_scaffold: PASS
-  bag_scan: PASS
-  bag_doctor: PASS
+  health_factor_specialization: PASS_SIMULATION_CI
+  complete_backend_ci: PASS_18_OF_18
+  four_category_backend_smoke: PASS
+  postgres_persistence_code: PRESENT_NOT_DEPLOYED
+  erc8183_live_driver: CODED_FAIL_CLOSED_FULL_E2E_NOT_EXECUTED
+  megafuel_erc8183_paymaster: PASS_ZERO_BALANCE_CREATE_AND_CANCEL_WRITES
 connectors:
   github:
     status: CONNECTED
     repository: Faadil1/Spondee
   bnb_external_runtime:
-    status: PREFLIGHT_PASS
-    workflow_run_id: 33752070626
+    status: GAS_PATH_PROVEN_FULL_HEALTH_FACTOR_E2E_PENDING
+    historical_preflight_run_id: 33752070626
+    backend_ci_run_id: 33801590780
+    megafuel_smoke_run_id: 33802027942
     cli_package: '@bnbagent/studio-cli'
-    cli_version: 0.0.13
+    cli_historical_version: 0.0.13
+    cli_current_note: Global CLI installation currently encounters upstream npm publication drift; current backend and wallet path use the pinned @bnbagent/sdk instead of depending on global bag installation.
+    sdk_package: '@bnbagent/sdk'
+    sdk_version: 0.5.5
     network: bsc-testnet
-    chain_id_hex: '0x61'
-    scaffold_probe: spondeehealth
-    doctor_exit_code: 0
-    evidence: evidence/runtime-preflight-001/README.md
-claude_code:
-  status: NOT_REQUIRED_FOR_CI_PREFLIGHT
-  workspace: null
-expected_onboarding_gaps:
-  - Create a throwaway/testnet agent wallet with WALLET_PASSWORD handled outside chat/argv.
-  - Activate/configure the selected LLM provider before live local fulfill execution.
-  - Set ERC-8183 max_price before going live.
-  - Install Bun 1.3+ before deployment.
-  - Configure B402 merchant credentials only if paid x402 is used.
-  - Run bag dev local smoke and preserve first live vertical evidence during G3.
+    chain_id: 97
+    seller_provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    seller_balance_wei: '0'
+    agentic_commerce_code: PRESENT
+    evaluator_router_code: PRESENT
+    optimistic_policy_code: PRESENT
+    megafuel_paymaster_supported_by_sdk: true
+    megafuel_paymaster_runtime_proof: PASS
+    backend_evidence: evidence/backend-ci-001/README.md
+    megafuel_evidence: evidence/megafuel-smoke-001/README.md
+wallets:
+  seller:
+    address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    type: encrypted_v3_local_only
+    local_signing_check: PASS
+    network_scope: bsc-testnet-only
+    balance_tbnb: '0'
+  megafuel_probe_client:
+    address: '0x6582Fe02B03a4E345A4e7597F4B1264d044f3026'
+    type: ephemeral_in_memory_only
+    balance_before_wei: '0'
+    balance_after_wei: '0'
+    private_key_persisted: false
+    purpose: PAYMASTER_INFRASTRUCTURE_PROBE_ONLY
+  full_e2e_buyer:
+    status: NOT_YET_VERIFIED_FOR_HEALTH_FACTOR_E2E
+    requirement: Separate throwaway BSC-testnet wallet; password and keystore stay outside chat.
+backend:
+  branch: build/backend-complete
+  path: backend
+  test_result: 18_OF_18_PASS
+  typescript_build: PASS
+  four_category_smoke: PASS
+  memory_store: PASS
+  postgres_store: CODE_PRESENT_NOT_LIVE_DEPLOYED
+  api_integration: PASS
+  live_deliverable_guardrails: PASS
+  claim_boundary: PASS
+  artifact_id: 9911265991
+  artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
+megafuel_probe:
+  status: PASS
+  workflow_run_id: 33802027942
+  artifact_id: 9911428783
+  artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+  chain_id: 97
+  balance_before_wei: '0'
+  balance_after_wei: '0'
+  job_id: '942'
+  create_job_tx: '0x1017e9f592bd84e9d433ad311f473e2e92bc24260c7a6d7e464970ae1f0f6f85'
+  cancel_open_tx: '0x893899a7d4c8c5b905765e2f3aada4be82cf3e0f8096f5c5fe73a8589616337c'
+  proof_statement: Two mined ERC-8183 writes from a zero-tBNB ephemeral client prove actual paymaster sponsorship in the pinned runtime.
+live_write_gate:
+  default_enabled: false
+  required_env:
+    - SPONDEE_LIVE_TESTNET_ENABLED=true
+    - SPONDEE_SELLER_A2A_URL
+    - BUYER_WALLET_ADDRESS
+    - BUYER_WALLETS_DIR
+    - BUYER_WALLET_PASSWORD
+  current_ready_for_full_health_factor_e2e: false
+  reason:
+    - specialized seller A2A endpoint is not currently running with the verified seller keystore
+    - dedicated full-E2E buyer wallet has not yet been verified/configured
+  gas_requirement:
+    primary: MEGAFUEL_RUNTIME_PROVEN
+    fallback: TBNB_IF_RELAY_UNAVAILABLE
+    tBNB_required_before_next_attempt: false
 limitations:
-  - No wallet key or funded transaction was created during credential-free preflight.
-  - No mainnet action occurred.
-  - Exact Health Factor protocol/scenario remains a bounded G3 implementation choice.
+  - MegaFuel proof covers zero-balance ERC-8183 createJob and cancelOpen, not the complete Spondee seller flow.
+  - No seller-signed live Promise Card + notify_funded + submit sequence has landed yet.
+  - No on-chain verified Spondee Outcome Receipt/deliverable evidence exists yet.
+  - No observed Agent Advantage evidence exists yet.
+  - Grid, Rebalancing and Yield reference agents are backend-simulation ready but not deployed as live Agent Studio agents.
+  - Public judging deployment and durable production database remain later gates.
 next_required_checks:
-  - secure testnet wallet onboarding
-  - local bag dev smoke
-  - first Promise Card generation
-  - bounded activation path
-  - first Outcome Receipt evidence
-next_gate: SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT
+  - start the specialized Health Factor seller A2A endpoint using the verified local seller wallet
+  - create/verify a separate throwaway buyer wallet for the full E2E
+  - execute signed zero-price ERC-8183 Health Factor E2E with MegaFuel enabled
+  - preserve create/register/budget/fund/submit transaction evidence and deliverable URL/manifest verification
+  - use tBNB self-pay only if the paymaster relay fails at runtime
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E

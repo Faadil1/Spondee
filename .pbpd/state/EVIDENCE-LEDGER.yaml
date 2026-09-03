@@ -3,19 +3,19 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_SCAFFOLD_AND_NETWORK_ONLY
+    status: PARTIALLY_VERIFIED_SOFTWARE_AND_GAS_PATH_FULL_SELLER_E2E_PENDING
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
-    truth_class: HYPOTHESIS
-    status: UNVERIFIED_G3
+    truth_class: FACT
+    status: VERIFIED_ALL_FOUR_BACKEND_CATEGORIES_IN_SIMULATION
   - id: CLM-003
     claim: Promise-to-actual calibration can be measured from preserved evidence.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED_G3
+    status: PARTIALLY_VERIFIED_STORAGE_AND_REPORTING_NO_OBSERVED_CALIBRATION_YET
   - id: CLM-004
     claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED_G3
+    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION_LIVE_E2E_PENDING
   - id: CLM-005
     claim: Three observed Agent Advantage paired experiments can be completed before submission.
     truth_class: HYPOTHESIS
@@ -23,11 +23,47 @@ claims:
   - id: CLM-006
     claim: All four required categories can reach comparable find-understand-activate depth.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED
+    status: PARTIALLY_VERIFIED_BACKEND_SIMULATION_DEPTH_ONLY
   - id: CLM-007
     claim: The current Agent Studio runtime can install, reach BSC testnet, scaffold and diagnose a Spondee reference-agent workspace without secrets.
     truth_class: FACT
     status: VERIFIED
+  - id: CLM-008
+    claim: The G3 Health Factor Promise Card is bound into ERC-8183 signable terms before signing.
+    truth_class: FACT
+    status: VERIFIED_WITH_INJECTED_TEST_SIGNER
+  - id: CLM-009
+    claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
+    truth_class: FACT
+    status: VERIFIED_WITH_INJECTED_TEST_SIGNER
+  - id: CLM-010
+    claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
+    truth_class: FACT
+    status: VERIFIED_CONFIGURATION_AND_CI
+  - id: CLM-011
+    claim: One shared backend contract supports Health Factor, Grid, Rebalancing and Yield through Task -> Promise -> Activation -> Receipt.
+    truth_class: FACT
+    status: VERIFIED_SIMULATION_CI
+  - id: CLM-012
+    claim: Spondee backend automatically excludes simulation evidence from observed Agent Advantage and calibration statistics.
+    truth_class: FACT
+    status: VERIFIED_CI
+  - id: CLM-013
+    claim: Spondee backend has a deployable durable persistence path without requiring it for local demo/CI.
+    truth_class: FACT
+    status: VERIFIED_CODE_MEMORY_AND_POSTGRES_ADAPTERS
+  - id: CLM-014
+    claim: Current BSC Testnet AgenticCommerce, EvaluatorRouter and OptimisticPolicy addresses contain deployed contract code.
+    truth_class: FACT
+    status: VERIFIED_READ_ONLY_RPC_2026_09_03
+  - id: CLM-015
+    claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
+    truth_class: FACT
+    status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_FULL_SELLER_E2E_UNEXECUTED
+  - id: CLM-016
+    claim: MegaFuel can sponsor ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
+    truth_class: FACT
+    status: VERIFIED_RUNTIME_ZERO_BALANCE_CREATE_AND_CANCEL
 
 evidence:
   - id: EV-001
@@ -84,6 +120,50 @@ evidence:
     supports:
       - PRD_READY transition
     status: PRESENT
+  - id: EV-008
+    type: g3_credential_free_build
+    artifact: evidence/g3-health-factor-ci-001/README.md
+    workflow_run_id: 33753788773
+    artifact_id: 9892600637
+    artifact_digest: sha256:8ca6c0f5ab50e5673ca9f515c1b4bd0b9fce957c1adf7f67beff24017d292b41
+    supports:
+      - Promise Card generation
+      - Promise binding before signing
+      - deterministic Outcome Receipt
+      - zero service price
+      - simulation claim boundary
+      - Agent Studio diagnostics
+    status: VERIFIED
+  - id: EV-009
+    type: full_backend_ci
+    artifact: evidence/backend-ci-001/README.md
+    workflow_run_id: 33801590780
+    artifact_id: 9911265991
+    artifact_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
+    supports:
+      - all four backend category paths
+      - REST marketplace API
+      - Promise and Receipt persistence
+      - observed evidence guardrails
+      - Agent Advantage report logic
+      - calibration exclusion rules
+      - fail-closed live ERC-8183 driver
+      - live deliverable manifest/identity guardrails
+      - read-only BSC contract readiness
+    status: VERIFIED
+  - id: EV-010
+    type: megafuel_runtime_sponsorship_probe
+    artifact: evidence/megafuel-smoke-001/README.md
+    workflow_run_id: 33802027942
+    artifact_id: 9911428783
+    artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+    supports:
+      - BSC Testnet chain 97 MegaFuel runtime sponsorship
+      - zero-balance ERC-8183 createJob write
+      - zero-balance ERC-8183 cancelOpen write
+      - ephemeral non-persisted key handling
+      - tBNB not required for the next paymaster-first attempt
+    status: VERIFIED
 
 verification_events:
   - id: VER-001
@@ -103,5 +183,45 @@ verification_events:
     at: '2026-09-03T07:53:12-04:00'
     event: bag doctor completed with exit code 0; warnings classified as expected pre-onboarding gaps.
     result: PASS_WITH_WARNINGS
+  - id: VER-005
+    at: '2026-09-03T08:12:12-04:00'
+    event: G3 Health Factor credential-free CI completed with tests, TypeScript, demo export and Agent Studio diagnostics all passing.
+    result: PASS
+    evidence: GitHub Actions run 33753788773
+  - id: VER-006
+    at: '2026-09-03T08:12:12-04:00'
+    event: Demo Promise Card and Outcome Receipt preserved with identical promise_id and explicit SIMULATION evidence class.
+    result: PASS
+    evidence: artifact 9892600637
+  - id: VER-007
+    at: '2026-09-03T20:19:58Z'
+    event: Hardened Spondee backend unit and API integration suite completed 18/18 tests.
+    result: PASS
+    evidence: GitHub Actions run 33801590780
+  - id: VER-008
+    at: '2026-09-03T20:20:00Z'
+    event: Four-category backend smoke produced four zero-price Promise/Receipt pairs with null confidence and simulation evidence exclusion.
+    result: PASS
+    evidence: artifact 9911265991
+  - id: VER-009
+    at: '2026-09-03T20:20:01Z'
+    event: Read-only BSC Testnet probe confirmed chain 97 and deployed code at AgenticCommerce, EvaluatorRouter and OptimisticPolicy anchors.
+    result: PASS
+    evidence: artifact 9911265991
+  - id: VER-010
+    at: '2026-09-03T20:20:01Z'
+    event: Read-only probe reconfirmed Spondee provider balance remains zero while the pinned SDK marks chain 97 paymaster-capable.
+    result: PASS_CAPABILITY_ONLY
+    evidence: artifact 9911265991
+  - id: VER-011
+    at: '2026-09-03T20:24:31Z'
+    event: MegaFuel runtime smoke used an ephemeral client with zero wei before and after to mine ERC-8183 createJob and cancelOpen transactions successfully.
+    result: PASS_ZERO_BALANCE_SPONSORSHIP_PROVEN
+    evidence: GitHub Actions run 33802027942 / artifact 9911428783
 
-contradictions: []
+contradictions:
+  - id: CON-001
+    topic: testnet_gas_sponsorship
+    observation: Earlier documentation/signals were inconsistent about whether tBNB was required for general ERC-8183 operations versus paymaster coverage.
+    handling: Runtime evidence takes precedence. GitHub Actions run 33802027942 proved createJob and cancelOpen from a zero-tBNB wallet with paymaster enabled; use MegaFuel first and retain tBNB only as a fallback if relay availability degrades.
+    status: RESOLVED_BY_RUNTIME_PROBE

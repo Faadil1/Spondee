@@ -56,3 +56,7 @@ artifacts:
       - plan.md
       - tasks.md
       - convergence.md
+  - id: ART-013
+    path: .pbpd/state/HANDOVER.yaml
+    type: canonical_handover
+    status: CURRENT

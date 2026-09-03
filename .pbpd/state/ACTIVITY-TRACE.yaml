@@ -148,5 +148,48 @@ entries:
     actor: PBPD_orchestrator
     action: resolve_testnet_gas_blocker
     result: MegaFuel promoted from SDK-supported hypothesis to runtime-proven gas path. tBNB downgraded to fallback-only; full Health Factor seller E2E remains the next gate.
-next_action: Start the specialized Health Factor seller A2A endpoint using the verified local seller wallet, create/verify a separate throwaway buyer wallet, execute the zero-price ERC-8183 Health Factor E2E with MegaFuel first, and use tBNB only if the relay fails.
-next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E
+  - id: ACT-027
+    at: '2026-09-03T20:39:58Z'
+    actor: human_local_runtime
+    action: attempt_full_health_factor_megafuel_e2e
+    result: FAIL_CLOSED_PRE_WRITE; buyer rejected an invalid assumed quote envelope before createJob. progress was empty, transaction count zero, no user funds used, MegaFuel not reached.
+  - id: ACT-028
+    at: '2026-09-03T21:00:00Z'
+    actor: PBPD_orchestrator
+    action: fix_official_quote_provider_identity_validation
+    result: Removed non-standard provider_address expectation; provider identity now verified cryptographically with official verifyQuoteSignature. Backend CI 33806097273 and G3 CI 33806096975 passed.
+    artifact: backend/src/erc8183.ts
+  - id: ACT-029
+    at: '2026-09-03T22:37:15.505Z'
+    actor: human_local_runtime
+    action: retry_full_health_factor_megafuel_e2e_after_quote_fix
+    result: FAIL_CLOSED_PRE_WRITE; signed quote missing terms.spondee_promise. progress remained empty, createJob was not sent, transaction count zero, no user funds used, MegaFuel not reached.
+  - id: ACT-030
+    at: '2026-09-03T23:05:00Z'
+    actor: PBPD_orchestrator
+    action: audit_official_sdk_negotiation_term_contract
+    result: Root cause isolated to TermSpecification reconstruction dropping arbitrary custom term keys before hash/signature/NegotiationResult serialization; success_criteria confirmed as protocol-preserved carrier surface.
+  - id: ACT-031
+    at: '2026-09-03T23:09:00Z'
+    actor: PBPD_orchestrator
+    action: implement_signed_promise_success_criteria_carrier
+    result: Versioned SPONDEE_PROMISE_CARD_V1 carrier added to signed request/response success_criteria; exact equality, uniqueness, post-signature trust ordering and seller fulfillment recovery enforced. Backend CI 33816310524 passed.
+    artifact: backend/src/erc8183.ts
+  - id: ACT-032
+    at: '2026-09-03T23:12:04Z'
+    actor: PBPD_orchestrator
+    action: reconcile_stale_g3_test_and_demo_fixtures
+    result: CI runs 33816337200 and 33816479581 intentionally blocked on stale spondee_promise fixtures; healthFactor.test.ts and demoEvidence.ts were migrated to the same success_criteria carrier as production code.
+  - id: ACT-033
+    at: '2026-09-03T23:13:11Z'
+    actor: github_actions
+    action: validate_signed_promise_carrier_g3_retry_candidate
+    result: PASS; G3 CI 33816544907 completed successfully. Ubuntu passed 9/9 deterministic tests, TypeScript, evidence export and Agent Studio diagnostics; Windows passed PowerShell parsing and Node 24 encrypted wallet create/reload roundtrip.
+    external_run: 33816544907
+  - id: ACT-034
+    at: '2026-09-03T23:14:00Z'
+    actor: PBPD_orchestrator
+    action: promote_one_local_g3_retry_ready
+    result: Exactly one human local retry authorized using the existing encrypted seller wallet and MegaFuel-first path; no new wallet or tBNB acquisition required before retry. Any new failure must stop without another blind retry.
+next_action: Human performs exactly one local run of scripts/g3-megafuel-live-e2e.ps1 after git pull, reusing the existing seller keystore. Return the public PASS block on success or new failure.v1 block on failure; never return secrets and do not retry again blindly.
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED

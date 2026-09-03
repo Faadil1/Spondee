@@ -46,3 +46,53 @@ artifacts:
     path: work/PRD-READY-DECLARATION.md
     type: prd_ready_declaration
     status: PRD_READY
+  - id: ART-012
+    path: reference-agents/health-factor
+    type: specialized_agent_studio_reference_agent
+    status: CI_VERIFIED_SIMULATION_LIVE_E2E_PENDING
+  - id: ART-013
+    path: evidence/g3-health-factor-ci-001/README.md
+    type: g3_health_factor_build_evidence
+    status: PASS_SIMULATION_ONLY
+    external_run: 33753788773
+  - id: ART-014
+    path: backend
+    type: marketplace_backend
+    status: CI_VERIFIED_OFFCHAIN_AND_READ_ONLY_CHAIN
+    branch: build/backend-complete
+  - id: ART-015
+    path: backend/src/app.ts
+    type: marketplace_rest_api
+    status: CI_VERIFIED
+  - id: ART-016
+    path: backend/src/engines.ts
+    type: four_category_promise_receipt_engines
+    status: CI_VERIFIED_SIMULATION
+  - id: ART-017
+    path: backend/src/store.ts
+    type: memory_and_postgres_persistence
+    status: CI_VERIFIED_CODE
+  - id: ART-018
+    path: backend/sql/001_init.sql
+    type: postgres_schema
+    status: PRESENT_NOT_DEPLOYED
+  - id: ART-019
+    path: backend/src/evidence.ts
+    type: agent_advantage_and_calibration_engine
+    status: CI_VERIFIED_LOGIC_OBSERVED_DATA_PENDING
+  - id: ART-020
+    path: backend/src/erc8183.ts
+    type: signed_zero_price_erc8183_live_driver
+    status: CI_VERIFIED_FAIL_CLOSED_LIVE_WRITE_NOT_EXECUTED
+  - id: ART-021
+    path: .github/workflows/backend-ci.yml
+    type: complete_backend_ci
+    status: PASS
+    external_run: 33800450806
+  - id: ART-022
+    path: evidence/backend-ci-001/README.md
+    type: complete_backend_evidence
+    status: PASS
+    external_run: 33800450806
+    artifact_id: 9910843880
+    artifact_digest: sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49

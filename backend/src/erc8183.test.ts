@@ -3,9 +3,52 @@ import test from "node:test";
 import {
   BSC_TESTNET,
   liveGateStatus,
+  signedSpondeePromiseFromQuote,
   validateLiveSpondeeReceipt,
   validateSignedQuoteEnvelope,
+  type SignedQuote,
 } from "./erc8183.js";
+
+const promise = {
+  schema: "spondee.promise-card.v1",
+  promise_id: "sp_test",
+  scenario_id: "scenario-test",
+  evidence_class: "SIMULATION",
+  confidence: null,
+};
+const promiseCarrier = `SPONDEE_PROMISE_CARD_V1:${JSON.stringify(promise)}`;
+
+function quoteFixture(
+  requestCriteria: unknown = [promiseCarrier],
+  responseCriteria: unknown = [promiseCarrier],
+): SignedQuote {
+  return validateSignedQuoteEnvelope({
+    request: {
+      task_description: "health factor task",
+      terms: {
+        deliverables: "Spondee Outcome Receipt",
+        quality_standards: "preserve promise",
+        success_criteria: requestCriteria,
+      },
+    },
+    request_hash: "0xrequest",
+    response: {
+      accepted: true,
+      terms: {
+        deliverables: "Spondee Outcome Receipt",
+        quality_standards: "preserve promise",
+        success_criteria: responseCriteria,
+        price: "0",
+        currency: "0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565",
+      },
+    },
+    response_hash: "0xresponse",
+    negotiation_hash: "0xnegotiation",
+    provider_sig: "0xsignature",
+    chain_id: 97,
+    verifying_contract: BSC_TESTNET.commerce,
+  });
+}
 
 test("live ERC-8183 execution is disabled by default", () => {
   const gate = liveGateStatus({});
@@ -32,39 +75,45 @@ test("BSC testnet contract anchors are explicit and chain id is 97", () => {
 });
 
 test("official BNB NegotiationResult envelope is accepted without provider_address", () => {
-  const quote = validateSignedQuoteEnvelope({
-    request: {
-      task_description: "health factor task",
-      terms: {
-        deliverables: "Spondee Outcome Receipt",
-        quality_standards: "preserve promise",
-        spondee_promise: {
-          schema: "spondee.promise-card.v1",
-          promise_id: "sp_test",
-          scenario_id: "scenario-test",
-        },
-      },
-    },
-    request_hash: "0xrequest",
-    response: {
-      accepted: true,
-      terms: {
-        deliverables: "Spondee Outcome Receipt",
-        quality_standards: "preserve promise",
-        price: "0",
-        currency: "0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565",
-      },
-    },
-    response_hash: "0xresponse",
-    negotiation_hash: "0xnegotiation",
-    provider_sig: "0xsignature",
-    chain_id: 97,
-    verifying_contract: BSC_TESTNET.commerce,
-  });
-
+  const quote = quoteFixture();
   assert.equal(quote.response.accepted, true);
   assert.equal(quote.response.terms.price, "0");
   assert.equal("provider_address" in quote, false);
+});
+
+test("Spondee Promise is recovered from the exact request/response success_criteria carrier", () => {
+  const recovered = signedSpondeePromiseFromQuote(quoteFixture());
+  assert.equal(recovered.promise_id, "sp_test");
+  assert.equal(recovered.scenario_id, "scenario-test");
+  assert.equal(recovered.confidence, null);
+});
+
+test("missing signed Spondee Promise carrier fails closed", () => {
+  assert.throws(
+    () => signedSpondeePromiseFromQuote(quoteFixture([], [promiseCarrier])),
+    /request.*exactly one Spondee Promise Card carrier/i,
+  );
+});
+
+test("duplicate signed Spondee Promise carriers fail closed", () => {
+  assert.throws(
+    () =>
+      signedSpondeePromiseFromQuote(
+        quoteFixture([promiseCarrier, promiseCarrier], [promiseCarrier]),
+      ),
+    /found 2/i,
+  );
+});
+
+test("request and response Spondee Promise carriers must match exactly", () => {
+  const other = `SPONDEE_PROMISE_CARD_V1:${JSON.stringify({
+    ...promise,
+    promise_id: "sp_other",
+  })}`;
+  assert.throws(
+    () => signedSpondeePromiseFromQuote(quoteFixture([promiseCarrier], [other])),
+    /do not match/i,
+  );
 });
 
 test("accepted quote without provider signature fails closed", () => {

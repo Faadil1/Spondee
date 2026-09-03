@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import {
+  DeliverableManifest,
   ERC8183Client,
   JobStatus,
   buildJobDescription,
@@ -27,6 +30,13 @@ interface RpcReply {
 
 export interface SignedQuote extends Record<string, unknown> {
   provider_address: string;
+  request?: {
+    terms?: {
+      spondee_promise?: Record<string, unknown>;
+      [key: string]: unknown;
+    };
+    [key: string]: unknown;
+  };
   response: { terms: { price: string; currency?: string } };
   negotiation_hash?: string;
   provider_sig?: string;
@@ -96,6 +106,9 @@ export async function publicTestnetReadiness(
     provider_address: getAddress(providerAddress),
     provider_balance_wei: balanceWei.toString(),
     funded_for_gas: balanceWei > 0n,
+    sdk_paymaster_default_for_erc8183_chain_97: true,
+    gas_note:
+      "Current @bnbagent/sdk defaults BSC Testnet ERC-8183 to MegaFuel sponsorship; a local tBNB balance remains useful as fallback if the relay is unavailable.",
     contracts: {
       commerce_has_code: commerceCode !== "0x",
       evaluator_router_has_code: routerCode !== "0x",
@@ -126,22 +139,103 @@ export function liveGateStatus(env = process.env) {
   };
 }
 
+function objectOrNull(value: unknown): Record<string, unknown> | null {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+export function validateLiveSpondeeReceipt(
+  value: unknown,
+  expectedPromiseId: string,
+  expectedScenarioId: string,
+): Record<string, unknown> {
+  const receipt = objectOrNull(value);
+  if (!receipt) throw new Error("deliverable content is not a JSON object");
+  if (receipt.schema !== "spondee.outcome-receipt.v1") {
+    throw new Error("deliverable is not a Spondee Outcome Receipt");
+  }
+  if (receipt.promise_id !== expectedPromiseId) {
+    throw new Error("deliverable promise_id does not match the signed Promise Card");
+  }
+  if (receipt.scenario_id !== expectedScenarioId) {
+    throw new Error("deliverable scenario_id does not match the requested scenario");
+  }
+  if (receipt.evidence_class !== "SIMULATION") {
+    throw new Error(
+      "G3 Health Factor declared-stress receipt must remain SIMULATION until observed market evidence exists",
+    );
+  }
+  const calibration = objectOrNull(receipt.calibration);
+  if (calibration?.eligible_for_observed_agent_advantage !== false) {
+    throw new Error("simulation deliverable cannot be eligible for observed Agent Advantage");
+  }
+  return receipt;
+}
+
+async function fetchManifest(
+  deliverableUrl: string,
+  gatewayUrl: string,
+): Promise<DeliverableManifest> {
+  let raw: string;
+  if (deliverableUrl.startsWith("file://")) {
+    raw = await readFile(fileURLToPath(deliverableUrl), "utf8");
+  } else {
+    const url = deliverableUrl.startsWith("ipfs://")
+      ? `${gatewayUrl.replace(/\/+$/, "")}/${deliverableUrl.slice("ipfs://".length)}`
+      : deliverableUrl;
+    const response = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+    if (!response.ok) throw new Error(`deliverable manifest HTTP ${response.status}`);
+    raw = await response.text();
+  }
+  const parsed = JSON.parse(raw) as Record<string, unknown>;
+  return DeliverableManifest.fromDict(parsed);
+}
+
+function signedPromiseFromQuote(quote: SignedQuote): Record<string, unknown> {
+  const promise = objectOrNull(quote.request?.terms?.spondee_promise);
+  if (!promise || promise.schema !== "spondee.promise-card.v1") {
+    throw new Error("signed quote is missing terms.spondee_promise");
+  }
+  if (typeof promise.promise_id !== "string") {
+    throw new Error("signed Promise Card is missing promise_id");
+  }
+  return promise;
+}
+
 export interface LiveTestnetResult {
   network: "bsc-testnet";
   provider_address: string;
   buyer_address: string;
   job_id: string;
-  create_job_tx: string | null;
   status: "SUBMITTED" | "COMPLETED";
-  deliverable_url: string | null;
   price_raw: "0";
   quote_negotiation_hash: string | null;
+  promise_id: string;
+  transactions: {
+    create_job: string;
+    register_job: string;
+    set_budget: string;
+    fund: string;
+    submit: string | null;
+  };
+  deliverable: {
+    url: string;
+    manifest_hash_verified: true;
+    spondee_receipt_verified: true;
+    receipt: Record<string, unknown>;
+  };
 }
 
 export async function runSignedZeroPriceTestnetActivation(
   task: SpondeeTask,
   env = process.env,
 ): Promise<LiveTestnetResult> {
+  if (task.schema !== "spondee.health-factor.task.v1") {
+    throw new Error(
+      "The current live Agent Studio reference seller is Health Factor only; other categories remain simulation-only until their reference-agent deployment gates pass.",
+    );
+  }
   const gate = liveGateStatus(env);
   if (!gate.ready_for_live_write) {
     throw new Error(
@@ -179,6 +273,11 @@ export async function runSignedZeroPriceTestnetActivation(
     if (quote.response.terms.price !== "0") {
       throw new Error(`G3 live activation refuses non-zero service price: ${quote.response.terms.price}`);
     }
+    const signedPromise = signedPromiseFromQuote(quote);
+    if (signedPromise.scenario_id !== task.scenario_id) {
+      throw new Error("signed Promise Card scenario does not match the live activation task");
+    }
+    const promiseId = String(signedPromise.promise_id);
 
     const client = await ERC8183Client.create({
       walletProvider: wallet,
@@ -208,9 +307,9 @@ export async function runSignedZeroPriceTestnetActivation(
     });
     if (created.jobId === null) throw new Error("createJob did not return jobId");
     const jobId = created.jobId;
-    await client.registerJob(jobId);
-    await client.setBudget(jobId, 0n);
-    await client.fund(jobId, 0n);
+    const registered = await client.registerJob(jobId);
+    const budgeted = await client.setBudget(jobId, 0n);
+    const funded = await client.fund(jobId, 0n);
 
     await sendSkill(messageUrl, { skill: "notify_funded", job_id: Number(jobId) });
 
@@ -230,18 +329,60 @@ export async function runSignedZeroPriceTestnetActivation(
     }
     if (finalStatus === null) throw new Error("timed out waiting for provider SUBMITTED status");
 
+    const job = await client.getJob(jobId);
     const deliverableUrl = await client.getDeliverableUrl(jobId);
+    if (!deliverableUrl) throw new Error("submitted job has no on-chain deliverable_url");
+
+    const latestBlock = await client.publicClient.getBlockNumber();
+    const fromBlock = latestBlock > 999n ? latestBlock - 999n : 0n;
+    const submitEvents = await client.commerce.getJobSubmittedEvents(
+      fromBlock,
+      latestBlock,
+      jobId,
+    );
+    const submitEvent = submitEvents.at(-1) ?? null;
+
+    const gatewayUrl =
+      env.STORAGE_GATEWAY_URL ?? "https://gateway.pinata.cloud/ipfs/";
+    const manifest = await fetchManifest(deliverableUrl, gatewayUrl);
+    if (!manifest.verify(job.deliverable)) {
+      throw new Error("deliverable manifest hash does not match the on-chain job deliverable hash");
+    }
+    let deliverableContent: unknown;
+    try {
+      deliverableContent = JSON.parse(manifest.response.content);
+    } catch {
+      throw new Error("deliverable manifest response.content is not valid JSON");
+    }
+    const verifiedReceipt = validateLiveSpondeeReceipt(
+      deliverableContent,
+      promiseId,
+      task.scenario_id,
+    );
+
     return {
       network: "bsc-testnet",
       provider_address: expectedProvider,
       buyer_address: buyerAddress,
       job_id: jobId.toString(),
-      create_job_tx: created.transactionHash ?? null,
       status: finalStatus,
-      deliverable_url: deliverableUrl,
       price_raw: "0",
       quote_negotiation_hash:
         typeof quote.negotiation_hash === "string" ? quote.negotiation_hash : null,
+      promise_id: promiseId,
+      transactions: {
+        create_job: created.transactionHash,
+        register_job: registered.transactionHash,
+        set_budget: budgeted.transactionHash,
+        fund: funded.transactionHash,
+        submit: submitEvent?.transactionHash ?? null,
+      },
+      deliverable: {
+        url: deliverableUrl,
+        manifest_hash_verified: true,
+        spondee_receipt_verified: true,
+        receipt: verifiedReceipt,
+      },
     };
   } finally {
     wallet.destroy();

@@ -119,16 +119,34 @@ entries:
     result: Shared four-category Task->Promise->Activation->Receipt contract, REST marketplace API, memory/PostgreSQL persistence, 8004scan identity boundary, evidence/calibration reporting and fail-closed signed zero-price ERC-8183 driver implemented.
     artifact: backend/README.md
   - id: ACT-022
-    at: '2026-09-03T20:08:22Z'
+    at: '2026-09-03T20:20:02Z'
     actor: github_actions
-    action: verify_complete_backend
-    result: PASS; 15/15 unit/API tests, strict TypeScript build, four-category smoke, claim-boundary assertions and read-only BSC Testnet contract probes all passed. No live write attempted.
-    external_run: 33800450806
+    action: verify_hardened_complete_backend
+    result: PASS; 18/18 unit/API tests, strict TypeScript build, four-category smoke, live-deliverable guardrails, claim-boundary assertions and read-only BSC Testnet contract probes all passed.
+    external_run: 33801590780
     artifact: evidence/backend-ci-001/README.md
   - id: ACT-023
-    at: '2026-09-03T20:09:00Z'
+    at: '2026-09-03T20:21:00Z'
     actor: PBPD_orchestrator
     action: preserve_backend_live_boundary
-    result: Backend code/CI declared complete for off-chain and read-only-chain scope only. Live ERC-8183, observed Agent Advantage and live deployment of Grid/Rebalancing/Yield remain unclaimed.
-next_action: When tBNB is available, create and verify a separate throwaway buyer BSC-testnet wallet locally and execute the prepared signed zero-price Health Factor ERC-8183 E2E, preserving job, transaction and deliverable evidence.
-next_gate: SPONDEE_BACKEND_COMPLETE_LIVE_TESTNET_E2E_PENDING_TBNB
+    result: Backend code/CI declared complete for off-chain/read-only-chain scope; full seller-backed live ERC-8183 and observed Agent Advantage remain unclaimed.
+  - id: ACT-024
+    at: '2026-09-03T20:24:02Z'
+    actor: PBPD_orchestrator
+    action: launch_bounded_megafuel_runtime_probe
+    result: Created a one-purpose GitHub Actions smoke using an ephemeral in-memory EVM wallet, zero user funds, BSC Testnet only, paymaster forced on and automatic cleanup via cancelOpen.
+    artifact: .github/workflows/megafuel-smoke.yml
+  - id: ACT-025
+    at: '2026-09-03T20:24:31Z'
+    actor: github_actions
+    action: prove_megafuel_zero_balance_erc8183_writes
+    result: PASS; wallet balance stayed 0 wei while createJob job 942 and cancelOpen both mined successfully. Private key was neither persisted nor printed.
+    external_run: 33802027942
+    artifact: evidence/megafuel-smoke-001/README.md
+  - id: ACT-026
+    at: '2026-09-03T20:25:00Z'
+    actor: PBPD_orchestrator
+    action: resolve_testnet_gas_blocker
+    result: MegaFuel promoted from SDK-supported hypothesis to runtime-proven gas path. tBNB downgraded to fallback-only; full Health Factor seller E2E remains the next gate.
+next_action: Start the specialized Health Factor seller A2A endpoint using the verified local seller wallet, create/verify a separate throwaway buyer wallet, execute the zero-price ERC-8183 Health Factor E2E with MegaFuel first, and use tBNB only if the relay fails.
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E

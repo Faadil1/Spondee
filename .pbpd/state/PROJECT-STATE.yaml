@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R007-G3-TBNB-PENDING
+revision: STATE-R008-BACKEND-COMPLETE
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_TESTNET_WALLET_VERIFIED_TBNB_REQUIRED
+  status: BACKEND_CORE_CI_VERIFIED_LIVE_TESTNET_PENDING
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -25,26 +25,54 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-build_branch:
-  name: build/g3-health-factor
+build:
+  active_branch: build/backend-complete
+  parent_branch: build/g3-health-factor
   merge_to_main: NOT_AUTHORIZED
-  current_vertical: Health Factor Monitoring
-  reference_agent: reference-agents/health-factor
-  code_status: CI_VERIFIED
-  evidence_class: SIMULATION_ONLY_UNTIL_LIVE_TESTNET_ACTIVATION
-verified_build_properties:
-  - official Agent Studio scaffold present
-  - deterministic Health Factor Promise Card engine implemented
+  backend_status: CI_VERIFIED
+  backend_path: backend
+  backend_ci_run: '33800450806'
+  backend_ci_artifact: '9910843880'
+  backend_ci_digest: sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49
+  backend_evidence: evidence/backend-ci-001/README.md
+  evidence_class: SIMULATION_AND_READ_ONLY_CHAIN_UNTIL_LIVE_TESTNET_E2E
+verified_backend_properties:
+  - shared Task -> Promise Card -> Activation -> Outcome Receipt contract exists
+  - Health Factor Monitoring deterministic backend path passes
+  - Grid Trading deterministic backend path passes without PnL claims
+  - Rebalancing deterministic backend path passes with bounded reset timing/cost
+  - Yield Optimisation deterministic backend path passes with declared risk ceiling
   - confidence remains null/UNSCORED until observed calibration exists
-  - Promise Card is injected into ERC-8183 signable terms before signing
-  - deterministic Outcome Receipt is bound to promise_id and scenario_id
-  - structured Health Factor work bypasses generic LLM generation
-  - G3 ERC-8183 service price and clamp are fixed at zero
-  - x402/B402 disabled for G3
-  - automatic LLM credit renewal disabled for G3
-  - TypeScript build passes
-  - deterministic tests pass
-  - credential-free configuration diagnostics pass
+  - all four simulation receipts are excluded from observed Agent Advantage
+  - marketplace category and agent APIs pass integration tests
+  - 8004scan/ERC-8004 data is constrained to identity/capability substrate
+  - memory store supports CI and local demo
+  - PostgreSQL durable store and migration are implemented
+  - evidence ingestion preserves observed vs simulation truth class
+  - Agent Advantage report requires explicit observed baseline pairs
+  - calibration summary ignores simulation evidence
+  - signed zero-price ERC-8183 buyer driver is implemented and fail-closed
+  - BSC Testnet chain ID 97 read probe passes
+  - AgenticCommerce contract code is present on configured BSC Testnet address
+  - EvaluatorRouter contract code is present on configured BSC Testnet address
+  - OptimisticPolicy contract code is present on configured BSC Testnet address
+  - 15/15 backend unit/API tests pass
+  - strict TypeScript backend build passes
+  - no live chain write was attempted during backend verification
+category_depth:
+  health_factor:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: AGENT_STUDIO_SPECIALIZED
+    live_testnet: PENDING_TBNB_AND_E2E
+  grid:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: NOT_YET_DEPLOYED_LIVE
+  rebalancing:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: NOT_YET_DEPLOYED_LIVE
+  yield:
+    backend: SIMULATION_CI_VERIFIED
+    reference_agent: NOT_YET_DEPLOYED_LIVE
 live_activation:
   status: TESTNET_WALLET_VERIFIED_TBNB_BALANCE_ZERO
   authorization:
@@ -60,7 +88,7 @@ live_activation:
       - no merge to main
       - no public deployment
       - no final submission
-  wallet:
+  seller_wallet:
     public_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
     network_scope: bsc-testnet-only
     keystore: encrypted_v3_local_only
@@ -70,18 +98,25 @@ live_activation:
     address_anchored_in_studio_toml: true
   balance_check:
     checked_via: BSC_TESTNET_PUBLIC_JSON_RPC
-    rpc: https://bsc-testnet-dataseed.bnbchain.org
-    checked_at: '2026-09-03T18:04:06Z'
+    checked_at: '2026-09-03T20:08:22Z'
     balance_wei: '0'
     balance_tbnb: '0'
     funded: false
-    ci_run: '33788242671'
+    ci_run: '33800450806'
+  live_driver:
+    status: CODED_FAIL_CLOSED_NOT_EXECUTED
+    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_AND_CURRENCY -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> DELIVERABLE_URL
+    requires_separate_buyer_testnet_wallet: true
+    live_env_gate_default: false
   not_yet_claimed:
     - nonzero tBNB balance
-    - live wallet-backed ERC-8183 signature
-    - funded ERC-8183 BSC testnet job
-    - on-chain submit transaction
+    - separate buyer testnet wallet readiness
+    - live buyer wallet-backed ERC-8183 signing
+    - createJob/registerJob/setBudget(0)/fund(0) transaction evidence
+    - provider on-chain submit transaction
+    - live Outcome Receipt/deliverable evidence
     - observed Agent Advantage
+    - four deployed live reference agents
 next_action:
-  primary: Fund only the verified public address with tBNB from an approved BSC Testnet faucet route, verify a nonzero balance, then execute the first zero-service-price bounded ERC-8183 testnet activation.
-next_gate: SPONDEE_G3_TBNB_BALANCE_REQUIRED
+  primary: When tBNB is available, create and verify a separate throwaway buyer BSC-testnet wallet locally, run the Health Factor signed zero-price ERC-8183 E2E, preserve job/transaction/deliverable evidence, and keep the three other categories as simulation-only until their live reference-agent gates are separately passed.
+next_gate: SPONDEE_BACKEND_COMPLETE_LIVE_TESTNET_E2E_PENDING_TBNB

@@ -1,0 +1,65 @@
+name: G3 Scaffold Health Factor Reference Agent
+
+on:
+  push:
+    branches: ['build/g3-health-factor']
+    paths:
+      - '.github/workflows/g3-scaffold-health-reference-agent.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout build branch
+        uses: actions/checkout@v4
+        with:
+          ref: build/g3-health-factor
+          fetch-depth: 0
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Agent Studio CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@10 --activate
+          npm install --global @bnbagent/studio-cli
+
+      - name: Generate official Studio scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e reference-agents/health-factor
+          bag init spondeehealth \
+            --network bsc-testnet \
+            --wallet-kind evm-local \
+            --protocols A2A,MCP,X402 \
+            --storage-provider local \
+            --no-onboard \
+            --ide both
+          mkdir -p reference-agents
+          rm -rf spondeehealth/node_modules
+          rm -f spondeehealth/.studio/.env.local
+          rm -f spondeehealth/app/agent/.env.local
+          mv spondeehealth reference-agents/health-factor
+          test -f reference-agents/health-factor/app/agent/studio.toml
+          grep -q 'bsc-testnet' reference-agents/health-factor/app/agent/studio.toml
+
+      - name: Commit generated scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'spondee-build-bot'
+          git config user.email 'spondee-build-bot@users.noreply.github.com'
+          git add reference-agents/health-factor
+          git diff --cached --check
+          git commit -m 'Scaffold Health Factor reference agent with BNB Agent Studio'
+          git push origin HEAD:build/g3-health-factor

@@ -21,6 +21,7 @@ $agentDir = Join-Path $workspaceRoot 'app\agent'
 $studioDir = Join-Path $workspaceRoot '.studio'
 $walletDir = Join-Path $studioDir 'wallets'
 $studioToml = Join-Path $agentDir 'studio.toml'
+$studioCliVersion = '0.0.13'
 
 Write-Host 'Spondee G3 - local BSC-testnet wallet setup' -ForegroundColor Green
 Write-Host 'This script NEVER prints, commits, or uploads your wallet password/private key.'
@@ -49,10 +50,12 @@ if (-not $bag) {
     if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
         Fail 'npm is not available; install Node.js 22+ with npm first.'
     }
-    Write-Step 'Installing current BNB Agent Studio CLI'
-    & npm install --global '@bnbagent/studio-cli'
+
+    Write-Step "Installing BNB Agent Studio CLI $studioCliVersion"
+    Write-Host 'Using --legacy-peer-deps to bypass a temporary upstream AI SDK peer-version mismatch.' -ForegroundColor DarkGray
+    & npm install --global "@bnbagent/studio-cli@$studioCliVersion" --legacy-peer-deps
     if ($LASTEXITCODE -ne 0) {
-        Fail 'npm install --global @bnbagent/studio-cli failed.'
+        Fail "npm install --global @bnbagent/studio-cli@$studioCliVersion --legacy-peer-deps failed. Do not create a wallet yet."
     }
 }
 

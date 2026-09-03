@@ -1,0 +1,26 @@
+schema: PBPD-PROJECT-STATE-v0.1
+revision: STATE-R001
+identity:
+  project_id: bnb_agent_studio_build_the_era_2026
+  name: Spondee
+authority:
+  project_authority: PROJECT_AUTHORIZED
+  source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
+lifecycle:
+  phase: PRD_PREBUILD
+  status: PRD_DRAFTED
+objective:
+  statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
+primary_path:
+  status: LOCKED
+  path: LAND -> CATEGORY -> AGENT -> PROMISE_CARD -> BOUNDED_ACTIVATE -> OUTCOME_RECEIPT
+hero_demo:
+  status: LOCKED
+  vertical: Health Factor Monitoring
+  mechanism: Intervention Advantage
+product:
+  tagline: Agents, measured by what they deliver.
+  concept: Calibrated Outcome Marketplace + Intervention Advantage
+next_action:
+  primary: Validate PRD v0.1, reconcile canonical ledgers, then decide PRD_READY vs PRD_VALIDATION_BLOCKED.
+next_gate: SPONDEE_PRD_VALIDATION_AND_RECONCILIATION

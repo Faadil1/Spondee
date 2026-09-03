@@ -169,7 +169,7 @@ export async function publicTestnetReadiness(
     contracts: {
       commerce_has_code: commerceCode !== "0x",
       evaluator_router_has_code: routerCode !== "0x",
-      optimistic_policy_code: policyCode !== "0x",
+      optimistic_policy_has_code: policyCode !== "0x",
     },
     live_write_attempted: false,
   };

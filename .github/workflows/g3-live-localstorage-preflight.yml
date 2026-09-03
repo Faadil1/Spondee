@@ -1,0 +1,80 @@
+name: G3 Live LocalStorage Preflight
+
+on:
+  push:
+    branches:
+      - build/backend-complete
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse LocalStorage wrapper PowerShell
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path './scripts/g3-megafuel-live-e2e-localstorage.ps1'),
+            [ref]$null,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) { $errors | Format-List | Out-String | Write-Error }
+      - name: Check deliverable server syntax
+        run: node --check scripts/local-erc8183-deliverable-server.mjs
+      - name: Prove LocalStorage HTTP bridge health
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmpdir="$(mktemp -d)"
+          SPONDEE_LOCAL_DELIVERABLE_DIR="$tmpdir" \
+          SPONDEE_LOCAL_DELIVERABLE_PORT=9100 \
+          node scripts/local-erc8183-deliverable-server.mjs > /tmp/spondee-deliverable.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; rm -rf "$tmpdir"' EXIT
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:9100/health | grep -q 'HEALTHY'; then
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cat /tmp/spondee-deliverable.log
+          exit 1
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression suite
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+
+  windows-parse:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Parse LocalStorage wrapper on Windows
+        shell: powershell
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path '.\scripts\g3-megafuel-live-e2e-localstorage.ps1'),
+            [ref]$null,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) { throw ($errors | Out-String) }
+      - name: Check deliverable server syntax on Windows Node 24
+        run: node --check scripts/local-erc8183-deliverable-server.mjs

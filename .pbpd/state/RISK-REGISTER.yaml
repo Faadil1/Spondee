@@ -1,0 +1,62 @@
+schema: PBPD-RISK-REGISTER-v0.1
+risks:
+  - id: R-01
+    severity: CRITICAL
+    risk: Scope exceeds the Sep 9 capacity window.
+    mitigation: Freeze MVP and block non-core market mechanisms until the primary vertical and evidence harness pass.
+    status: OPEN
+  - id: R-02
+    severity: CRITICAL
+    risk: Four-category depth becomes cosmetic or uneven.
+    mitigation: Shared Promise/Receipt schemas plus category-level acceptance tests.
+    status: OPEN
+  - id: R-03
+    severity: HIGH
+    risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
+    mitigation: Keep Health Factor as hero only; require equal find-understand-activate depth across the other three categories.
+    status: OPEN
+  - id: R-04
+    severity: HIGH
+    risk: Agent confidence values are arbitrary or misleading.
+    mitigation: Preserve forecast provenance, track calibration against actual outcomes and label insufficient history.
+    status: OPEN
+  - id: R-05
+    severity: HIGH
+    risk: Baseline comparisons are biased or invented.
+    mitigation: Same initial state/window where applicable; raw baseline evidence required; invented timings prohibited.
+    status: OPEN
+  - id: R-06
+    severity: HIGH
+    risk: External agent/API instability blocks the judge path.
+    mitigation: Early reference-agent reconnaissance, explicit failure states and bounded fallback strategy.
+    status: OPEN
+  - id: R-07
+    severity: MEDIUM
+    risk: Altana integration consumes time before core Main/TermiX paths work.
+    mitigation: Treat Altana as qualification target after the core activation path is real.
+    status: OPEN
+  - id: R-08
+    severity: HIGH
+    risk: Financial wording implies guarantees.
+    mitigation: Use forecast/probability/outcome language and visible limitations; prohibit guarantee claims.
+    status: OPEN
+  - id: R-09
+    severity: HIGH
+    risk: JigJoy/Syndicate collision consumes the available build window.
+    mitigation: Evidence-first narrow vertical, strict gate sequencing and no platform expansion.
+    status: OPEN
+  - id: A-01
+    severity: CRITICAL
+    risk: No credible live BSC agent/path exists for one or more required categories.
+    mitigation: Resolve through bounded 8004scan/Agent Studio reconnaissance before consequential architecture.
+    status: KILLING_ASSUMPTION_UNRESOLVED
+  - id: A-02
+    severity: CRITICAL
+    risk: Task-specific promises cannot be produced before activation.
+    mitigation: Resolve with one G3 Promise Card probe before full build.
+    status: KILLING_ASSUMPTION_UNRESOLVED
+  - id: A-03
+    severity: HIGH
+    risk: Promise-to-actual provenance cannot be bound reliably.
+    mitigation: Define immutable promise/run IDs and test one complete vertical.
+    status: KILLING_ASSUMPTION_UNRESOLVED

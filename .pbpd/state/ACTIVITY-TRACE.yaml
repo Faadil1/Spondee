@@ -91,5 +91,10 @@ entries:
     actor: PBPD_orchestrator
     action: preserve_g3_claim_boundary
     result: Software path is verified as SIMULATION/CI only; live wallet-backed signing, funded ERC-8183 job, on-chain submit and observed Agent Advantage remain explicitly unclaimed.
-next_action: Obtain explicit human participation/approval for secure throwaway BSC-testnet wallet creation and minimal tBNB gas if required, then run the first live ERC-8183 activation without exposing secrets.
-next_gate: SPONDEE_G3_LIVE_TESTNET_ACTIVATION_REQUIRED
+  - id: ACT-017
+    at: '2026-09-03T09:08:00-04:00'
+    actor: human
+    action: authorize_testnet_wallet_and_gas
+    result: Explicit GO granted for local throwaway BSC-testnet wallet creation, minimal tBNB acquisition if required, and first bounded live ERC-8183 testnet activation. No secret disclosure, mainnet, merge, deployment or submission authorized.
+next_action: Human creates the throwaway wallet locally and returns only its public 0x address after verifying the local keystore; then continue with minimal tBNB balance and bounded ERC-8183 testnet activation.
+next_gate: SPONDEE_G3_TESTNET_WALLET_ADDRESS_REQUIRED

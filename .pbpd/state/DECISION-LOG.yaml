@@ -47,3 +47,45 @@ decisions:
     evidence:
       - bag doctor exit code 0
       - runtime preflight evidence
+  - id: DEC-008
+    date: '2026-09-03'
+    decision: Use the existing encrypted BSC-testnet seller keystore at 0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8 for bounded G3 retries; do not recreate it and do not expose its password or key material to chat.
+    status: ACCEPTED
+    authority: HUMAN_TESTNET_GO_PLUS_PBPD_SAFETY_BOUNDARY
+    evidence:
+      - local EIP-191 signing verification PASS
+      - G3 Windows Node 24 wallet roundtrip PASS
+  - id: DEC-009
+    date: '2026-09-03'
+    decision: MegaFuel is the primary gas path for the bounded BSC-testnet ERC-8183 G3 flow; tBNB is fallback-only and is not required before the current retry.
+    status: ACCEPTED
+    authority: PBPD_RUNTIME_EVIDENCE
+    evidence:
+      - evidence/megafuel-smoke-001/README.md
+      - GitHub Actions run 33802027942
+  - id: DEC-010
+    date: '2026-09-03'
+    decision: Carry the Spondee Promise Card through the official ERC-8183 TermSpecification success_criteria field using the versioned SPONDEE_PROMISE_CARD_V1 prefix; arbitrary custom terms such as terms.spondee_promise are forbidden for signed provenance.
+    status: ACCEPTED
+    authority: PBPD_PROTOCOL_RECONCILIATION
+    constraints:
+      - exactly one Spondee carrier in signed request
+      - exactly one Spondee carrier in signed response
+      - exact request/response carrier equality
+      - verify provider signature, chain and Commerce contract before trusting Promise data
+      - seller fulfillment must recover the same carrier from the job terms
+      - missing, malformed, duplicate or mismatched carrier fails closed before createJob
+    evidence:
+      - backend/src/erc8183.ts
+      - reference-agents/health-factor/app/agent/src/healthFactor.ts
+      - GitHub Actions run 33816310524
+      - GitHub Actions run 33816544907
+  - id: DEC-011
+    date: '2026-09-03'
+    decision: After Backend CI 33816310524 and G3 CI 33816544907 passed, authorize exactly one local MegaFuel-backed Health Factor E2E retry using the existing seller keystore; any new failure closes the retry gate again until deterministic diagnosis.
+    status: ACCEPTED
+    authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
+    evidence:
+      - .pbpd/state/PROJECT-STATE.yaml
+      - .pbpd/state/HANDOVER.yaml
+      - GitHub Actions run 33816544907

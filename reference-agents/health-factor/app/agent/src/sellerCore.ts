@@ -41,6 +41,7 @@ import { ERC8183JobOps } from "@bnbagent/sdk/erc8183";
 import { SubmitPermanentlyUnsupportedError } from "@bnbagent/studio-runtime/erc8183";
 import { getWallet } from "@bnbagent/studio-runtime/wallet";
 import { limitCommerceOperation } from "./requestLimits.js";
+import { enrichHealthFactorNegotiation, previewHealthFactorFromEnvelope } from "./healthFactor.js";
 import * as defaultSigning from "./signing.js";
 
 const log = {
@@ -217,6 +218,24 @@ export class SellerCore {
   // ── skills ──────────────────────────────────────────────────────────────
 
   /**
+   * Free, read-only Spondee preview. No signing, no LLM, no payment.
+   * Confidence deliberately remains UNSCORED until observed calibration exists.
+   */
+  async previewHealthFactor(
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const clamped = this.signing.clampPrice(this.signing.listPrice());
+    const promise = previewHealthFactorFromEnvelope(data, clamped);
+    if (promise === null) {
+      return {
+        status: "rejected",
+        error: "expected a spondee.health-factor.task.v1 task or task_description",
+      };
+    }
+    return { status: "ok", promise };
+  }
+
+  /**
    * Rule-based quote → SDK `NegotiationResult` envelope (no LLM).
    *
    * The price is the FIXED list price from studio.toml, clamped to
@@ -238,12 +257,18 @@ export class SellerCore {
       request = picked;
     }
     const clamped = this.signing.clampPrice(this.signing.listPrice());
-    return this.signing.signQuote(request as Record<string, unknown>, clamped);
+    const enriched = enrichHealthFactorNegotiation(
+      request as Record<string, unknown>,
+      clamped,
+    );
+    return this.signing.signQuote(enriched.request, clamped);
   }
 
-  /** The seller's two advertised skills. */
+  /** Spondee preview is always available; commerce skills follow the configured rail. */
   skills(): string[] {
-    return this.commerceSkills ? ["negotiate", "notify_funded"] : [];
+    return this.commerceSkills
+      ? ["preview_health_factor", "negotiate", "notify_funded"]
+      : ["preview_health_factor"];
   }
 
   /**

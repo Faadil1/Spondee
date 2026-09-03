@@ -22,6 +22,19 @@
 import type { AgentCard, AgentSkill, SecurityScheme } from "@a2a-js/sdk";
 import { loadStudioToml } from "@bnbagent/studio-runtime/config";
 
+const PREVIEW_HEALTH_FACTOR: AgentSkill = {
+  id: "preview_health_factor",
+  name: "Preview a Spondee Health Factor promise",
+  description:
+    'Send {"skill":"preview_health_factor","task":{...}} with a ' +
+    '`spondee.health-factor.task.v1` simulation. Returns a deterministic ' +
+    'Promise Card before activation. Confidence is explicitly UNSCORED until ' +
+    'observed calibration history exists; no payment, signing, or LLM call occurs.',
+  tags: ["health-factor", "spondee", "promise-card", "bnb-chain"],
+  inputModes: ["application/json"],
+  outputModes: ["application/json"],
+};
+
 const NEGOTIATE: AgentSkill = {
   id: "negotiate",
   name: "Negotiate an ERC-8183 job",
@@ -107,7 +120,7 @@ export function buildAgentCard(
   }
   return {
     name,
-    description: `ERC-8183 seller agent (${name}) — negotiate + notify_funded over A2A.`,
+    description: `Spondee Health Factor agent (${name}) — preview measurable promises, then negotiate + deliver over ERC-8183.`,
     // main.ts overwrites this with $AGENTCORE_RUNTIME_URL at boot.
     // Local-dev fallback: a client-routable localhost URL (not the 0.0.0.0
     // bind address). Host via AGENT_HOST (default localhost); port via the
@@ -129,7 +142,9 @@ export function buildAgentCard(
     defaultInputModes: ["application/json"],
     defaultOutputModes: ["application/json"],
     skills:
-      opts.commerceSkills === false ? [] : [NEGOTIATE, NOTIFY_FUNDED],
+      opts.commerceSkills === false
+        ? [PREVIEW_HEALTH_FACTOR]
+        : [PREVIEW_HEALTH_FACTOR, NEGOTIATE, NOTIFY_FUNDED],
     ...extra,
   };
 }

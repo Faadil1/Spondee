@@ -79,6 +79,9 @@ export class SellerAgentExecutor extends SellerCore implements AgentExecutor {
   ): Promise<Record<string, unknown>> {
     const skill = data.skill;
     try {
+      if (skill === "preview_health_factor") {
+        return await this.previewHealthFactor(data);
+      }
       if (skill === "negotiate") {
         return await this.negotiate(data);
       }
@@ -111,7 +114,9 @@ export class SellerAgentExecutor extends SellerCore implements AgentExecutor {
     const skill = data.skill;
     let result: Record<string, unknown>;
     try {
-      if (skill === "negotiate") {
+      if (skill === "preview_health_factor") {
+        result = await this.previewHealthFactor(data);
+      } else if (skill === "negotiate") {
         result = await this.negotiate(data);
       } else if (skill === "notify_funded") {
         result = await this.notifyFunded(data);

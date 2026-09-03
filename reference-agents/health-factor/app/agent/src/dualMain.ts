@@ -80,6 +80,7 @@ import { buildAgentCard } from "./agentCard.js";
 import { SellerAgentExecutor } from "./executor.js";
 import { buildMcpServer } from "./mcpMain.js";
 import { buildModel } from "./model.js";
+import { buildHealthFactorOutcomeFromWorkPrompt } from "./healthFactor.js";
 import { requestLimitContext } from "./requestLimits.js";
 import type { RunWork } from "./sellerCore.js";
 import { LLM_READ_TOOLS } from "./tools.js";
@@ -176,7 +177,11 @@ export function buildRunWork(): RunWork {
   // the LLM) — missing-key errors surface at notify_funded delivery time.
   let model: ReturnType<typeof buildModel> | undefined;
   return async (prompt, { abortSignal }) => {
-    model ??= buildModel(); // managed model with the auto-renew hook (delivery only)
+    const deterministic = buildHealthFactorOutcomeFromWorkPrompt(prompt);
+    if (deterministic !== null) {
+      return JSON.stringify(deterministic, null, 2);
+    }
+    model ??= buildModel(); // generic fallback only; Spondee HF work stays deterministic
     const result = await generateText({
       model,
       system:

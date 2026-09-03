@@ -93,6 +93,16 @@ evidence:
       - G3 task decomposition
       - living PRD reconciliation protocol
     status: PRESENT_DERIVED_NOT_PRODUCT_EVIDENCE
+  - id: EV-009
+    type: pbpd_spec_kit_pointer_activation
+    reference: Faadil1/pbpd-cowork-system#80
+    validate_workflow_run_id: 33815125056
+    merge_sha: e6cdb63db938939006e8b147c2add793c687a829
+    supports:
+      - bounded first-pilot routing into PBPD
+      - PBPD production ownership preserved
+      - branch protection and required validation respected
+    status: VERIFIED
 
 verification_events:
   - id: VER-001
@@ -117,5 +127,10 @@ verification_events:
     event: PRD document metadata/footer reconciled to the existing PRD_READY canonical state and first Spec Kit pilot bundle registered.
     result: PASS_CANONICAL_COHERENCE
     evidence: .pbpd/state/PROJECT-STATE.yaml
+  - id: VER-006
+    at: '2026-09-03T18:53:00-04:00'
+    event: PBPD PR #80 required Validate PBPD workflow completed successfully and the protected pointer update was merged.
+    result: PASS
+    evidence: Faadil1/pbpd-cowork-system#80
 
 contradictions: []

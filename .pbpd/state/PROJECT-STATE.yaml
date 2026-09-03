@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R003
+revision: STATE-R004-G3
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -7,8 +7,8 @@ authority:
   project_authority: PROJECT_AUTHORIZED
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
-  phase: BUILD_READY
-  status: PRD_READY
+  phase: CONSEQUENTIAL_BUILD
+  status: G3_IN_PROGRESS
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -24,17 +24,34 @@ product:
 prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
-  validation_artifact: work/PRD-VALIDATION-001.md
-  ready_declaration: work/PRD-READY-DECLARATION.md
-  validation_status: PASS
   ready_status: PRD_READY
-prebuild_recon:
-  status: PASS_FOR_ARCHITECTURE
-  artifact: references/EXTERNAL-RECON-2026-09-03.md
-runtime_preflight:
-  status: PASS_WITH_EXPECTED_ONBOARDING_GAPS
-  workflow_run_id: 33752070626
-  evidence: evidence/runtime-preflight-001/README.md
+build_branch:
+  name: build/g3-health-factor
+  merge_to_main: NOT_AUTHORIZED
+  current_vertical: Health Factor Monitoring
+  reference_agent: reference-agents/health-factor
+  code_status: CI_VERIFIED
+  evidence_class: SIMULATION_ONLY_UNTIL_LIVE_TESTNET_ACTIVATION
+verified_build_properties:
+  - official Agent Studio scaffold present
+  - deterministic Health Factor Promise Card engine implemented
+  - confidence remains null/UNSCORED until observed calibration exists
+  - Promise Card is injected into ERC-8183 signable terms before signing
+  - deterministic Outcome Receipt is bound to promise_id and scenario_id
+  - structured Health Factor work bypasses generic LLM generation
+  - G3 ERC-8183 service price and clamp are fixed at zero
+  - x402/B402 disabled for G3
+  - automatic LLM credit renewal disabled for G3
+  - TypeScript build passes
+  - deterministic tests pass
+  - bag scan and bag doctor pass in credential-free CI
+live_activation:
+  status: PENDING_HUMAN_GATED_TESTNET_WALLET_AND_GAS
+  not_yet_claimed:
+    - live wallet-backed signing
+    - funded ERC-8183 BSC testnet job
+    - on-chain submit transaction
+    - observed Agent Advantage
 next_action:
-  primary: Begin SPONDEE_G3 vertical slice with the Health Factor reference agent: secure testnet wallet onboarding, local bag dev smoke, Promise Card contract, bounded activation and first Outcome Receipt evidence.
-next_gate: SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT
+  primary: Complete all remaining credential-free G3 evidence, then obtain explicit human approval for throwaway BSC-testnet wallet/gas setup before the first live activation.
+next_gate: SPONDEE_G3_LIVE_TESTNET_ACTIVATION_REQUIRED

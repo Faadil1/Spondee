@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R008-BACKEND-COMPLETE
+revision: STATE-R009-MEGAFUEL-PROVEN
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: BACKEND_CORE_CI_VERIFIED_LIVE_TESTNET_PENDING
+  status: BACKEND_CORE_CI_VERIFIED_MEGAFUEL_PROVEN_LIVE_E2E_PENDING
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -31,11 +31,11 @@ build:
   merge_to_main: NOT_AUTHORIZED
   backend_status: CI_VERIFIED
   backend_path: backend
-  backend_ci_run: '33800450806'
-  backend_ci_artifact: '9910843880'
-  backend_ci_digest: sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49
+  backend_ci_run: '33801590780'
+  backend_ci_artifact: '9911265991'
+  backend_ci_digest: sha256:9b7fd3ca1a4f6ba24b409d096df96842696e1a307d6fb3327d3b280db5534a56
   backend_evidence: evidence/backend-ci-001/README.md
-  evidence_class: SIMULATION_AND_READ_ONLY_CHAIN_UNTIL_LIVE_TESTNET_E2E
+  evidence_class: SIMULATION_PLUS_RUNTIME_INFRASTRUCTURE_PROOF_UNTIL_HEALTH_FACTOR_LIVE_E2E
 verified_backend_properties:
   - shared Task -> Promise Card -> Activation -> Outcome Receipt contract exists
   - Health Factor Monitoring deterministic backend path passes
@@ -56,14 +56,33 @@ verified_backend_properties:
   - AgenticCommerce contract code is present on configured BSC Testnet address
   - EvaluatorRouter contract code is present on configured BSC Testnet address
   - OptimisticPolicy contract code is present on configured BSC Testnet address
-  - 15/15 backend unit/API tests pass
+  - 18/18 backend unit/API tests pass after live-deliverable hardening
   - strict TypeScript backend build passes
-  - no live chain write was attempted during backend verification
+  - live deliverable verification preserves promise_id/scenario_id and simulation truth class
+megafuel:
+  status: RUNTIME_PROVEN_ZERO_BALANCE_ERC8183_WRITES
+  evidence: evidence/megafuel-smoke-001/README.md
+  workflow_run: '33802027942'
+  artifact_id: '9911428783'
+  artifact_digest: sha256:1c8e893c796a0e0ba8cac320b7b13b42baabdb265eae5794b2cb2b16089aaa94
+  network: bsc-testnet
+  chain_id: 97
+  ephemeral_client: '0x6582Fe02B03a4E345A4e7597F4B1264d044f3026'
+  balance_before_wei: '0'
+  balance_after_wei: '0'
+  job_id: '942'
+  create_job_tx: '0x1017e9f592bd84e9d433ad311f473e2e92bc24260c7a6d7e464970ae1f0f6f85'
+  cancel_open_tx: '0x893899a7d4c8c5b905765e2f3aada4be82cf3e0f8096f5c5fe73a8589616337c'
+  create_status: 1
+  cancel_status: 1
+  private_key_persisted: false
+  user_funds_used: false
+  operational_rule: MegaFuel is primary for bounded BSC-testnet ERC-8183 writes; tBNB remains fallback if the relay is unavailable.
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: PENDING_TBNB_AND_E2E
+    live_testnet: PAYMASTER_PROVEN_FULL_E2E_PENDING
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -74,7 +93,7 @@ category_depth:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
 live_activation:
-  status: TESTNET_WALLET_VERIFIED_TBNB_BALANCE_ZERO
+  status: GAS_PATH_PROVEN_SELLER_E2E_PENDING
   authorization:
     granted_at: '2026-09-03T09:08:00-04:00'
     phrase: GO wallet testnet + tBNB
@@ -96,27 +115,25 @@ live_activation:
     password_exposed_to_chat: false
     private_key_exposed_to_chat: false
     address_anchored_in_studio_toml: true
-  balance_check:
-    checked_via: BSC_TESTNET_PUBLIC_JSON_RPC
-    checked_at: '2026-09-03T20:08:22Z'
-    balance_wei: '0'
     balance_tbnb: '0'
-    funded: false
-    ci_run: '33800450806'
+  gas_strategy:
+    primary: MEGAFUEL_PAYMASTER
+    primary_status: PROVEN_WITH_ZERO_BALANCE_CREATE_AND_CANCEL_WRITES
+    fallback: TBNB_SELF_PAY
+    fallback_status: NOT_CURRENTLY_REQUIRED_FOR_NEXT_ATTEMPT
   live_driver:
-    status: CODED_FAIL_CLOSED_NOT_EXECUTED
-    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_AND_CURRENCY -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> DELIVERABLE_URL
+    status: CODED_FAIL_CLOSED_FULL_E2E_NOT_EXECUTED
+    sequence: SIGNED_QUOTE -> VERIFY_PROVIDER_AND_CURRENCY -> BUILD_SAME_SIGNED_DESCRIPTION -> CREATE_JOB -> REGISTER_JOB -> SET_BUDGET_0 -> FUND_0 -> NOTIFY_FUNDED -> POLL_SUBMITTED -> VERIFY_DELIVERABLE_MANIFEST -> OUTCOME_RECEIPT
     requires_separate_buyer_testnet_wallet: true
     live_env_gate_default: false
   not_yet_claimed:
-    - nonzero tBNB balance
-    - separate buyer testnet wallet readiness
-    - live buyer wallet-backed ERC-8183 signing
-    - createJob/registerJob/setBudget(0)/fund(0) transaction evidence
+    - dedicated buyer testnet wallet readiness for the full Health Factor E2E
+    - seller-signed live Spondee Promise Card quote
+    - full createJob/registerJob/setBudget(0)/fund(0) Health Factor sequence
     - provider on-chain submit transaction
-    - live Outcome Receipt/deliverable evidence
+    - live verified Outcome Receipt/deliverable evidence
     - observed Agent Advantage
     - four deployed live reference agents
 next_action:
-  primary: When tBNB is available, create and verify a separate throwaway buyer BSC-testnet wallet locally, run the Health Factor signed zero-price ERC-8183 E2E, preserve job/transaction/deliverable evidence, and keep the three other categories as simulation-only until their live reference-agent gates are separately passed.
-next_gate: SPONDEE_BACKEND_COMPLETE_LIVE_TESTNET_E2E_PENDING_TBNB
+  primary: Start the specialized Health Factor seller A2A endpoint with the verified seller wallet, create/verify a separate throwaway buyer wallet, and execute the complete zero-price ERC-8183 Health Factor E2E using MegaFuel first; use tBNB only if the paymaster relay fails.
+next_gate: SPONDEE_G3_MEGAFUEL_BACKED_HEALTH_FACTOR_LIVE_E2E

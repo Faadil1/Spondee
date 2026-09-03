@@ -92,7 +92,9 @@ export const YieldTaskSchema = z.object({
   candidates: z.array(YieldOptionSchema).min(1).max(50),
 });
 
-export const TaskSchema = z.discriminatedUnion("schema", [
+// Grid/Rebalancing carry cross-field refinements, so Zod v3 cannot place them
+// inside discriminatedUnion. A normal union preserves every schema/refinement.
+export const TaskSchema = z.union([
   HealthFactorTaskSchema,
   GridTaskSchema,
   RebalancingTaskSchema,

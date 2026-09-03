@@ -86,4 +86,13 @@ entries:
     actor: PBPD_orchestrator
     action: close_first_pilot_activation_coherence_milestone
     result: Spondee, Spec Kit Orchestration, central router and PBPD pointer agree on active first pilot, PBPD production ownership and G3 as the next product gate.
+  - id: ACT-016
+    at: '2026-09-03T18:56:00-04:00'
+    actor: PBPD_orchestrator
+    action: diagnose_nonrequired_pbpd_workflow_failures
+    result: Two additional legacy PBPD workflows failed because they assert stable pbpd-builder version 0.4.0 while the repository runtime is already 0.5.0. The changed PR contained only the Spec Kit pointer, the required Validate PBPD workflow passed, and this version-drift debt is classified external/nonblocking for Spondee rather than silently remediated inside this pilot.
+    affected_runs:
+      - 33815125119
+      - 33815125150
+    classification: EXTERNAL_SYSTEM_TECH_DEBT_NONBLOCKING_FOR_SPONDEE
 next_action: Execute SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT with secure testnet wallet onboarding, local bag dev smoke, task-specific Promise Card, bounded activation, first Outcome Receipt evidence, negative-path test and living-PRD discovery reconciliation.

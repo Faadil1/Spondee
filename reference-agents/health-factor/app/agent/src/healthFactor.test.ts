@@ -6,9 +6,11 @@ import {
   buildHealthFactorPromiseCommitment,
   decodeHealthFactorPromiseCommitmentCriterion,
   encodeHealthFactorPromiseCommitmentCriterion,
+  encodeHealthFactorTaskForChain,
   enrichHealthFactorNegotiation,
   hashHealthFactorPromise,
   HealthFactorTaskSchema,
+  parseHealthFactorTask,
   SPONDEE_PROMISE_COMMITMENT_PREFIX,
 } from "./healthFactor.js";
 
@@ -55,9 +57,17 @@ test("Promise Card is deterministic and refuses invented confidence", () => {
   assert.equal(hashHealthFactorPromise(first), hashHealthFactorPromise(second));
 });
 
+test("chain task carrier survives the SDK claim sanitizer alphabet", () => {
+  const encoded = encodeHealthFactorTaskForChain(task);
+  assert.match(encoded, /^SPONDEE_TASK_B64_V1:[A-Za-z0-9_-]+$/);
+  assert.equal(encoded.includes("["), false);
+  assert.equal(encoded.includes("]"), false);
+  assert.deepEqual(parseHealthFactorTask(encoded), task);
+});
+
 test("Negotiation enrichment binds only a compact Promise commitment into SDK-preserved success_criteria", () => {
   const original = {
-    task_description: JSON.stringify(task),
+    task_description: encodeHealthFactorTaskForChain(task),
     terms: {
       deliverables: "Spondee Health Factor Outcome Receipt",
       quality_standards: "Preserve promise id and scenario evidence class",
@@ -83,13 +93,13 @@ test("Negotiation enrichment binds only a compact Promise commitment into SDK-pr
   assert.equal("spondee_promise" in terms, false);
 });
 
-test("Outcome Receipt reconstructs and verifies the committed Promise before delivery", () => {
+test("Outcome Receipt reconstructs and verifies the committed Promise from the chain-safe task", () => {
   const promise = buildHealthFactorPromise(task, 25n);
   const prompt =
     "You accepted and were paid for the following job. Produce the deliverable now.\n\n" +
     "JOB CONTEXT:\n" +
     JSON.stringify({
-      task: JSON.stringify(task),
+      task: encodeHealthFactorTaskForChain(task),
       terms: {
         success_criteria: [encodeHealthFactorPromiseCommitmentCriterion(promise)],
       },
@@ -109,13 +119,15 @@ test("Outcome Receipt fails closed when a Promise commitment hash is tampered", 
   const promise = buildHealthFactorPromise(task, 25n);
   const commitment = buildHealthFactorPromiseCommitment(promise);
   const tampered = `${SPONDEE_PROMISE_COMMITMENT_PREFIX}${JSON.stringify({
-    ...commitment,
-    promise_sha256: "0".repeat(64),
+    p: commitment.promise_id,
+    s: commitment.scenario_id,
+    r: commitment.price_raw,
+    h: "0".repeat(64),
   })}`;
   const prompt =
     "JOB CONTEXT:\n" +
     JSON.stringify({
-      task: JSON.stringify(task),
+      task: encodeHealthFactorTaskForChain(task),
       terms: { success_criteria: [tampered] },
     });
 

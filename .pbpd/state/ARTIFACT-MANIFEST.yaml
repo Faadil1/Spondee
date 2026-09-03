@@ -16,7 +16,7 @@ artifacts:
     path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
     type: product_requirements_document
     version: '0.1'
-    status: PRD_READY_BY_DECLARATION
+    status: PRD_READY
   - id: ART-005
     external_reference: Faadil1/hackathon-opportunity-intelligence#55
     type: hoi_authorization_and_concept_lock
@@ -46,3 +46,13 @@ artifacts:
     path: work/PRD-READY-DECLARATION.md
     type: prd_ready_declaration
     status: PRD_READY
+  - id: ART-012
+    external_reference: Faadil1/spec-kit-orchestration/projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml
+    type: spec_kit_pilot_execution_bundle
+    status: SPEC_PLAN_TASKS_READY_FOR_PBPD
+    includes:
+      - constitution.md
+      - spec.md
+      - plan.md
+      - tasks.md
+      - convergence.md

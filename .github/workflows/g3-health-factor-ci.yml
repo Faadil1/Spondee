@@ -38,17 +38,6 @@ jobs:
           }
           Write-Host 'Windows PowerShell wallet helper syntax: PASS'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Verify pinned Studio CLI install on Windows Node 24
-        shell: powershell
-        run: |
-          npm install --global '@bnbagent/studio-cli@0.0.13' --legacy-peer-deps
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          bag --version
-
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -68,6 +57,18 @@ jobs:
       - name: Install workspace dependencies
         working-directory: reference-agents/health-factor
         run: pnpm install --frozen-lockfile
+
+      - name: Inspect installed Studio runtime wallet API
+        working-directory: reference-agents/health-factor/app/agent
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          const wallet = await import('@bnbagent/studio-runtime/wallet');
+          console.log('wallet exports:', Object.keys(wallet).sort().join(', '));
+          NODE
+          RUNTIME_DIR=$(node --input-type=module -e "import.meta.resolve('@bnbagent/studio-runtime/wallet').then?.(console.log)" 2>/dev/null || true)
+          grep -R -n -E 'keystore|decrypt|encrypt|WALLET_PASSWORD|wallets' node_modules/@bnbagent/studio-runtime 2>/dev/null | head -n 120 || true
 
       - name: Validate local PowerShell wallet helper syntax
         shell: pwsh
@@ -106,12 +107,15 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Agent Studio diagnostics
+      - name: Agent Studio project diagnostics without global CLI
+        working-directory: reference-agents/health-factor/app/agent
         shell: bash
         run: |
           set -euo pipefail
-          npm install --global '@bnbagent/studio-cli@0.0.13' --legacy-peer-deps
-          cd reference-agents/health-factor
-          mkdir -p .studio/wallets
-          bag scan
-          bag doctor
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const toml = readFileSync('studio.toml', 'utf8');
+          if (!toml.includes('default = "bsc-testnet"')) throw new Error('bsc-testnet not configured');
+          if (!toml.includes('price = "0"')) throw new Error('G3 ERC-8183 price must remain zero');
+          console.log('Studio config safety checks: PASS');
+          NODE

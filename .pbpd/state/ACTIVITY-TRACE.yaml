@@ -20,4 +20,16 @@ entries:
     actor: PBPD_orchestrator
     action: enforce_prebuild_gate
     result: consequential implementation remains blocked until PRD validation and reconciliation complete
-next_action: Complete runtime/preflight visibility, validate PRD checklist, resolve any architecture-blocking killing assumptions, then emit PRD_READY or PRD_VALIDATION_BLOCKED.
+  - id: ACT-005
+    at: '2026-09-03T07:31:00-04:00'
+    actor: PBPD_orchestrator
+    action: bounded_external_reconnaissance
+    result: Official BNB sources confirm Agent Studio reference-agent creation/deployment path and Altana bounded permissions; architecture no longer depends on finding perfect pre-existing agents.
+    artifact: references/EXTERNAL-RECON-2026-09-03.md
+  - id: ACT-006
+    at: '2026-09-03T07:32:00-04:00'
+    actor: PBPD_orchestrator
+    action: validate_prd_v0_1
+    result: PRD_VALIDATED; no unresolved product-definition blocker; PRD_READY withheld pending actual build-runtime preflight.
+    artifact: work/PRD-VALIDATION-001.md
+next_action: Run Agent Studio build-runtime preflight and record environment evidence. Promote to PRD_READY only if preflight passes or route to bounded remediation if it fails.

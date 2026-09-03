@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R004-G3
+revision: STATE-R005-G3-LIVE-GO
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_IN_PROGRESS
+  status: G3_LIVE_TESTNET_AUTHORIZED
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -46,12 +46,25 @@ verified_build_properties:
   - deterministic tests pass
   - bag scan and bag doctor pass in credential-free CI
 live_activation:
-  status: PENDING_HUMAN_GATED_TESTNET_WALLET_AND_GAS
+  status: HUMAN_GO_GRANTED_LOCAL_WALLET_SETUP_PENDING
+  authorization:
+    granted_at: '2026-09-03T09:08:00-04:00'
+    phrase: GO wallet testnet + tBNB
+    scope:
+      - create throwaway BSC-testnet wallet locally
+      - acquire minimal tBNB testnet gas if required
+      - perform first bounded live ERC-8183 testnet activation after local wallet verification
+    exclusions:
+      - no private key, seed phrase, keystore or wallet password in chat
+      - no mainnet activity
+      - no merge to main
+      - no public deployment
+      - no final submission
   not_yet_claimed:
     - live wallet-backed signing
     - funded ERC-8183 BSC testnet job
     - on-chain submit transaction
     - observed Agent Advantage
 next_action:
-  primary: Complete all remaining credential-free G3 evidence, then obtain explicit human approval for throwaway BSC-testnet wallet/gas setup before the first live activation.
-next_gate: SPONDEE_G3_LIVE_TESTNET_ACTIVATION_REQUIRED
+  primary: Human creates the throwaway wallet locally and returns only the public 0x address after local verification; then proceed to minimal tBNB balance check and first bounded ERC-8183 testnet activation.
+next_gate: SPONDEE_G3_TESTNET_WALLET_ADDRESS_REQUIRED

@@ -36,6 +36,18 @@ const SPONDEE_TASK_B64_PREFIX = "SPONDEE_TASK_B64_V1:";
  */
 export const SPONDEE_MEGAFUEL_DESCRIPTION_MAX_BYTES = 1600;
 
+/**
+ * Provider submission horizon for a newly created G3 job.
+ *
+ * ERC-8183 requires submit() before `expiredAt - disputeWindow`. The official
+ * BNB SDK protocol notes recommend a long-lived job (roughly 30 days) rather
+ * than relying on the quickstart's 10-minute demonstration slack. The fourth
+ * local attempt proved that 600 seconds is too short for an E2E that may need
+ * deterministic diagnosis/recovery after funding. Keep this independent of
+ * the policy dispute window: expiredAt = now + disputeWindow + this horizon.
+ */
+export const SPONDEE_G3_SUBMISSION_WINDOW_SECONDS = 30n * 24n * 60n * 60n;
+
 interface RpcReply {
   error?: { message?: string };
   result?: { parts?: Array<{ data?: Record<string, unknown> }> };
@@ -157,7 +169,7 @@ export async function publicTestnetReadiness(
     contracts: {
       commerce_has_code: commerceCode !== "0x",
       evaluator_router_has_code: routerCode !== "0x",
-      optimistic_policy_has_code: policyCode !== "0x",
+      optimistic_policy_code: policyCode !== "0x",
     },
     live_write_attempted: false,
   };
@@ -529,7 +541,10 @@ export async function runSignedZeroPriceTestnetActivation(
     }
 
     const disputeWindow = await client.policy.disputeWindow();
-    const expiredAt = BigInt(Math.floor(Date.now() / 1000)) + disputeWindow + 600n;
+    const expiredAt =
+      BigInt(Math.floor(Date.now() / 1000)) +
+      disputeWindow +
+      SPONDEE_G3_SUBMISSION_WINDOW_SECONDS;
     const created = await client.createJob({
       provider: expectedProvider,
       expiredAt,

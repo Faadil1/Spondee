@@ -35,6 +35,23 @@ jobs:
         working-directory: reference-agents/health-factor
         run: pnpm install --frozen-lockfile
 
+      - name: Validate local PowerShell wallet helper syntax
+        shell: pwsh
+        run: |
+          $path = 'reference-agents/health-factor/scripts/g3-create-testnet-wallet.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+          Write-Host 'PowerShell wallet helper syntax: PASS'
+
       - name: Run deterministic Spondee tests
         working-directory: reference-agents/health-factor/app/agent
         run: pnpm test

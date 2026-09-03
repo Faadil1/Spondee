@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import {
   DeliverableManifest,
   ERC8183Client,
+  ERC8183_PAYMASTER_CHAIN_IDS,
   JobStatus,
   buildJobDescription,
   verifyQuoteSignature,
@@ -100,15 +101,17 @@ export async function publicTestnetReadiness(
     jsonRpc("eth_getCode", [BSC_TESTNET.optimisticPolicy, "latest"]),
   ]);
   const balanceWei = BigInt(balanceHex);
+  const paymasterSupported = ERC8183_PAYMASTER_CHAIN_IDS.has(BSC_TESTNET.chainId);
   return {
     network: "bsc-testnet" as const,
     chain_id: Number(BigInt(chainIdHex)),
     provider_address: getAddress(providerAddress),
     provider_balance_wei: balanceWei.toString(),
     funded_for_gas: balanceWei > 0n,
-    sdk_paymaster_default_for_erc8183_chain_97: true,
-    gas_note:
-      "Current @bnbagent/sdk defaults BSC Testnet ERC-8183 to MegaFuel sponsorship; a local tBNB balance remains useful as fallback if the relay is unavailable.",
+    sdk_erc8183_paymaster_supported: paymasterSupported,
+    gas_note: paymasterSupported
+      ? "Pinned @bnbagent/sdk marks chain 97 as ERC-8183 paymaster-supported. tBNB remains a useful fallback because relay availability is runtime-dependent."
+      : "Pinned @bnbagent/sdk does not mark this chain as ERC-8183 paymaster-supported; self-paid tBNB gas is required.",
     contracts: {
       commerce_has_code: commerceCode !== "0x",
       evaluator_router_has_code: routerCode !== "0x",
@@ -203,6 +206,23 @@ function signedPromiseFromQuote(quote: SignedQuote): Record<string, unknown> {
   return promise;
 }
 
+export type LiveProgressStage =
+  | "CREATE_JOB"
+  | "REGISTER_JOB"
+  | "SET_BUDGET"
+  | "FUND"
+  | "SUBMIT_OBSERVED"
+  | "DELIVERABLE_VERIFIED";
+
+export interface LiveActivationProgress {
+  stage: LiveProgressStage;
+  job_id: string;
+  transaction_hash?: string;
+  deliverable_url?: string;
+}
+
+type ProgressSink = (progress: LiveActivationProgress) => Promise<void> | void;
+
 export interface LiveTestnetResult {
   network: "bsc-testnet";
   provider_address: string;
@@ -230,6 +250,7 @@ export interface LiveTestnetResult {
 export async function runSignedZeroPriceTestnetActivation(
   task: SpondeeTask,
   env = process.env,
+  onProgress: ProgressSink = () => undefined,
 ): Promise<LiveTestnetResult> {
   if (task.schema !== "spondee.health-factor.task.v1") {
     throw new Error(
@@ -307,9 +328,32 @@ export async function runSignedZeroPriceTestnetActivation(
     });
     if (created.jobId === null) throw new Error("createJob did not return jobId");
     const jobId = created.jobId;
+    await onProgress({
+      stage: "CREATE_JOB",
+      job_id: jobId.toString(),
+      transaction_hash: created.transactionHash,
+    });
+
     const registered = await client.registerJob(jobId);
+    await onProgress({
+      stage: "REGISTER_JOB",
+      job_id: jobId.toString(),
+      transaction_hash: registered.transactionHash,
+    });
+
     const budgeted = await client.setBudget(jobId, 0n);
+    await onProgress({
+      stage: "SET_BUDGET",
+      job_id: jobId.toString(),
+      transaction_hash: budgeted.transactionHash,
+    });
+
     const funded = await client.fund(jobId, 0n);
+    await onProgress({
+      stage: "FUND",
+      job_id: jobId.toString(),
+      transaction_hash: funded.transactionHash,
+    });
 
     await sendSkill(messageUrl, { skill: "notify_funded", job_id: Number(jobId) });
 
@@ -341,6 +385,14 @@ export async function runSignedZeroPriceTestnetActivation(
       jobId,
     );
     const submitEvent = submitEvents.at(-1) ?? null;
+    if (submitEvent?.transactionHash) {
+      await onProgress({
+        stage: "SUBMIT_OBSERVED",
+        job_id: jobId.toString(),
+        transaction_hash: submitEvent.transactionHash,
+        deliverable_url: deliverableUrl,
+      });
+    }
 
     const gatewayUrl =
       env.STORAGE_GATEWAY_URL ?? "https://gateway.pinata.cloud/ipfs/";
@@ -359,6 +411,11 @@ export async function runSignedZeroPriceTestnetActivation(
       promiseId,
       task.scenario_id,
     );
+    await onProgress({
+      stage: "DELIVERABLE_VERIFIED",
+      job_id: jobId.toString(),
+      deliverable_url: deliverableUrl,
+    });
 
     return {
       network: "bsc-testnet",

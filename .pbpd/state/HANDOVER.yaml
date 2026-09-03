@@ -1,0 +1,108 @@
+handover:
+  protocol_version: 1
+  project_id: bnb_agent_studio_build_the_era_2026
+  project_name: Spondee
+  date: 2026-09-03
+  source_of_truth: GITHUB
+  repository: Faadil1/Spondee
+  branch: build/backend-complete
+
+  resume_rule: >-
+    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, AUTHORITY-STATE.yaml,
+    REQUIREMENTS-LEDGER.yaml, EVIDENCE-LEDGER.yaml, RUNTIME-STATUS.yaml and ACTIVITY-TRACE.yaml.
+    Canonical GitHub state outranks chat memory. Do not ask the human to recreate the seller wallet,
+    obtain tBNB, or expose any secret unless a new independently verified runtime blocker requires it.
+
+  current_milestone: G3_MEGAFUEL_LIVE_E2E_SECOND_FAIL_CLOSED__SIGNED_PROMISE_CARRIER_FIX_APPLIED
+  lifecycle_status: FIX_APPLIED_CI_PENDING__NO_LOCAL_RETRY_AUTHORIZED_YET
+
+  authority:
+    project: PROJECT_AUTHORIZED
+    production_owner: PBPD
+    protected_submission: HUMAN
+    meaningful_mainnet_or_user_capital: HUMAN_ONLY
+    material_paid_spend: HUMAN_ONLY
+
+  canonical_seller:
+    network: bsc-testnet
+    chain_id: 97
+    address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    existing_encrypted_keystore_reuse_required: true
+    password_chat_exposure: FORBIDDEN
+    recreate_wallet: false
+    tBNB_required_for_current_retry: false
+
+  previous_verified_fix:
+    commit: f19a51deb39c37ab2c5b25d7d88c5d75f7514292
+    issue: buyer_expected_nonstandard_provider_address
+    resolution: provider identity verified with official SDK verifyQuoteSignature
+    backend_ci_run: '33806097273'
+    g3_ci_run: '33806096975'
+    result: PASS
+
+  second_live_attempt:
+    started_at: '2026-09-03T22:37:13.916Z'
+    failed_at: '2026-09-03T22:37:15.505Z'
+    result: FAIL_CLOSED_PRE_WRITE
+    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    ephemeral_buyer_address: '0xC70fd5b6c59027592917dA0e118B1f20eC0E5629'
+    progress_events: 0
+    create_job_sent: false
+    transaction_count: 0
+    user_funds_used: false
+    megafuel_failure: false
+    error: signed quote is missing terms.spondee_promise
+
+  root_cause:
+    classification: SDK_PROTOCOL_SHAPE_ASSUMPTION
+    finding: >-
+      Spondee correctly generated the Promise Card before signing, but placed it in the custom
+      terms.spondee_promise field. Official @bnbagent/sdk NegotiationRequest.fromDict reconstructs
+      terms through TermSpecification, which preserves only protocol fields such as deliverables,
+      quality_standards and success_criteria; arbitrary custom term keys are dropped before the
+      request/response hashes, provider signature and NegotiationResult.toDict envelope are produced.
+    consequence: >-
+      The buyer correctly failed before createJob when the custom Promise field was absent. The previous
+      test suite was insufficient because its fake signQuote seam inspected the pre-SDK request rather than
+      the real serialized NegotiationResult shape.
+
+  applied_fix:
+    carrier: success_criteria
+    carrier_prefix: 'SPONDEE_PROMISE_CARD_V1:'
+    security_properties:
+      - Promise Card is carried only through an official TermSpecification field preserved by the SDK
+      - request and response must each contain exactly one Spondee Promise carrier
+      - request and response carrier strings must match exactly
+      - buyer verifies provider signature, chain and Commerce contract before trusting the Promise Card
+      - seller delivery reads the same carrier back from the on-chain JobDescription terms
+      - missing, malformed, duplicate or mismatched carriers fail closed before createJob
+    commits:
+      seller_carrier: ed74abdcf8496c8beb34dd9751deaaeca4d52250
+      buyer_decoder_and_verification_order: 05191e522507b71858c8a43b96dca802a4a5eb90
+      backend_regression_tests: 58e1df6e80debd6b9aace3d07d8f3cfd73183aad
+      seller_regression_tests: 1ecc3aed89af6d367e2f692946ea88e375aa95bd
+
+  validation:
+    backend_ci: PENDING
+    g3_ci: PENDING
+    windows_node24_wallet_roundtrip: PENDING_NEW_HEAD
+    powershell_parse: PENDING_NEW_HEAD
+    local_live_retry: BLOCKED_UNTIL_CI_PASS
+
+  safety_invariants:
+    - no blind retry
+    - no new seller wallet
+    - no secret in chat
+    - no mainnet activity
+    - no meaningful user capital
+    - simulation receipt remains SIMULATION and ineligible for observed Agent Advantage
+    - progress empty means no ERC-8183 write was started in the second attempt
+
+  exact_next_gate: SPONDEE_G3_SIGNED_PROMISE_CARRIER_CI_VALIDATION
+  exact_next_owner: PBPD
+  exact_next_action: >-
+    Wait only for repository CI evidence already triggered by the code changes. Require Spondee Backend CI
+    and G3 Health Factor CI to pass on the relevant new commits, including Windows Node 24 wallet roundtrip
+    and PowerShell parsing. If both pass, update canonical state and this HANDOVER to RETRY_READY, then ask
+    the human to git pull and rerun scripts/g3-megafuel-live-e2e.ps1 once using the existing seller wallet.
+    If either CI fails, fix deterministically and do not ask for a local retry.

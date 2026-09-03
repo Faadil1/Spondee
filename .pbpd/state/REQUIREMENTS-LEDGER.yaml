@@ -1,0 +1,129 @@
+schema: PBPD-REQUIREMENTS-LEDGER-v0.1
+requirements:
+  - id: MUST-01
+    class: MUST
+    requirement: Surface all four official categories at equal product depth.
+    status: PENDING
+    evidence_plan: Judge-path checklist
+  - id: MUST-02
+    class: MUST
+    requirement: Anything represented as activatable must use a real BSC-live agent/path.
+    status: PENDING
+    evidence_plan: Agent IDs and BSC activity evidence
+  - id: MUST-03
+    class: MUST
+    requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
+    status: PENDING
+    evidence_plan: Data provenance record
+  - id: MUST-04
+    class: MUST
+    requirement: Produce a task-specific Promise Card before activation.
+    status: PENDING
+    evidence_plan: Stored promise artifact
+  - id: MUST-05
+    class: MUST
+    requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
+    status: PENDING
+    evidence_plan: Promise schema validation
+  - id: MUST-06
+    class: MUST
+    requirement: Category to successful activation has no dead end.
+    status: PENDING
+    evidence_plan: End-to-end test
+  - id: MUST-07
+    class: MUST
+    requirement: Delegated execution authority is visibly bounded.
+    status: PENDING
+    evidence_plan: Allowlist, cap, expiry and revoke evidence
+  - id: MUST-08
+    class: MUST
+    requirement: Every completed measured run creates an Outcome Receipt.
+    status: PENDING
+    evidence_plan: Receipt artifact
+  - id: MUST-09
+    class: MUST
+    requirement: Outcome Receipt binds original promise to actual result.
+    status: PENDING
+    evidence_plan: Promise/result identifiers and timestamps
+  - id: MUST-10
+    class: MUST
+    requirement: Agent Advantage Report contains at least three observed paired tasks.
+    status: PENDING
+    evidence_plan: Final report and raw outputs
+  - id: MUST-11
+    class: MUST
+    requirement: At least one measured task is trading-related.
+    status: PENDING
+    evidence_plan: Grid Trading experiment
+  - id: MUST-12
+    class: MUST
+    requirement: Baseline timings, costs and results are observed or reproducible, never invented.
+    status: PENDING
+    evidence_plan: Raw baseline artifacts
+  - id: MUST-13
+    class: MUST
+    requirement: Health Factor hero measures useful warning lead time and response latency.
+    status: PENDING
+    evidence_plan: Event tape
+  - id: MUST-14
+    class: MUST
+    requirement: Public product remains accessible during judging.
+    status: PENDING
+    evidence_plan: Public URL smoke check
+  - id: MUST-15
+    class: MUST
+    requirement: Failure states fail visibly rather than fabricating success.
+    status: PENDING
+    evidence_plan: Negative-path test
+  - id: SHOULD-01
+    class: SHOULD
+    requirement: Show calibration history when enough completed runs exist.
+    status: PENDING
+  - id: SHOULD-02
+    class: SHOULD
+    requirement: Provide Decision Replay for measured runs.
+    status: PENDING
+  - id: SHOULD-03
+    class: SHOULD
+    requirement: Use Altana scoped session authority if core integration supports it.
+    status: PENDING
+  - id: SHOULD-04
+    class: SHOULD
+    requirement: Add genuine PancakeSwap trader/LP benefit only after core product is complete.
+    status: PENDING
+  - id: SHOULD-05
+    class: SHOULD
+    requirement: Keep generic reputation secondary to task-specific evidence.
+    status: PENDING
+  - id: MUST_NOT-01
+    class: MUST_NOT
+    requirement: Do not present estimated or synthetic performance as observed real evidence.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-02
+    class: MUST_NOT
+    requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-03
+    class: MUST_NOT
+    requirement: Do not claim guaranteed profit, safety or liquidation prevention.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-04
+    class: MUST_NOT
+    requirement: Do not show an agent as activatable when activation does not work.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-05
+    class: MUST_NOT
+    requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-06
+    class: MUST_NOT
+    requirement: Do not add bonds, auctions, leagues, generic red-team systems or orchestration platforms before core gates pass.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-07
+    class: MUST_NOT
+    requirement: Do not move meaningful real mainnet user capital without explicit human authorization.
+    status: ACTIVE_GUARDRAIL
+  - id: MUST_NOT-08
+    class: MUST_NOT
+    requirement: Do not treat LLM-generated quality scores as ground truth.
+    status: ACTIVE_GUARDRAIL

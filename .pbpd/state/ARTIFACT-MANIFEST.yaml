@@ -96,3 +96,7 @@ artifacts:
     external_run: 33800450806
     artifact_id: 9910843880
     artifact_digest: sha256:0b6dd58a0d04dd8eec819073decf06e75b42cfbb5c413b1db5f498879584fd49
+  - id: ART-023
+    external_reference: Faadil1/Spondee#1
+    type: draft_backend_review_pull_request
+    status: DRAFT_DO_NOT_MERGE_BEFORE_LIVE_E2E_REVIEW

@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 
-const SPONDEE_PROMISE_CRITERION_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
+export const SPONDEE_PROMISE_COMMITMENT_PREFIX = "SPONDEE_PROMISE_COMMITMENT_V1:";
 
 const StressPointSchema = z.object({
   at_seconds: z.number().int().nonnegative(),
@@ -57,6 +57,14 @@ export interface HealthFactorPromiseCard {
   claim_guardrail: string;
 }
 
+export interface HealthFactorPromiseCommitment {
+  schema: "spondee.promise-commitment.v1";
+  promise_id: string;
+  scenario_id: string;
+  price_raw: string;
+  promise_sha256: string;
+}
+
 export interface HealthFactorOutcomeReceipt {
   schema: "spondee.outcome-receipt.v1";
   category: "Health Factor Monitoring";
@@ -104,6 +112,10 @@ function stable(value: unknown): string {
 
 function hash(value: unknown): string {
   return createHash("sha256").update(stable(value)).digest("hex");
+}
+
+export function hashHealthFactorPromise(promise: HealthFactorPromiseCard): string {
+  return hash(promise);
 }
 
 function hfAt(task: HealthFactorTask, collateralMultiplier: number, debtMultiplier: number): number {
@@ -214,26 +226,55 @@ export function buildHealthFactorPromise(
   };
 }
 
-function encodePromiseCriterion(promise: HealthFactorPromiseCard): string {
-  return `${SPONDEE_PROMISE_CRITERION_PREFIX}${JSON.stringify(promise)}`;
+export function buildHealthFactorPromiseCommitment(
+  promise: HealthFactorPromiseCard,
+): HealthFactorPromiseCommitment {
+  return {
+    schema: "spondee.promise-commitment.v1",
+    promise_id: promise.promise_id,
+    scenario_id: promise.scenario_id,
+    price_raw: promise.expected_cost.amount,
+    promise_sha256: hashHealthFactorPromise(promise),
+  };
 }
 
-function decodePromiseCriterion(value: unknown): HealthFactorPromiseCard | null {
-  if (typeof value !== "string" || !value.startsWith(SPONDEE_PROMISE_CRITERION_PREFIX)) {
+export function encodeHealthFactorPromiseCommitmentCriterion(
+  promise: HealthFactorPromiseCard,
+): string {
+  return `${SPONDEE_PROMISE_COMMITMENT_PREFIX}${JSON.stringify(
+    buildHealthFactorPromiseCommitment(promise),
+  )}`;
+}
+
+export function decodeHealthFactorPromiseCommitmentCriterion(
+  value: unknown,
+): HealthFactorPromiseCommitment | null {
+  if (
+    typeof value !== "string" ||
+    !value.startsWith(SPONDEE_PROMISE_COMMITMENT_PREFIX)
+  ) {
     return null;
   }
   try {
-    const candidate = JSON.parse(value.slice(SPONDEE_PROMISE_CRITERION_PREFIX.length)) as unknown;
-    if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) return null;
-    const p = candidate as Record<string, unknown>;
+    const candidate = JSON.parse(
+      value.slice(SPONDEE_PROMISE_COMMITMENT_PREFIX.length),
+    ) as unknown;
+    if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) {
+      return null;
+    }
+    const c = candidate as Record<string, unknown>;
     if (
-      p.schema !== "spondee.promise-card.v1" ||
-      typeof p.promise_id !== "string" ||
-      typeof p.scenario_id !== "string"
+      c.schema !== "spondee.promise-commitment.v1" ||
+      typeof c.promise_id !== "string" ||
+      typeof c.scenario_id !== "string" ||
+      typeof c.price_raw !== "string" ||
+      !/^\d+$/.test(c.price_raw) ||
+      typeof c.promise_sha256 !== "string" ||
+      !/^[a-f0-9]{64}$/.test(c.promise_sha256)
     ) {
       return null;
     }
-    return candidate as HealthFactorPromiseCard;
+    return candidate as HealthFactorPromiseCommitment;
   } catch {
     return null;
   }
@@ -250,11 +291,16 @@ export function previewHealthFactorFromEnvelope(
 export function enrichHealthFactorNegotiation(
   request: Record<string, unknown>,
   priceWei: bigint,
-): { request: Record<string, unknown>; promise: HealthFactorPromiseCard | null } {
+): {
+  request: Record<string, unknown>;
+  promise: HealthFactorPromiseCard | null;
+  commitment: HealthFactorPromiseCommitment | null;
+} {
   const task = taskFromRequest(request);
-  if (task === null) return { request, promise: null };
+  if (task === null) return { request, promise: null, commitment: null };
 
   const promise = buildHealthFactorPromise(task, priceWei);
+  const commitment = buildHealthFactorPromiseCommitment(promise);
   const existingTerms =
     request.terms !== null && typeof request.terms === "object" && !Array.isArray(request.terms)
       ? (request.terms as Record<string, unknown>)
@@ -262,7 +308,8 @@ export function enrichHealthFactorNegotiation(
   const existingCriteria = Array.isArray(existingTerms.success_criteria)
     ? existingTerms.success_criteria.filter(
         (entry): entry is string =>
-          typeof entry === "string" && !entry.startsWith(SPONDEE_PROMISE_CRITERION_PREFIX),
+          typeof entry === "string" &&
+          !entry.startsWith(SPONDEE_PROMISE_COMMITMENT_PREFIX),
       )
     : [];
 
@@ -271,20 +318,24 @@ export function enrichHealthFactorNegotiation(
       ...request,
       terms: {
         ...existingTerms,
-        success_criteria: [...existingCriteria, encodePromiseCriterion(promise)],
+        success_criteria: [
+          ...existingCriteria,
+          encodeHealthFactorPromiseCommitmentCriterion(promise),
+        ],
       },
     },
     promise,
+    commitment,
   };
 }
 
-function termsPromise(value: unknown): HealthFactorPromiseCard | null {
+function termsCommitment(value: unknown): HealthFactorPromiseCommitment | null {
   if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
   const terms = value as Record<string, unknown>;
   if (!Array.isArray(terms.success_criteria)) return null;
   const matches = terms.success_criteria
-    .map(decodePromiseCriterion)
-    .filter((candidate): candidate is HealthFactorPromiseCard => candidate !== null);
+    .map(decodeHealthFactorPromiseCommitmentCriterion)
+    .filter((candidate): candidate is HealthFactorPromiseCommitment => candidate !== null);
   return matches.length === 1 ? matches[0] : null;
 }
 
@@ -304,8 +355,24 @@ export function buildHealthFactorOutcomeFromWorkPrompt(
   if (context === null || typeof context !== "object" || Array.isArray(context)) return null;
   const job = context as Record<string, unknown>;
   const task = parseHealthFactorTask(job.task);
-  const promise = termsPromise(job.terms);
-  if (task === null || promise === null || promise.scenario_id !== task.scenario_id) return null;
+  const commitment = termsCommitment(job.terms);
+  if (task === null || commitment === null || commitment.scenario_id !== task.scenario_id) {
+    return null;
+  }
+
+  let priceWei: bigint;
+  try {
+    priceWei = BigInt(commitment.price_raw);
+  } catch {
+    return null;
+  }
+  const promise = buildHealthFactorPromise(task, priceWei);
+  if (
+    promise.promise_id !== commitment.promise_id ||
+    hashHealthFactorPromise(promise) !== commitment.promise_sha256
+  ) {
+    return null;
+  }
 
   const analysis = analyzeHealthFactorTask(task);
   return {

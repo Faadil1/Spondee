@@ -30,14 +30,15 @@ Hero vertical: **Health Factor Monitoring**.
 Read in this order for Spondee product/build continuation:
 
 1. `.pbpd/state/PROJECT-STATE.yaml`
-2. `.pbpd/state/AUTHORITY-STATE.yaml`
-3. `incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md`
-4. `.pbpd/state/DECISION-LOG.yaml`
-5. `.pbpd/state/REQUIREMENTS-LEDGER.yaml`
-6. `.pbpd/state/EVIDENCE-LEDGER.yaml`
-7. `.pbpd/state/RISK-REGISTER.yaml`
-8. `.pbpd/state/ACTIVITY-TRACE.yaml`
-9. `Faadil1/spec-kit-orchestration/state/CURRENT.yaml` and the Spondee project-local Spec Kit execution bundle when specification/planning/convergence context is needed.
+2. `.pbpd/state/HANDOVER.yaml`
+3. `.pbpd/state/AUTHORITY-STATE.yaml`
+4. `incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md`
+5. `.pbpd/state/DECISION-LOG.yaml`
+6. `.pbpd/state/REQUIREMENTS-LEDGER.yaml`
+7. `.pbpd/state/EVIDENCE-LEDGER.yaml`
+8. `.pbpd/state/RISK-REGISTER.yaml`
+9. `.pbpd/state/ACTIVITY-TRACE.yaml`
+10. `Faadil1/spec-kit-orchestration/state/CURRENT.yaml` and the Spondee project-local Spec Kit execution bundle when specification/planning/convergence context is needed.
 
 Canonical product intent stays in the living PRD. Build discoveries must be captured and classified; any approved product clarification or material product change updates the PRD first, then derived Spec Kit artifacts are reconciled.
 

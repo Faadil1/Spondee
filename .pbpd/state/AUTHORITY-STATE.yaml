@@ -19,11 +19,20 @@ chief_of_staff_delegation:
     - final hackathon submission remains human-owned
 current_action_grants:
   - action: PBPD_PRD_VALIDATION
-    status: ALLOWED
+    status: COMPLETE
   - action: BOUNDED_RECONNAISSANCE_FOR_REQUIREMENTS
     status: ALLOWED
   - action: CONSEQUENTIAL_PRODUCT_BUILD
-    status: BLOCKED_UNTIL_PRD_READY
+    status: ALLOWED_WITHIN_PRD_AND_AUTHORIZATION
+    opened_by_gate: PRD_READY
+  - action: BSC_TESTNET_REFERENCE_AGENT_BUILD
+    status: ALLOWED
+  - action: PUBLIC_JUDGING_BUILD_DEPLOYMENT
+    status: ALLOWED_WITHIN_EXISTING_AUTHORIZATION
+  - action: MEANINGFUL_MAINNET_OR_USER_CAPITAL
+    status: PROTECTED_HUMAN_ONLY
+  - action: MATERIAL_PAID_SPEND
+    status: PROTECTED_HUMAN_ONLY
   - action: FINAL_HACKATHON_SUBMISSION
     status: PROTECTED_HUMAN_ONLY
 revocations: []

@@ -1,7 +1,7 @@
 # Spondee — Product Requirements Document
 
 Version: `0.1`  
-Status: `PRD_DRAFTED`  
+Status: `PRD_READY`  
 Project ID: `bnb_agent_studio_build_the_era_2026`  
 Date: `2026-09-03`  
 Owner: `PBPD`  
@@ -271,7 +271,7 @@ Human: observed manual/no-agent baselines and protected final submission.
 - Q4 — Can Altana scoped activation be included in G3 without jeopardizing the core vertical?
 - Q5 — What is the simplest truthful metric set for Yield Optimisation?
 
-These are implementation reconnaissance questions. They must be resolved or explicitly bounded before `PRD_READY` where they affect consequential architecture.
+These are bounded implementation-reconnaissance questions, not current PRD-definition blockers. If evidence turns any of them into a product clarification or material product change, PBPD must route it through the living-PRD revision policy before affected derived artifacts or implementation silently drift.
 
 ## 20. Completion / submission boundary
 
@@ -305,9 +305,10 @@ IP/provenance: competition-specific code belongs here; do not copy reusable PBPD
 | Version | Date | Change | Authority / reason |
 |---|---|---|---|
 | 0.1 | 2026-09-03 | Initial Spondee PRD after human GO, blind council, collision analysis and naming lock | Human authorization + PBPD pre-build standard |
+| 0.1 status reconciliation | 2026-09-03 | Reconciled document metadata/footer to the already-approved `PRD_READY` state; clarified that remaining Q1–Q5 are bounded implementation questions. No product-intent expansion. | Existing PBPD `PRD_READY` declaration + canonical-state coherence audit |
 
 ## PRD_READY declaration
 
-Current status remains `PRD_DRAFTED`.
+Current status is `PRD_READY`.
 
-Advance only after PBPD validates this document and reconciles requirements, authority, evidence, risks, decisions, artifacts and activity into `.pbpd/state/`.
+The authoritative promotion record is `work/PRD-READY-DECLARATION.md`; `.pbpd/state/PROJECT-STATE.yaml` owns the current project lifecycle state. This PRD remains a living canonical product-intent source: implementation discoveries may propose changes, but approved product-intent changes must be recorded here before derived Spec Kit artifacts and affected implementation are reconciled.

@@ -6,11 +6,11 @@ Spondee is the BNB Agent Studio / Build the Era project for a calibrated outcome
 
 ## Current state
 
-`PROJECT_AUTHORIZED -> CONTEXT_RECOVERED -> PRD_DRAFTED`
+`PROJECT_AUTHORIZED -> CONTEXT_RECOVERED -> PRD_DRAFTED -> PRD_VALIDATED -> PRD_READY`
 
-No consequential product implementation has started yet.
+The pre-build gate is complete. A reproducible GitHub Actions preflight verified Node 22, pnpm 10, `@bnbagent/studio-cli`, BSC testnet connectivity, credential-free reference-agent scaffolding, `bag scan` and `bag doctor`.
 
-PBPD must validate/reconcile the PRD before the build gate opens.
+Consequential product implementation may now begin only within the authorized PRD scope.
 
 ## Locked product direction
 
@@ -27,11 +27,14 @@ Hero vertical: **Health Factor Monitoring**.
 
 ## Governance
 
-Canonical pre-build inputs live under `incoming/`.
+Canonical inputs live under `incoming/`.
 Canonical PBPD state lives under `.pbpd/state/`.
+Runtime preflight evidence lives under `evidence/runtime-preflight-001/`.
 
-Protected final submission remains human-owned.
+Protected final submission remains human-owned. Meaningful mainnet/user capital and material paid spend remain human-gated.
 
 ## Next gate
 
-`SPONDEE_PRD_VALIDATION_AND_RECONCILIATION`
+`SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT`
+
+First build objective: configure one Spondee Health Factor reference agent, complete a local `bag dev` smoke, generate a task-specific Promise Card, exercise a bounded activation path and preserve the first Outcome Receipt evidence.

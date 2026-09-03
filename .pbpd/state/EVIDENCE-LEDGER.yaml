@@ -3,19 +3,19 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: ARCHITECTURE_SUPPORTED_RUNTIME_UNVERIFIED
+    status: PARTIALLY_VERIFIED_SCAFFOLD_AND_NETWORK_ONLY
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
     truth_class: HYPOTHESIS
-    status: DESIGN_SUPPORTED_RUNTIME_UNVERIFIED
+    status: UNVERIFIED_G3
   - id: CLM-003
     claim: Promise-to-actual calibration can be measured from preserved evidence.
     truth_class: HYPOTHESIS
-    status: DESIGN_SUPPORTED_RUNTIME_UNVERIFIED
+    status: UNVERIFIED_G3
   - id: CLM-004
     claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED
+    status: UNVERIFIED_G3
   - id: CLM-005
     claim: Three observed Agent Advantage paired experiments can be completed before submission.
     truth_class: HYPOTHESIS
@@ -24,6 +24,11 @@ claims:
     claim: All four required categories can reach comparable find-understand-activate depth.
     truth_class: HYPOTHESIS
     status: UNVERIFIED
+  - id: CLM-007
+    claim: The current Agent Studio runtime can install, reach BSC testnet, scaffold and diagnose a Spondee reference-agent workspace without secrets.
+    truth_class: FACT
+    status: VERIFIED
+
 evidence:
   - id: EV-001
     type: authorization
@@ -44,7 +49,7 @@ evidence:
     supports:
       - product requirements
       - evidence burden
-    status: PRD_VALIDATED
+    status: PRESENT
   - id: EV-004
     type: source_decision
     reference: Faadil1/hackathon-opportunity-intelligence#55
@@ -59,26 +64,44 @@ evidence:
       - project routing
     status: EXTERNAL_REFERENCE
   - id: EV-006
-    type: official_external_recon
-    artifact: references/EXTERNAL-RECON-2026-09-03.md
+    type: runtime_preflight
+    artifact: evidence/runtime-preflight-001/README.md
+    workflow_run_id: 33752070626
+    artifact_id: 9891943363
+    artifact_digest: sha256:aa77d354a2098baa21558ee036665ec09f1f93443a10a956acbc422cb34a656c
     supports:
-      - BNB Agent Studio can create/deploy Spondee-owned reference agents
-      - BSC testnet path exists
-      - ERC-8004/8183/x402 architecture is available
-      - Altana bounded permission model exists
-      - relevant live BSC agent supply exists on 8004scan
-    status: PRESENT
+      - Node 22 runtime
+      - pnpm 10 runtime
+      - Agent Studio CLI installation
+      - BSC testnet chain connectivity
+      - credential-free reference-agent scaffold
+      - bag scan
+      - bag doctor
+    status: VERIFIED
   - id: EV-007
-    type: prd_validation
-    artifact: work/PRD-VALIDATION-001.md
+    type: prd_ready_declaration
+    artifact: work/PRD-READY-DECLARATION.md
     supports:
-      - PRD completeness
-      - architecture blocker classification
-    status: PASS
+      - PRD_READY transition
+    status: PRESENT
+
 verification_events:
   - id: VER-001
-    date: '2026-09-03'
-    event: PRD v0.1 validated against PBPD pre-build standard.
+    at: '2026-09-03T07:53:12-04:00'
+    event: GitHub Actions runtime preflight completed successfully.
     result: PASS
-    limitation: Runtime preflight still required before PRD_READY.
+    evidence: GitHub Actions run 33752070626
+  - id: VER-002
+    at: '2026-09-03T07:53:12-04:00'
+    event: BSC testnet RPC returned chain ID 0x61.
+    result: PASS
+  - id: VER-003
+    at: '2026-09-03T07:53:12-04:00'
+    event: bag init spondeehealth completed with exit code 0.
+    result: PASS
+  - id: VER-004
+    at: '2026-09-03T07:53:12-04:00'
+    event: bag doctor completed with exit code 0; warnings classified as expected pre-onboarding gaps.
+    result: PASS_WITH_WARNINGS
+
 contradictions: []

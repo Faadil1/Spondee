@@ -47,3 +47,19 @@ decisions:
     evidence:
       - bag doctor exit code 0
       - runtime preflight evidence
+  - id: DEC-008
+    date: '2026-09-03'
+    decision: Use Spondee as the first real bounded Spec Kit Orchestration pilot for G3; Spec Kit owns derived specification/planning/convergence artifacts only and PBPD retains production ownership.
+    status: ACCEPTED
+    authority: human
+    evidence:
+      - Faadil1/spec-kit-orchestration/projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml
+      - human GO in current workstream
+  - id: DEC-009
+    date: '2026-09-03'
+    decision: Reconcile the PRD document metadata/footer from stale PRD_DRAFTED text to the already-approved PRD_READY canonical state without changing product intent.
+    status: ACCEPTED
+    authority: PBPD_CANONICAL_COHERENCE
+    evidence:
+      - work/PRD-READY-DECLARATION.md
+      - .pbpd/state/PROJECT-STATE.yaml

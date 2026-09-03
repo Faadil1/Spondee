@@ -29,18 +29,32 @@ interface RpcReply {
   result?: { parts?: Array<{ data?: Record<string, unknown> }> };
 }
 
+/**
+ * Official @bnbagent/sdk NegotiationResult.toDict() wire shape.
+ *
+ * Important: the SDK envelope does NOT contain provider_address. Provider
+ * identity is proven cryptographically by verifyQuoteSignature() against the
+ * configured expected provider address and Commerce verifying contract.
+ */
 export interface SignedQuote extends Record<string, unknown> {
-  provider_address: string;
-  request?: {
+  request: {
     terms?: {
       spondee_promise?: Record<string, unknown>;
       [key: string]: unknown;
     };
     [key: string]: unknown;
   };
-  response: { terms: { price: string; currency?: string } };
-  negotiation_hash?: string;
-  provider_sig?: string;
+  response: {
+    accepted: boolean;
+    terms: { price: string; currency?: string; [key: string]: unknown };
+    [key: string]: unknown;
+  };
+  request_hash?: string;
+  response_hash?: string;
+  negotiation_hash: string;
+  provider_sig: string;
+  chain_id?: number;
+  verifying_contract?: string;
 }
 
 async function sendSkill(
@@ -146,6 +160,36 @@ function objectOrNull(value: unknown): Record<string, unknown> | null {
   return value !== null && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : null;
+}
+
+/** Validate the protocol shape before any on-chain write is attempted. */
+export function validateSignedQuoteEnvelope(value: unknown): SignedQuote {
+  const quote = objectOrNull(value);
+  if (!quote) throw new Error("seller returned a non-object ERC-8183 quote envelope");
+
+  const request = objectOrNull(quote.request);
+  const response = objectOrNull(quote.response);
+  const terms = objectOrNull(response?.terms);
+  if (!request || !response || !terms) {
+    throw new Error("seller returned an invalid ERC-8183 quote envelope");
+  }
+  if (response.accepted !== true) {
+    const reason = typeof response.reason === "string" ? `: ${response.reason}` : "";
+    throw new Error(`seller rejected the ERC-8183 negotiation${reason}`);
+  }
+  if (typeof terms.price !== "string" || terms.price.length === 0) {
+    throw new Error("accepted ERC-8183 quote is missing price");
+  }
+  if (typeof quote.negotiation_hash !== "string" || quote.negotiation_hash.length === 0) {
+    throw new Error("accepted ERC-8183 quote is missing negotiation_hash");
+  }
+  if (typeof quote.provider_sig !== "string" || quote.provider_sig.length === 0) {
+    throw new Error("accepted ERC-8183 quote is missing provider_sig");
+  }
+
+  // The official SDK envelope intentionally has no provider_address field.
+  // Provider identity is verified later with verifyQuoteSignature(expectedProvider).
+  return quote as SignedQuote;
 }
 
 export function validateLiveSpondeeReceipt(
@@ -284,13 +328,7 @@ export async function runSignedZeroPriceTestnetActivation(
           "Preserve promise_id, scenario_id, evidence class, zero service price and claim guardrails",
       },
     });
-    const quote = quoteRaw as SignedQuote;
-    if (!quote.provider_address || !quote.response?.terms) {
-      throw new Error("seller returned an invalid ERC-8183 quote envelope");
-    }
-    if (getAddress(quote.provider_address) !== expectedProvider) {
-      throw new Error("signed quote provider does not match the configured Spondee provider anchor");
-    }
+    const quote = validateSignedQuoteEnvelope(quoteRaw);
     if (quote.response.terms.price !== "0") {
       throw new Error(`G3 live activation refuses non-zero service price: ${quote.response.terms.price}`);
     }

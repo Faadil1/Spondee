@@ -69,8 +69,17 @@ jobs:
           console.log('runtime wallet exports:', Object.keys(runtime).sort().join(', '));
           console.log('sdk wallet exports:', Object.keys(sdk).sort().join(', '));
           NODE
-          echo '--- SDK wallet declarations/source hits ---'
-          grep -R -n -E 'create|generate|keystore|encrypt|decrypt|privateKey|LocalWallet|Evm' node_modules/@bnbagent/sdk/dist 2>/dev/null | head -n 220 || true
+          echo '--- EVMWalletProvider declaration ---'
+          FILE=$(grep -R -l 'declare class EVMWalletProvider' node_modules/@bnbagent/sdk/dist | head -n 1)
+          if [ -n "$FILE" ]; then
+            LINE=$(grep -n 'declare class EVMWalletProvider' "$FILE" | head -n1 | cut -d: -f1)
+            START=$((LINE-35)); if [ "$START" -lt 1 ]; then START=1; fi
+            END=$((LINE+115))
+            sed -n "${START},${END}p" "$FILE"
+          else
+            echo 'EVMWalletProvider declaration not found' >&2
+            exit 1
+          fi
 
       - name: Validate local PowerShell wallet helper syntax
         shell: pwsh

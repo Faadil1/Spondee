@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R005-G3-LIVE-GO
+revision: STATE-R006-G3-WALLET-VERIFIED
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_LIVE_TESTNET_AUTHORIZED
+  status: G3_TESTNET_WALLET_VERIFIED
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -44,9 +44,9 @@ verified_build_properties:
   - automatic LLM credit renewal disabled for G3
   - TypeScript build passes
   - deterministic tests pass
-  - bag scan and bag doctor pass in credential-free CI
+  - credential-free configuration diagnostics pass
 live_activation:
-  status: HUMAN_GO_GRANTED_LOCAL_WALLET_SETUP_PENDING
+  status: TESTNET_WALLET_VERIFIED_TBNB_PENDING
   authorization:
     granted_at: '2026-09-03T09:08:00-04:00'
     phrase: GO wallet testnet + tBNB
@@ -60,11 +60,20 @@ live_activation:
       - no merge to main
       - no public deployment
       - no final submission
+  wallet:
+    public_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    network_scope: bsc-testnet-only
+    keystore: encrypted_v3_local_only
+    local_signing_check: PASS
+    password_exposed_to_chat: false
+    private_key_exposed_to_chat: false
+    address_anchored_in_studio_toml: true
   not_yet_claimed:
-    - live wallet-backed signing
+    - nonzero tBNB balance
+    - live wallet-backed ERC-8183 signature
     - funded ERC-8183 BSC testnet job
     - on-chain submit transaction
     - observed Agent Advantage
 next_action:
-  primary: Human creates the throwaway wallet locally and returns only the public 0x address after local verification; then proceed to minimal tBNB balance check and first bounded ERC-8183 testnet activation.
-next_gate: SPONDEE_G3_TESTNET_WALLET_ADDRESS_REQUIRED
+  primary: Fund only the verified public address with minimal tBNB from the official BSC Testnet faucet, verify a nonzero balance, then execute the first zero-service-price bounded ERC-8183 testnet activation.
+next_gate: SPONDEE_G3_TBNB_BALANCE_REQUIRED

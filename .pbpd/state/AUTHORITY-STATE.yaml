@@ -1,0 +1,29 @@
+schema: PBPD-AUTHORITY-STATE-v0.1
+project_authority: PROJECT_AUTHORIZED
+chief_of_staff_delegation:
+  status: HUMAN_PROJECT_GO_BOUND_TO_PBPD
+  scope:
+    - build and test Spondee
+    - use BSC testnet
+    - integrate public or authorized APIs and SDKs
+    - create test/reference agents
+    - collect evidence
+    - deploy public judging build
+    - perform bounded implementation reconnaissance
+  limitations:
+    - no meaningful real user or mainnet funds without new human authority
+    - no material paid spend without new human authority
+    - no legal or financial guarantees
+    - no unsupported return or safety claims
+    - no material objective expansion
+    - final hackathon submission remains human-owned
+current_action_grants:
+  - action: PBPD_PRD_VALIDATION
+    status: ALLOWED
+  - action: BOUNDED_RECONNAISSANCE_FOR_REQUIREMENTS
+    status: ALLOWED
+  - action: CONSEQUENTIAL_PRODUCT_BUILD
+    status: BLOCKED_UNTIL_PRD_READY
+  - action: FINAL_HACKATHON_SUBMISSION
+    status: PROTECTED_HUMAN_ONLY
+revocations: []

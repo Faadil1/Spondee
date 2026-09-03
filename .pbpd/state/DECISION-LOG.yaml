@@ -27,5 +27,23 @@ decisions:
   - id: DEC-005
     date: '2026-09-03'
     decision: No consequential implementation before PRD_READY.
-    status: ACCEPTED
+    status: SATISFIED
     authority: PBPD_PREBUILD_STANDARD
+  - id: DEC-006
+    date: '2026-09-03'
+    decision: Promote Spondee PRD v0.1 to PRD_READY after successful credential-free Agent Studio runtime preflight.
+    status: ACCEPTED
+    authority: PBPD
+    evidence:
+      - work/PRD-VALIDATION-001.md
+      - work/PRD-READY-DECLARATION.md
+      - evidence/runtime-preflight-001/README.md
+      - GitHub Actions run 33752070626
+  - id: DEC-007
+    date: '2026-09-03'
+    decision: Treat wallet creation, LLM activation, pricing clamp, local bag dev smoke and deployment tooling as G3 implementation onboarding rather than PRD-definition blockers.
+    status: ACCEPTED
+    authority: PBPD
+    evidence:
+      - bag doctor exit code 0
+      - runtime preflight evidence

@@ -3,11 +3,14 @@ import test from "node:test";
 import {
   buildHealthFactorOutcomeFromWorkPrompt,
   buildHealthFactorPromise,
+  buildHealthFactorPromiseCommitment,
+  decodeHealthFactorPromiseCommitmentCriterion,
+  encodeHealthFactorPromiseCommitmentCriterion,
   enrichHealthFactorNegotiation,
+  hashHealthFactorPromise,
   HealthFactorTaskSchema,
+  SPONDEE_PROMISE_COMMITMENT_PREFIX,
 } from "./healthFactor.js";
-
-const PROMISE_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
 
 const task = HealthFactorTaskSchema.parse({
   schema: "spondee.health-factor.task.v1",
@@ -27,13 +30,16 @@ const task = HealthFactorTaskSchema.parse({
   ],
 });
 
-function decodePromise(criteria: unknown): Record<string, unknown> {
+function decodeCommitment(criteria: unknown) {
   assert.ok(Array.isArray(criteria));
   const matches = criteria.filter(
-    (entry): entry is string => typeof entry === "string" && entry.startsWith(PROMISE_PREFIX),
+    (entry): entry is string =>
+      typeof entry === "string" && entry.startsWith(SPONDEE_PROMISE_COMMITMENT_PREFIX),
   );
   assert.equal(matches.length, 1);
-  return JSON.parse(matches[0].slice(PROMISE_PREFIX.length)) as Record<string, unknown>;
+  const decoded = decodeHealthFactorPromiseCommitmentCriterion(matches[0]);
+  assert.ok(decoded);
+  return decoded;
 }
 
 test("Promise Card is deterministic and refuses invented confidence", () => {
@@ -46,9 +52,10 @@ test("Promise Card is deterministic and refuses invented confidence", () => {
   assert.equal(first.evidence_class, "SIMULATION");
   assert.equal(first.expected_downside.breach_projected, true);
   assert.equal(first.timing.expected_warning_lead_seconds, 120);
+  assert.equal(hashHealthFactorPromise(first), hashHealthFactorPromise(second));
 });
 
-test("Negotiation enrichment binds the Promise Card into SDK-preserved success_criteria", () => {
+test("Negotiation enrichment binds only a compact Promise commitment into SDK-preserved success_criteria", () => {
   const original = {
     task_description: JSON.stringify(task),
     terms: {
@@ -60,16 +67,23 @@ test("Negotiation enrichment binds the Promise Card into SDK-preserved success_c
 
   const enriched = enrichHealthFactorNegotiation(original, 25n);
   assert.ok(enriched.promise);
+  assert.ok(enriched.commitment);
   const terms = enriched.request.terms as Record<string, unknown>;
   const criteria = terms.success_criteria as unknown[];
   assert.ok(criteria.includes("keep this existing criterion"));
-  const carriedPromise = decodePromise(criteria);
-  assert.deepEqual(carriedPromise, enriched.promise);
+  const commitment = decodeCommitment(criteria);
+  assert.deepEqual(commitment, buildHealthFactorPromiseCommitment(enriched.promise));
+  assert.equal(commitment.promise_id, enriched.promise.promise_id);
+  assert.equal(commitment.scenario_id, enriched.promise.scenario_id);
+  assert.equal(commitment.promise_sha256, hashHealthFactorPromise(enriched.promise));
+  assert.ok(
+    encodeHealthFactorPromiseCommitmentCriterion(enriched.promise).length <
+      JSON.stringify(enriched.promise).length / 3,
+  );
   assert.equal("spondee_promise" in terms, false);
-  assert.equal("spondee_promise" in original.terms, false);
 });
 
-test("Outcome Receipt binds to the Promise carrier and remains simulation-only", () => {
+test("Outcome Receipt reconstructs and verifies the committed Promise before delivery", () => {
   const promise = buildHealthFactorPromise(task, 25n);
   const prompt =
     "You accepted and were paid for the following job. Produce the deliverable now.\n\n" +
@@ -77,7 +91,7 @@ test("Outcome Receipt binds to the Promise carrier and remains simulation-only",
     JSON.stringify({
       task: JSON.stringify(task),
       terms: {
-        success_criteria: [`${PROMISE_PREFIX}${JSON.stringify(promise)}`],
+        success_criteria: [encodeHealthFactorPromiseCommitmentCriterion(promise)],
       },
     });
 
@@ -89,6 +103,23 @@ test("Outcome Receipt binds to the Promise carrier and remains simulation-only",
   assert.equal(receipt.calibration.eligible_for_observed_agent_advantage, false);
   assert.equal(receipt.outcome.floor_crossed, true);
   assert.equal(receipt.outcome.useful_lead_seconds, 120);
+});
+
+test("Outcome Receipt fails closed when a Promise commitment hash is tampered", () => {
+  const promise = buildHealthFactorPromise(task, 25n);
+  const commitment = buildHealthFactorPromiseCommitment(promise);
+  const tampered = `${SPONDEE_PROMISE_COMMITMENT_PREFIX}${JSON.stringify({
+    ...commitment,
+    promise_sha256: "0".repeat(64),
+  })}`;
+  const prompt =
+    "JOB CONTEXT:\n" +
+    JSON.stringify({
+      task: JSON.stringify(task),
+      terms: { success_criteria: [tampered] },
+    });
+
+  assert.equal(buildHealthFactorOutcomeFromWorkPrompt(prompt), null);
 });
 
 test("Non-Spondee work is not intercepted", () => {

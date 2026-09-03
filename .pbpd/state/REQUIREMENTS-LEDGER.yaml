@@ -3,82 +3,90 @@ requirements:
   - id: MUST-01
     class: MUST
     requirement: Surface all four official categories at equal product depth.
-    status: PENDING
-    evidence_plan: Judge-path checklist
+    status: PARTIAL_BACKEND_EQUAL_DEPTH_VERIFIED_FRONTEND_AND_LIVE_DEPTH_PENDING
+    evidence: evidence/backend-ci-001/README.md
+    evidence_plan: Judge-path checklist across frontend plus live activation depth
   - id: MUST-02
     class: MUST
     requirement: Anything represented as activatable must use a real BSC-live agent/path.
-    status: PENDING
-    evidence_plan: Agent IDs and BSC activity evidence
+    status: PARTIAL_GUARDRAIL_VERIFIED_LIVE_ACTIVATION_PENDING
+    evidence: backend/src/catalog.ts
+    evidence_plan: Agent IDs and BSC activity evidence; current non-live agents remain activatable=false
   - id: MUST-03
     class: MUST
     requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
-    status: PENDING
-    evidence_plan: Data provenance record
+    status: PARTIAL_BACKEND_SUBSTRATE_BOUNDARY_VERIFIED_DYNAMIC_INTEGRATION_PENDING
+    evidence: backend/src/catalog.ts
+    evidence_plan: Data provenance record plus live 8004scan/ERC-8004 fetch
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
-    status: PENDING
-    evidence_plan: Stored promise artifact
+    status: VERIFIED_BACKEND_SIMULATION_AND_HEALTH_FACTOR_EXECUTOR_PATH
+    evidence: evidence/backend-ci-001/README.md
   - id: MUST-05
     class: MUST
     requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
-    status: PENDING
-    evidence_plan: Promise schema validation
+    status: VERIFIED_SCHEMA_AND_FOUR_CATEGORY_CI
+    evidence: backend/src/contracts.ts
   - id: MUST-06
     class: MUST
     requirement: Category to successful activation has no dead end.
-    status: PENDING
-    evidence_plan: End-to-end test
+    status: PARTIAL_SIMULATION_PATHS_PASS_LIVE_E2E_PENDING
+    evidence: evidence/backend-ci-001/README.md
+    evidence_plan: Health Factor live ERC-8183 E2E followed by equivalent activation evidence for remaining categories
   - id: MUST-07
     class: MUST
     requirement: Delegated execution authority is visibly bounded.
-    status: PENDING
-    evidence_plan: Allowlist, cap, expiry and revoke evidence
+    status: PENDING_LIVE_AUTHORITY_INTEGRATION
+    evidence_plan: Allowlist, cap, expiry and revoke evidence; Altana preferred if integration remains viable
   - id: MUST-08
     class: MUST
     requirement: Every completed measured run creates an Outcome Receipt.
-    status: PENDING
-    evidence_plan: Receipt artifact
+    status: PARTIAL_FOUR_CATEGORY_SIMULATION_RECEIPTS_VERIFIED_LIVE_MEASURED_RUNS_PENDING
+    evidence: evidence/backend-ci-001/README.md
   - id: MUST-09
     class: MUST
     requirement: Outcome Receipt binds original promise to actual result.
-    status: PENDING
-    evidence_plan: Promise/result identifiers and timestamps
+    status: PARTIAL_PROMISE_RECEIPT_BINDING_VERIFIED_SIMULATION_LIVE_EVIDENCE_PENDING
+    evidence: evidence/backend-ci-001/README.md
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
-    status: PENDING
-    evidence_plan: Final report and raw outputs
+    status: PENDING_OBSERVED_RUNS
+    evidence_plan: Final report and raw outputs; reporting engine already implemented
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
-    status: PENDING
-    evidence_plan: Grid Trading experiment
+    status: PARTIAL_GRID_BACKEND_SIMULATION_VERIFIED_OBSERVED_TRADING_RUN_PENDING
+    evidence: backend/src/engines.test.ts
+    evidence_plan: Observed Grid Trading experiment
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
-    status: PENDING
-    evidence_plan: Raw baseline artifacts
+    status: ACTIVE_VERIFIED_EVIDENCE_GUARDRAIL_OBSERVED_BASELINES_PENDING
+    evidence: backend/src/evidence.ts
+    evidence_plan: Raw observed baseline artifacts
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
-    status: PENDING
-    evidence_plan: Event tape
+    status: PARTIAL_WARNING_LEAD_SIMULATION_VERIFIED_LIVE_RESPONSE_LATENCY_PENDING
+    evidence: evidence/backend-ci-001/README.md
+    evidence_plan: Live event tape and response-latency timestamps
   - id: MUST-14
     class: MUST
     requirement: Public product remains accessible during judging.
-    status: PENDING
+    status: PENDING_PUBLIC_DEPLOYMENT
     evidence_plan: Public URL smoke check
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
-    status: PENDING
-    evidence_plan: Negative-path test
+    status: VERIFIED_BACKEND_NEGATIVE_PATHS_LIVE_RUNTIME_HARDENING_PENDING
+    evidence: backend/src/app.test.ts
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
-    status: PENDING
+    status: IMPLEMENTED_CONDITIONALLY_OBSERVED_HISTORY_PENDING
+    evidence: backend/src/evidence.ts
   - id: SHOULD-02
     class: SHOULD
     requirement: Provide Decision Replay for measured runs.
@@ -86,35 +94,36 @@ requirements:
   - id: SHOULD-03
     class: SHOULD
     requirement: Use Altana scoped session authority if core integration supports it.
-    status: PENDING
+    status: PENDING_AFTER_CORE_LIVE_E2E
   - id: SHOULD-04
     class: SHOULD
     requirement: Add genuine PancakeSwap trader/LP benefit only after core product is complete.
-    status: PENDING
+    status: PENDING_AFTER_CORE_LIVE_E2E
   - id: SHOULD-05
     class: SHOULD
     requirement: Keep generic reputation secondary to task-specific evidence.
-    status: PENDING
+    status: VERIFIED_BACKEND_INFORMATION_ARCHITECTURE
+    evidence: backend/src/catalog.ts
   - id: MUST_NOT-01
     class: MUST_NOT
     requirement: Do not present estimated or synthetic performance as observed real evidence.
-    status: ACTIVE_GUARDRAIL
+    status: ACTIVE_AND_CI_VERIFIED_GUARDRAIL
   - id: MUST_NOT-02
     class: MUST_NOT
     requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.
-    status: ACTIVE_GUARDRAIL
+    status: ACTIVE_AND_BACKEND_VERIFIED_GUARDRAIL
   - id: MUST_NOT-03
     class: MUST_NOT
     requirement: Do not claim guaranteed profit, safety or liquidation prevention.
-    status: ACTIVE_GUARDRAIL
+    status: ACTIVE_AND_CI_VERIFIED_GUARDRAIL
   - id: MUST_NOT-04
     class: MUST_NOT
     requirement: Do not show an agent as activatable when activation does not work.
-    status: ACTIVE_GUARDRAIL
+    status: ACTIVE_AND_CATALOG_VERIFIED_GUARDRAIL
   - id: MUST_NOT-05
     class: MUST_NOT
     requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.
-    status: ACTIVE_GUARDRAIL
+    status: ACTIVE_BACKEND_EQUAL_DEPTH_VERIFIED_LIVE_DEPTH_PENDING
   - id: MUST_NOT-06
     class: MUST_NOT
     requirement: Do not add bonds, auctions, leagues, generic red-team systems or orchestration platforms before core gates pass.

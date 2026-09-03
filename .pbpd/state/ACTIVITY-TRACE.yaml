@@ -51,4 +51,45 @@ entries:
     action: promote_prd_ready
     result: PRD_READY; consequential product build authority opened within existing scope; protected actions remain protected.
     artifact: work/PRD-READY-DECLARATION.md
-next_action: Begin SPONDEE_G3_VERTICAL_SLICE_PROMISE_ACTIVATE_RECEIPT with secure testnet wallet onboarding, local bag dev smoke, task-specific Promise Card, bounded activation and first Outcome Receipt evidence.
+  - id: ACT-010
+    at: '2026-09-03T08:01:00-04:00'
+    actor: PBPD_orchestrator
+    action: start_g3_health_factor_branch
+    result: build/g3-health-factor created; merge to main not authorized.
+  - id: ACT-011
+    at: '2026-09-03T08:02:00-04:00'
+    actor: github_actions
+    action: scaffold_official_agent_studio_reference_agent
+    result: PASS; official BNB Agent Studio scaffold generated for reference-agents/health-factor without onboarding, wallet or secret.
+    external_run: 33752538013
+  - id: ACT-012
+    at: '2026-09-03T08:04:08-04:00'
+    actor: PBPD_orchestrator
+    action: specialize_health_factor_reference_agent
+    result: Deterministic Promise Card preview, pre-signature Promise binding, deterministic Outcome Receipt path and Agent Studio skill wiring implemented.
+    external_run: 33753107804
+  - id: ACT-013
+    at: '2026-09-03T08:06:32-04:00'
+    actor: github_actions
+    action: verify_g3_health_factor_code
+    result: PASS; deterministic tests, TypeScript build, bag scan and bag doctor all succeeded credential-free.
+    external_run: 33753280627
+  - id: ACT-014
+    at: '2026-09-03T08:07:41-04:00'
+    actor: PBPD_orchestrator
+    action: harden_g3_financial_surface
+    result: ERC-8183 service price/min/max fixed at zero; x402/B402 disabled; LLM auto-renew disabled; BSC testnet only.
+  - id: ACT-015
+    at: '2026-09-03T08:12:12-04:00'
+    actor: github_actions
+    action: verify_and_export_g3_demo_evidence
+    result: PASS; executor integration tests, TypeScript, demo Promise/Receipt export, artifact upload and Agent Studio diagnostics all succeeded.
+    external_run: 33753788773
+    artifact: evidence/g3-health-factor-ci-001/README.md
+  - id: ACT-016
+    at: '2026-09-03T08:13:00-04:00'
+    actor: PBPD_orchestrator
+    action: preserve_g3_claim_boundary
+    result: Software path is verified as SIMULATION/CI only; live wallet-backed signing, funded ERC-8183 job, on-chain submit and observed Agent Advantage remain explicitly unclaimed.
+next_action: Obtain explicit human participation/approval for secure throwaway BSC-testnet wallet creation and minimal tBNB gas if required, then run the first live ERC-8183 activation without exposing secrets.
+next_gate: SPONDEE_G3_LIVE_TESTNET_ACTIVATION_REQUIRED

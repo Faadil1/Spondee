@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { SellerAgentExecutor } from "./executor.js";
-import { buildHealthFactorOutcomeFromWorkPrompt } from "./healthFactor.js";
+import {
+  buildHealthFactorOutcomeFromWorkPrompt,
+  buildHealthFactorPromiseCommitment,
+  decodeHealthFactorPromiseCommitmentCriterion,
+  encodeHealthFactorPromiseCommitmentCriterion,
+  hashHealthFactorPromise,
+  SPONDEE_PROMISE_COMMITMENT_PREFIX,
+} from "./healthFactor.js";
 import type { SigningApi } from "./sellerCore.js";
-
-const PROMISE_PREFIX = "SPONDEE_PROMISE_CARD_V1:";
 
 const task = {
   schema: "spondee.health-factor.task.v1",
@@ -49,13 +54,16 @@ function executor(opts: {
   });
 }
 
-function decodePromiseCarrier(criteria: unknown): Record<string, unknown> {
+function decodeCommitment(criteria: unknown) {
   assert.ok(Array.isArray(criteria));
   const carriers = criteria.filter(
-    (entry): entry is string => typeof entry === "string" && entry.startsWith(PROMISE_PREFIX),
+    (entry): entry is string =>
+      typeof entry === "string" && entry.startsWith(SPONDEE_PROMISE_COMMITMENT_PREFIX),
   );
   assert.equal(carriers.length, 1);
-  return JSON.parse(carriers[0].slice(PROMISE_PREFIX.length)) as Record<string, unknown>;
+  const commitment = decodeHealthFactorPromiseCommitmentCriterion(carriers[0]);
+  assert.ok(commitment);
+  return commitment;
 }
 
 test("real SellerAgentExecutor dispatch exposes the free Promise Card skill", async () => {
@@ -72,7 +80,7 @@ test("real SellerAgentExecutor dispatch exposes the free Promise Card skill", as
   assert.equal(promise.confidence_status, "UNSCORED_UNTIL_OBSERVED_CALIBRATION");
 });
 
-test("the previewed Promise Card is carried in the ERC-8183 signable success_criteria", async () => {
+test("the previewed Promise Card is committed compactly in ERC-8183 signable success_criteria", async () => {
   let signedRequest: Record<string, unknown> | undefined;
   const signing = baseSigning({
     signQuote: async (request, price) => {
@@ -86,7 +94,7 @@ test("the previewed Promise Card is carried in the ERC-8183 signable success_cri
     skill: "preview_health_factor",
     task,
   });
-  const previewPromise = preview.promise as Record<string, unknown>;
+  const previewPromise = preview.promise as any;
 
   const negotiated = await agent.dispatch({
     skill: "negotiate",
@@ -103,27 +111,28 @@ test("the previewed Promise Card is carried in the ERC-8183 signable success_cri
   const signedTerms = signedRequest.terms as Record<string, unknown>;
   const criteria = signedTerms.success_criteria as unknown[];
   assert.ok(criteria.includes("existing non-Spondee criterion"));
-  const signedPromise = decodePromiseCarrier(criteria);
-  assert.equal(signedPromise.promise_id, previewPromise.promise_id);
-  assert.equal(signedPromise.scenario_id, previewPromise.scenario_id);
-  assert.equal(signedPromise.confidence, null);
+  const commitment = decodeCommitment(criteria);
+  assert.equal(commitment.promise_id, previewPromise.promise_id);
+  assert.equal(commitment.scenario_id, previewPromise.scenario_id);
+  assert.equal(commitment.promise_sha256, hashHealthFactorPromise(previewPromise));
+  assert.deepEqual(commitment, buildHealthFactorPromiseCommitment(previewPromise));
   assert.equal("spondee_promise" in signedTerms, false);
 });
 
-test("notify_funded drives the deterministic Spondee receipt through signed success_criteria", async () => {
+test("notify_funded reconstructs and verifies the deterministic Promise from the compact commitment", async () => {
   let submittedContent = "";
   const previewAgent = executor();
   const preview = await previewAgent.dispatch({
     skill: "preview_health_factor",
     task,
   });
-  const promise = preview.promise as Record<string, unknown>;
+  const promise = preview.promise as any;
 
   const signing = baseSigning({
     jobSpec: async (jobId) => ({
       task: JSON.stringify(task),
       terms: {
-        success_criteria: [`${PROMISE_PREFIX}${JSON.stringify(promise)}`],
+        success_criteria: [encodeHealthFactorPromiseCommitmentCriterion(promise)],
         test_job_id: jobId,
       },
     }),

@@ -8,21 +8,20 @@ handover:
   branch: build/g4-sequential-live-e2e
 
   resume_rule: >-
-    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
-    evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    Health Factor G3 is complete. Grid, Rebalancing and Yield controlled Agent Studio paths have passed
-    build/test/bag-scan CI and the dedicated sequential live preflight is PASS. The human explicitly opened
-    the sequential G4 live-testnet gate. Execute Grid first, then Rebalancing only after Grid PASS, then Yield
-    only after Rebalancing PASS. Stop on the first failure and never retry blindly after a partial chain write.
+    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the evidence/runtime ledgers.
+    Canonical GitHub state outranks chat memory. Health Factor G3 is complete. The G4 sequential preflight
+    passed. The first Grid live run created job 954 and the seller confirmed provider submission, but the buyer
+    then failed on an unnecessary bounded eth_getLogs scan. DO NOT RETRY job 954. Complete the dedicated
+    read-only local manifest + Outcome Receipt verification first. Rebalancing and Yield remain blocked.
 
-  current_milestone: G4_SEQUENTIAL_LIVE_PREFLIGHT_PASS__GRID_EXECUTION_READY
-  lifecycle_status: G4_GRID_LOCAL_LIVE_TESTNET_E2E_READY
+  current_milestone: G4_GRID_JOB_954_SUBMITTED__DIRECT_RECEIPT_CI_PASS__LOCAL_MANIFEST_VERIFY_READY
+  lifecycle_status: G4_GRID_READ_ONLY_RECOVERY_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-    gate_status: HUMAN_AUTHORIZED_AND_PREFLIGHT_PASS
-    current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
+    parent_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+    current_gate: SPONDEE_G4_GRID_JOB_954_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_RECOVERY_REQUIRED
+    current_action_class: READ_ONLY_LOCAL_AND_BSC_TESTNET_VERIFICATION
     production_owner: PBPD
     local_runtime_owner: HUMAN
     final_submission: HUMAN
@@ -33,101 +32,87 @@ handover:
     status: PASS
     evidence: evidence/g3-job-949-final-pass/README.md
     job_id: '949'
-    provider_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    outcome_receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
     no_further_g3_live_run: true
 
-  g4_build_ci:
+  g4_preflight:
     status: PASS
-    evidence: evidence/g4-three-reference-agents-ci/README.md
-    authoritative_run: 33826331454
-    grid: PASS
-    rebalancing: PASS
-    yield: PASS
-
-  g4_multi_category_buyer:
-    status: CI_PASS
-    implementation: backend/src/category-erc8183.ts
-    cli: backend/src/live-g4-category.ts
-    backend_ci_run: 33826671823
-    guarantees:
-      - all G4 task schemas supported
-      - live gate closed by default
-      - zero-price enforced
-      - provider signature verified before createJob
-      - Promise commitment verified before createJob
-      - 1600-byte MegaFuel description ceiling preserved
-      - 30-day submission horizon preserved
-      - post-submit URL decoded from known submit receipt
-      - simulation receipt excluded from observed Agent Advantage
-
-  g4_sequential_preflight:
-    status: PASS
+    run: 33827625957
     evidence: evidence/g4-sequential-live-preflight/README.md
-    authoritative_run: 33827625957
-    validated_head: 01050a567bbd4a670a0663702c5a581e8c9dbe96
-    backend_tests: PASS_31_OF_31
-    backend_typescript: PASS
-    scenarios: PASS_GRID_REBALANCING_YIELD
-    credential_free_fail_closed: PASS
-    grid_agent: PASS
-    rebalancing_agent: PASS
-    yield_agent: PASS
-    windows_runner_parse_and_safety: PASS
-    g4_chain_write_attempted: false
 
-  g4_candidate_qualification:
-    status: PASS
-    evidence: evidence/g4-four-category-live-path-qualification/README.md
-    external_candidates_remain_discovery_only: true
-
-  g4_sequential_live_gate:
-    authorization_evidence: evidence/g4-sequential-live-gate/README.md
-    preflight_evidence: evidence/g4-sequential-live-preflight/README.md
-    status: AUTHORIZED_AND_PREFLIGHT_PASS
-    network: bsc-testnet
-    chain_id: 97
+  grid_job_954:
+    status: SUBMITTED
+    category: grid
+    scenario_id: spondee-grid-live-001
     provider: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    seller_wallet: EXISTING_ENCRYPTED_LOCAL_ONLY
-    service_price_raw: '0'
-    gas_path: MEGAFUEL_PRIMARY
-    buyer: EPHEMERAL_ZERO_BALANCE_REQUIRED
-    deliverable_transport: LOCAL_HTTP_BRIDGE
-    sequence:
-      - category: grid
-        task: reference-agents/grid/demo/g4-live-scenario.json
-        status: READY_NOW
-      - category: rebalancing
-        task: reference-agents/rebalancing/demo/g4-live-scenario.json
-        status: BLOCKED_UNTIL_GRID_PASS
-      - category: yield
-        task: reference-agents/yield/demo/g4-live-scenario.json
-        status: BLOCKED_UNTIL_REBALANCING_PASS
-    runner: scripts/g4-sequential-live-e2e-localstorage.ps1
-    stop_on_first_failure: true
-    no_blind_retry: true
+    buyer: '0xaCFe38292DdFC028CD3D9e1900B590Ef8C99c3a1'
+    transactions:
+      create_job: '0x6d6b54e9d1c591e4d5fa749cbb5447aa90f25bcac2e0a5d33a03af265aa4a72e'
+      register_job: '0xa33afe6deb28eb131f6b13f0ece91cb8b66b56322be505229da3e87ff9ae9713'
+      set_budget: '0x3c1a6ce970d2afd65ce4faa77af28dcbbc4db2fdb428c87a6f34bf617e8a9ed1'
+      fund: '0x88eef4c03e7caee0b531aeea5b9e4de978aab03dcc9785a5870d6badb2b881d0'
+      provider_submit: '0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3'
+    submit_block: '128979779'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/954/response'
+    deliverable_hash: '0x60d6559e9d8e9f5c6982cbe427d0f42538d7086508f5c30d3ac550292f33d26f'
+    promise_id: sp_2bd9d0cfdf390f09ddafd8a0
+    promise_sha256: '30b221979b30d33a006ec1fe42cb2a70a92f311c00ca2542086826937680ccb0'
+    chain_receipt_proof: PASS
+    chain_receipt_proof_run: 33828319822
+    receipt_log_scan_used: false
+    local_manifest_path: reference-agents/grid/app/agent/.agent-data/erc8183-job-954.json
+    local_manifest_hash_verified: PENDING
+    outcome_receipt_verified: PENDING
+    retry: FORBIDDEN
 
-  exact_next_gate: SPONDEE_G4_GRID_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
+  failure_diagnosis:
+    class: POST_SUBMIT_RPC_LOG_SCAN_LIMIT
+    buyer_error: Request exceeds defined limit / eth_getLogs / limit exceeded
+    seller_submit_confirmed: true
+    root_cause: >-
+      backend/src/category-erc8183.ts ignored the tx_hash returned by notify_funded, then called
+      commerce.getJobSubmittedEvents(fundBlock, latestBlock, jobId). The historical/bounded log scan is
+      unnecessary when the provider submit transaction is already known.
+    remediation_before_rebalancing: >-
+      Capture the notify_funded tx_hash and decode JobSubmitted + JobInitialised from that known receipt
+      directly. Do not use a historical JobSubmitted eth_getLogs scan.
+
+  recovery_implementation:
+    verifier: backend/src/verify-g4-grid-954.ts
+    cli: backend/src/verify-g4-grid-954-cli.ts
+    chain_probe: backend/src/probe-g4-grid-954.ts
+    local_runner: scripts/g4-verify-grid-job-954.ps1
+    ci_workflow: .github/workflows/g4-grid-954-recovery.yml
+    ci_run: 33828319822
+    ci_status: PASS
+    backend_tests: PASS_31_OF_31
+    typescript_build: PASS
+    windows_node24: PASS
+    wallet_required: false
+    password_required: false
+    seller_required: false
+    transaction_allowed: false
+
+  sequence_state:
+    grid: SUBMITTED_RECEIPT_PROVEN_LOCAL_MANIFEST_VERIFY_PENDING
+    rebalancing: BLOCKED_UNTIL_GRID_FULL_PASS_AND_DRIVER_FIX
+    yield: BLOCKED_UNTIL_REBALANCING_PASS
+
+  exact_next_gate: SPONDEE_G4_GRID_JOB_954_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_RECOVERY_REQUIRED
   exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   exact_next_action: >-
-    Locally fetch/check out build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
-    .\scripts\g4-sequential-live-e2e-localstorage.ps1. Enter the existing seller wallet password only into
-    the masked local prompt. Return only the public PASS/FAIL evidence. Grid is the only category permitted
-    to begin; the runner unlocks Rebalancing and Yield only after the prior category passes.
+    Pull build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
+    .\scripts\g4-verify-grid-job-954.ps1 exactly once. It must not ask for a wallet password or start a seller.
+    Return the complete public PASS/FAIL JSON and terminal.
 
   stop_conditions:
-    - stop immediately on any category failure
-    - no retry after partial chain write until deterministic diagnosis
-    - no new seller wallet
-    - no seller password/private key/seed/keystore in chat or Git
-    - no tBNB acquisition if MegaFuel fails
-    - no non-zero service price
-    - no x402/B402 payment
-    - no Altana grantSession
-    - no PancakeSwap/Venus/Lista value-moving transaction
+    - do not rerun scripts/g4-sequential-live-e2e-localstorage.ps1
+    - do not retry or recreate job 954
+    - do not unlock the seller wallet
+    - do not create/register/setBudget/fund/submit any job
+    - no tBNB acquisition
     - no mainnet or meaningful user capital
     - no observed Agent Advantage claim from simulation receipts
+    - no Rebalancing write until Grid 954 recovery PASS and buyer driver remediation CI PASS
     - no merge to main
     - no Project Finisher
     - no final submission

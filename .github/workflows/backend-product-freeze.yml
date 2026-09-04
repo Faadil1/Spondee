@@ -1,0 +1,138 @@
+name: Backend Product Freeze + Frontend Contract
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/backend-product-freeze']
+    paths:
+      - 'backend/**'
+      - 'work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md'
+      - '.pbpd/state/FRONTEND-HANDOFF.yaml'
+      - '.github/workflows/backend-product-freeze.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  backend-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+
+      - name: Full backend tests
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+
+      - name: Four-category simulation smoke
+        working-directory: backend
+        run: npm run --silent smoke > backend-smoke.json
+
+      - name: Verify simulation claim boundary
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const report = JSON.parse(readFileSync('backend-smoke.json', 'utf8'));
+          if (report.live_write_attempted !== false) throw new Error('smoke attempted live write');
+          if (report.category_count !== 4) throw new Error('expected four categories');
+          for (const row of report.rows) {
+            if (row.confidence !== null) throw new Error('simulation confidence must remain null');
+            if (row.evidence_class !== 'SIMULATION') throw new Error('simulation smoke changed truth class');
+            if (row.observed_advantage_eligible !== false) throw new Error('simulation became observed-eligible');
+          }
+          console.log('simulation truth boundary: PASS');
+          NODE
+
+      - name: Frontend bootstrap contract smoke
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --input-type=module - <<'NODE'
+          import { once } from 'node:events';
+          import { createApp } from './src/app.ts';
+          import { MemoryStore } from './src/store.ts';
+          const store = new MemoryStore();
+          await store.init();
+          const server = createApp(store, { SPONDEE_CORS_ORIGINS: 'https://frontend.example' }).listen(0);
+          await once(server, 'listening');
+          const address = server.address();
+          if (!address || typeof address === 'string') throw new Error('server address unavailable');
+          const base = `http://127.0.0.1:${address.port}`;
+          const response = await fetch(`${base}/v1/product/bootstrap`);
+          if (!response.ok) throw new Error(`bootstrap HTTP ${response.status}`);
+          const body = await response.json();
+          if (body.schema !== 'spondee.frontend-bootstrap.v1') throw new Error('wrong bootstrap schema');
+          if (body.categories.length !== 4) throw new Error('bootstrap must expose four categories');
+          const jobs = body.categories.map((x) => x.reference_agent.activation_proof?.job_id);
+          if (JSON.stringify(jobs) !== JSON.stringify(['949','954','955','957'])) throw new Error(`unexpected activation proof jobs: ${jobs}`);
+          if (!body.categories.every((x) => x.reference_agent.readiness === 'LIVE_TESTNET_VERIFIED')) throw new Error('reference agent readiness not reconciled');
+          if (body.backend_capabilities.first_countable_observed_grid_pair !== 'VERIFIED_JOB_962') throw new Error('Grid 962 capability missing');
+          const options = await fetch(`${base}/v1/product/bootstrap`, { method: 'OPTIONS', headers: { origin: 'https://frontend.example' } });
+          if (options.status !== 204) throw new Error(`CORS preflight failed: ${options.status}`);
+          if (options.headers.get('access-control-allow-origin') !== 'https://frontend.example') throw new Error('CORS origin mismatch');
+          await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+          await store.close();
+          console.log(JSON.stringify({
+            schema: body.schema,
+            category_count: body.categories.length,
+            activation_proof_jobs: jobs,
+            first_countable_pair: body.backend_capabilities.first_countable_observed_grid_pair,
+            cors: 'PASS',
+            live_write_attempted: false,
+            conclusion: 'SPONDEE_BACKEND_FRONTEND_CONTRACT_PASS'
+          }, null, 2));
+          NODE
+
+      - name: Static frontend-freeze safety guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'spondee.frontend-bootstrap.v1' backend/src/product.ts
+          grep -F 'SPONDEE_CORS_ORIGINS' backend/src/app.ts
+          grep -F 'VERIFIED_JOB_962' backend/src/product.ts
+          grep -F 'Winner Intelligence' work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+          grep -F 'benita_v1_can_start_now: true' .pbpd/state/FRONTEND-HANDOFF.yaml
+          test -z "$(grep -E 'MAINNET_PRIVATE_KEY|mainnet.*writeContract|mainnet.*sendTransaction' backend/src/app.ts backend/src/product.ts || true)"
+
+      - name: Read-only BSC testnet readiness probe
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --input-type=module - <<'NODE' | tee bsc-readiness.json
+          import { publicTestnetReadiness } from './src/erc8183.ts';
+          const readiness = await publicTestnetReadiness();
+          if (readiness.chain_id !== 97) throw new Error(`expected chain 97, got ${readiness.chain_id}`);
+          if (readiness.live_write_attempted !== false) throw new Error('readiness probe attempted write');
+          console.log(JSON.stringify(readiness, null, 2));
+          NODE
+
+      - name: Upload backend freeze evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-backend-product-freeze-evidence
+          path: |
+            backend/backend-smoke.json
+            backend/bsc-readiness.json
+            work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+            backend/FRONTEND-CONTRACT.md
+            .pbpd/state/FRONTEND-HANDOFF.yaml
+          if-no-files-found: error
+          retention-days: 14

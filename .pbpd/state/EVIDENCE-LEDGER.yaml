@@ -1,384 +1,213 @@
 schema: PBPD-EVIDENCE-LEDGER-v0.1
+revision: EVIDENCE-R036-BACKEND-CODE-COMPLETE
+history:
+  previous_ledger_blob_sha: 2b6ed35ce3ed60fe98b4bbd24c321211aecc3ea0
+  previous_detail_preserved_in_git_history: true
+  compaction_reason: >-
+    Roll the canonical ledger forward after G4/G5 and backend-final-completion so current claims do not
+    remain anchored to the earlier Health-Factor-only state. Detailed earlier EV/VER/CON records remain
+    durable in Git history and individual evidence directories.
 claims:
   - id: CLM-001
-    claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
+    claim: Spondee supports four required categories through verified bounded BSC-testnet activation paths.
     truth_class: FACT
-    status: VERIFIED_HEALTH_FACTOR_G3_LIVE_E2E
+    status: VERIFIED_4_OF_4_LIVE_TRANSPORT
+    evidence:
+      - evidence/g3-job-949-final-pass/README.md
+      - evidence/g4-grid-job-954-final-pass/README.md
+      - evidence/g4-rebalancing-job-955-final-pass/README.md
+      - evidence/g4-yield-job-957-final-pass/README.md
   - id: CLM-002
-    claim: A task-specific Promise Card can be generated before activation.
+    claim: A task-specific Promise Card is created before Spondee activation and can be bound to the resulting outcome.
     truth_class: FACT
-    status: VERIFIED_ALL_FOUR_BACKEND_CATEGORIES_IN_SIMULATION_AND_HEALTH_FACTOR_LIVE
+    status: VERIFIED_G3_G4_AND_G5
+    evidence:
+      - backend/src/contracts.ts
+      - evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: CLM-003
-    claim: Promise-to-actual calibration can be measured from preserved evidence.
-    truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_STORAGE_AND_REPORTING_NO_OBSERVED_CALIBRATION_YET
+    claim: SIMULATION evidence is excluded from observed Agent Advantage and calibration statistics.
+    truth_class: FACT
+    status: VERIFIED_BACKEND_REGRESSION_AND_RUNTIME_TRUTH_BOUNDARY
+    evidence:
+      - backend/src/evidence.ts
+      - backend/src/backend-completion.test.ts
+      - evidence/backend-final-completion/README.md
   - id: CLM-004
-    claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
-    truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_LIVE_ACTIVATION_AND_SIMULATION_RECEIPT_OBSERVED_EVENT_TAPE_PENDING
+    claim: Spondee has at least one countable observed Agent Advantage pair using a verified marketplace activation and same-window baseline.
+    truth_class: FACT
+    status: VERIFIED_GRID_JOB_962_COUNTABLE_1_OF_3
+    evidence:
+      - evidence/g5-grid-forward-job-962-countable-pass/README.md
+    measured_result:
+      agent_terminal_equity_usd: 9996.660009
+      baseline_terminal_equity_usd: 9999.160009
+      delta_usd: -2.5
+      interpretation: AGENT_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
   - id: CLM-005
-    claim: Three observed Agent Advantage paired experiments can be completed before submission.
+    claim: Three countable observed Agent Advantage pairs will be complete before final submission.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED
+    status: PARTIAL_1_OF_3
+    remaining: 2
   - id: CLM-006
-    claim: All four required categories can reach comparable find-understand-activate depth.
+    claim: Health Factor observed warning lead time and response latency will satisfy the hero evidence requirement.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_BACKEND_SIMULATION_HEALTH_FACTOR_LIVE_ONLY
+    status: PENDING_OBSERVED_EVENT_TAPE
   - id: CLM-007
-    claim: The current Agent Studio runtime can install, reach BSC testnet, scaffold and diagnose a Spondee reference-agent workspace without secrets.
+    claim: Backend code is complete for frontend V1 and no backend architecture work is required before Benita starts.
     truth_class: FACT
-    status: VERIFIED
+    status: VERIFIED_PASS_RUN_33866229883
+    evidence:
+      - evidence/backend-final-completion/README.md
+      - backend/README.md
+      - backend/FRONTEND-CONTRACT.md
   - id: CLM-008
-    claim: The G3 Health Factor Promise provenance can be bound into ERC-8183 signable terms before signing.
+    claim: Consequential live actions and canonical evidence ingestion are protected from unauthenticated mutation.
     truth_class: FACT
-    status: VERIFIED_LIVE_COMPACT_COMMITMENT_THROUGH_FINAL_RECEIPT
+    status: VERIFIED_BACKEND
+    evidence:
+      - backend/src/security.ts
+      - backend/src/backend-completion.test.ts
   - id: CLM-009
-    claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
+    claim: Backend prevents blind duplicate live writes through state guards and durable operation locks.
     truth_class: FACT
-    status: VERIFIED_LIVE_JOB_949_MANIFEST_AND_OUTCOME_RECEIPT
+    status: VERIFIED_BACKEND
+    evidence:
+      - backend/src/app.ts
+      - backend/src/store.ts
+      - backend/sql/001_init.sql
   - id: CLM-010
-    claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
+    claim: Canonical evidence cannot be silently overwritten under an existing run_id.
     truth_class: FACT
-    status: VERIFIED_CONFIGURATION_CI_AND_LIVE_ZERO_PRICE_THROUGH_PROVIDER_SUBMIT
+    status: VERIFIED_PROTECTED_IMMUTABLE_IDEMPOTENT_INGESTION
+    evidence:
+      - backend/src/app.ts
+      - backend/src/backend-completion.test.ts
   - id: CLM-011
-    claim: One shared backend contract supports Health Factor, Grid, Rebalancing and Yield through Task -> Promise -> Activation -> Receipt.
+    claim: Decision Replay can reconstruct a preserved activation without re-executing a financial action.
     truth_class: FACT
-    status: VERIFIED_SIMULATION_CI
+    status: VERIFIED_READ_ONLY
+    evidence:
+      - backend/src/replay.ts
+      - backend/src/replay.test.ts
   - id: CLM-012
-    claim: Spondee backend automatically excludes simulation evidence from observed Agent Advantage and calibration statistics.
+    claim: Spondee dynamically reuses official 8004scan discovery without treating external identity metadata as verified performance or activation compatibility.
     truth_class: FACT
-    status: VERIFIED_CI_AND_FINAL_G3_TRUTH_BOUNDARY
+    status: VERIFIED_OFFICIAL_API_READ_ONLY_CI
+    evidence:
+      - backend/src/discovery.ts
+      - backend/src/discovery.test.ts
+      - evidence/backend-final-completion/README.md
   - id: CLM-013
-    claim: Spondee backend has a deployable durable persistence path without requiring it for local demo/CI.
+    claim: Backend exposes a production deployment-readiness contract that separates code completion from runtime configuration.
     truth_class: FACT
-    status: VERIFIED_CODE_MEMORY_AND_POSTGRES_ADAPTERS
+    status: VERIFIED_BACKEND
+    evidence:
+      - backend/src/security.ts
+      - backend/src/backend-completion.test.ts
   - id: CLM-014
-    claim: Current BSC Testnet AgenticCommerce, EvaluatorRouter and OptimisticPolicy addresses contain deployed contract code.
-    truth_class: FACT
-    status: VERIFIED_READ_ONLY_RPC_2026_09_03
+    claim: Public judge availability is complete.
+    truth_class: HYPOTHESIS
+    status: UNVERIFIED_PUBLIC_DEPLOYMENT_PENDING
   - id: CLM-015
-    claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
-    truth_class: FACT
-    status: VERIFIED_CODE_FAIL_CLOSED_TESTS_AND_LIVE_G3_COMPLETE
-  - id: CLM-016
-    claim: MegaFuel can sponsor bounded ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
-    truth_class: FACT
-    status: VERIFIED_LIVE_COMPLETE_SPONDEE_SEQUENCE_THROUGH_PROVIDER_SUBMIT
-  - id: CLM-017
-    claim: Spondee can preserve Promise provenance across official SDK negotiation serialization without embedding the full Promise Card on chain.
-    truth_class: FACT
-    status: VERIFIED_LIVE_COMPACT_SHA256_COMMITMENT_THROUGH_FINAL_RECEIPT
-  - id: CLM-018
-    claim: Health Factor stress_path task arrays can survive official SDK claim sanitization without semantic corruption.
-    truth_class: FACT
-    status: VERIFIED_LIVE_TASK_RECONSTRUCTION_AND_OUTCOME_RECEIPT
-  - id: CLM-019
-    claim: A representative compact Health Factor live JobDescription fits the Spondee 1600-byte conservative MegaFuel application budget.
-    truth_class: FACT
-    status: VERIFIED_CI_AND_LIVE_RELAY_ACCEPTANCE
-  - id: CLM-020
-    claim: The corrected G3 live path exposes LocalStorage deliverables through an HTTP URL acceptable to the pinned ERC-8183 runtime.
-    truth_class: FACT
-    status: VERIFIED_LIVE_ONCHAIN_HTTP_DELIVERABLE_URL_JOB_949
-  - id: CLM-021
-    claim: Newly created G3 jobs use a provider submission horizon long enough to survive deterministic recovery rather than the 10-minute quickstart slack.
-    truth_class: FACT
-    status: VERIFIED_LIVE_JOB_949_NON_EXPIRED_AND_SUBMITTED
-  - id: CLM-022
-    claim: A known provider submit transaction receipt can deterministically prove JobSubmitted and JobInitialised for job 949 without a historical eth_getLogs scan.
-    truth_class: FACT
-    status: VERIFIED_LIVE_CI_JOB_949
-  - id: CLM-023
-    claim: The existing local job 949 manifest matches the on-chain deliverable hash and contains a valid Spondee Outcome Receipt bound to the signed Promise/scenario.
-    truth_class: FACT
-    status: VERIFIED_HUMAN_LOCAL_READ_ONLY_FINAL_PASS
+    claim: Winner Intelligence findings can be applied after frontend V1 without requiring backend rearchitecture.
+    truth_class: HYPOTHESIS
+    status: BOUNDED_POST_V1_REVIEW_PLANNED
 
-evidence:
-  - id: EV-001
-    type: authorization
-    artifact: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
+canonical_evidence:
+  - id: EV-R036-001
+    type: backend_final_completion_ci
+    workflow_run_id: 33866229883
+    validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
+    artifact: evidence/backend-final-completion/README.md
+    result: PASS
+    verified_steps:
+      - FULL_BACKEND_REGRESSION
+      - STRICT_TYPESCRIPT
+      - FOUR_CATEGORY_TRUTH_SMOKE
+      - NO_SIMULATION_PROMOTION
+      - PROTECTED_SURFACE_AND_REPLAY
+      - OFFICIAL_8004SCAN_READONLY_INTEGRATION
+      - BSC_TESTNET_READONLY_READINESS
+      - STATIC_BACKEND_COMPLETION_GUARDS
+      - ARTIFACT_UPLOAD
+    chain_write_attempted: false
+  - id: EV-R036-002
+    type: backend_final_frontend_handoff
+    artifact: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
     status: PRESENT
-  - id: EV-002
-    type: product_brief
-    artifact: incoming/PROJECT-BRIEF.md
+  - id: EV-R036-003
+    type: frontend_technical_contract
+    artifact: backend/FRONTEND-CONTRACT.md
     status: PRESENT
-  - id: EV-003
-    type: prd
-    artifact: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
+  - id: EV-R036-004
+    type: machine_frontend_handoff
+    artifact: .pbpd/state/FRONTEND-HANDOFF.yaml
     status: PRESENT
-  - id: EV-004
-    type: source_decision
-    reference: Faadil1/hackathon-opportunity-intelligence#55
-    status: EXTERNAL_REFERENCE
-  - id: EV-005
-    type: pbpd_handoff
-    reference: Faadil1/pbpd-cowork-system#78
-    status: EXTERNAL_REFERENCE
-  - id: EV-006
-    type: runtime_preflight
-    artifact: evidence/runtime-preflight-001/README.md
-    workflow_run_id: 33752070626
-    artifact_id: 9891943363
-    status: VERIFIED
-  - id: EV-007
-    type: prd_ready_declaration
-    artifact: work/PRD-READY-DECLARATION.md
-    status: PRESENT
-  - id: EV-008
-    type: g3_credential_free_build
-    artifact: evidence/g3-health-factor-ci-001/README.md
-    workflow_run_id: 33753788773
-    artifact_id: 9892600637
-    status: VERIFIED
-  - id: EV-009
-    type: full_backend_ci
-    artifact: evidence/backend-ci-001/README.md
-    workflow_run_id: 33801590780
-    artifact_id: 9911265991
-    status: VERIFIED
-  - id: EV-010
-    type: megafuel_runtime_sponsorship_probe
-    artifact: evidence/megafuel-smoke-001/README.md
-    workflow_run_id: 33802027942
-    artifact_id: 9911428783
-    status: VERIFIED
-  - id: EV-011
-    type: full_promise_success_criteria_regression_ci
-    workflow_run_id: 33816310524
-    status: SUPERSEDED_BY_COMPACT_COMMITMENT
-  - id: EV-012
-    type: full_promise_success_criteria_g3_ci
-    workflow_run_id: 33816544907
-    status: SUPERSEDED_BY_COMPACT_COMMITMENT
-  - id: EV-013
-    type: third_live_health_factor_attempt_public_failure
-    source: human_local_runtime_public_failure_v1
-    started_at: '2026-09-03T23:21:16.823Z'
-    failed_at: '2026-09-03T23:21:21.084Z'
-    buyer_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
-    supports:
-      - MegaFuel relay size rejection before any write
-      - zero-balance self-pay fallback rejection before mining
-      - 2223-byte JobDescription observation
-    status: VERIFIED_PUBLIC_RUNTIME_EVIDENCE
-  - id: EV-014
-    type: compact_commitment_backend_ci
-    workflow_run_id: 33817822355
-    head_commit: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
-    artifact_id: 9917173773
-    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
-    status: VERIFIED_PASS
-  - id: EV-015
-    type: compact_commitment_g3_ci
-    workflow_run_id: 33817846752
-    head_commit: 2c86096949c27b354bef68154e93c54abb016ab9
-    status: VERIFIED_PASS
-  - id: EV-016
-    type: fourth_live_health_factor_partial_success
-    source: human_local_runtime_public_failure_v1_and_transaction_hashes
-    started_at: '2026-09-03T23:38:40.406Z'
-    failed_at: '2026-09-03T23:41:03.555Z'
-    job_id: '948'
-    buyer_address: '0xA7ceB00B63F911fB76BD6d5616093586de757139'
-    transactions:
-      create_job: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
-      register_job: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
-      set_budget: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
-      fund: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
-    status: VERIFIED_LIVE_CHAIN_PARTIAL_SUCCESS
-  - id: EV-017
-    type: job_948_recovery_public_failure
-    source: human_local_runtime_public_recovery_failure_v1
-    started_at: '2026-09-03T23:50:58.062Z'
-    failed_at: '2026-09-03T23:53:03.692Z'
-    job_id: '948'
-    error_class: SUBMISSION_DEADLINE_PASSED
-    status: VERIFIED_TERMINAL_RUNTIME_EVIDENCE
-  - id: EV-018
-    type: final_localstorage_30d_preflight
-    workflow_run_id: 33819854509
-    head_commit: 1c4b83b92524808731271e132981e4c48c3b62e3
-    status: VERIFIED_PASS
-  - id: EV-019
-    type: fifth_live_health_factor_job_949_runtime
-    source: human_local_runtime_public_failure_v1_and_seller_audit
-    started_at: '2026-09-04T00:05:40.534Z'
-    runner_failed_at: '2026-09-04T00:07:18.579Z'
+  - id: EV-R036-005
+    type: health_factor_live_transport
+    artifact: evidence/g3-job-949-final-pass/README.md
     job_id: '949'
-    buyer_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
-    transactions:
-      create_job: '0x7d4c6b2528841068de045a7e037a4f1c88f6adf6f34ee9c353c30b49c110da4c'
-      register_job: '0x64e290a8c119cb3be5dfe27b3126adc7e3932ad86053bb4667acb92615628766'
-      set_budget: '0xc28452786f9be893663f5f0a7c2fef72330341b76e811cf4a76cd2ab3eca9b6d'
-      fund: '0x3e6d9bb9d504d1c80a8dbd32cc65a234cf91c6e503afccff48222f03873a95ef'
-      provider_submit: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    provider_submit:
-      confirmed: true
-      gas_used: '248654'
-      effective_gas_price_wei: '0'
-      wallet_paid_wei: '0'
-      deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
-    runner_error: JobInitialised scan for job 949 hit the RPC range/rate limit; retry later
-    status: VERIFIED_LIVE_CHAIN_SUBMITTED
-  - id: EV-020
-    type: job_949_receipt_based_chain_verification
-    workflow_run_id: 33820803719
-    head_commit: 1a613ba4de74a5a0181247dc4c5a86f3d61c49af
-    evidence_record: evidence/g3-job-949-submitted/README.md
-    job_id: '949'
-    job_status: SUBMITTED
-    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    submit_transaction_hash: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    submit_block: '128964136'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
-    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
-    promise_id: 'sp_87c1d19f5bc0cda01d586131'
-    promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
-    scenario_id: spondee-hf-demo-001
-    receipt_log_scan_used: false
-    backend_tests: PASS_29_OF_29
-    typescript_build: PASS
-    windows_parse: PASS
-    status: VERIFIED_PASS
-  - id: EV-021
-    type: job_949_final_local_manifest_and_outcome_receipt_verification
-    source: human_local_runtime_public_pass_v1
-    evidence_record: evidence/g3-job-949-final-pass/README.md
-    job_id: '949'
-    job_status: SUBMITTED
-    submit_transaction_hash: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    submit_block: '128964136'
-    submitted_at: '1788480369'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
-    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
-    promise_id: 'sp_87c1d19f5bc0cda01d586131'
-    promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
-    scenario_id: spondee-hf-demo-001
-    manifest_hash_verified: true
-    spondee_receipt_verified: true
-    evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
-    secrets_printed: false
-    conclusion: SPONDEE_G3_SUBMITTED_JOB_949_RECEIPT_VERIFICATION_PASS
-    status: VERIFIED_FINAL_G3_PASS
+    receipt_truth_class: SIMULATION
+    status: VERIFIED_CLOSED
+  - id: EV-R036-006
+    type: grid_live_transport
+    artifact: evidence/g4-grid-job-954-final-pass/README.md
+    job_id: '954'
+    receipt_truth_class: SIMULATION
+    status: VERIFIED_CLOSED
+  - id: EV-R036-007
+    type: rebalancing_live_transport
+    artifact: evidence/g4-rebalancing-job-955-final-pass/README.md
+    job_id: '955'
+    receipt_truth_class: SIMULATION
+    status: VERIFIED_CLOSED
+  - id: EV-R036-008
+    type: yield_live_transport
+    artifact: evidence/g4-yield-job-957-final-pass/README.md
+    job_id: '957'
+    receipt_truth_class: SIMULATION
+    status: VERIFIED_CLOSED
+  - id: EV-R036-009
+    type: first_countable_observed_pair
+    artifact: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    job_id: '962'
+    pair_id: g5-grid-forward-job-962
+    evidence_class: OBSERVED
+    countable_for_final_report: true
+    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+    agent_terminal_equity_usd: 9996.660009
+    baseline_terminal_equity_usd: 9999.160009
+    delta_usd: -2.5
+    mainnet_value_moved: false
+    status: VERIFIED_CLOSED
 
 verification_events:
-  - id: VER-001
-    at: '2026-09-03T07:53:12-04:00'
-    event: Agent Studio runtime preflight completed successfully.
-    result: PASS
-    evidence: GitHub Actions run 33752070626
-  - id: VER-002
-    at: '2026-09-03T08:12:12-04:00'
-    event: G3 credential-free build and deterministic evidence completed successfully.
-    result: PASS
-    evidence: GitHub Actions run 33753788773
-  - id: VER-003
-    at: '2026-09-03T20:20:02Z'
-    event: Hardened full backend CI completed successfully.
-    result: PASS
-    evidence: GitHub Actions run 33801590780
-  - id: VER-004
-    at: '2026-09-03T20:24:31Z'
-    event: MegaFuel zero-balance createJob and cancelOpen mined successfully.
-    result: PASS_ZERO_BALANCE_SPONSORSHIP_PROVEN
-    evidence: GitHub Actions run 33802027942
-  - id: VER-005
-    at: '2026-09-03T20:39:58Z'
-    event: First full local E2E failed before write on quote envelope assumption.
-    result: FAIL_CLOSED_ZERO_TRANSACTIONS
-  - id: VER-006
-    at: '2026-09-03T22:37:15.505Z'
-    event: Second full local E2E failed before write because custom Promise term was dropped by official SDK.
-    result: FAIL_CLOSED_ZERO_TRANSACTIONS
-  - id: VER-007
-    at: '2026-09-03T23:13:11Z'
-    event: Full-Promise success_criteria carrier fix passed G3 CI.
-    result: PASS
-    evidence: GitHub Actions run 33816544907
-  - id: VER-008
-    at: '2026-09-03T23:21:21.084Z'
-    event: Third full local E2E reached createJob preparation; MegaFuel rejected the oversized transaction and SDK self-pay fallback failed for zero balance before mining.
-    result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE_ZERO_MINED_TRANSACTIONS
-  - id: VER-009
-    at: '2026-09-03T23:29:57Z'
-    event: Compact commitment backend CI passed 28/28 including byte-budget and sanitizer-safe task regressions.
-    result: PASS
-    evidence: GitHub Actions run 33817822355
-  - id: VER-010
-    at: '2026-09-03T23:31:00Z'
-    event: Compact commitment G3 CI passed Ubuntu verification plus Windows PowerShell and wallet roundtrip.
-    result: PASS
-    evidence: GitHub Actions run 33817846752
-  - id: VER-011
-    at: '2026-09-03T23:41:03.555Z'
-    event: Fourth local E2E mined job 948 createJob/registerJob/setBudget(0)/fund(0) and generated the deterministic deliverable locally; submit failed before broadcast because ERC8183_AGENT_URL was unset.
-    result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
-    evidence: EV-016
-  - id: VER-012
-    at: '2026-09-03T23:53:03.692Z'
-    event: Job 948 recovery failed closed because the provider submission deadline had passed; no submit transaction was broadcast.
-    result: FAIL_CLOSED_TERMINAL_JOB_948
-    evidence: EV-017
-  - id: VER-013
-    at: '2026-09-03T23:59:02Z'
-    event: Integrated LocalStorage HTTP bridge and 30-day submission horizon passed cross-platform final preflight.
-    result: PASS
-    evidence: GitHub Actions run 33819854509
-  - id: VER-014
-    at: '2026-09-04T00:07:18.579Z'
-    event: Fifth local E2E created job 949, completed all buyer-side writes and confirmed the provider submit transaction; the runner then failed only while scanning JobInitialised logs under RPC range/rate limiting.
-    result: LIVE_CHAIN_SUBMITTED_POST_SUBMIT_READ_FAILURE
-    evidence: EV-019
-  - id: VER-015
-    at: '2026-09-04T00:12:31Z'
-    event: Independent receipt-based verifier proved job 949 SUBMITTED, canonical provider, on-chain LocalStorage URL, matching deliverable hash and signed Promise commitment without eth_getLogs.
-    result: PASS_JOB_949_SUBMITTED_RECEIPT_PROOF_NO_ETH_GETLOGS
-    evidence: GitHub Actions run 33820803719 / EV-020
-  - id: VER-016
-    at: '2026-09-04T00:51:00Z'
-    event: Human-local read-only verifier served the existing job 949 manifest, matched its hash to the on-chain deliverable and verified the Spondee Outcome Receipt against the signed Promise/scenario.
-    result: PASS_G3_FINAL_MANIFEST_AND_OUTCOME_RECEIPT
-    evidence: EV-021
+  - id: VER-R036-001
+    at: '2026-09-04T11:05:15Z'
+    event: Authoritative Backend Final Completion workflow finished successfully.
+    result: PASS_RUN_33866229883
+    evidence: EV-R036-001
+  - id: VER-R036-002
+    at: '2026-09-04'
+    event: Backend completion was promoted from frontend-contract freeze to backend-code-complete canonical state.
+    result: STATE_R036
+    evidence: .pbpd/state/PROJECT-STATE.yaml
 
-contradictions:
-  - id: CON-001
-    topic: testnet_gas_sponsorship
-    observation: Earlier signals conflicted on whether tBNB was required for ERC-8183 writes.
-    handling: Runtime evidence includes the complete Spondee live sequence through provider submit with zero wallet-paid gas; tBNB remains fallback-only.
-    status: RESOLVED_BY_RUNTIME_PROOF
-  - id: CON-002
-    topic: custom_negotiation_term_survival
-    observation: Injected signer tests suggested custom terms survived, but official TermSpecification drops arbitrary keys.
-    handling: Use official success_criteria as the signed provenance surface.
-    status: RESOLVED_BY_PROTOCOL_CONTRACT_AND_CI
-  - id: CON-003
-    topic: full_promise_on_chain_vs_megafuel_size
-    observation: Full Promise Card in success_criteria was cryptographically sound but produced a 2223-byte JobDescription that MegaFuel rejected.
-    handling: Keep full Promise off-chain, sign only p/s/r/SHA-256 commitment, enforce a 1600-byte description cap before createJob.
-    status: RESOLVED_BY_COMPACT_COMMITMENT_CI_AND_LIVE_ACCEPTANCE
-  - id: CON-004
-    topic: raw_json_task_vs_sdk_claim_sanitizer
-    observation: Official SDK sanitizer replaces square brackets, which would corrupt Health Factor stress_path JSON arrays.
-    handling: Encode the signed task as versioned Base64URL JSON and reconstruct deterministically.
-    status: RESOLVED_BY_TASK_CARRIER_CI_AND_LIVE_RUNTIME
-  - id: CON-005
-    topic: localstorage_file_url_vs_onchain_deliverable_url
-    observation: LocalStorageProvider generated a file:// manifest while the runtime requires ERC8183_AGENT_URL to publish a fetchable HTTP deliverable URL.
-    handling: Start a bounded local HTTP bridge before the seller and inject ERC8183_AGENT_URL=http://127.0.0.1:9100/erc8183 into the live seller process.
-    status: RESOLVED_LIVE_JOB_949_ONCHAIN_HTTP_URL
-  - id: CON-006
-    topic: quickstart_600_second_slack_vs_recoverable_e2e
-    observation: The quickstart-style 600-second provider submission slack expired before job 948 recovery, making the already-funded job permanently unsubmittable.
-    handling: New G3 jobs use expiredAt = now + disputeWindow + 30 days; job 949 was created under that rule and submitted successfully.
-    status: RESOLVED_LIVE_JOB_949_SUBMITTED_WITH_30_DAY_HORIZON
-  - id: CON-007
-    topic: post_submit_eth_getlogs_limit_vs_actual_submit_state
-    observation: The SDK deliverable URL resolver hit an RPC range/rate limit after job 949 provider submit had already been confirmed, causing the local runner to report failure despite the successful lifecycle transition.
-    handling: Use the known submit transaction receipt to decode JobSubmitted and JobInitialised directly, plus direct getJob(949), eliminating historical eth_getLogs from the recovery proof.
-    status: RESOLVED_BY_RECEIPT_BASED_LIVE_CI_PROOF
-  - id: CON-008
-    topic: windows_cli_zero_exit_vs_actual_verification_execution
-    observation: Two local Windows runs exited 0 without executing the verifier because a hand-built import.meta.url guard did not match Windows file URL semantics.
-    handling: Dedicated CLI entrypoint plus wrapper requirement for an explicit PASS terminal; cross-platform run 33823556651 passed including Windows Node 24.
-    status: RESOLVED_AND_FINAL_HUMAN_PASS_CONFIRMED
+truth_boundaries:
+  - SIMULATION_NE_OBSERVED
+  - PAPER_PNL_NE_REALIZED_PNL
+  - IDENTITY_NE_PERFORMANCE
+  - EXTERNAL_DISCOVERY_NE_ACTIVATION_COMPATIBILITY
+  - VERIFIED_PATH_NE_CURRENT_WRITE_AUTHORITY
+  - FAILURE_NE_VALID_NEGATIVE_OUTCOME
+  - INSUFFICIENT_HISTORY_NE_CONFIDENCE_SCORE
+  - BACKEND_CODE_COMPLETE_NE_SUBMISSION_COMPLETE
+
+remaining_evidence_gates:
+  - SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  - THIRD_COUNTABLE_OBSERVED_PAIR
+  - PUBLIC_JUDGE_DEPLOYMENT_AND_SMOKE
+
+closed_job_guards:
+  jobs: ['949', '954', '955', '957', '962']
+  rerun_or_mutation_allowed: false

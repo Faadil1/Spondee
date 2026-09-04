@@ -13,8 +13,9 @@ requirements:
   - id: MUST-03
     class: MUST
     requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
-    status: PARTIAL_BACKEND_SUBSTRATE_BOUNDARY_VERIFIED_DYNAMIC_INTEGRATION_PENDING
-    evidence: backend/src/catalog.ts
+    status: VERIFIED_DYNAMIC_SERVER_SIDE_8004SCAN_DISCOVERY_AND_STATIC_CONTROLLED_CATALOG_BOUNDARY
+    evidence: backend/src/discovery.ts
+    note: Official 8004scan API integration is read-only, server-side, cached and explicitly discovery-only. External agents remain activatable=false until an adapter is independently verified.
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
@@ -33,8 +34,9 @@ requirements:
   - id: MUST-07
     class: MUST
     requirement: Delegated execution authority is visibly bounded.
-    status: PARTIAL_TESTNET_ZERO_PRICE_BOUNDARY_VERIFIED__G5_ONE_JOB_GATE_CONSUMED_AND_CLOSED__PRODUCT_VISIBLE_AUTHORITY_UI_PENDING
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: BACKEND_BOUNDARY_VERIFIED__LIVE_ACTION_PROTECTED_AND_RUNTIME_GATED__FRONTEND_VISIBLE_AUTHORITY_UI_PENDING
+    evidence: backend/src/security.ts
+    note: Backend live mutation now requires a dedicated server-side action token, runtime live gate, retry-state guard and durable operation lock. Judge-facing visual treatment remains frontend work.
   - id: MUST-08
     class: MUST
     requirement: Every measured completed run creates an Outcome Receipt.
@@ -66,19 +68,19 @@ requirements:
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
-    status: BLOCKING_OBSERVED_EVENT_TAPE_PENDING__NEXT_PAIR_TARGET
+    status: BLOCKING_OBSERVED_EVENT_TAPE_PENDING__EVIDENCE_WORKSTREAM_NOT_BACKEND_CODE
     evidence: evidence/g3-job-949-final-pass/README.md
-    evidence_plan: Next no-write gate freezes Health Factor position/rules and a reproducible without-agent baseline, then preserves warning, intervention/recommendation and adverse-event timestamps on observed external inputs.
+    evidence_plan: Freeze Health Factor position/rules and a reproducible without-agent baseline, then preserve warning, intervention/recommendation and adverse-event timestamps on observed external inputs.
   - id: MUST-14
     class: MUST
     requirement: Public product remains accessible during judging.
-    status: BLOCKING_PUBLIC_DEPLOYMENT_PENDING
-    evidence_plan: Public URL smoke check and judge-path verification. Current loopback deliverables are not judge-accessible.
+    status: BLOCKING_PUBLIC_DEPLOYMENT_PENDING__RUNTIME_DEPLOYMENT_NOT_BACKEND_CODE
+    evidence_plan: Deploy backend/frontend, configure durable storage/CORS/protected tokens, then run public URL and judge-path verification.
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
-    status: VERIFIED_CI_LIVE_RUNTIME_G5_PREWRITE_FAIL_CLOSED_AND_COUNTABLE_GRID_PASS
-    evidence: evidence/g5-grid-forward-prewrite-size-failclosed-remediation/README.md
+    status: VERIFIED_BACKEND_FAIL_CLOSED_LIVE_AND_EVIDENCE_MUTATION_GUARDS
+    evidence: backend/src/app.ts
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
@@ -87,15 +89,17 @@ requirements:
   - id: SHOULD-02
     class: SHOULD
     requirement: Provide Decision Replay for measured runs.
-    status: PENDING
+    status: VERIFIED_READ_ONLY_DECISION_REPLAY_IMPLEMENTED
+    evidence: backend/src/replay.ts
+    note: Replay reconstructs preserved inputs, Promise, authority, transactions and Outcome Receipt without re-execution or evidence promotion.
   - id: SHOULD-03
     class: SHOULD
     requirement: Use Altana scoped session authority if core integration supports it.
-    status: PENDING_AFTER_OBSERVED_EVIDENCE_CORE
+    status: DEFERRED_OPTIONAL_NOT_BACKEND_COMPLETION_BLOCKER
   - id: SHOULD-04
     class: SHOULD
     requirement: Add genuine PancakeSwap trader/LP benefit only after core product is complete.
-    status: PENDING_AFTER_OBSERVED_EVIDENCE_CORE
+    status: DEFERRED_OPTIONAL_NOT_BACKEND_COMPLETION_BLOCKER
   - id: SHOULD-05
     class: SHOULD
     requirement: Keep generic reputation secondary to task-specific evidence.
@@ -104,12 +108,13 @@ requirements:
   - id: MUST_NOT-01
     class: MUST_NOT
     requirement: Do not present estimated or synthetic performance as observed real evidence.
-    status: ACTIVE_AND_FIRST_COUNTABLE_PAIR_TRUTH_BOUNDARY_VERIFIED
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: ACTIVE_AND_BACKEND_TRUTH_BOUNDARY_REGRESSION_VERIFIED
+    evidence: backend/src/backend-completion.test.ts
   - id: MUST_NOT-02
     class: MUST_NOT
     requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.
-    status: ACTIVE_AND_BACKEND_VERIFIED_GUARDRAIL
+    status: ACTIVE_AND_DYNAMIC_8004SCAN_DISCOVERY_VERIFIED
+    evidence: backend/src/discovery.ts
   - id: MUST_NOT-03
     class: MUST_NOT
     requirement: Do not claim guaranteed profit, safety or liquidation prevention.
@@ -118,7 +123,8 @@ requirements:
   - id: MUST_NOT-04
     class: MUST_NOT
     requirement: Do not show an agent as activatable when activation does not work.
-    status: ACTIVE_AND_FOUR_LIVE_CATEGORIES_VERIFIED_GUARDRAIL
+    status: ACTIVE_FOUR_LIVE_PATHS_VERIFIED__EXTERNAL_DISCOVERY_REMAINS_NON_ACTIVATABLE__CURRENT_WRITE_READINESS_SEPARATE
+    evidence: backend/src/catalog.ts
   - id: MUST_NOT-05
     class: MUST_NOT
     requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.

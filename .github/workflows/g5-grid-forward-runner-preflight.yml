@@ -74,20 +74,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install pinned pnpm
+        run: npm install --global pnpm@10.24.0 --no-audit --no-fund
       - name: Install frozen Grid workspace
         working-directory: reference-agents/grid
-        run: npx --yes pnpm@10.24.0 install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts --reporter=append-only
       - name: Existing Grid category tests
         working-directory: reference-agents/grid/app/agent
-        run: npx --yes pnpm@10.24.0 test
+        run: pnpm test
       - name: G5 forward seller tests
         working-directory: reference-agents/grid/app/agent
-        run: npx --yes pnpm@10.24.0 exec node --import tsx --test src/g5ForwardObserved.test.ts
+        run: pnpm exec node --import tsx --test src/g5ForwardObserved.test.ts
       - name: Strict Grid TypeScript build
         working-directory: reference-agents/grid/app/agent
-        run: npx --yes pnpm@10.24.0 build
+        run: pnpm build
       - name: Seller safety invariants
         shell: bash
         run: |

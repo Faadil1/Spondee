@@ -2,22 +2,20 @@ schema: PBPD-FRONTEND-HANDOFF-v0.1
 project_id: bnb_agent_studio_build_the_era_2026
 project_name: Spondee
 audience: Benita
-source_branch: build/backend-completion-final
+source_branch: build/frontend-handoff-ready
 product_authority: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
 human_handoff: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
 technical_contract: backend/FRONTEND-CONTRACT.md
-status: BACKEND_CODE_COMPLETE_FRONTEND_V1_HANDOFF_READY
+status: RELEASED_FINAL_BACKEND_AND_EVIDENCE_READY_FOR_FRONTEND_V1
 validation:
-  authoritative_ci_run: 33866229883
-  validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
-  full_backend_regression: PASS
-  strict_typescript: PASS
-  four_category_truth_smoke: PASS
-  protected_surface_smoke: PASS
-  decision_replay_smoke: PASS
-  official_8004scan_readonly_integration: PASS
-  bsc_readiness_probe: PASS_READ_ONLY
-  chain_write_attempted: false
+  backend_authoritative_ci_run: 33867168666
+  observed_closure_preflight_run: 33868671297
+  public_deployment_contract_preflight_run: 33869418246
+  backend_code_complete: true
+  observed_agent_advantage_ready: true
+  countable_pairs: 3
+  health_event_tape_closed: true
+  chain_write_authority_currently_open: false
 product:
   tagline: Agents, measured by what they deliver.
   concept: Calibrated Outcome Marketplace + Intervention Advantage
@@ -30,7 +28,7 @@ product:
     - BOUNDED_ACTIVATE
     - OUTCOME_RECEIPT
     - PROMISE_VS_ACTUAL
-    - AGENT_ADVANTAGE_WHEN_AVAILABLE
+    - AGENT_ADVANTAGE
 categories:
   - Health Factor Monitoring
   - Grid Trading
@@ -78,8 +76,6 @@ backend_completion:
   durable_operation_idempotency: IMPLEMENTED
   immutable_evidence_ingestion: IMPLEMENTED
   deployment_readiness_contract: IMPLEMENTED
-  public_deployment_configuration_complete: false
-  public_deployment_configuration_is_backend_code_gap: false
 verified_activation_paths:
   health_factor: { job_id: '949', status: VERIFIED_LIVE_TESTNET }
   grid: { job_id: '954', status: VERIFIED_LIVE_TESTNET }
@@ -87,33 +83,30 @@ verified_activation_paths:
   yield: { job_id: '957', status: VERIFIED_LIVE_TESTNET }
 observed_evidence:
   required_pairs: 3
-  countable_pairs: 1
+  countable_pairs: 3
+  final_status: READY
   trading_requirement_satisfied: true
-  first_pair:
-    category: Grid Trading
-    job_id: '962'
-    pair_id: g5-grid-forward-job-962
-    result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD_ON_OBSERVED_WINDOW
-    countable_for_final_report: true
-remaining_project_work_not_backend_code:
-  - HEALTH_FACTOR_OBSERVED_PAIR_AND_EVENT_TAPE
-  - THIRD_COUNTABLE_OBSERVED_PAIR
-  - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
-  - WINNER_INTELLIGENCE_AND_TRACE_FRONTEND_REVIEW
-  - PROJECT_FINISHER
-  - MERGE_MAIN
-  - HUMAN_FINAL_SUBMISSION
-winner_intelligence:
-  role: POST_V1_BLIND_SPOT_AND_PRE_SUBMISSION_HEURISTIC_OVERLAY
-  frontend_blocker: false
-  backend_rearchitecture_expected: false
-  winning_laws_promoted: 0
-  win_probability_score: FORBIDDEN
-  checks:
-    - SPONSOR_NATIVE_NECESSITY_CHECK
-    - WHOLE_RUBRIC_COVERAGE_CHECK
-    - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
-    - JUDGE_PATH_LEGIBILITY_CHECK
+  pairs:
+    - category: Grid Trading
+      job_id: '962'
+      pair_id: g5-grid-forward-job-962
+      result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD
+      evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    - category: Health Factor Monitoring
+      job_id: '971'
+      pair_id: g5-health-forward-job-971
+      warning_lead_time_seconds: 95.829
+      response_latency_ms: 0
+      adverse_event_observed: false
+      evidence: evidence/g5-health-forward-job-971-countable-pass/README.md
+    - category: Rebalancing
+      job_id: '973'
+      pair_id: g5-rebalancing-forward-job-973
+      result: NEUTRAL_AGENT_EQUALS_BASELINE_ON_THIS_WINDOW
+      agent_terminal_equity_usd: 10002.727008
+      baseline_terminal_equity_usd: 10002.727008
+      evidence: evidence/g5-rebalancing-forward-job-973-countable-pass/README.md
+  aggregate_evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
 truth_boundaries:
   - SIMULATION_NE_OBSERVED
   - PAPER_PNL_NE_REALIZED_PNL
@@ -122,8 +115,40 @@ truth_boundaries:
   - EXTERNAL_DISCOVERY_NE_ACTIVATION_COMPATIBILITY
   - FAILURE_NE_VALID_NEGATIVE_OUTCOME
   - INSUFFICIENT_HISTORY_NE_CONFIDENCE_SCORE
+  - NEGATIVE_OR_NEUTRAL_OBSERVED_RESULT_NE_FAILURE
+frontend_scope:
+  owner: Benita
+  frontend_v1: true
+  vercel_project_and_deployment: true
+  database_connection: true
+  server_environment_configuration: true
+  cors_configuration: true
+  public_smoke_tests: true
+production_env_required:
+  - DATABASE_URL
+  - SPONDEE_CORS_ORIGINS
+  - SPONDEE_ACTION_TOKEN
+  - SPONDEE_EVIDENCE_INGEST_TOKEN
+production_security:
+  protected_tokens_browser_safe: false
+  protected_tokens_must_remain_server_only: true
+  do_not_reuse_unrelated_project_database_without_explicit_approval: true
+raw_evidence_preservation:
+  archive_script: scripts/archive-g5-pre-frontend-evidence.ps1
+  health_job: '971'
+  rebalancing_job: '973'
+  should_archive_before_temp_cleanup: true
+winner_intelligence:
+  role: POST_V1_BLIND_SPOT_AND_PRE_SUBMISSION_HEURISTIC_OVERLAY
+  frontend_blocker: false
+  winning_laws_promoted: 0
+  win_probability_score: FORBIDDEN
+  checks:
+    - SPONSOR_NATIVE_NECESSITY_CHECK
+    - WHOLE_RUBRIC_COVERAGE_CHECK
+    - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
+    - JUDGE_PATH_LEGIBILITY_CHECK
 benita_v1_can_start_now: true
 benita_v1_should_not_wait_for_winner_intelligence: true
 backend_architecture_change_required_before_benita_starts: false
-next_backend_gate: NONE_BACKEND_CODE_COMPLETE
-next_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+next_internal_gate_after_benita: SPONDEE_WINNER_INTELLIGENCE_TRACE_FRONTEND_REVIEW_REQUIRED

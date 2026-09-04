@@ -5,25 +5,25 @@ handover:
   date: 2026-09-04
   source_of_truth: GITHUB
   repository: Faadil1/Spondee
-  branch: build/backend-product-freeze
+  branch: build/backend-completion-final
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, FRONTEND-HANDOFF,
-    REQUIREMENTS-LEDGER, RUNTIME-STATUS and RISK-REGISTER. The backend/frontend contract is frozen
-    on build/backend-product-freeze after CI run 33864316044. Benita may build frontend V1 from
-    /v1/product/bootstrap without waiting for remaining observed-pair evidence. Jobs 949, 954, 955,
-    957 and 962 are CLOSED and MUST NOT be rerun or mutated.
+    REQUIREMENTS-LEDGER, RUNTIME-STATUS, RISK-REGISTER and EVIDENCE-LEDGER. Backend code is complete
+    for frontend V1 after authoritative CI run 33866229883. Do not reopen backend architecture to
+    complete evidence/runtime/frontend work. Benita uses build/backend-completion-final and
+    /v1/product/bootstrap. Jobs 949, 954, 955, 957 and 962 are CLOSED and MUST NOT be rerun or mutated.
 
-  current_milestone: BACKEND_PRODUCT_FREEZE_AND_FRONTEND_HANDOFF_PASS
-  lifecycle_status: FRONTEND_V1_READY_IN_PARALLEL__ONE_OF_THREE_COUNTABLE_PAIRS_COMPLETE
+  current_milestone: BACKEND_FINAL_COMPLETION_PASS
+  lifecycle_status: BACKEND_CODE_COMPLETE__BENITA_FINAL_HANDOFF_READY__EVIDENCE_AND_FRONTEND_PARALLEL
 
   authority:
     project: PROJECT_AUTHORIZED
-    completed_backend_gate: SPONDEE_BACKEND_PRODUCT_FREEZE_AND_FRONTEND_HANDOFF
-    completed_backend_gate_status: PASS_RUN_33864316044
-    current_backend_evidence_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-    current_backend_evidence_gate_status: NOT_YET_OPENED
-    current_action_class: NO_CHAIN_WRITE__PARALLEL_FRONTEND_AND_EVIDENCE_BUILD
+    completed_backend_gate: SPONDEE_BACKEND_FINAL_COMPLETION
+    completed_backend_gate_status: PASS_RUN_33866229883
+    current_backend_gate: NONE_BACKEND_CODE_COMPLETE
+    current_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+    current_project_gate_status: NOT_YET_OPENED
     production_owner: PBPD
     frontend_collaborator: Benita
     protected_external_action_owner: HUMAN
@@ -31,38 +31,50 @@ handover:
     mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY_NOT_OPENED
     merge_to_main: NOT_AUTHORIZED
 
-  backend_freeze:
-    status: PASS_FROZEN_FOR_FRONTEND_V1
-    branch: build/backend-product-freeze
-    authoritative_ci_run: 33864316044
-    validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
-    evidence: evidence/backend-product-freeze-frontend-handoff/README.md
-    product_handoff: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+  backend_completion:
+    status: PASS_CODE_COMPLETE_FOR_FRONTEND_V1
+    branch: build/backend-completion-final
+    authoritative_ci_run: 33866229883
+    validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
+    evidence: evidence/backend-final-completion/README.md
+    product_handoff: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
     technical_contract: backend/FRONTEND-CONTRACT.md
     machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
     bootstrap_endpoint: /v1/product/bootstrap
     bootstrap_schema: spondee.frontend-bootstrap.v1
-    cors_env: SPONDEE_CORS_ORIGINS
     tests: PASS
     strict_typescript: PASS
-    bootstrap_smoke: PASS
-    cors_smoke: PASS
+    simulation_truth_smoke: PASS
+    mutation_protection: PASS
+    durable_operation_idempotency: PASS
+    immutable_evidence_ingestion: PASS
+    decision_replay: PASS_READ_ONLY
+    dynamic_8004scan_discovery: PASS_OFFICIAL_API_READ_ONLY
     bsc_readiness_probe: PASS_READ_ONLY
+    deployment_readiness_contract: PASS_IMPLEMENTED
     chain_write_attempted: false
+    remaining_backend_percentage: 0
 
   frontend_contract:
-    list_endpoints:
-      - /v1/promises
-      - /v1/activations
-      - /v1/receipts
-      - /v1/evidence/runs
-    activation_proof_semantics: VERIFIED_PATH_SEPARATE_FROM_CURRENT_RUNTIME_WRITE_READINESS
+    source_branch: build/backend-completion-final
+    schemas:
+      bootstrap: spondee.frontend-bootstrap.v1
+      replay: spondee.decision-replay.v1
+      discovery: spondee.8004scan-discovery.v1
+      backend_readiness: spondee.backend-deployment-readiness.v1
+    server_only_protected_actions:
+      - POST /v1/activations/:id/live-testnet
+      - POST /v1/evidence/baselines
+    server_only_tokens:
+      - SPONDEE_ACTION_TOKEN
+      - SPONDEE_EVIDENCE_INGEST_TOKEN
+    browser_secret_embedding: FORBIDDEN
+    v1_breaking_changes_allowed: false_without_new_contract_version
     controlled_reference_agents:
       health_factor: { status: LIVE_TESTNET_VERIFIED, proof_job: '949' }
       grid: { status: LIVE_TESTNET_VERIFIED, proof_job: '954' }
       rebalancing: { status: LIVE_TESTNET_VERIFIED, proof_job: '955' }
       yield: { status: LIVE_TESTNET_VERIFIED, proof_job: '957' }
-    v1_breaking_changes_allowed: false_without_new_contract_version
 
   observed_evidence:
     required_pairs: 3
@@ -77,48 +89,54 @@ handover:
       countable_for_final_report: true
     final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
 
+  remaining_project_work_not_backend_code:
+    - HEALTH_FACTOR_OBSERVED_PAIR_AND_EVENT_TAPE
+    - THIRD_COUNTABLE_OBSERVED_PAIR
+    - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
+    - BENITA_FRONTEND_V1
+    - WINNER_INTELLIGENCE_AND_TRACE_JUDGE_PATH_REVIEW
+    - PROJECT_FINISHER
+    - MERGE_MAIN
+    - HUMAN_FINAL_SUBMISSION
+
   winner_intelligence_overlay:
     status: DOCUMENTED_FOR_POST_V1_REVIEW
     frontend_blocker: false
+    backend_rearchitecture_expected: false
     winning_laws_promoted: 0
     checks:
       - SPONSOR_NATIVE_NECESSITY_CHECK
       - WHOLE_RUBRIC_COVERAGE_CHECK
       - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
       - JUDGE_PATH_LEGIBILITY_CHECK
-    priority_blind_spots:
-      - FIRST_5S_CORE_CLARITY
-      - FIRST_15S_PROGRESS_CLARITY
-      - SIGNATURE_ACTION_TO_VISIBLE_CONSEQUENCE
-      - RUBRIC_EVIDENCE_SURFACING
-      - TRUTHFUL_WAIT_AND_FAILURE_STATES
-      - MOBILE_KEYBOARD_REDUCED_MOTION_LEGIBILITY
 
   parallel_tracks:
     frontend:
       owner: Benita
       status: READY_TO_START_V1
-      source_branch: build/backend-product-freeze
+      source_branch: build/backend-completion-final
       primary_contract: /v1/product/bootstrap
       wait_for_winner_intelligence: false
-    backend_evidence:
+    evidence:
       owner: PBPD
-      status: NEXT_GATE_NOT_OPENED
+      status: NEXT_PROJECT_GATE_NOT_OPENED
       next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
       chain_write_allowed: false
 
-  exact_next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  exact_next_owner: PBPD_AFTER_GATE_OPEN
+  exact_next_backend_gate: NONE_BACKEND_CODE_COMPLETE
+  exact_next_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  exact_next_owner: PBPD_AFTER_PROJECT_GATE_OPEN
   exact_next_action: >-
-    Implement and dry-run the Health Factor observed pair/event-tape protocol while Benita proceeds
-    independently on frontend V1 from the frozen backend contract. The evidence work may update pair
-    counts/data but must not silently break spondee.frontend-bootstrap.v1.
+    Complete the Health Factor observed pair/event-tape evidence while Benita builds frontend V1 from
+    the completed backend contract. Evidence progress may change data/counts but must not silently break
+    spondee.frontend-bootstrap.v1.
 
   stop_conditions:
     - do not rerun jobs 949, 954, 955, 957, or 962
     - do not rewrite job 962 underperformance as a performance win
-    - frontend V1 must preserve SIMULATION vs OBSERVED truth boundaries
-    - no BSC-testnet write during the next Health Factor implementation/dry-run gate
+    - do not expose SPONDEE_ACTION_TOKEN or SPONDEE_EVIDENCE_INGEST_TOKEN in browser code
+    - do not promote SIMULATION to OBSERVED
+    - no BSC-testnet write during the Health Factor implementation/dry-run gate
     - no meaningful user/mainnet capital
     - no material paid spend
     - no guaranteed profit, safety or liquidation-prevention claim

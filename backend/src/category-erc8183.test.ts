@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { SpondeeTask } from "./contracts.js";
 import {
+  boundedNotifyFundedPayload,
   encodeSpondeeCategoryTask,
   parseNotifyFundedSubmit,
   runSignedZeroPriceCategoryTestnetActivation,
@@ -72,30 +73,45 @@ test("all G4 categories fail closed before wallet/network when live gate is abse
   }
 });
 
-test("notify_funded submit response yields the exact known provider transaction", () => {
+test("bounded local proof explicitly opts into synchronous notify result", () => {
+  assert.deepEqual(boundedNotifyFundedPayload(955n), {
+    skill: "notify_funded",
+    job_id: 955,
+    wait_for_result: true,
+  });
+});
+
+test("bounded synchronous seller result yields the exact provider submit transaction", () => {
   const parsed = parseNotifyFundedSubmit(
     {
       ok: true,
-      job_id: 954,
-      tx_hash: "0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3",
-      deliverable_url: "http://127.0.0.1:9100/erc8183/job/954/response",
+      job_id: 955,
+      tx_hash: "0x1111111111111111111111111111111111111111111111111111111111111111",
+      deliverable_url: "http://127.0.0.1:9100/erc8183/job/955/response",
     },
-    954n,
+    955n,
   );
   assert.equal(
     parsed.transactionHash,
-    "0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3",
+    "0x1111111111111111111111111111111111111111111111111111111111111111",
   );
-  assert.equal(parsed.deliverableUrl, "http://127.0.0.1:9100/erc8183/job/954/response");
+  assert.equal(parsed.deliverableUrl, "http://127.0.0.1:9100/erc8183/job/955/response");
 });
 
-test("notify_funded submit response fails closed on wrong job or malformed tx", () => {
+test("default asynchronous notify ACK is never mistaken for a terminal submit result", () => {
   assert.throws(
-    () => parseNotifyFundedSubmit({ ok: true, job_id: 955, tx_hash: `0x${"1".repeat(64)}` }, 954n),
+    () => parseNotifyFundedSubmit({ status: "accepted", job_id: 955 }, 955n),
+    /did not return ok=true/i,
+  );
+});
+
+test("bounded synchronous result fails closed on wrong job or malformed tx", () => {
+  assert.throws(
+    () => parseNotifyFundedSubmit({ ok: true, job_id: 956, tx_hash: `0x${"1".repeat(64)}` }, 955n),
     /wrong job id/i,
   );
   assert.throws(
-    () => parseNotifyFundedSubmit({ ok: true, job_id: 954, tx_hash: "0x1234" }, 954n),
+    () => parseNotifyFundedSubmit({ ok: true, job_id: 955, tx_hash: "0x1234" }, 955n),
     /valid submit transaction hash/i,
   );
 });

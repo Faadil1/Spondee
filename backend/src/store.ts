@@ -8,14 +8,21 @@ import type {
 
 const { Pool } = pg;
 
+function byCreatedAt<T extends { created_at: string }>(values: T[]): T[] {
+  return [...values].sort((a, b) => a.created_at.localeCompare(b.created_at));
+}
+
 export interface SpondeeStore {
   init(): Promise<void>;
   putPromise(value: PromiseCard): Promise<void>;
   getPromise(id: string): Promise<PromiseCard | null>;
+  listPromises(): Promise<PromiseCard[]>;
   putActivation(value: ActivationRecord): Promise<void>;
   getActivation(id: string): Promise<ActivationRecord | null>;
+  listActivations(): Promise<ActivationRecord[]>;
   putReceipt(value: OutcomeReceipt): Promise<void>;
   getReceipt(id: string): Promise<OutcomeReceipt | null>;
+  listReceipts(): Promise<OutcomeReceipt[]>;
   putEvidence(value: EvidenceRun): Promise<void>;
   listEvidence(): Promise<EvidenceRun[]>;
   close(): Promise<void>;
@@ -37,6 +44,9 @@ export class MemoryStore implements SpondeeStore {
     const value = this.promises.get(id);
     return value ? structuredClone(value) : null;
   }
+  async listPromises(): Promise<PromiseCard[]> {
+    return byCreatedAt([...this.promises.values()]).map((value) => structuredClone(value));
+  }
   async putActivation(value: ActivationRecord): Promise<void> {
     this.activations.set(value.activation_id, structuredClone(value));
   }
@@ -44,12 +54,18 @@ export class MemoryStore implements SpondeeStore {
     const value = this.activations.get(id);
     return value ? structuredClone(value) : null;
   }
+  async listActivations(): Promise<ActivationRecord[]> {
+    return byCreatedAt([...this.activations.values()]).map((value) => structuredClone(value));
+  }
   async putReceipt(value: OutcomeReceipt): Promise<void> {
     this.receipts.set(value.receipt_id, structuredClone(value));
   }
   async getReceipt(id: string): Promise<OutcomeReceipt | null> {
     const value = this.receipts.get(id);
     return value ? structuredClone(value) : null;
+  }
+  async listReceipts(): Promise<OutcomeReceipt[]> {
+    return byCreatedAt([...this.receipts.values()]).map((value) => structuredClone(value));
   }
   async putEvidence(value: EvidenceRun): Promise<void> {
     this.evidence.set(value.run_id, structuredClone(value));
@@ -134,6 +150,13 @@ export class PostgresStore implements SpondeeStore {
     return result.rows[0]?.payload ?? null;
   }
 
+  async listPromises(): Promise<PromiseCard[]> {
+    const result = await this.pool.query<{ payload: PromiseCard }>(
+      "SELECT payload FROM spondee_promises ORDER BY created_at ASC",
+    );
+    return result.rows.map((row) => row.payload);
+  }
+
   async putActivation(value: ActivationRecord): Promise<void> {
     await this.pool.query(
       `INSERT INTO spondee_activations
@@ -160,6 +183,13 @@ export class PostgresStore implements SpondeeStore {
     return result.rows[0]?.payload ?? null;
   }
 
+  async listActivations(): Promise<ActivationRecord[]> {
+    const result = await this.pool.query<{ payload: ActivationRecord }>(
+      "SELECT payload FROM spondee_activations ORDER BY updated_at ASC",
+    );
+    return result.rows.map((row) => row.payload);
+  }
+
   async putReceipt(value: OutcomeReceipt): Promise<void> {
     await this.pool.query(
       `INSERT INTO spondee_receipts (receipt_id, category, scenario_id, agent_id, promise_id, payload)
@@ -182,6 +212,13 @@ export class PostgresStore implements SpondeeStore {
       [id],
     );
     return result.rows[0]?.payload ?? null;
+  }
+
+  async listReceipts(): Promise<OutcomeReceipt[]> {
+    const result = await this.pool.query<{ payload: OutcomeReceipt }>(
+      "SELECT payload FROM spondee_receipts ORDER BY created_at ASC",
+    );
+    return result.rows.map((row) => row.payload);
   }
 
   async putEvidence(value: EvidenceRun): Promise<void> {

@@ -54,14 +54,15 @@ jobs:
           node --import tsx --input-type=module - <<'NODE'
           import { backendDeploymentReadiness } from './src/security.ts';
           const incomplete = backendDeploymentReadiness({});
-          if (incomplete.production_ready !== false) throw new Error('empty deployment env must fail closed');
+          if (incomplete.public_deployment_ready !== false) throw new Error('empty deployment env must fail closed');
           const complete = backendDeploymentReadiness({
             DATABASE_URL: 'postgresql://example.invalid/spondee',
             SPONDEE_CORS_ORIGINS: 'https://frontend.example',
             SPONDEE_ACTION_TOKEN: 'a'.repeat(32),
             SPONDEE_EVIDENCE_INGEST_TOKEN: 'b'.repeat(32),
           });
-          if (complete.production_ready !== true) throw new Error('complete deployment env not recognized');
+          if (complete.public_deployment_ready !== true) throw new Error('complete deployment env not recognized');
+          if (complete.blocking_configuration.length !== 0) throw new Error('complete deployment env still reports blockers');
           if (JSON.stringify(complete).includes('a'.repeat(32)) || JSON.stringify(complete).includes('b'.repeat(32))) throw new Error('readiness leaks protected token');
           console.log('production configuration contract: PASS');
           NODE

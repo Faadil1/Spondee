@@ -2,18 +2,20 @@ schema: PBPD-FRONTEND-HANDOFF-v0.1
 project_id: bnb_agent_studio_build_the_era_2026
 project_name: Spondee
 audience: Benita
-source_branch: build/backend-product-freeze
+source_branch: build/backend-completion-final
 product_authority: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
-human_handoff: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+human_handoff: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
 technical_contract: backend/FRONTEND-CONTRACT.md
-status: BACKEND_FRONTEND_CONTRACT_FROZEN_PASS
+status: BACKEND_CODE_COMPLETE_FRONTEND_V1_HANDOFF_READY
 validation:
-  authoritative_ci_run: 33864316044
-  validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
-  full_backend_tests: PASS
+  authoritative_ci_run: 33866229883
+  validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
+  full_backend_regression: PASS
   strict_typescript: PASS
-  frontend_bootstrap_smoke: PASS
-  cors_allowlist_smoke: PASS
+  four_category_truth_smoke: PASS
+  protected_surface_smoke: PASS
+  decision_replay_smoke: PASS
+  official_8004scan_readonly_integration: PASS
   bsc_readiness_probe: PASS_READ_ONLY
   chain_write_attempted: false
 product:
@@ -40,13 +42,44 @@ backend_contract:
   cors_env: SPONDEE_CORS_ORIGINS
   promise_schema: spondee.promise-card.v1
   receipt_schema: spondee.outcome-receipt.v1
-  list_endpoints:
+  replay_schema: spondee.decision-replay.v1
+  discovery_schema: spondee.8004scan-discovery.v1
+  backend_readiness_schema: spondee.backend-deployment-readiness.v1
+  read_endpoints:
+    - /healthz
+    - /v1/product/bootstrap
+    - /v1/categories
+    - /v1/agents
+    - /v1/discovery/agents
     - /v1/promises
     - /v1/activations
+    - /v1/activations/:id/replay
     - /v1/receipts
     - /v1/evidence/runs
-  live_readiness_endpoint: /v1/runtime/readiness
+    - /v1/evidence/agent-advantage
+    - /v1/runtime/readiness
+    - /v1/runtime/backend-readiness
+  normal_browser_actions:
+    - POST /v1/promises/preview
+    - POST /v1/activations
+  protected_server_actions:
+    - POST /v1/activations/:id/live-testnet
+    - POST /v1/evidence/baselines
+  server_only_tokens:
+    - SPONDEE_ACTION_TOKEN
+    - SPONDEE_EVIDENCE_INGEST_TOKEN
   breaking_changes_policy: VERSION_NEW_CONTRACT_DO_NOT_SILENTLY_BREAK_V1
+backend_completion:
+  code_complete: true
+  remaining_backend_percentage: 0
+  dynamic_8004scan_discovery: IMPLEMENTED
+  decision_replay: IMPLEMENTED
+  mutation_protection: IMPLEMENTED
+  durable_operation_idempotency: IMPLEMENTED
+  immutable_evidence_ingestion: IMPLEMENTED
+  deployment_readiness_contract: IMPLEMENTED
+  public_deployment_configuration_complete: false
+  public_deployment_configuration_is_backend_code_gap: false
 verified_activation_paths:
   health_factor: { job_id: '949', status: VERIFIED_LIVE_TESTNET }
   grid: { job_id: '954', status: VERIFIED_LIVE_TESTNET }
@@ -62,13 +95,18 @@ observed_evidence:
     pair_id: g5-grid-forward-job-962
     result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD_ON_OBSERVED_WINDOW
     countable_for_final_report: true
-remaining_evidence_work:
+remaining_project_work_not_backend_code:
   - HEALTH_FACTOR_OBSERVED_PAIR_AND_EVENT_TAPE
   - THIRD_COUNTABLE_OBSERVED_PAIR
-  - PUBLIC_JUDGE_DEPLOYMENT
+  - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
+  - WINNER_INTELLIGENCE_AND_TRACE_FRONTEND_REVIEW
+  - PROJECT_FINISHER
+  - MERGE_MAIN
+  - HUMAN_FINAL_SUBMISSION
 winner_intelligence:
   role: POST_V1_BLIND_SPOT_AND_PRE_SUBMISSION_HEURISTIC_OVERLAY
   frontend_blocker: false
+  backend_rearchitecture_expected: false
   winning_laws_promoted: 0
   win_probability_score: FORBIDDEN
   checks:
@@ -76,24 +114,16 @@ winner_intelligence:
     - WHOLE_RUBRIC_COVERAGE_CHECK
     - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
     - JUDGE_PATH_LEGIBILITY_CHECK
-  high_value_frontend_blind_spots:
-    - FIRST_5S_CORE_CLARITY
-    - FIRST_15S_PROGRESS_CLARITY
-    - SIGNATURE_ACTION_TO_VISIBLE_CONSEQUENCE
-    - RUBRIC_EVIDENCE_SURFACING
-    - TRUTHFUL_WAIT_STATE
-    - TRUTHFUL_FAILURE_STATE
-    - MOBILE_GEOMETRY
-    - KEYBOARD_NAVIGATION
-    - REDUCED_MOTION_LEGIBILITY
 truth_boundaries:
   - SIMULATION_NE_OBSERVED
   - PAPER_PNL_NE_REALIZED_PNL
   - IDENTITY_NE_PERFORMANCE
   - VERIFIED_PATH_NE_CURRENT_WRITE_AUTHORITY
+  - EXTERNAL_DISCOVERY_NE_ACTIVATION_COMPATIBILITY
   - FAILURE_NE_VALID_NEGATIVE_OUTCOME
   - INSUFFICIENT_HISTORY_NE_CONFIDENCE_SCORE
 benita_v1_can_start_now: true
 benita_v1_should_not_wait_for_winner_intelligence: true
 backend_architecture_change_required_before_benita_starts: false
-next_backend_gate_after_freeze: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+next_backend_gate: NONE_BACKEND_CODE_COMPLETE
+next_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED

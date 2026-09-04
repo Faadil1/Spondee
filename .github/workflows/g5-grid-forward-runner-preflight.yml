@@ -1,0 +1,120 @@
+name: G5 Grid Forward Observed Runner Preflight
+
+on:
+  push:
+    branches: ['build/g5-grid-forward-observed']
+    paths:
+      - 'backend/src/g5-grid-forward.ts'
+      - 'backend/src/g5-grid-forward.test.ts'
+      - 'backend/src/g5-grid-forward-preflight.ts'
+      - 'backend/src/g5-grid-forward-erc8183.ts'
+      - 'backend/src/live-g5-grid-forward.ts'
+      - 'reference-agents/grid/app/agent/src/g5ForwardObserved.ts'
+      - 'reference-agents/grid/app/agent/src/g5ForwardObserved.test.ts'
+      - 'reference-agents/grid/app/agent/src/g5ForwardServer.ts'
+      - 'scripts/g5-grid-forward-observed-pair.ps1'
+      - '.github/workflows/g5-grid-forward-runner-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-forward-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression + G5 forward tests
+        working-directory: backend
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Static gate and no-mainnet-write guard
+        shell: bash
+        run: |
+          grep -F 'SPONDEE_G5_GRID_FORWARD_EXECUTION_ENABLED' backend/src/g5-grid-forward-erc8183.ts
+          grep -F 'G5 Grid forward execution gate is closed' backend/src/g5-grid-forward-erc8183.ts
+          grep -F 'mainnet_value_moved: false' backend/src/live-g5-grid-forward.ts
+          grep -F 'countable_for_final_report: true' backend/src/live-g5-grid-forward.ts
+          test -z "$(grep -E 'mainnet.*writeContract|mainnet.*sendTransaction|MAINNET_PRIVATE_KEY' backend/src/g5-grid-forward-erc8183.ts backend/src/live-g5-grid-forward.ts || true)"
+      - name: Live CLI must fail before wallet/network writes without gate
+        working-directory: backend
+        shell: bash
+        run: |
+          set +e
+          out=$(npx tsx src/live-g5-grid-forward.ts 2>&1)
+          code=$?
+          set -e
+          test "$code" -ne 0
+          printf '%s\n' "$out" | grep -F 'explicit G5 Grid forward execution authorization flag is required'
+      - name: Run read-only forward preflight against live Chainlink source
+        working-directory: backend
+        run: npx tsx src/g5-grid-forward-preflight.ts | tee /tmp/g5-grid-forward-preflight.json
+      - name: Validate preflight truth boundary
+        shell: bash
+        run: |
+          grep -F '"conclusion": "SPONDEE_G5_GRID_FORWARD_RUNNER_PREFLIGHT_PASS"' /tmp/g5-grid-forward-preflight.json
+          grep -F '"wallet_used": false' /tmp/g5-grid-forward-preflight.json
+          grep -F '"chain_write_attempted": false' /tmp/g5-grid-forward-preflight.json
+          grep -F '"execution_gate_open": false' /tmp/g5-grid-forward-preflight.json
+
+  grid-forward-seller:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install frozen Grid workspace
+        working-directory: reference-agents/grid
+        run: npx --yes pnpm@10.24.0 install --frozen-lockfile
+      - name: Existing Grid category tests
+        working-directory: reference-agents/grid/app/agent
+        run: npx --yes pnpm@10.24.0 test
+      - name: G5 forward seller tests
+        working-directory: reference-agents/grid/app/agent
+        run: npx --yes pnpm@10.24.0 exec node --import tsx --test src/g5ForwardObserved.test.ts
+      - name: Strict Grid TypeScript build
+        working-directory: reference-agents/grid/app/agent
+        run: npx --yes pnpm@10.24.0 build
+      - name: Seller safety invariants
+        shell: bash
+        run: |
+          grep -F 'only_rounds_after_activation' reference-agents/grid/app/agent/src/g5ForwardObserved.ts
+          grep -F 'Date.parse(r.updated_at) <= Date.parse(observationStartedAt)' reference-agents/grid/app/agent/src/g5ForwardObserved.ts
+          grep -F 'mainnet_chain_write_attempted: false' reference-agents/grid/app/agent/src/g5ForwardObserved.ts
+          grep -F 'wait_for_result !== true' reference-agents/grid/app/agent/src/g5ForwardServer.ts
+          test -z "$(grep -E 'settle\(|wallet:create|mainnet.*submit' reference-agents/grid/app/agent/src/g5ForwardObserved.ts reference-agents/grid/app/agent/src/g5ForwardServer.ts || true)"
+
+  windows-runner-safety:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell runner
+        shell: powershell
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path '.\scripts\g5-grid-forward-observed-pair.ps1'), [ref]$null, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) { $errors | Format-List | Out-String | Write-Error; exit 1 }
+      - name: Protected execution invariants
+        shell: powershell
+        run: |
+          $s = Get-Content '.\scripts\g5-grid-forward-observed-pair.ps1' -Raw
+          if ($s -notmatch 'SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED') { throw 'missing exact human gate' }
+          if ($s -notmatch 'if \(-not \$Execute\)') { throw 'default read-only mode missing' }
+          if ($s -notmatch 'g5-grid-forward-preflight.ts') { throw 'preflight entrypoint missing' }
+          if ($s -notmatch 'SPONDEE_G5_GRID_FORWARD_EXECUTION_ENABLED') { throw 'execution flag missing' }
+          if ($s -match 'wallet:create') { throw 'runner must not create seller wallet' }
+          if ($s -match 'build/g4-sequential-live-e2e') { throw 'runner must not target closed G4 branch' }

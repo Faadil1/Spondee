@@ -1,5 +1,5 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: BACKEND_AND_G3_COMPACT_COMMITMENT_CI_PASS_ONE_NEW_LOCAL_RETRY_READY
+preflight_status: BACKEND_COMPACT_PROTOCOL_LIVE_CHAIN_THROUGH_FUND_AND_LOCALSTORAGE_30D_PREFLIGHT_PASS
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
@@ -11,14 +11,16 @@ capabilities:
   health_factor_specialization: PASS_SIMULATION_CI
   complete_backend_ci: PASS
   four_category_backend_smoke: PASS
-  erc8183_live_driver: CODED_FAIL_CLOSED_COMPACT_COMMITMENT_CI_VERIFIED
-  megafuel_erc8183_paymaster: PASS_ZERO_BALANCE_BOUNDED_WRITES_WITH_SIZE_LIMITATION
+  erc8183_live_driver: CODED_FAIL_CLOSED_COMPACT_COMMITMENT_LIVE_CHAIN_THROUGH_FUND
+  megafuel_erc8183_paymaster: PASS_COMPLETE_SPONDEE_BUYER_WRITES_THROUGH_FUND
+  localstorage_http_bridge: PASS_CI_CROSS_PLATFORM
+  g3_submission_horizon: PASS_30_DAY_CODE_TEST_CI
 connectors:
   github:
     status: CONNECTED
     repository: Faadil1/Spondee
   bnb_external_runtime:
-    status: COMPACT_COMMITMENT_AND_SANITIZER_SAFE_TASK_CI_VERIFIED_FULL_HEALTH_FACTOR_RETRY_REQUIRED
+    status: LIVE_CHAIN_THROUGH_FUND__SUBMIT_RECEIPT_RETRY_READY_WITH_LOCALSTORAGE_AND_30D_FIX
     sdk_package: '@bnbagent/sdk'
     sdk_version: 0.5.5
     network: bsc-testnet
@@ -28,6 +30,8 @@ connectors:
     megafuel_smoke_run_id: 33802027942
     compact_backend_ci_run_id: 33817822355
     compact_g3_ci_run_id: 33817846752
+    funded_recovery_ci_run_id: 33819012423
+    final_localstorage_preflight_run_id: 33819854509
 wallets:
   seller:
     address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
@@ -36,25 +40,27 @@ wallets:
     network_scope: bsc-testnet-only
     balance_tbnb: '0'
     recreate_for_next_retry: false
-  full_e2e_buyer:
-    strategy: EPHEMERAL_ZERO_BALANCE_PER_RUN_DESTROY_AFTER_RUN
-    third_attempt_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
+  buyer_strategy:
+    type: EPHEMERAL_ZERO_BALANCE_PER_RUN_DESTROY_AFTER_RUN
     password_and_keystore_chat_exposure: FORBIDDEN
-megafuel_probe:
-  status: PASS
-  workflow_run_id: 33802027942
-  proof_statement: Zero-balance ERC-8183 createJob and cancelOpen mined successfully in the pinned runtime.
-  limitation: Third full E2E proved an oversized 2223-byte JobDescription can exceed relay raw-transaction size acceptance even when paymaster sponsorship is otherwise available.
-third_live_attempt:
-  result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE
-  progress_events: 0
-  mined_transaction_count: 0
-  user_funds_used: false
-  relay_error: 'tx size is too large'
-  sdk_self_pay_fallback: REJECTED_ZERO_BALANCE_BEFORE_MINING
-  description_bytes_observed: 2223
+live_chain_evidence:
+  job_948:
+    status: FUNDED_TERMINAL_FOR_PROVIDER_SUBMIT_DEADLINE_EXPIRED
+    create_job_tx: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
+    register_job_tx: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
+    set_budget_tx: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
+    fund_tx: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
+    provider_submit_tx: null
+    user_funds_used: false
+    retry_for_submit: FORBIDDEN
+    proof:
+      - compact Promise commitment accepted live
+      - Base64URL task accepted live
+      - MegaFuel sponsored all four buyer-side writes through fund
+      - seller generated deterministic local deliverable
+      - recovery failed only after provider submission deadline had expired
 compact_protocol:
-  status: CI_VERIFIED
+  status: LIVE_PARTIALLY_VERIFIED_AND_CI_VERIFIED
   full_promise: OFF_CHAIN_READ_ONLY_PREVIEW
   signed_promise_commitment:
     carrier: success_criteria
@@ -69,46 +75,55 @@ compact_protocol:
     sdk_cap_bytes: 4096
     spondee_cap_bytes: 1600
     enforcement: BEFORE_CREATE_JOB
-  guards:
-    provider_signature_before_commitment_trust: true
-    chain_and_commerce_verification_before_commitment_trust: true
-    exact_request_response_commitment_equality: true
-    preview_hash_matches_commitment_before_create_job: true
-    seller_reconstruction_hash_matches_before_delivery: true
+localstorage_delivery:
+  status: CI_VERIFIED_INTEGRATED_NEXT_LIVE_ATTEMPT
+  server: scripts/local-erc8183-deliverable-server.mjs
+  wrapper: scripts/g3-megafuel-live-e2e-localstorage.ps1
+  storage_root: reference-agents/health-factor/app/agent/.agent-data
+  agent_url: 'http://127.0.0.1:9100/erc8183'
+  runtime_env: ERC8183_AGENT_URL
+  expected_url_shape: 'http://127.0.0.1:9100/erc8183/job/{id}/response'
+expiry_policy:
+  status: CI_VERIFIED_NEXT_LIVE_JOB_PENDING
+  previous_quickstart_slack_seconds: 600
+  previous_result: JOB_948_SUBMISSION_DEADLINE_EXPIRED_BEFORE_RECOVERY
+  corrected_submission_window_seconds: 2592000
+  corrected_submission_window_days: 30
+  formula: expiredAt = now + disputeWindow + 30_days
+  regression_test: backend/src/g3-expiry.test.ts
 validation:
-  backend_ci:
+  compact_backend_ci:
     run: 33817822355
     result: PASS_28_OF_28
-    typescript: PASS
-    sanitizer_safe_task: PASS
-    compact_commitment: PASS
-    representative_description_under_1600_bytes: PASS
-    bsc_read_only_probe: PASS
-    artifact_id: 9917173773
-    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
-  g3_ci:
+  compact_g3_ci:
     run: 33817846752
-    head: 2c86096949c27b354bef68154e93c54abb016ab9
     result: PASS
-    ubuntu_verify: PASS
-    deterministic_tests: PASS
+  funded_recovery_ci:
+    run: 33819012423
+    result: PASS
+  final_localstorage_preflight:
+    run: 33819854509
+    head: 1c4b83b92524808731271e132981e4c48c3b62e3
+    result: PASS
+    ubuntu_wrapper_parse: PASS
+    local_http_bridge_health: PASS
+    backend_regression_suite: PASS
     typescript_build: PASS
-    evidence_export: PASS
-    agent_studio_diagnostics: PASS
-    windows_powershell_parse: PASS
-    windows_node24_wallet_roundtrip: PASS
+    windows_wrapper_parse: PASS
+    windows_node24_server_syntax: PASS
 live_write_gate:
   default_enabled: false
   current_ready_for_full_health_factor_e2e: true
-  readiness_scope: ONE_NEW_HUMAN_LOCAL_RETRY_ONLY
-  local_runner: scripts/g3-megafuel-live-e2e.ps1
+  readiness_scope: ONE_NEW_HUMAN_LOCAL_ATTEMPT_ONLY
+  local_runner: scripts/g3-megafuel-live-e2e-localstorage.ps1
   seller_wallet_rule: REUSE_EXISTING_ENCRYPTED_KEYSTORE
   buyer_rule: CREATE_EPHEMERAL_ZERO_BALANCE_BUYER_AND_DESTROY_AFTER_RUN
+  job_948_rule: DO_NOT_RETRY
   gas_requirement:
     primary: MEGAFUEL
     fallback: TBNB_ONLY_IF_NEW_VERIFIED_RELAY_AVAILABILITY_BLOCKER
     tBNB_required_before_next_attempt: false
-  expected_progress_if_write_path_advances:
+  expected_progress:
     - CREATE_JOB
     - REGISTER_JOB
     - SET_BUDGET
@@ -123,7 +138,7 @@ limitations:
   - Public judging deployment and final submission remain protected later gates.
 next_required_checks:
   - human pulls build/backend-complete
-  - human runs scripts/g3-megafuel-live-e2e.ps1 exactly once using the existing masked seller password prompt
+  - human runs scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once using the existing masked seller password prompt
   - preserve complete public PASS evidence if successful
-  - if failure occurs, stop and return only failure.v1 without another blind retry
-next_gate: SPONDEE_G3_MEGAFUEL_COMPACT_COMMITMENT_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+  - if failure occurs, stop and return only the new public failure block without another blind retry
+next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED

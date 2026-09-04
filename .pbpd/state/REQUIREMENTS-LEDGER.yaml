@@ -38,31 +38,31 @@ requirements:
   - id: MUST-08
     class: MUST
     requirement: Every measured completed run creates an Outcome Receipt.
-    status: PARTIAL_FOUR_LIVE_TRANSPORT_RECEIPTS_VERIFIED_SIMULATION_OBSERVED_RUNS_PENDING
+    status: PARTIAL_FOUR_LIVE_TRANSPORT_RECEIPTS_VERIFIED_SIMULATION_OBSERVED_COUNTABLE_RUNS_PENDING
     evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: MUST-09
     class: MUST
     requirement: Outcome Receipt binds original promise to actual result.
     status: VERIFIED_FOUR_LIVE_PROMISE_RECEIPT_BINDINGS_SIMULATION_EVIDENCE
     evidence: evidence/g4-yield-job-957-final-pass/README.md
-    note: All current receipts remain SIMULATION and are excluded from observed Agent Advantage.
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
-    status: BLOCKING_0_OF_3_OBSERVED_PAIRS__STRICT_PAIR_SCHEMA_PREFLIGHT_PASS
-    evidence: evidence/g5-observed-evidence-preflight/README.md
-    evidence_plan: Build and execute three validated `spondee.agent-advantage-pair.v1` bundles with actual outputs attached.
+    status: BLOCKING_0_OF_3_COUNTABLE_PAIRS__GRID_HARNESS_DRY_RUN_PASS_NON_COUNTABLE
+    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    evidence_plan: Execute three forward/countable marketplace-hired pairs; historical dry runs remain excluded.
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
-    status: BLOCKING_GRID_OBSERVED_PAIR_IMPLEMENTATION_PENDING__MARKET_SOURCE_QUALIFIED
-    evidence: evidence/g5-grid-market-source-readonly/README.md
-    evidence_plan: Implement and execute the first Grid agent-vs-without-agent observed pair using qualified BNB/USD provenance and a real record with window and risk.
+    status: PARTIAL_GRID_OBSERVED_HARNESS_PASS__COUNTABLE_FORWARD_TRADING_PAIR_PENDING
+    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    evidence_plan: Run one forward Grid pair with Promise/marketplace activation before the observation window and preserved transaction tape.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
-    status: STRICT_OBSERVED_PAIR_PROTOCOL_PASS__FIRST_REAL_PAIR_PENDING
-    evidence: evidence/g5-observed-evidence-preflight/README.md
+    status: VERIFIED_GRID_DRY_RUN_REPRODUCIBILITY__COUNTABLE_FORWARD_PAIR_PENDING
+    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    note: Dry run preserved same immutable 25-round BNB/USD window for agent and baseline plus raw timing/cost/output artifacts.
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
@@ -72,7 +72,7 @@ requirements:
     class: MUST
     requirement: Public product remains accessible during judging.
     status: BLOCKING_PUBLIC_DEPLOYMENT_PENDING
-    evidence_plan: Public URL smoke check and judge-path verification. Current loopback deliverables are not judge-accessible.
+    evidence_plan: Public URL smoke check and judge-path verification.
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
@@ -103,8 +103,8 @@ requirements:
   - id: MUST_NOT-01
     class: MUST_NOT
     requirement: Do not present estimated or synthetic performance as observed real evidence.
-    status: ACTIVE_AND_G5_SCHEMA_CI_VERIFIED_GUARDRAIL
-    evidence: evidence/g5-observed-evidence-preflight/README.md
+    status: ACTIVE_AND_G5_COUNTABILITY_CI_VERIFIED_GUARDRAIL
+    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
   - id: MUST_NOT-02
     class: MUST_NOT
     requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.

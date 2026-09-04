@@ -93,7 +93,7 @@ type Commitment = {
   h: string;
 };
 
-function findReceiptEvent(
+export function findReceiptEvent(
   logs: readonly Log[],
   address: string,
   abi: typeof jobSubmittedAbi | typeof jobInitialisedAbi,
@@ -112,7 +112,7 @@ function findReceiptEvent(
   throw new Error(`${eventName}(${TARGET_JOB_ID}) not found in the known submit transaction receipt`);
 }
 
-function parseCommittedJobDescription(description: string): {
+export function parseCommittedJobDescription(description: string): {
   promiseId: string;
   scenarioId: string;
   promiseSha256: string;
@@ -156,7 +156,7 @@ function parseCommittedJobDescription(description: string): {
   };
 }
 
-export async function verifySubmittedJob949() {
+export async function verifySubmittedReceipt949() {
   const client = createPublicClient({ transport: http(BSC_TESTNET.rpc) });
   const receipt = await client.getTransactionReceipt({ hash: TARGET_SUBMIT_TX });
   if (receipt.status !== "success") {
@@ -211,13 +211,24 @@ export async function verifySubmittedJob949() {
 
   const commitment = parseCommittedJobDescription(job.description);
 
-  const response = await fetch(EXPECTED_DELIVERABLE_URL, {
+  return {
+    client,
+    receipt,
+    job,
+    commitment,
+    deliverableUrl: EXPECTED_DELIVERABLE_URL,
+  };
+}
+
+export async function verifySubmittedJob949() {
+  const chain = await verifySubmittedReceipt949();
+  const response = await fetch(chain.deliverableUrl, {
     signal: AbortSignal.timeout(15_000),
   });
   if (!response.ok) throw new Error(`deliverable manifest HTTP ${response.status}`);
   const manifestDict = (await response.json()) as Record<string, unknown>;
   const manifest = DeliverableManifest.fromDict(manifestDict);
-  if (!manifest.verify(job.deliverable)) {
+  if (!manifest.verify(chain.job.deliverable)) {
     throw new Error("deliverable manifest hash does not match the on-chain job deliverable hash");
   }
 
@@ -229,8 +240,8 @@ export async function verifySubmittedJob949() {
   }
   const verifiedReceipt = validateLiveSpondeeReceipt(
     receiptContent,
-    commitment.promiseId,
-    commitment.scenarioId,
+    chain.commitment.promiseId,
+    chain.commitment.scenarioId,
   );
 
   return {
@@ -239,15 +250,15 @@ export async function verifySubmittedJob949() {
     chain_id: 97,
     provider_address: CANONICAL_PROVIDER,
     job_id: TARGET_JOB_ID.toString(),
-    status: Number(job.status) === 3 ? "COMPLETED" : "SUBMITTED",
+    status: Number(chain.job.status) === 3 ? "COMPLETED" : "SUBMITTED",
     submit_transaction_hash: TARGET_SUBMIT_TX,
-    submit_block: receipt.blockNumber.toString(),
-    submitted_at: job.submittedAt.toString(),
-    deliverable_url: EXPECTED_DELIVERABLE_URL,
-    deliverable_hash: job.deliverable,
-    promise_id: commitment.promiseId,
-    promise_sha256: commitment.promiseSha256,
-    scenario_id: commitment.scenarioId,
+    submit_block: chain.receipt.blockNumber.toString(),
+    submitted_at: chain.job.submittedAt.toString(),
+    deliverable_url: chain.deliverableUrl,
+    deliverable_hash: chain.job.deliverable,
+    promise_id: chain.commitment.promiseId,
+    promise_sha256: chain.commitment.promiseSha256,
+    scenario_id: chain.commitment.scenarioId,
     manifest_hash_verified: true,
     spondee_receipt_verified: true,
     evidence_class: verifiedReceipt.evidence_class,

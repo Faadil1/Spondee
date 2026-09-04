@@ -3,37 +3,38 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze MVP; complete Yield live proof next, then prioritize observed evidence and public judging availability over optional integrations.
+    mitigation: Freeze live-transport scope at 4/4 PASS; prioritize observed Agent Advantage evidence and public judging availability over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
     risk: Four-category depth becomes cosmetic or uneven.
-    mitigation: Health Factor, Grid and Rebalancing now have verified live testnet paths; require the same bounded proof for Yield before closing equal depth.
-    status: OPEN_YIELD_LIVE_PROOF_PENDING
+    mitigation: All four categories now have verified bounded live BSC-testnet paths with Promise and Outcome Receipt plumbing.
+    status: RESOLVED_LIVE_TRANSPORT_4_OF_4
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Keep Health Factor as hero only; Grid and Rebalancing are live-verified and Yield has an isolated validated runner.
-    status: OPEN_UNTIL_YIELD_LIVE_PASS
+    mitigation: Grid, Rebalancing and Yield now have equivalent live transport proof; preserve comparable UI depth in public judge build.
+    status: CONTROLLED_LIVE_DEPTH_CLOSED_UI_REVIEW_PENDING
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
-    mitigation: Preserve forecast provenance, track calibration against actual outcomes and label insufficient history.
+    mitigation: Preserve forecast provenance, track calibration only against observed outcomes, and label insufficient history.
     status: OPEN_OBSERVED_EVIDENCE_PENDING
   - id: R-05
-    severity: HIGH
-    risk: Baseline comparisons are biased or invented.
-    mitigation: Same initial state/window where applicable; raw baseline evidence required; invented timings prohibited.
-    status: OPEN_OBSERVED_EVIDENCE_PENDING
+    severity: CRITICAL
+    risk: Baseline comparisons are biased, synthetic or invented but presented as observed Agent Advantage.
+    mitigation: Freeze a paired-experiment protocol with same initial state/window or reproducible baseline, immutable run IDs, preserved raw timing/cost/output artifacts, and explicit OBSERVED evidence validation.
+    status: OPEN_G5_PRIMARY_EVIDENCE_RISK
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Keep external ERC-8004 candidates discovery-only when activation is opaque; controlled Spondee Agent Studio paths remain the activation fallback.
+    mitigation: Keep external ERC-8004 candidates discovery-only when activation is opaque; controlled Spondee Agent Studio paths have 4/4 live proof.
     status: CONTROLLED_BY_SPONDEE_FALLBACK_PATHS
   - id: R-07
     severity: MEDIUM
-    risk: Altana integration consumes time before core paths work.
-    mitigation: Altana writes remain blocked until all four core categories and observed evidence are credible.
+    risk: Altana integration consumes time before core evidence and deployment are complete.
+    mitigation: Keep Altana writes blocked until observed evidence and public judging build are credible.
     status: CONTROLLED_BLOCKED
   - id: R-08
     severity: HIGH
@@ -43,51 +44,67 @@ risks:
   - id: R-09
     severity: HIGH
     risk: JigJoy/Syndicate collision consumes the available build window.
-    mitigation: Strict gate sequencing and no optional platform expansion until Spondee core is submission-ready.
+    mitigation: Strict gate sequencing and no optional platform expansion until Spondee is submission-ready.
     status: OPEN_CAPACITY_RISK
   - id: R-10
-    severity: HIGH
+    severity: CRITICAL
     risk: Current verified deliverable URLs are loopback-only and cannot serve judges publicly.
-    mitigation: Preserve local/testnet proof as evidence, then deploy a public judging build and verify public URL health before submission.
-    status: OPEN_PUBLIC_DEPLOYMENT_PENDING
+    mitigation: Preserve local/testnet evidence, then deploy a public judging build and verify public URL/journey health before submission.
+    status: OPEN_PUBLIC_DEPLOYMENT_BLOCKER
   - id: R-11
     severity: CRITICAL
     risk: A live ERC-8004 registration is mistaken for a proven Spondee activation path.
-    mitigation: Keep every external candidate activatable=false until its advertised Agent Card/service/task interface is independently verified; wallet activity and third-party Activate buttons are insufficient evidence.
+    mitigation: Keep external candidates activatable=false until their Spondee task interface is independently verified; controlled Spondee paths own activation proof.
     status: CONTROLLED_EXTERNAL_CANDIDATES_DISCOVERY_ONLY
   - id: R-12
     severity: HIGH
     risk: BSC Testnet RPC eth_getLogs limits can falsely fail a live path after provider submit.
-    mitigation: The G4 buyer consumes the exact provider submit transaction and decodes that receipt directly. CI forbids getJobSubmittedEvents in the live driver.
+    mitigation: G4 buyer consumes exact provider submit transaction and decodes that receipt directly; CI forbids getJobSubmittedEvents in the live driver.
     status: RESOLVED_BY_DIRECT_SUBMIT_RECEIPT_AND_CI_INVARIANT
     evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: R-13
     severity: HIGH
     risk: Buyer and seller disagree on notify_funded response semantics, causing a false failure after FUND.
-    mitigation: Preserve Agent Studio default async ACK, but use explicit wait_for_result=true only for bounded Spondee local proof so the exact provider submit tx is returned synchronously; tests cover async default and bounded sync mode.
+    mitigation: Preserve Agent Studio default async ACK, with explicit wait_for_result=true only for bounded Spondee proof; tests cover both modes.
     status: RESOLVED_BY_EXPLICIT_BOUNDED_WAIT_FOR_RESULT
     evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: R-14
     severity: HIGH
-    risk: Rebalancing job 955 is accidentally recreated or mutated after successful recovery.
-    mitigation: Job 955 is canonically closed; Yield runner has no Rebalancing scenario/category path and explicitly treats 955 as CLOSED.
+    risk: Closed G4 jobs are accidentally recreated or mutated.
+    mitigation: Jobs 949/954/955/957 are canonically closed; G5 forbids rerunning them and opens no live-chain write path during evidence design.
     status: CONTROLLED_CLOSED_JOB_GUARD
-    evidence: evidence/g4-yield-isolated-runner-preflight/README.md
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
+  - id: R-15
+    severity: CRITICAL
+    risk: Existing SIMULATION receipts are accidentally counted toward the required three observed Agent Advantage pairs.
+    mitigation: backend report engine already excludes non-OBSERVED runs; add schema-level and negative CI tests before any observed experiment execution.
+    status: OPEN_G5_CLAIM_BOUNDARY_PREFLIGHT
+    evidence: backend/src/evidence.ts
+  - id: R-16
+    severity: HIGH
+    risk: Observed trading evidence requires meaningful real capital or introduces unacceptable financial risk.
+    mitigation: Design a bounded reproducible trading experiment first; prefer testnet or replayable observed market-data execution where acceptance criteria allow; do not move meaningful mainnet/user capital without explicit human authority.
+    status: OPEN_FIRST_GRID_OBSERVED_PROTOCOL_REQUIRED
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
-    mitigation: Health Factor, Grid and Rebalancing have verified controlled live BSC-testnet paths; Yield controlled Agent Studio path is build/test/preflight verified and awaits one bounded live execution.
-    status: PARTIALLY_RESOLVED_THREE_OF_FOUR_LIVE_YIELD_READY
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    mitigation: Health Factor, Grid, Rebalancing and Yield now have verified controlled live BSC-testnet paths.
+    status: RESOLVED_FOUR_OF_FOUR_LIVE
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    mitigation: Resolved by signed Promise commitments and final receipt verification across Health Factor, Grid and Rebalancing.
+    mitigation: Resolved by signed Promise commitments and verified receipts across all four live categories.
     status: RESOLVED_BY_LIVE_E2E
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt across three live categories.
+    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt across all four live categories.
     status: RESOLVED_BY_LIVE_E2E
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
+  - id: A-06
+    severity: CRITICAL
+    risk: TermiX-style observed baselines cannot be collected reproducibly before deadline.
+    mitigation: Start G5 with a no-write evidence protocol/preflight and prove the first bounded observed pair before expanding to three.
+    status: OPEN_KILLING_ASSUMPTION_FIRST_OBSERVED_PAIR_REQUIRED

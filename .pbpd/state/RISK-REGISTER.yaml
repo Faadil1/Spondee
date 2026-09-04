@@ -3,18 +3,18 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze MVP; verify external task surfaces quickly, then build only the controlled fallbacks actually required; prioritize observed evidence and public judging availability over optional integrations.
+    mitigation: Freeze MVP; finish Rebalancing and Yield live proof before optional integrations; prioritize observed evidence and public judging availability.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
     risk: Four-category depth becomes cosmetic or uneven.
-    mitigation: External candidates now exist for all remaining categories; require direct task-surface verification or Spondee Agent Studio fallback before activatable=true.
-    status: OPEN_ACTIVATION_PROOF_NEXT
+    mitigation: Health Factor and Grid now have verified live testnet paths; require the same bounded proof for Rebalancing and Yield before treating four-category depth as closed.
+    status: OPEN_REBALANCING_YIELD_LIVE_PROOF_PENDING
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Keep Health Factor as hero only; advance Grid, Rebalancing and Yield through the same truthful find-understand-activate structure.
-    status: OPEN_ACTIVATION_PROOF_NEXT
+    mitigation: Keep Health Factor as hero only; Grid is now live-verified and Rebalancing/Yield must advance through the same truthful structure.
+    status: OPEN_REBALANCING_YIELD_LIVE_PROOF_PENDING
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
@@ -28,12 +28,12 @@ risks:
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Primary and fallback candidates are recorded per category; probe public task surfaces read-only, then switch quickly to the Spondee Agent Studio controlled fallback if an external path is opaque or unstable.
-    status: OPEN_EXTERNAL_TASK_SURFACE_PROBE
+    mitigation: Keep external ERC-8004 candidates discovery-only when activation is opaque; controlled Spondee Agent Studio paths remain the activation fallback.
+    status: CONTROLLED_BY_SPONDEE_FALLBACK_PATHS
   - id: R-07
     severity: MEDIUM
     risk: Altana integration consumes time before core Main/TermiX paths work.
-    mitigation: Altana writes remain blocked; only record permission requirements during read-only task-surface probes.
+    mitigation: Altana writes remain blocked until all four core categories and observed evidence are credible.
     status: CONTROLLED_BLOCKED
   - id: R-08
     severity: HIGH
@@ -47,29 +47,35 @@ risks:
     status: OPEN_CAPACITY_RISK
   - id: R-10
     severity: HIGH
-    risk: Current verified deliverable URL is loopback-only and cannot serve judges publicly.
+    risk: Current verified deliverable URLs are loopback-only and cannot serve judges publicly.
     mitigation: Preserve local/testnet proof as evidence, then deploy a public judging build and verify public URL health before submission.
     status: OPEN_PUBLIC_DEPLOYMENT_PENDING
   - id: R-11
     severity: CRITICAL
     risk: A live ERC-8004 registration is mistaken for a proven Spondee activation path.
     mitigation: Keep every external candidate activatable=false until its advertised Agent Card/service/task interface is independently verified; wallet activity and third-party Activate buttons are insufficient evidence.
-    status: OPEN_NEXT_GATE
+    status: CONTROLLED_EXTERNAL_CANDIDATES_DISCOVERY_ONLY
+  - id: R-12
+    severity: HIGH
+    risk: BSC Testnet RPC eth_getLogs limits can falsely fail a live path after provider submit.
+    mitigation: The G4 buyer now consumes the exact provider submit transaction returned by notify_funded and decodes that known receipt directly. CI forbids getJobSubmittedEvents in the live driver.
+    status: RESOLVED_BY_DIRECT_SUBMIT_RECEIPT_AND_CI_INVARIANT
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
-    mitigation: G4 read-only qualification found primary and fallback BSC/ERC-8004 candidates for Grid, Rebalancing and Yield plus a controlled Spondee Agent Studio fallback for each.
-    status: CANDIDATE_AVAILABILITY_RESOLVED__JUDGE_READY_ACTIVATION_UNRESOLVED
-    evidence: evidence/g4-four-category-live-path-qualification/README.md
+    mitigation: Health Factor and Grid have verified controlled live BSC-testnet paths; Rebalancing and Yield controlled Agent Studio paths are built and CI-verified but still require live execution proof.
+    status: PARTIALLY_RESOLVED_HEALTH_FACTOR_GRID_LIVE_REBALANCING_YIELD_PENDING
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    mitigation: Resolved by G3 job 949 signed Promise commitment and final receipt verification.
-    status: RESOLVED_BY_G3_LIVE_E2E
-    evidence: evidence/g3-job-949-final-pass/README.md
+    mitigation: Resolved by G3 job 949 and G4 Grid job 954 signed Promise commitments and final receipt verification.
+    status: RESOLVED_BY_LIVE_E2E
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt for job 949.
-    status: RESOLVED_BY_G3_LIVE_E2E
-    evidence: evidence/g3-job-949-final-pass/README.md
+    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt for Health Factor and Grid.
+    status: RESOLVED_BY_LIVE_E2E
+    evidence: evidence/g4-grid-job-954-final-pass/README.md

@@ -3,7 +3,7 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_SOFTWARE_GAS_AND_PROTOCOL_FULL_SELLER_E2E_PENDING
+    status: PARTIALLY_VERIFIED_LIVE_CHAIN_THROUGH_FUND_FULL_SUBMIT_RECEIPT_PENDING
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
     truth_class: FACT
@@ -15,7 +15,7 @@ claims:
   - id: CLM-004
     claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION_LIVE_E2E_PENDING
+    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION_LIVE_SUBMIT_RECEIPT_PENDING
   - id: CLM-005
     claim: Three observed Agent Advantage paired experiments can be completed before submission.
     truth_class: HYPOTHESIS
@@ -31,15 +31,15 @@ claims:
   - id: CLM-008
     claim: The G3 Health Factor Promise provenance can be bound into ERC-8183 signable terms before signing.
     truth_class: FACT
-    status: VERIFIED_CI_WITH_COMPACT_SUCCESS_CRITERIA_COMMITMENT
+    status: VERIFIED_LIVE_CREATE_JOB_WITH_COMPACT_SUCCESS_CRITERIA_COMMITMENT
   - id: CLM-009
     claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
     truth_class: FACT
-    status: VERIFIED_CI_WITH_COMMITMENT_RECONSTRUCTION
+    status: VERIFIED_LOCAL_RUNTIME_MANIFEST_GENERATION_LIVE_ONCHAIN_RECEIPT_VERIFY_PENDING
   - id: CLM-010
     claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
     truth_class: FACT
-    status: VERIFIED_CONFIGURATION_AND_CI
+    status: VERIFIED_CONFIGURATION_CI_AND_LIVE_ZERO_BUDGET_FUND
   - id: CLM-011
     claim: One shared backend contract supports Health Factor, Grid, Rebalancing and Yield through Task -> Promise -> Activation -> Receipt.
     truth_class: FACT
@@ -59,23 +59,31 @@ claims:
   - id: CLM-015
     claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
     truth_class: FACT
-    status: VERIFIED_CODE_AND_FAIL_CLOSED_TESTS_FULL_SELLER_E2E_PENDING
+    status: VERIFIED_CODE_FAIL_CLOSED_TESTS_AND_LIVE_CHAIN_THROUGH_FUND
   - id: CLM-016
     claim: MegaFuel can sponsor bounded ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
     truth_class: FACT
-    status: VERIFIED_RUNTIME_ZERO_BALANCE_CREATE_AND_CANCEL_WITH_SIZE_LIMITATION
+    status: VERIFIED_LIVE_COMPLETE_SPONDEE_SEQUENCE_THROUGH_FUND
   - id: CLM-017
     claim: Spondee can preserve Promise provenance across official SDK negotiation serialization without embedding the full Promise Card on chain.
     truth_class: FACT
-    status: VERIFIED_CI_COMPACT_SHA256_COMMITMENT_LIVE_E2E_PENDING
+    status: VERIFIED_LIVE_COMPACT_SHA256_COMMITMENT_THROUGH_CREATE_JOB
   - id: CLM-018
     claim: Health Factor stress_path task arrays can survive official SDK claim sanitization without semantic corruption.
     truth_class: FACT
-    status: VERIFIED_CI_VERSIONED_BASE64URL_TASK_CARRIER
+    status: VERIFIED_LIVE_TASK_RECONSTRUCTION_AND_LOCAL_DELIVERABLE_GENERATION
   - id: CLM-019
     claim: A representative compact Health Factor live JobDescription fits the Spondee 1600-byte conservative MegaFuel application budget.
     truth_class: FACT
-    status: VERIFIED_CI_LIVE_RELAY_RETRY_PENDING
+    status: VERIFIED_CI_AND_LIVE_RELAY_ACCEPTANCE
+  - id: CLM-020
+    claim: The corrected G3 live path exposes LocalStorage deliverables through an HTTP URL acceptable to the pinned ERC-8183 runtime.
+    truth_class: FACT
+    status: VERIFIED_CI_LOCAL_HTTP_BRIDGE_LIVE_SUBMIT_PENDING
+  - id: CLM-021
+    claim: Newly created G3 jobs use a provider submission horizon long enough to survive deterministic recovery rather than the 10-minute quickstart slack.
+    truth_class: FACT
+    status: VERIFIED_CODE_TEST_AND_CI_30_DAY_HORIZON_LIVE_NEW_JOB_PENDING
 
 evidence:
   - id: EV-001
@@ -141,13 +149,9 @@ evidence:
     failed_at: '2026-09-03T23:21:21.084Z'
     buyer_address: '0x74Ed7Bb2ccf9751a2fB89DF7b64B9c65b08c8b89'
     supports:
-      - full Promise signed carrier survived negotiation
-      - MegaFuel relay rejected oversized createJob raw transaction
-      - SDK self-pay fallback encountered zero-balance pre-mining rejection
-      - progress remained empty
-      - no transaction mined
-      - no user funds used
-      - observed pre-ABI JobDescription was 2223 bytes
+      - MegaFuel relay size rejection before any write
+      - zero-balance self-pay fallback rejection before mining
+      - 2223-byte JobDescription observation
     status: VERIFIED_PUBLIC_RUNTIME_EVIDENCE
   - id: EV-014
     type: compact_commitment_backend_ci
@@ -158,12 +162,11 @@ evidence:
     supports:
       - 28/28 backend tests
       - compact signed Promise commitment
-      - tampered/missing/duplicate/mismatched commitment fail-closed guards
-      - Base64URL sanitizer-safe Health Factor task carrier
-      - representative live JobDescription within 1600-byte Spondee MegaFuel budget
+      - tamper guards
+      - Base64URL sanitizer-safe task
+      - representative live JobDescription within 1600-byte budget
       - strict TypeScript build
-      - four-category claim boundary
-      - read-only BSC testnet contract readiness
+      - read-only BSC readiness
     status: VERIFIED_PASS
   - id: EV-015
     type: compact_commitment_g3_ci
@@ -172,10 +175,58 @@ evidence:
     supports:
       - seller compact Promise commitment
       - encoded task through negotiate and notify_funded
-      - deterministic Promise reconstruction before Outcome Receipt
-      - Ubuntu deterministic tests/build/evidence/diagnostics
-      - Windows PowerShell parse
-      - Windows Node 24 encrypted wallet create/reload roundtrip
+      - deterministic Promise reconstruction
+      - Ubuntu and Windows validation
+    status: VERIFIED_PASS
+  - id: EV-016
+    type: fourth_live_health_factor_partial_success
+    source: human_local_runtime_public_failure_v1_and_transaction_hashes
+    started_at: '2026-09-03T23:38:40.406Z'
+    failed_at: '2026-09-03T23:41:03.555Z'
+    job_id: '948'
+    buyer_address: '0xA7ceB00B63F911fB76BD6d5616093586de757139'
+    transactions:
+      create_job: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
+      register_job: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
+      set_budget: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
+      fund: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
+    supports:
+      - compact signed Promise commitment accepted live
+      - sanitizer-safe task accepted live
+      - MegaFuel sponsored complete buyer chain sequence through fund
+      - seller reconstructed deterministic work and generated local deliverable
+      - zero user funds/tBNB used
+      - provider submit blocked only by missing HTTP deliverable URL configuration
+    status: VERIFIED_LIVE_CHAIN_PARTIAL_SUCCESS
+  - id: EV-017
+    type: job_948_recovery_public_failure
+    source: human_local_runtime_public_recovery_failure_v1
+    started_at: '2026-09-03T23:50:58.062Z'
+    failed_at: '2026-09-03T23:53:03.692Z'
+    job_id: '948'
+    error_class: SUBMISSION_DEADLINE_PASSED
+    supports:
+      - job 948 remained FUNDED
+      - HTTP bridge was no longer the observed blocker
+      - provider submit was rejected before broadcast because expiredAt - disputeWindow was already in the past
+      - 600-second quickstart slack is insufficient for deterministic recovery
+    status: VERIFIED_TERMINAL_RUNTIME_EVIDENCE
+  - id: EV-018
+    type: final_localstorage_30d_preflight
+    workflow_run_id: 33819854509
+    head_commit: 1c4b83b92524808731271e132981e4c48c3b62e3
+    artifacts:
+      - scripts/local-erc8183-deliverable-server.mjs
+      - scripts/g3-megafuel-live-e2e-localstorage.ps1
+      - backend/src/g3-expiry.test.ts
+      - backend/src/erc8183.ts
+    supports:
+      - integrated LocalStorage HTTP bridge
+      - 30-day provider submission horizon
+      - backend regression suite
+      - strict TypeScript build
+      - Ubuntu wrapper parsing and HTTP bridge health
+      - Windows wrapper parsing and Node 24 server syntax
     status: VERIFIED_PASS
 
 verification_events:
@@ -216,24 +267,38 @@ verification_events:
     at: '2026-09-03T23:21:21.084Z'
     event: Third full local E2E reached createJob preparation; MegaFuel rejected the oversized transaction and SDK self-pay fallback failed for zero balance before mining.
     result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE_ZERO_MINED_TRANSACTIONS
-    evidence: public failure.v1 supplied by human local runtime
   - id: VER-009
     at: '2026-09-03T23:29:57Z'
-    event: Compact commitment backend CI passed 28/28 including the representative MegaFuel JobDescription byte-budget regression and sanitizer-safe task roundtrip.
+    event: Compact commitment backend CI passed 28/28 including byte-budget and sanitizer-safe task regressions.
     result: PASS
-    evidence: GitHub Actions run 33817822355 / artifact 9917173773
+    evidence: GitHub Actions run 33817822355
   - id: VER-010
     at: '2026-09-03T23:31:00Z'
-    event: Compact commitment G3 CI passed Ubuntu verification plus Windows PowerShell and Node 24 wallet roundtrip.
+    event: Compact commitment G3 CI passed Ubuntu verification plus Windows PowerShell and wallet roundtrip.
     result: PASS
     evidence: GitHub Actions run 33817846752
+  - id: VER-011
+    at: '2026-09-03T23:41:03.555Z'
+    event: Fourth local E2E mined job 948 createJob/registerJob/setBudget(0)/fund(0) and generated the deterministic deliverable locally; submit failed before broadcast because ERC8183_AGENT_URL was unset.
+    result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
+    evidence: EV-016
+  - id: VER-012
+    at: '2026-09-03T23:53:03.692Z'
+    event: Job 948 recovery failed closed because the provider submission deadline had passed; no submit transaction was broadcast.
+    result: FAIL_CLOSED_TERMINAL_JOB_948
+    evidence: EV-017
+  - id: VER-013
+    at: '2026-09-03T23:59:02Z'
+    event: Integrated LocalStorage HTTP bridge and 30-day submission horizon passed cross-platform final preflight.
+    result: PASS
+    evidence: GitHub Actions run 33819854509
 
 contradictions:
   - id: CON-001
     topic: testnet_gas_sponsorship
     observation: Earlier signals conflicted on whether tBNB was required for ERC-8183 writes.
-    handling: Runtime run 33802027942 proved zero-balance MegaFuel writes; tBNB remains fallback-only.
-    status: RESOLVED_BY_RUNTIME_PROBE
+    handling: Runtime evidence now includes complete Spondee buyer writes through fund with zero tBNB; tBNB remains fallback-only.
+    status: RESOLVED_BY_RUNTIME_PROOF
   - id: CON-002
     topic: custom_negotiation_term_survival
     observation: Injected signer tests suggested custom terms survived, but official TermSpecification drops arbitrary keys.
@@ -241,11 +306,21 @@ contradictions:
     status: RESOLVED_BY_PROTOCOL_CONTRACT_AND_CI
   - id: CON-003
     topic: full_promise_on_chain_vs_megafuel_size
-    observation: Full Promise Card in success_criteria was cryptographically sound but produced a 2223-byte JobDescription that MegaFuel rejected as an oversized raw transaction.
-    handling: Keep full Promise off-chain, sign only p/s/r/SHA-256 commitment, enforce a 1600-byte Spondee description cap before createJob.
-    status: RESOLVED_BY_COMPACT_COMMITMENT_AND_CI
+    observation: Full Promise Card in success_criteria was cryptographically sound but produced a 2223-byte JobDescription that MegaFuel rejected.
+    handling: Keep full Promise off-chain, sign only p/s/r/SHA-256 commitment, enforce a 1600-byte description cap before createJob.
+    status: RESOLVED_BY_COMPACT_COMMITMENT_CI_AND_LIVE_ACCEPTANCE
   - id: CON-004
     topic: raw_json_task_vs_sdk_claim_sanitizer
-    observation: Official SDK sanitizer replaces square brackets, which would corrupt Health Factor stress_path JSON arrays in task_description.
-    handling: Encode the signed task as versioned Base64URL JSON and test roundtrip through seller fulfillment.
-    status: RESOLVED_BY_TASK_CARRIER_AND_CI
+    observation: Official SDK sanitizer replaces square brackets, which would corrupt Health Factor stress_path JSON arrays.
+    handling: Encode the signed task as versioned Base64URL JSON and reconstruct deterministically.
+    status: RESOLVED_BY_TASK_CARRIER_CI_AND_LIVE_RUNTIME
+  - id: CON-005
+    topic: localstorage_file_url_vs_onchain_deliverable_url
+    observation: LocalStorageProvider generated a file:// manifest while the runtime requires ERC8183_AGENT_URL to publish a fetchable HTTP deliverable URL.
+    handling: Start a bounded local HTTP bridge before the seller and inject ERC8183_AGENT_URL=http://127.0.0.1:9100/erc8183 into the live seller process.
+    status: RESOLVED_IN_CODE_AND_CI_LIVE_SUBMIT_PENDING
+  - id: CON-006
+    topic: quickstart_600_second_slack_vs_recoverable_e2e
+    observation: The quickstart-style 600-second provider submission slack expired before job 948 recovery, making the already-funded job permanently unsubmittable.
+    handling: New G3 jobs use expiredAt = now + disputeWindow + 30 days, matching official protocol guidance for long-lived jobs; regression test and cross-platform preflight pass.
+    status: RESOLVED_IN_CODE_TEST_AND_CI_LIVE_NEW_JOB_PENDING

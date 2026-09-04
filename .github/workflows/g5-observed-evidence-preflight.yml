@@ -1,0 +1,52 @@
+name: G5 Observed Agent Advantage Evidence Preflight
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'backend/src/observed-evidence.ts'
+      - 'backend/src/observed-evidence.test.ts'
+      - 'backend/src/evidence.ts'
+      - 'backend/src/contracts.ts'
+      - 'work/G5-OBSERVED-EVIDENCE-PROTOCOL.md'
+      - '.github/workflows/g5-observed-evidence-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  observed-evidence-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression + observed evidence tests
+        working-directory: backend
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Claim-boundary static invariants
+        shell: bash
+        run: |
+          grep -F 'agent run must be OBSERVED' backend/src/observed-evidence.ts
+          grep -F 'baseline run must be OBSERVED' backend/src/observed-evidence.ts
+          grep -F 'Grid Trading observed pair requires a real record' backend/src/observed-evidence.ts
+          grep -F 'requires external observed provenance' backend/src/observed-evidence.ts
+          grep -F 'SIMULATION cannot be relabeled into an observed pair' backend/src/observed-evidence.test.ts
+          grep -F 'three non-trading pairs do not satisfy the final report gate' backend/src/observed-evidence.test.ts
+          grep -F 'simulationCount' backend/src/evidence.ts
+          grep -F 'pairs.length >= 3' backend/src/evidence.ts
+      - name: Protocol authority guard
+        shell: bash
+        run: |
+          grep -F 'does not authorize meaningful mainnet or user capital' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'new observed experiment chain writes' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'Grid Trading — REQUIRED trading task' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md

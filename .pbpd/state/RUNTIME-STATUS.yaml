@@ -1,5 +1,5 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: G4_GRID_954_SUBMITTED_DIRECT_RECEIPT_CI_PASS__LOCAL_MANIFEST_VERIFY_READY
+preflight_status: G4_GRID_LIVE_E2E_PASS__REBALANCING_ISOLATED_RUNNER_PASS__EXECUTION_READY
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
@@ -9,46 +9,45 @@ capabilities:
   bsc_testnet_rpc: PASS_DIRECT_RECEIPT_AND_GETJOB
   reference_agent_scaffold: PASS
   health_factor_specialization: PASS_LIVE_E2E
+  grid_specialization: PASS_LIVE_E2E_JOB_954
   complete_backend_ci: PASS
   four_category_backend_smoke: PASS_SIMULATION
   g4_three_reference_agents: PASS_BUILD_TEST_BAG_SCAN
-  g4_multi_category_live_driver: POST_SUBMIT_SCAN_DEFECT_IDENTIFIED
-  g4_local_sequential_runner: STOPPED_CORRECTLY_ON_GRID_FAILURE
-  g4_grid_954_direct_receipt_probe: PASS_NO_ETH_GETLOGS
-  g4_grid_954_local_recovery_runner: PASS_WINDOWS_PARSE_AND_CLI_SMOKE
-  erc8183_live_driver_health_factor: PASS_JOB_949
+  g4_multi_category_live_driver: PASS_CI_DIRECT_NOTIFY_FUNDED_RECEIPT
+  g4_historical_submit_log_scan: FORBIDDEN_BY_CI
+  g4_rebalancing_isolated_runner: PASS_WINDOWS_PARSE_AND_SAFETY
+  g4_yield_live: BLOCKED_UNTIL_REBALANCING_PASS
   megafuel_erc8183_paymaster: PASS_COMPLETE_SPONDEE_WRITES_THROUGH_PROVIDER_SUBMIT
-  localstorage_http_bridge: PASS_LIVE_JOB_949_AND_GRID_954_URL_EMITTED
+  localstorage_http_bridge: PASS_HEALTH_FACTOR_AND_GRID
 connectors:
   github:
     status: CONNECTED
     repository: Faadil1/Spondee
     active_branch: build/g4-sequential-live-e2e
   bnb_external_runtime:
-    status: G4_GRID_954_SUBMITTED_READ_ONLY_RECOVERY_REQUIRED
+    status: HEALTH_FACTOR_AND_GRID_COMPLETE__REBALANCING_READY
     sdk_package: '@bnbagent/sdk'
     sdk_version: 0.5.5
     network: bsc-testnet
     chain_id: 97
     seller_provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    seller_balance_wei_last_known: '0'
     gas_path: MEGAFUEL_PRIMARY
 live_chain_evidence:
   job_948:
     status: FUNDED_TERMINAL_FOR_PROVIDER_SUBMIT_DEADLINE_EXPIRED
     retry: FORBIDDEN
   job_949:
-    status: SUBMITTED_AND_FINAL_RECEIPT_VERIFIED
+    category: health_factor
+    status: FINAL_PASS
     provider_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    submit_block: '128964136'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
-    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
     manifest_hash_verified: true
     spondee_receipt_verified: true
     receipt_evidence_class: SIMULATION
     observed_agent_advantage_claimed: false
   job_954:
     category: grid
-    status: SUBMITTED
+    status: COMPLETED_FINAL_PASS
     buyer_address: '0xaCFe38292DdFC028CD3D9e1900B590Ef8C99c3a1'
     create_job_tx: '0x6d6b54e9d1c591e4d5fa749cbb5447aa90f25bcac2e0a5d33a03af265aa4a72e'
     register_job_tx: '0xa33afe6deb28eb131f6b13f0ece91cb8b66b56322be505229da3e87ff9ae9713'
@@ -56,59 +55,58 @@ live_chain_evidence:
     fund_tx: '0x88eef4c03e7caee0b531aeea5b9e4de978aab03dcc9785a5870d6badb2b881d0'
     provider_submit_tx: '0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3'
     submit_block: '128979779'
+    submitted_at: '1788487408'
     deliverable_url: 'http://127.0.0.1:9100/erc8183/job/954/response'
     deliverable_hash: '0x60d6559e9d8e9f5c6982cbe427d0f42538d7086508f5c30d3ac550292f33d26f'
-    promise_id: sp_2bd9d0cfdf390f09ddafd8a0
+    promise_id: 'sp_2bd9d0cfdf390f09ddafd8a0'
     promise_sha256: '30b221979b30d33a006ec1fe42cb2a70a92f311c00ca2542086826937680ccb0'
-    scenario_id: spondee-grid-live-001
-    chain_receipt_proof: PASS
+    manifest_hash_verified: true
+    spondee_receipt_verified: true
+    receipt_evidence_class: SIMULATION
+    observed_agent_advantage_claimed: false
     receipt_log_scan_used_for_recovery: false
-    local_manifest_hash_verified: PENDING
-    spondee_receipt_verified: PENDING
+    write_retry_used: false
     retry: FORBIDDEN
 validation:
-  final_g3_human_local_verification: PASS
+  final_g3_local_verification: PASS
   g4_reference_agents_ci: 33826331454
-  g4_multi_category_backend_ci: 33826671823
-  g4_sequential_live_preflight: 33827625957
   g4_grid_954_recovery_ci: 33828319822
-  g4_grid_954_backend_tests: PASS_31_OF_31
-  g4_grid_954_typescript: PASS
-  g4_grid_954_direct_receipt_chain_proof: PASS
-  g4_grid_954_windows_node24: PASS
-runtime_defect:
-  id: G4_POST_SUBMIT_GETLOGS_SCAN
-  status: IDENTIFIED_REMEDIATION_PENDING_BEFORE_REBALANCING
-  root_cause: notify_funded returned provider submit tx but buyer ignored it and scanned JobSubmitted logs
-  required_fix: use known notify_funded tx receipt directly and decode JobSubmitted plus JobInitialised
+  g4_grid_954_local_manifest_verification: PASS
+  g4_direct_submit_receipt_ci: 33839234808
+  g4_direct_submit_receipt_ci_status: PASS
+  g4_rebalancing_isolated_runner_ci: 33839458498
+  g4_rebalancing_isolated_runner_ci_status: PASS
+  g4_rebalancing_isolated_runner_validated_head: 116b696fbc785dd0dda8c8d6c5629e93c7c26493
 current_gate:
-  id: SPONDEE_G4_GRID_JOB_954_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_RECOVERY_REQUIRED
+  id: SPONDEE_G4_REBALANCING_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
   parent_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  status: READ_ONLY_LOCAL_VERIFICATION_READY
-  action_class: READ_ONLY_LOCAL_AND_BSC_TESTNET_VERIFICATION
-  wallet_unlock_required: false
-  seller_process_required: false
-  chain_write_allowed: false
-  create_job_allowed: false
-  register_job_allowed: false
-  set_budget_allowed: false
-  fund_allowed: false
-  provider_submit_allowed: false
+  status: AUTHORIZED_AND_PREFLIGHT_PASS
+  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
+  category: rebalancing
+  runner: scripts/g4-rebalancing-live-e2e-localstorage.ps1
+  wallet_unlock_required: true_local_masked_prompt
+  create_job_allowed: REBALANCING_ONLY
+  provider_submit_allowed: REBALANCING_ONLY
+  grid_write_allowed: false
+  yield_write_allowed: false
+  tBNB_required: false
   tBNB_acquisition_allowed: false
   mainnet_allowed: false
   user_capital_allowed: false
   deployment_allowed: false
   merge_main_allowed: false
 limitations:
-  - Grid manifest hash and Outcome Receipt still require the human-local read-only verification.
-  - Rebalancing remains blocked until Grid recovery PASS and the post-submit buyer defect is remediated in CI.
-  - Yield remains blocked until Rebalancing PASS.
-  - No observed Agent Advantage evidence exists yet for G4 scenarios.
-  - Current deliverables use local HTTP bridges and are not public judge-accessible deployments.
+  - Rebalancing and Yield have not yet completed live BSC-testnet E2E.
+  - No observed Agent Advantage evidence exists yet for the G4 category scenarios.
+  - Current verified deliverables use local HTTP bridges and are not public judge-accessible deployments.
+  - Health Factor observed warning/event/intervention tape remains pending.
+  - Public judging deployment and final submission remain later protected gates.
 next_required_checks:
-  - run scripts/g4-verify-grid-job-954.ps1 exactly once
-  - verify manifest hash equals on-chain Grid deliverable hash
-  - verify Grid Outcome Receipt and preserve SIMULATION truth class
-  - after Grid PASS, remediate category buyer to use notify_funded submit tx directly
-  - only after remediation CI PASS: resume with Rebalancing
-next_gate: SPONDEE_G4_GRID_JOB_954_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_RECOVERY_REQUIRED
+  - pull current build/g4-sequential-live-e2e
+  - verify isolated Rebalancing runner HEAD ancestry contains validated head 116b696f
+  - local canonical seller wallet verification without exposing secrets
+  - Rebalancing live E2E with zero-balance ephemeral buyer and MegaFuel
+  - direct notify_funded submit transaction receipt, no JobSubmitted log scan
+  - only after Rebalancing PASS: prepare isolated Yield runner
+  - preserve SIMULATION truth boundary
+next_gate: SPONDEE_G4_REBALANCING_LIVE_TESTNET_E2E_EXECUTION_REQUIRED

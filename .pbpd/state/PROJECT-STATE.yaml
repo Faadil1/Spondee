@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R036-BACKEND-CODE-COMPLETE__FINAL-BENITA-HANDOFF-READY
+revision: STATE-R037-PRE-FRONTEND-OBSERVED-CLOSURE-PREFLIGHT-PASS__LOCAL-EXECUTION-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -11,18 +11,19 @@ authority:
   completed_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
   completed_human_gate_status: PASS_JOB_962_2026_09_04
   completed_backend_gate: SPONDEE_BACKEND_FINAL_COMPLETION
-  completed_backend_gate_status: PASS_RUN_33866229883
-  current_backend_gate: NONE_BACKEND_CODE_COMPLETE
-  current_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  current_project_gate_status: NOT_YET_OPENED
+  completed_backend_gate_status: PASS_RUN_33867168666
+  completed_observed_closure_preflight: SPONDEE_G5_PRE_FRONTEND_OBSERVED_CLOSURE_PREFLIGHT_PASS
+  completed_observed_closure_preflight_run: 33868671297
+  current_project_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
+  current_project_gate_status: READY_FOR_HUMAN_LOCAL_EXECUTION
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
-  phase: PARALLEL_FRONTEND_AND_EVIDENCE_BUILD
-  status: BACKEND_CODE_COMPLETE__FINAL_FRONTEND_HANDOFF_READY__ONE_OF_THREE_OBSERVED_PAIRS
+  phase: PRE_FRONTEND_EVIDENCE_AND_DEPLOYMENT_CLOSURE
+  status: BACKEND_CODE_COMPLETE__PAIR_2_3_PREFLIGHT_PASS__PUBLIC_DEPLOYMENT_PREPARED_NOT_DEPLOYED
 objective:
-  statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
+  statement: Close all remaining evidence and public-backend prerequisites before Benita starts frontend V1.
 primary_path:
   status: LOCKED
   path: LAND -> CATEGORY -> AGENT -> PROMISE_CARD -> BOUNDED_ACTIVATE -> OUTCOME_RECEIPT -> PROMISE_VS_ACTUAL -> AGENT_ADVANTAGE_WHEN_AVAILABLE
@@ -34,208 +35,170 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_r035: false
+  material_product_change_from_r036: false
 build:
-  active_branch: build/backend-completion-final
-  parent_branch: build/backend-product-freeze
-  base_branch: build/backend-complete
+  active_branch: build/pre-frontend-closure
+  parent_branch: build/backend-completion-final
+  parent_backend_complete_head: b123437c12341be4e012d61d8c58aa1151f13cd3
   merge_to_main: NOT_AUTHORIZED
   backend_code_status: COMPLETE_FOR_FRONTEND_V1
   backend_remaining_percentage: 0
-  backend_final_completion_ci_run: 33866229883
-  backend_final_completion_validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
   frontend_bootstrap_schema: spondee.frontend-bootstrap.v1
   frontend_bootstrap_endpoint: /v1/product/bootstrap
-  frontend_handoff_document: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
-  frontend_technical_contract: backend/FRONTEND-CONTRACT.md
-  frontend_machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
-  backend_completion_evidence: evidence/backend-final-completion/README.md
   four_category_live_transport_status: PASS_CLOSED
-  health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED_SIMULATION_RECEIPT
-  grid_status: G4_JOB_954_CLOSED__G5_COUNTABLE_PAIR_JOB_962_CLOSED_PASS
-  rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED_SIMULATION_RECEIPT
-  yield_status: LIVE_E2E_PASS_JOB_957_CLOSED_SIMULATION_RECEIPT
+  health_factor_g3_job: '949'
+  grid_g4_job: '954'
+  rebalancing_g4_job: '955'
+  yield_g4_job: '957'
+  first_countable_observed_grid_job: '962'
 backend_completion:
   status: PASS_CODE_COMPLETE
-  authoritative_ci_run: 33866229883
-  validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
-  chain_write_attempted_by_completion_ci: false
-  full_backend_regression: PASS
-  strict_typescript: PASS
-  four_category_truth_smoke: PASS
-  simulation_promotion_guard: PASS
-  protected_mutation_surfaces: PASS_IMPLEMENTED
-  decision_replay: PASS_IMPLEMENTED_READ_ONLY
-  dynamic_8004scan_discovery: PASS_IMPLEMENTED_SERVER_SIDE_READ_ONLY
-  official_8004scan_integration_smoke: PASS
-  bsc_testnet_readiness: PASS_READ_ONLY
-  durable_postgres_operation_locks: IMPLEMENTED
-  immutable_evidence_ingestion: IMPLEMENTED
-  deployment_readiness_contract: IMPLEMENTED
-  production_security:
-    live_action_scope: SPONDEE_ACTION_TOKEN
-    evidence_ingest_scope: SPONDEE_EVIDENCE_INGEST_TOKEN
-    tokens_browser_safe: false
-    secret_values_exposed_by_readiness: false
-  schemas:
-    frontend_bootstrap: spondee.frontend-bootstrap.v1
-    decision_replay: spondee.decision-replay.v1
-    discovery: spondee.8004scan-discovery.v1
-    backend_readiness: spondee.backend-deployment-readiness.v1
-  backend_architecture_change_required_for_benita_v1: false
-  public_deployment_configuration_complete: false
-  public_deployment_configuration_is_backend_code_gap: false
+  final_validated_head: b123437c12341be4e012d61d8c58aa1151f13cd3
+  authoritative_ci_run: 33867168666
+  protected_mutation_surfaces: PASS
+  decision_replay: PASS
+  dynamic_8004scan_discovery: PASS
+  deployment_readiness_contract: PASS
+  contract_breaking_change_required_by_r037: false
+observed_evidence:
+  schema: spondee.agent-advantage-pair.v1
+  required_pairs: 3
+  current_countable_pairs: 1
+  remaining_pairs: 2
+  pair_1:
+    category: Grid Trading
+    job_id: '962'
+    pair_id: g5-grid-forward-job-962
+    status: PASS_COUNTABLE_CLOSED
+    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+    agent_terminal_equity_usd: 9996.660009
+    baseline_terminal_equity_usd: 9999.160009
+  pair_2_health_factor:
+    status: IMPLEMENTED_PREFLIGHT_PASS_EXECUTION_PENDING
+    target: CLOSE_HEALTH_FACTOR_EVENT_TAPE_AND_COUNTABLE_PAIR
+    model: FUTURE_CHAINLINK_BNB_USD_READ_ONLY_PLUS_FROZEN_HYPOTHETICAL_POSITION
+    marketplace_transport: LIVE_BSC_TESTNET_ERC8183_ZERO_PRICE_MEGAFUEL
+    baseline: PERIODIC_WITHOUT_AGENT_CHECK_EVERY_4_FUTURE_ROUNDS
+    required_measurements:
+      - warning_emitted_at
+      - intervention_recommended_at
+      - baseline_first_check_at
+      - warning_lead_time_seconds
+      - response_latency_ms
+      - optional_adverse_event_at
+    liquidation_prevention_claim_allowed: false
+  pair_3_rebalancing:
+    status: IMPLEMENTED_PREFLIGHT_PASS_EXECUTION_PENDING
+    target: THIRD_COUNTABLE_PAIR
+    model: FUTURE_CHAINLINK_BNB_USD_READ_ONLY_PLUS_FROZEN_HYPOTHETICAL_50_50_PORTFOLIO
+    marketplace_transport: LIVE_BSC_TESTNET_ERC8183_ZERO_PRICE_MEGAFUEL
+    baseline: NO_REBALANCE_STATIC_HOLD_SAME_WINDOW
+    realized_mainnet_pnl_claim_allowed: false
+  final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE_UNTIL_LOCAL_CLOSURE_PASS
+observed_closure_preflight:
+  status: PASS
+  authoritative_run: 33868671297
+  validated_implementation_head: 1ebecc1263c69464fc7b8b6b6f3fe5010dbe667e
+  evidence: evidence/g5-pre-frontend-observed-closure-preflight/README.md
+  windows_parse: PASS
+  backend_regression: PASS
+  backend_typescript: PASS
+  health_workspace_build: PASS
+  rebalancing_workspace_build: PASS
+  bnb_usd_readonly_source_qualification: PASS
+  static_no_mainnet_write_guards: PASS
+  combined_no_write_runner: PASS
+  wallet_unlocked: false
+  chain_write_attempted: false
+combined_local_runner:
+  path: scripts/g5-pre-frontend-observed-closure.ps1
+  execution_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
+  seller_password_prompt: MASKED_LOCAL_ONLY_ONCE
+  execution_order:
+    - HEALTH_FACTOR_PAIR_2
+    - REBALANCING_PAIR_3
+  stop_on_first_failure: true
+  automatic_retry: false
+  closed_jobs_touched: false
+  mainnet_market_data: READ_ONLY
+  bsc_testnet_marketplace_write: EXACTLY_NEW_PAIR_JOBS_ONLY
+  service_price_raw: '0'
+  paymaster: MEGAFUEL
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   password_or_key_chat_exposure: FORBIDDEN
   create_new_wallet: FORBIDDEN
-  wallet_unlock_required_for_current_project_gate: false
-historical_runtime:
-  job_948:
-    result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
-    retry: FORBIDDEN
-  job_949:
-    category: health_factor
-    result: G3_FINAL_PASS
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_954:
-    category: grid
-    result: G4_FINAL_PASS_AFTER_READ_ONLY_RECOVERY
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_955:
-    category: rebalancing
-    result: G4_FINAL_PASS_AFTER_EXISTING_FUNDED_JOB_RECOVERY
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_957:
-    category: yield
-    result: G4_FINAL_PASS
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_962:
-    category: grid
-    result: G5_FIRST_COUNTABLE_FORWARD_OBSERVED_PAIR_PASS
-    no_further_live_run: true
-    evidence_class: OBSERVED
-    countable_for_final_report: true
-    pair_id: g5-grid-forward-job-962
-    promise_id: spg5_6be8ca0d0f37354475b0f656
-    scenario_id: g5-grid-forward-55340232221132059004-1788516525376
-    observed_round_count: 8
-    external_round_verification: PASS
-    service_price_raw: '0'
-    mainnet_value_moved: false
-    realized_mainnet_pnl_claimed: false
-    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-    agent_terminal_equity_usd: 9996.660009
-    baseline_terminal_equity_usd: 9999.160009
-    terminal_equity_delta_usd: -2.5
-four_category_closure:
-  status: PASS
-  live_transport_count: 4
-  required_category_count: 4
-  g3_g4_receipt_truth_class: SIMULATION
-  no_further_g4_category_live_runs_authorized: true
-g5_observed_evidence_protocol:
-  status: PASS_HARDENED
-  schema: spondee.agent-advantage-pair.v1
-  implementation: backend/src/observed-evidence.ts
-  tests: backend/src/observed-evidence.test.ts
-  protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
-  authoritative_ci_run: 33843642146
-  required_pairs: 3
-  countable_pairs: 1
-  remaining_pairs: 2
-  grid_pair_required: true
-  grid_pair_requirement_satisfied: true
-  final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
-  simulation_promotion_allowed: false
-  historical_replay_countable: false
-  dry_run_reference_agent_countable: false
-frontend_handoff:
-  status: FINAL_BACKEND_COMPLETE_HANDOFF_READY
-  collaborator: Benita
-  source_branch: build/backend-completion-final
-  primary_contract: /v1/product/bootstrap
-  human_handoff: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
-  technical_contract: backend/FRONTEND-CONTRACT.md
-  machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
-  backend_architecture_change_required_before_start: false
-  winner_intelligence_required_before_start: false
-  protected_server_tokens_must_not_be_embedded_in_browser: true
+  wallet_unlock_required_for_current_gate: true_local_masked_only
+closed_jobs:
+  - '949'
+  - '954'
+  - '955'
+  - '957'
+  - '962'
+public_deployment:
+  status: PREPARED_NOT_DEPLOYED
+  adapter: api/index.mjs
+  config: vercel.json
+  deployment_preflight_workflow: .github/workflows/public-backend-deployment-preflight.yml
+  durable_database_required_for_full_stateful_frontend: true
+  required_production_env:
+    - DATABASE_URL
+    - SPONDEE_CORS_ORIGINS
+    - SPONDEE_ACTION_TOKEN
+    - SPONDEE_EVIDENCE_INGEST_TOKEN
+  vercel_connected_api_attempt:
+    date: '2026-09-04'
+    result: FAIL_CLOSED_EXTERNAL_QUOTA
+    reason: API_DEPLOYMENTS_FREE_PER_DAY_EXHAUSTED_100_OF_100
+    reset_at_utc: '2026-09-05T11:40:52.876Z'
+    reset_at_america_toronto: '2026-09-05T07:40:52.876-04:00'
+    spondee_deployment_created: false
+  existing_unrelated_projects_may_be_repurposed: false
+frontend_benita:
+  status: INTENTIONALLY_HELD_UNTIL_PRE_FRONTEND_CLOSURE
+  old_handoff_ready_but_not_yet_sent_as_execution_source: true
+  final_source_branch_after_closure: TO_BE_PROMOTED_AFTER_3_OF_3_AND_PUBLIC_DEPLOYMENT
 winner_intelligence_overlay:
-  status: DOCUMENTED_POST_V1_FRONTEND_REVIEW
-  source_system: Faadil1/hackathon-opportunity-intelligence
+  status: POST_FRONTEND_V1_REVIEW
+  frontend_blocker_after_pre_frontend_closure: false
   winning_laws_promoted: 0
   win_probability_score_allowed: false
-  frontend_blocker: false
-  backend_rearchitecture_expected: false
-  checks:
-    - SPONSOR_NATIVE_NECESSITY_CHECK
-    - WHOLE_RUBRIC_COVERAGE_CHECK
-    - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
-    - JUDGE_PATH_LEGIBILITY_CHECK
-  high_priority_blind_spots:
-    - FIRST_5S_CORE_CLARITY
-    - FIRST_15S_PROGRESS_CLARITY
-    - SIGNATURE_ACTION_TO_VISIBLE_CONSEQUENCE
-    - RUBRIC_EVIDENCE_SURFACING
-    - TRUTHFUL_WAIT_AND_FAILURE_STATES
-    - MOBILE_KEYBOARD_REDUCED_MOTION_LEGIBILITY
-remaining_project_work_not_backend_code:
-  observed_agent_advantage:
-    required_pairs: 3
-    countable_pairs: 1
-    remaining_pairs: 2
-    trading_pair_countable: true
-    status: BLOCKING_TWO_MORE_PAIRS_REQUIRED
-  health_factor_event_tape:
-    status: PENDING_BLOCKING
-    next_pair_target: true
-  public_backend_frontend_deployment:
-    status: PENDING_BLOCKING
-    deployment_configuration_required:
-      - DATABASE_URL
-      - SPONDEE_CORS_ORIGINS
-      - SPONDEE_ACTION_TOKEN
-      - SPONDEE_EVIDENCE_INGEST_TOKEN
-  frontend_v1:
-    status: READY_FOR_BENITA
-  winner_intelligence_trace_review:
-    status: AFTER_FRONTEND_V1
-  project_finisher:
-    status: NOT_STARTED
-  merge_main:
-    status: NOT_AUTHORIZED
-  final_submission:
-    status: HUMAN_ONLY
+remaining_project_work:
+  observed_agent_advantage: EXECUTE_PAIR_2_AND_PAIR_3
+  health_factor_event_tape: EXECUTE_PAIR_2
+  public_backend_deployment: BLOCKED_BY_VERCEL_API_QUOTA_OR_ALTERNATIVE_HOST_CONFIRMATION
+  frontend_v1: HELD_BY_USER_UNTIL_ABOVE_CLOSED
+  winner_intelligence_trace_review: AFTER_FRONTEND_V1
+  project_finisher: NOT_STARTED
+  merge_main: NOT_AUTHORIZED
+  final_submission: HUMAN_ONLY
 current_gate:
-  id: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  status: NOT_YET_OPENED
-  gate_class: PROJECT_EVIDENCE_NOT_BACKEND_COMPLETION
-  action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
-  chain_write_allowed: false
-  wallet_unlock_allowed: false
-  bsc_mainnet_read_allowed: true_if_required
+  id: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
+  status: READY_FOR_HUMAN_LOCAL_EXECUTION
+  action_class: TWO_NEW_BSC_TESTNET_MARKETPLACE_PAIRS_ONLY
+  wallet_unlock_allowed: true_local_masked_canonical_seller_only
+  bsc_testnet_write_allowed: true_for_new_health_then_rebalancing_pair_only
+  bsc_mainnet_read_allowed: true_chainlink_only
   bsc_mainnet_write_allowed: false
   meaningful_user_capital_allowed: false
+  service_price_raw: '0'
+  paymaster_required: MEGAFUEL
   material_paid_spend_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
 next_backend_gate: NONE_BACKEND_CODE_COMPLETE
-next_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+next_project_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
 next_action:
-  owner: PBPD_AFTER_PROJECT_GATE_OPEN
-  primary: Complete the Health Factor observed pair/event tape while Benita builds frontend V1 from the completed backend contract.
+  owner: HUMAN_LOCAL_RUNNER_THEN_PBPD_VERIFICATION
+  primary: Run the combined Health Factor + Rebalancing observed closure exactly once. If both pass, reconcile Agent Advantage to 3/3 and Health event tape closed, then close public backend deployment before releasing the final Benita handoff.
   constraints:
-    - do not touch closed jobs 949, 954, 955, 957, or 962
+    - do not rerun or mutate jobs 949, 954, 955, 957, or 962
+    - stop on first failure and diagnose before any retry
+    - never paste seller password or keystore material into chat
     - no mainnet value movement
-    - no wallet unlock or BSC-testnet write during implementation/dry-run
-    - no guaranteed liquidation-prevention or safety claim
-    - do not silently break spondee.frontend-bootstrap.v1
+    - preserve negative or neutral measured outcomes
+    - no guaranteed liquidation prevention, safety or profit claim
     - no merge to main
     - no final submission

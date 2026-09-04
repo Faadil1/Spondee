@@ -49,7 +49,7 @@ artifacts:
   - id: ART-012
     path: reference-agents/health-factor
     type: specialized_agent_studio_reference_agent
-    status: CI_VERIFIED_COMPACT_COMMITMENT_LIVE_E2E_RETRY_READY
+    status: LIVE_CHAIN_THROUGH_FUND_LOCALSTORAGE_30D_RETRY_READY
   - id: ART-013
     path: evidence/g3-health-factor-ci-001/README.md
     type: g3_health_factor_build_evidence
@@ -82,12 +82,11 @@ artifacts:
   - id: ART-020
     path: backend/src/erc8183.ts
     type: signed_zero_price_erc8183_live_driver
-    status: COMPACT_COMMITMENT_AND_1600_BYTE_GUARD_CI_VERIFIED_ONE_NEW_LOCAL_RETRY_READY
+    status: COMPACT_COMMITMENT_1600_BYTE_GUARD_30_DAY_SUBMISSION_HORIZON_CI_VERIFIED
   - id: ART-021
     path: .github/workflows/backend-ci.yml
     type: complete_backend_ci
     status: PASS
-    external_run: 33817822355
   - id: ART-022
     path: evidence/backend-ci-001/README.md
     type: backend_evidence_path
@@ -114,14 +113,13 @@ artifacts:
   - id: ART-027
     path: reference-agents/health-factor/app/agent/src/healthFactor.ts
     type: compact_promise_commitment_and_task_carrier
-    status: CI_VERIFIED
+    status: LIVE_PARTIALLY_VERIFIED_AND_CI_VERIFIED
     promise_carrier_prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
     task_carrier_prefix: 'SPONDEE_TASK_B64_V1:'
   - id: ART-028
     path: backend/src/erc8183.test.ts
     type: compact_commitment_and_megafuel_size_regression_tests
-    status: PASS_28_OF_28_SUITE
-    external_run: 33817822355
+    status: PASS
   - id: ART-029
     path: .github/workflows/g3-health-factor-ci.yml
     type: g3_compact_commitment_validation
@@ -131,19 +129,18 @@ artifacts:
     path: reference-agents/health-factor/app/agent/src/demoEvidence.ts
     type: deterministic_evidence_export_using_compact_commitment
     status: PASS
-    external_run: 33817846752
   - id: ART-031
     path: scripts/g3-megafuel-live-e2e.ps1
-    type: human_local_live_e2e_runner
-    status: ONE_NEW_LOCAL_RETRY_AUTHORIZED
+    type: canonical_inner_live_e2e_runner
+    status: USE_ONLY_VIA_LOCALSTORAGE_WRAPPER_FOR_NEXT_GATE
   - id: ART-032
     path: .pbpd/state/HANDOVER.yaml
     type: canonical_handover
-    status: CURRENT_COMPACT_RETRY_READY
+    status: CURRENT_LOCALSTORAGE_30D_RETRY_READY
   - id: ART-033
     path: .pbpd/state/PROJECT-STATE.yaml
     type: canonical_project_state
-    status: CURRENT_COMPACT_RETRY_READY
+    status: CURRENT_LOCALSTORAGE_30D_RETRY_READY
   - id: ART-034
     external_reference: human_local_runtime_failure_v1_2026-09-03T23:21:21.084Z
     type: third_live_e2e_fail_closed_evidence
@@ -154,23 +151,62 @@ artifacts:
     type: compact_commitment_backend_ci
     status: PASS
     artifact_id: 9917173773
-    artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
   - id: ART-036
     external_reference: GitHub Actions run 33817846752
     type: compact_commitment_g3_ci
     status: PASS
-    head: 2c86096949c27b354bef68154e93c54abb016ab9
   - id: ART-037
     path: reference-agents/health-factor/app/agent/src/healthFactor.test.ts
     type: sanitizer_safe_task_and_commitment_tests
     status: PASS
-    external_run: 33817846752
   - id: ART-038
     path: reference-agents/health-factor/app/agent/src/executorSpondee.test.ts
     type: encoded_task_notify_funded_roundtrip_tests
     status: PASS
-    external_run: 33817846752
   - id: ART-039
     path: .pbpd/state/DECISION-LOG.yaml
     type: protocol_decision_record
-    status: CURRENT_COMPACT_COMMITMENT
+    status: CURRENT_LOCALSTORAGE_30D
+  - id: ART-040
+    external_reference: human_local_runtime_job_948_partial_success_2026-09-03T23:41:03.555Z
+    type: fourth_live_e2e_partial_success_evidence
+    status: VERIFIED_LIVE_CHAIN_THROUGH_FUND
+    job_id: '948'
+  - id: ART-041
+    path: scripts/local-erc8183-deliverable-server.mjs
+    type: localstorage_http_bridge
+    status: CI_VERIFIED
+    external_runs: [33819012423, 33819854509]
+  - id: ART-042
+    path: backend/src/resume-g3-funded.ts
+    type: funded_job_recovery_verifier
+    status: CI_VERIFIED_HISTORICAL_JOB_948_TERMINAL
+  - id: ART-043
+    path: scripts/g3-resume-funded-job.ps1
+    type: funded_job_recovery_runner
+    status: HISTORICAL_DO_NOT_RETRY_JOB_948
+  - id: ART-044
+    path: .github/workflows/g3-funded-recovery-ci.yml
+    type: funded_job_recovery_ci
+    status: PASS
+    external_run: 33819012423
+  - id: ART-045
+    external_reference: human_local_runtime_recovery_failure_2026-09-03T23:53:03.692Z
+    type: job_948_submission_deadline_evidence
+    status: VERIFIED_TERMINAL
+    error_class: submit_deadline_passed
+  - id: ART-046
+    path: scripts/g3-megafuel-live-e2e-localstorage.ps1
+    type: integrated_localstorage_live_e2e_wrapper
+    status: CI_VERIFIED_ONE_LOCAL_ATTEMPT_AUTHORIZED
+    external_run: 33819854509
+  - id: ART-047
+    path: backend/src/g3-expiry.test.ts
+    type: thirty_day_submission_horizon_regression_test
+    status: PASS
+    external_run: 33819854509
+  - id: ART-048
+    path: .github/workflows/g3-live-localstorage-preflight.yml
+    type: final_localstorage_30d_live_preflight
+    status: PASS
+    external_run: 33819854509

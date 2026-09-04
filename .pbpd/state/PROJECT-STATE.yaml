@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R027-G4-REBALANCING-PASS-YIELD-EXECUTION-READY
+revision: STATE-R028-G4-FOUR-CATEGORY-LIVE-PASS-G5-OBSERVED-EVIDENCE-PREFLIGHT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,14 +8,15 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
   production_owner: PBPD
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
-  current_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  current_human_gate_status: AUTHORIZED_2026_09_04
+  completed_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+  completed_human_gate_status: PASS_2026_09_04
+  current_human_gate: NONE_REQUIRED_FOR_READ_ONLY_OBSERVED_EVIDENCE_DESIGN
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_THREE_OF_FOUR_LIVE_PASS__YIELD_LOCAL_EXECUTION_READY
+  status: G4_FOUR_OF_FOUR_LIVE_TRANSPORT_PASS__G5_OBSERVED_EVIDENCE_PREFLIGHT
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -28,7 +29,7 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_r027: false
+  material_product_change_from_r028: false
 build:
   active_branch: build/g4-sequential-live-e2e
   base_branch: build/backend-complete
@@ -36,7 +37,8 @@ build:
   health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED
   grid_status: LIVE_E2E_PASS_JOB_954_CLOSED
   rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED
-  yield_status: BUILD_CI_AND_ISOLATED_RUNNER_PREFLIGHT_PASS
+  yield_status: LIVE_E2E_PASS_JOB_957_CLOSED
+  four_category_live_transport_status: PASS
   g4_rebalancing_955_readonly_probe_run: 33840042425
   g4_rebalancing_955_recovery_preflight_run: 33840652210
   g4_yield_isolated_runner_preflight_run: 33841526082
@@ -47,7 +49,7 @@ canonical_seller:
   keystore: encrypted_v3_local_only
   password_or_key_chat_exposure: FORBIDDEN
   create_new_wallet: FORBIDDEN
-  wallet_unlock_required_for_current_gate: true_at_local_execution_only
+  wallet_unlock_required_for_current_gate: false
 historical_runtime:
   job_948:
     result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
@@ -92,8 +94,6 @@ historical_runtime:
     deliverable_hash: '0x2c0341870da9ba1a03cb80130ba3de7852873ae6274396aa4141d591cef80a3c'
     promise_id: sp_034fd69c69975ffa9a5b916f
     promise_sha256: 8fe7607d75b86a924d14e0a63dccfaf40b16119d535c450caa99781194f225b3
-    task_schema: spondee.rebalancing.task.v1
-    scenario_id: spondee-rebalancing-live-001
     manifest_hash_verified: true
     spondee_receipt_verified: true
     receipt_evidence_class: SIMULATION
@@ -103,11 +103,35 @@ historical_runtime:
     secrets_printed: false
     no_further_live_run: true
     evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+  job_957:
+    category: yield
+    result: G4_FINAL_PASS
+    status: SUBMITTED
+    buyer_address: '0xa9C2A1397F7E5901Af2BB8C40CC9acEdC5aeD770'
+    buyer_balance_before_wei: '0'
+    buyer_balance_after_wei: '0'
+    create_job_tx: '0xa62ec234e3d1d348a56b72fd0974f229c73371787ccc8148f251aab54a5610bd'
+    register_job_tx: '0xcc674932bff4f0842e9078642c77c29f4af8b97eb8b2d9665c9d9ffb8264eb16'
+    set_budget_tx: '0x649ec3dce10b4184f2288db5c6538dff7de6074c124e45eed18e324087fb1d7e'
+    fund_tx: '0xf4b07f73f023922d9560e536710eb956e0fb6be16d514434f630b972eb31455a'
+    provider_submit_tx: '0x35de5f07749c3d0cc6471b20272100b8eeb8b3424a62ecee357904ddfb8800f7'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/957/response'
+    promise_id: sp_54d1d6a04418f5a2f4e5c79c
+    promise_sha256: 3aae9cea505146218d1c3518e625b885983a043ff20635ae08f64beab3a204d6
+    job_description_bytes: 1255
+    task_schema: spondee.yield.task.v1
+    scenario_id: spondee-yield-live-001
+    manifest_hash_verified: true
+    spondee_receipt_verified: true
+    receipt_evidence_class: SIMULATION
+    observed_agent_advantage_claimed: false
+    buyer_private_key_persisted_after_run: false
+    buyer_private_key_printed: false
+    no_further_live_run: true
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
 transport_truth:
   default_agent_studio_notify_funded: ASYNC_ACK_STATUS_ACCEPTED_THEN_BACKGROUND_SUBMIT
-  prior_wrong_assumption: DEFAULT_NOTIFY_RETURNS_OK_TRUE_WITH_TX
-  prior_wrong_assumption_status: SUPERSEDED
-  final_bounded_spondee_mode:
+  bounded_spondee_mode:
     request_field: wait_for_result
     value: true
     scope: CONTROLLED_LOCAL_G4_PROOF_ONLY
@@ -115,24 +139,22 @@ transport_truth:
     result: EXACT_PROVIDER_SUBMIT_TX_AND_DELIVERABLE_URL
     receipt_resolution: EXACT_TRANSACTION_RECEIPT
     historical_jobsubmitted_scan: FORBIDDEN
-controlled_activation_paths:
-  health_factor:
-    live_status: PASS_CLOSED
-    job_id: '949'
-  grid:
-    live_status: PASS_CLOSED
-    job_id: '954'
-  rebalancing:
-    live_status: PASS_CLOSED
-    job_id: '955'
-  yield:
-    workspace: reference-agents/yield
-    task_schema: spondee.yield.task.v1
-    scenario_id: spondee-yield-live-001
-    build_status: PASS
-    isolated_runner_preflight: PASS
-    runner: scripts/g4-yield-live-e2e-localstorage.ps1
-    live_status: READY_FOR_EXECUTION
+four_category_closure:
+  status: PASS
+  live_transport_count: 4
+  required_category_count: 4
+  health_factor: PASS_JOB_949
+  grid: PASS_JOB_954
+  rebalancing: PASS_JOB_955
+  yield: PASS_JOB_957
+  all_receipt_truth_class: SIMULATION
+  observed_agent_advantage_count: 0
+  no_further_g4_category_live_runs_authorized: true
+  evidence:
+    - evidence/g3-job-949-final-pass/README.md
+    - evidence/g4-grid-job-954-final-pass/README.md
+    - evidence/g4-rebalancing-job-955-final-pass/README.md
+    - evidence/g4-yield-job-957-final-pass/README.md
 category_depth:
   health_factor:
     live_testnet: PASS
@@ -144,86 +166,59 @@ category_depth:
     live_testnet: PASS
     outcome_receipt_truth: SIMULATION
   yield:
-    live_testnet: READY_FOR_EXECUTION
-    outcome_receipt_truth_target: SIMULATION
+    live_testnet: PASS
+    outcome_receipt_truth: SIMULATION
 killing_assumptions:
   A-01:
     candidate_availability: RESOLVED
     health_factor_live: RESOLVED
     grid_live: RESOLVED
     rebalancing_live: RESOLVED
-    yield_live: PENDING_EXECUTION
-    status: PARTIALLY_RESOLVED_THREE_OF_FOUR_COMPLETE
+    yield_live: RESOLVED
+    status: RESOLVED_FOUR_OF_FOUR_LIVE
   A-02:
     status: RESOLVED_BY_LIVE_E2E
   A-03:
     status: RESOLVED_BY_LIVE_E2E
-rebalancing_closure:
-  status: PASS
-  job_id: '955'
-  evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-  no_further_rebalancing_live_run_authorized: true
-  final_status: SUBMITTED
-  live_transport: VERIFIED
-  outcome_receipt: VERIFIED_SIMULATION
-  observed_agent_advantage: NOT_CLAIMED
-yield_preflight:
-  status: PASS
-  authoritative_run: 33841526082
-  validated_head: b57bd35ba4fd6d77993c035c7ca3e33e83cef4a7
-  backend_tests: PASS
-  backend_typescript: PASS
-  exact_receipt_contract: PASS
-  historical_log_scan_absent: PASS
-  yield_tests: PASS
-  yield_typescript: PASS
-  yield_scenario_truth_boundary: PASS_SIMULATION
-  windows_runner_safety: PASS
-  evidence: evidence/g4-yield-isolated-runner-preflight/README.md
+  A-06:
+    status: OPEN_FIRST_OBSERVED_PAIRED_EXPERIMENT_REQUIRED
+critical_remaining_gaps:
+  observed_agent_advantage:
+    required_pairs: 3
+    observed_pairs: 0
+    trading_pair_required: true
+    trading_pair_observed: false
+    status: BLOCKING
+  health_factor_event_tape:
+    status: PENDING
+  public_judge_deployment:
+    status: PENDING
+  visible_authority_controls:
+    status: PARTIAL
+  project_finisher:
+    status: NOT_STARTED
 current_gate:
-  id: SPONDEE_G4_YIELD_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
-  parent_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  status: AUTHORIZED_AND_PREFLIGHT_PASS
-  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
-  category: yield
-  runner: scripts/g4-yield-live-e2e-localstorage.ps1
-  network: bsc-testnet
-  chain_id: 97
-  service_price_raw: '0'
-  gas_path: MEGAFUEL_PRIMARY
-  ephemeral_buyer_zero_balance_required: true
-  receipt_truth_class: SIMULATION
-  observed_agent_advantage_claim_allowed: false
-  create_job_allowed: YIELD_ONLY_ONE_NEW_JOB
-  register_job_allowed: YIELD_ONLY
-  set_budget_allowed: YIELD_ONLY
-  fund_allowed: YIELD_ONLY
-  provider_submit_allowed: YIELD_ONLY
-  health_factor_write_allowed: false
-  grid_write_allowed: false
-  rebalancing_write_allowed: false
-  wallet_unlock_allowed: EXISTING_CANONICAL_SELLER_MASKED_LOCAL_PROMPT_ONLY
-  tBNB_acquisition_allowed: false
+  id: SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED
+  status: OPEN_NO_HUMAN_SECRET_OR_CHAIN_WRITE_REQUIRED
+  action_class: CODE_AND_READ_ONLY_EVIDENCE_DESIGN
+  objective: Define and validate three reproducible observed paired experiments, including Grid Trading, without moving meaningful user/mainnet capital or misclassifying simulations as observed.
+  protected_chain_write_allowed: false
   mainnet_allowed: false
   user_capital_allowed: false
-  x402_payment_allowed: false
+  material_paid_spend_allowed: false
+  simulation_as_observed_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
-  stop_on_first_failure: true
 next_action:
-  owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
-  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
-  primary: Pull build/g4-sequential-live-e2e and run scripts/g4-yield-live-e2e-localstorage.ps1 exactly once. Enter the existing seller password only in the masked local prompt. Return only public PASS/FAIL evidence.
+  owner: PBPD_IMPLEMENTATION
+  action_class: CODE_AND_READ_ONLY_EVIDENCE_DESIGN
+  primary: Freeze the observed-evidence protocol for three paired tasks, build raw evidence schemas/runners and negative claim-boundary tests, then identify the first bounded observed experiment that can be executed without meaningful real capital.
   constraints:
-    - do not run Health Factor, Grid, or Rebalancing live runners again
-    - existing canonical seller wallet only
-    - no secret in chat/log/Git
-    - zero service price
-    - MegaFuel primary and ephemeral buyer balance must remain zero
-    - exact wait_for_result submit transaction receipt only
-    - no getJobSubmittedEvents scan
-    - local HTTP deliverable bridge must remain healthy through manifest verification
-    - no blind retry after any partial chain write
-    - no tBNB acquisition fallback
-    - simulation receipt remains excluded from observed Agent Advantage
-next_gate: SPONDEE_G4_YIELD_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
+    - do not rerun jobs 949, 954, 955, or 957
+    - do not treat their SIMULATION receipts as observed evidence
+    - require same initial state/window or reproducible baseline protocol
+    - preserve raw timings, costs, outputs and scenario IDs
+    - at least one observed pair must be Grid Trading
+    - no meaningful mainnet/user capital without new human authority
+    - public deployment remains a separate follow-on gate
+next_gate: SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED

@@ -1,38 +1,62 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: G5_GRID_FIRST_COUNTABLE_PAIR_PASS__HEALTH_FACTOR_OBSERVED_PAIR_NOT_YET_OPEN
+preflight_status: BACKEND_PRODUCT_FREEZE_PASS__FRONTEND_V1_READY__HEALTH_FACTOR_EVIDENCE_GATE_NOT_OPEN
 capabilities:
   github_repository_access: AVAILABLE
   node_22: PASS
   pnpm_10_24: PASS
+  backend_product_freeze_ci: PASS_RUN_33864316044
+  backend_tests: PASS
+  backend_strict_typescript: PASS
+  frontend_bootstrap_contract: PASS_spondee.frontend-bootstrap.v1
+  frontend_cors_allowlist: PASS
+  backend_record_list_endpoints: PASS
+  backend_postgres_persistence: IMPLEMENTED
+  backend_memory_persistence: IMPLEMENTED
   bsc_testnet_live_transport: PASS_4_OF_4_G4_CLOSED
-  bsc_mainnet_readonly_rpc: PASS
-  chainlink_bnb_usd_readonly_source: PASS
   observed_agent_advantage_contract: PASS_HARDENED_COUNTABILITY
-  g5_grid_historical_dry_run: PASS_NON_COUNTABLE
-  g5_grid_forward_runner: PASS_EXECUTED_JOB_962_CLOSED
-  g5_grid_forward_seller: PASS_COMPACT_WIRE_RUNTIME
-  g5_grid_forward_backend: PASS_COUNTABLE_PAIR_RUNTIME
   observed_agent_advantage_pairs: 1
   observed_agent_advantage_required_pairs: 3
-  observed_grid_pair_required: true
-  observed_grid_pair_requirement: SATISFIED
+  observed_grid_pair_requirement: SATISFIED_JOB_962
   g4_closed_jobs_guard: ACTIVE_949_954_955_957
   g5_closed_jobs_guard: ACTIVE_962
 connectors:
   github:
     status: CONNECTED
     repository: Faadil1/Spondee
-    active_branch: build/g5-grid-forward-observed
+    active_branch: build/backend-product-freeze
   bnb_external_runtime:
-    status: G4_FOUR_OF_FOUR_CLOSED__G5_GRID_JOB_962_COUNTABLE_PAIR_CLOSED
+    status: LIVE_TRANSPORT_PROVEN__NO_CURRENT_WRITE_GATE_OPEN
     testnet_chain_id: 97
-    mainnet_readonly_chain_id: 56
     seller_provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-  chainlink_bnb_usd:
-    status: READ_ONLY_SOURCE_QUALIFIED_AND_USED_IN_COUNTABLE_PAIR
-    network: bsc-mainnet
-    feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
-    write_capability: NONE
+frontend_handoff:
+  status: READY
+  collaborator: Benita
+  source_branch: build/backend-product-freeze
+  product_handoff: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+  technical_contract: backend/FRONTEND-CONTRACT.md
+  machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
+  primary_endpoint: /v1/product/bootstrap
+  schema: spondee.frontend-bootstrap.v1
+  winner_intelligence_blocker: false
+  contract_breaking_change_allowed: false_without_new_schema_version
+backend_validation:
+  authoritative_ci_run: 33864316044
+  validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
+  evidence: evidence/backend-product-freeze-frontend-handoff/README.md
+  full_tests: PASS
+  strict_typescript: PASS
+  four_category_simulation_smoke: PASS
+  simulation_truth_boundary: PASS
+  frontend_bootstrap_smoke: PASS
+  cors_allowlist_smoke: PASS
+  static_no_mainnet_write_guard: PASS
+  bsc_testnet_readiness_probe: PASS_READ_ONLY
+  chain_write_attempted: false
+catalog_readiness:
+  health_factor: { readiness: LIVE_TESTNET_VERIFIED, proof_job: '949', current_write_gate: CLOSED }
+  grid: { readiness: LIVE_TESTNET_VERIFIED, proof_job: '954', current_write_gate: CLOSED }
+  rebalancing: { readiness: LIVE_TESTNET_VERIFIED, proof_job: '955', current_write_gate: CLOSED }
+  yield: { readiness: LIVE_TESTNET_VERIFIED, proof_job: '957', current_write_gate: CLOSED }
 live_chain_evidence:
   job_949: { category: health_factor, status: PASS_CLOSED, receipt_evidence_class: SIMULATION }
   job_954: { category: grid, status: PASS_CLOSED, receipt_evidence_class: SIMULATION }
@@ -44,42 +68,25 @@ live_chain_evidence:
     evidence_class: OBSERVED
     countable_for_final_report: true
     pair_id: g5-grid-forward-job-962
-    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    buyer_address: '0x9423f5B1Ae49A93Ee8757D5793b3019d17a12023'
-    service_price_raw: '0'
     observed_round_count: 8
     external_round_verification: PASS
     manifest_hash_verified: true
-    buyer_balance_before_wei: '0'
-    buyer_balance_after_wei: '0'
+    service_price_raw: '0'
     mainnet_value_moved: false
-validation:
-  g5_observed_evidence_ci_run: 33843642146
-  g5_grid_dry_run_ci_run: 33843581388
-  g5_grid_forward_remediation_ci_run: 33859221865
-  g5_grid_forward_remediation_ci_status: PASS
-  g5_grid_forward_remediation_validated_head: e608c81f34ef2e8442d53efbe946ab84f1515829
-  compact_wire_roundtrip: PASS
-  compact_wire_byte_budget: LESS_THAN_500
-  seller_compact_wire_reconstruction: PASS
-  seller_strict_typescript: PASS
-  windows_runner_safety: PASS
-  job_962_runtime_conclusion: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_PASS
-  job_962_countable_for_final_report: true
-  job_962_external_round_verification: PASS
-  job_962_manifest_hash_verified: true
-  job_962_observed_round_count: 8
-  job_962_measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-  job_962_agent_terminal_equity_usd: 9996.660009
-  job_962_baseline_terminal_equity_usd: 9999.160009
-  job_962_terminal_equity_delta_usd: -2.5
-  job_962_realized_mainnet_pnl_claimed: false
-closed_execution_authorization:
-  gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  status: CONSUMED_BY_SUCCESSFUL_JOB_962_AND_CLOSED
-  execution_budget: ONE_NEW_GRID_G5_BSC_TESTNET_JOB_ONLY
-  jobs_created_under_budget: 1
-  further_grid_g5_jobs_allowed: false
+    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+    agent_terminal_equity_usd: 9996.660009
+    baseline_terminal_equity_usd: 9999.160009
+    terminal_equity_delta_usd: -2.5
+winner_intelligence_overlay:
+  status: DOCUMENTED_FOR_POST_V1_REVIEW
+  checks:
+    - SPONSOR_NATIVE_NECESSITY_CHECK
+    - WHOLE_RUBRIC_COVERAGE_CHECK
+    - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
+    - JUDGE_PATH_LEGIBILITY_CHECK
+  winning_laws_promoted: 0
+  win_probability_score_allowed: false
+  frontend_start_blocked: false
 current_gate:
   id: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
   status: NOT_YET_OPENED
@@ -87,7 +94,6 @@ current_gate:
   wallet_unlock_required: false
   new_job_allowed: false
   bsc_testnet_write_allowed: false
-  bsc_mainnet_read_allowed: true_if_required
   bsc_mainnet_write_allowed: false
   mainnet_value_movement_allowed: false
   meaningful_user_capital_allowed: false
@@ -95,19 +101,16 @@ current_gate:
   merge_main_allowed: false
   final_submission_allowed: false
 limitations:
+  - Backend is frozen for frontend V1, but hackathon evidence is not submission-complete.
   - Countable Agent Advantage is 1/3; two more countable pairs are required.
-  - The trading-related pair requirement is satisfied by Grid job 962.
-  - Grid job 962 underperformed the without-agent baseline on its observed window; do not characterize it as superior performance.
-  - Historical Grid dry-run remains non-countable.
-  - Health Factor observed warning/intervention event tape remains pending and is the next pair target.
-  - Public judge deployment is still pending.
+  - Health Factor observed warning/intervention event tape remains pending.
+  - Public judge deployment remains pending.
+  - Dynamic external 8004scan activation adapters remain unverified/discovery-only.
+  - Winner Intelligence is a bounded post-V1 blind-spot review, not a predictor or blocker.
 next_required_checks:
-  - human/project flow opens SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  - design frozen Health Factor position/rules and observed-data provenance
-  - define precommitted without-agent baseline on the same state/window
-  - preserve raw warning, recommendation/intervention and adverse-event timestamps
-  - measure useful warning lead time and response latency
-  - reject simulation-to-observed promotion
-  - run no-write dry-run and validate the pair bundle as structurally observed but non-countable
-  - do not touch jobs 949, 954, 955, 957, or 962
+  - Benita starts frontend V1 from build/backend-product-freeze and /v1/product/bootstrap
+  - preserve truth boundaries and runtime-gate semantics in UI
+  - separately open SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED for evidence work
+  - no silent breaking change to spondee.frontend-bootstrap.v1
+  - no write to closed jobs 949, 954, 955, 957, or 962
 next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED

@@ -3,7 +3,7 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze G4 at 4/4 PASS; prioritize first countable Grid pair, two additional observed pairs and public judging availability over optional integrations.
+    mitigation: Freeze G4 at 4/4 PASS; first countable Grid pair is closed; prioritize Health Factor observed pair/event tape, one additional pair, and public judging availability over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
@@ -14,19 +14,19 @@ risks:
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Grid, Rebalancing and Yield have equivalent live transport proof; preserve comparable UI depth in public judge build.
+    mitigation: Grid, Rebalancing and Yield have equivalent live transport proof; Grid also has the first countable observed pair. Preserve comparable UI depth in public judge build.
     status: CONTROLLED_LIVE_DEPTH_CLOSED_UI_REVIEW_PENDING
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
     mitigation: Preserve forecast provenance, track calibration only against observed outcomes, and label insufficient history.
-    status: OPEN_OBSERVED_EVIDENCE_PENDING
+    status: OPEN_OBSERVED_CALIBRATION_HISTORY_INSUFFICIENT
   - id: R-05
     severity: CRITICAL
     risk: Baseline comparisons are biased, synthetic or invented but presented as observed Agent Advantage.
-    mitigation: G5 countable schema requires marketplace activation, future/non-historical window, transaction tape, same scenario/input, raw outputs and measured metrics. Grid forward buyer independently rereads every Chainlink round and computes the baseline from exactly those rounds.
-    status: CONTROLLED_FORWARD_PREFLIGHT_PASS_FIRST_COUNTABLE_PAIR_PENDING
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    mitigation: G5 countable schema requires marketplace activation, future/non-historical window, transaction tape, same scenario/input, raw outputs and measured metrics. Grid job 962 independently re-read every Chainlink round and computed the baseline from exactly those rounds.
+    status: CONTROLLED_AND_FIRST_COUNTABLE_PAIR_VERIFIED__MUST_REPEAT_FOR_REMAINING_PAIRS
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
@@ -40,8 +40,9 @@ risks:
   - id: R-08
     severity: HIGH
     risk: Financial wording implies guarantees.
-    mitigation: Use forecast/probability/outcome language and visible limitations; forward Grid explicitly labels strategy returns as paper-only and never realized mainnet PnL.
-    status: OPEN_GUARDRAIL_ACTIVE
+    mitigation: Use forecast/probability/outcome language and visible limitations. Grid job 962 explicitly preserves underperformance and labels paper accounting as non-realized PnL.
+    status: CONTROLLED_GUARDRAIL_ACTIVE
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: R-09
     severity: HIGH
     risk: JigJoy/Syndicate collision consumes the available build window.
@@ -65,48 +66,58 @@ risks:
   - id: R-13
     severity: HIGH
     risk: Buyer and seller disagree on notify_funded response semantics, causing a false failure after FUND.
-    mitigation: G5 forward seller requires bounded wait_for_result=true and returns the exact submit tx after the future observation completes.
-    status: CONTROLLED_BY_EXPLICIT_BOUNDED_WAIT_FOR_RESULT
+    mitigation: Observed forward sellers use an explicit bounded wait contract and return the exact submit transaction after the observation completes.
+    status: CONTROLLED_AND_VERIFIED_JOB_962
   - id: R-14
     severity: HIGH
-    risk: Closed G4 jobs are accidentally recreated or mutated.
-    mitigation: Jobs 949/954/955/957 are canonically closed; G5 uses a separate branch, task schema, runner and future job scope.
-    status: CONTROLLED_CLOSED_JOB_GUARD
+    risk: Closed jobs are accidentally recreated or mutated.
+    mitigation: Jobs 949/954/955/957 and now 962 are canonically closed; future pairs require a dedicated gate and new task scope.
+    status: CONTROLLED_CLOSED_JOB_GUARD_949_954_955_957_962
   - id: R-15
     severity: CRITICAL
     risk: Existing SIMULATION receipts or the historical observed dry-run are accidentally counted toward the required three pairs.
-    mitigation: Countability requires LIVE_BSC_TESTNET_MARKETPLACE, activation reference, transaction tape and non-historical mode. Dry-run remains explicitly non-countable.
-    status: RESOLVED_AT_SCHEMA_LEVEL_EXECUTION_EVIDENCE_STILL_PENDING
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    mitigation: Countability requires LIVE_BSC_TESTNET_MARKETPLACE, activation reference, transaction tape and non-historical mode. Only Grid job 962 currently satisfies this contract.
+    status: RESOLVED_AT_SCHEMA_LEVEL__FIRST_REAL_COUNTABLE_PAIR_RECORDED_1_OF_3
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: R-16
     severity: HIGH
     risk: Observed trading evidence requires meaningful real capital or introduces unacceptable financial risk.
-    mitigation: G5 forward design uses zero-price BSC-testnet marketplace transport plus read-only BNB-mainnet Chainlink data and paper accounting. No mainnet value movement is implemented.
-    status: CONTROLLED_FORWARD_RUNNER_PREFLIGHT_PASS
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    mitigation: Grid job 962 used zero-price BSC-testnet marketplace transport plus read-only BNB-mainnet Chainlink data and paper accounting; no mainnet value moved.
+    status: RESOLVED_FOR_REQUIRED_TRADING_PAIR
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: R-17
     severity: HIGH
     risk: A paper Grid record is described as realized mainnet trading performance.
-    mitigation: Task, seller output, pair limitations and final result explicitly state paper accounting and no realized mainnet PnL.
-    status: CONTROLLED_CLAIM_GUARDRAIL_ACTIVE
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    mitigation: Task, seller output, pair limitations and final result explicitly state paper accounting and no realized mainnet PnL; observed underperformance is preserved.
+    status: CONTROLLED_CLAIM_GUARDRAIL_VERIFIED_JOB_962
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: R-18
     severity: HIGH
-    risk: The forward Chainlink window times out before enough future rounds arrive, leaving a partial marketplace job.
-    mitigation: Target is bounded to eight future rounds with a 480-second ceiling. Runner must fail closed, preserve any partial job state and forbid blind retry until read-only diagnosis determines the exact state.
-    status: OPEN_EXECUTION_RUNTIME_RISK
+    risk: A forward observation times out before enough future rounds arrive, leaving a partial marketplace job.
+    mitigation: Job 962 successfully collected all eight rounds inside the bounded window. Future forward-style pairs must preserve the same fail-closed recovery rule.
+    status: RESOLVED_FOR_GRID_JOB_962__REUSABLE_PATTERN_REQUIRED_FOR_FUTURE_FORWARD_PAIRS
   - id: R-19
     severity: HIGH
     risk: Future market rounds are accidentally backfilled from before marketplace funding, invalidating the observed pair.
-    mitigation: Seller filters on observation start; buyer independently enforces first counted round strictly after both Promise freeze and BSC-testnet funding and rereads exact Chainlink round IDs.
-    status: CONTROLLED_BY_TEMPORAL_AND_SOURCE_VERIFICATION
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    mitigation: Seller filters on observation start; buyer independently enforces the temporal boundary and re-reads exact source records.
+    status: RESOLVED_FOR_GRID_JOB_962_BY_TEMPORAL_AND_SOURCE_VERIFICATION
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: R-20
     severity: MEDIUM
     risk: Seller dependency drift breaks the forward runtime.
-    mitigation: Final seller removed undeclared viem import and uses native read-only JSON-RPC fetch; frozen workspace, G5 tests and TypeScript build pass in run 33845758154.
-    status: RESOLVED_IN_PREFLIGHT
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    mitigation: Frozen workspace, tests and TypeScript build passed; compact wire remediation passed authoritative CI run 33859221865 before job 962.
+    status: RESOLVED_FOR_GRID_RUNTIME
+    evidence: evidence/g5-grid-forward-prewrite-size-failclosed-remediation/README.md
+  - id: R-21
+    severity: CRITICAL
+    risk: Health Factor event tape is generated from simulation or post-hoc thresholds and presented as observed warning advantage.
+    mitigation: Next Health Factor pair must freeze position, warning threshold, intervention rule and without-agent baseline before the observation window; preserve raw observed inputs and warning/intervention/adverse-event timestamps; dry-run remains non-countable until a dedicated marketplace activation exists.
+    status: OPEN_NEXT_GATE_BLOCKER
+  - id: R-22
+    severity: HIGH
+    risk: Health Factor baseline cadence is chosen after seeing the event, biasing warning lead-time or response-latency comparison.
+    mitigation: Baseline cadence/rule must be precommitted in the frozen input snapshot and run against the exact same observed window and initial state.
+    status: OPEN_NEXT_GATE_DESIGN_RISK
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
@@ -114,13 +125,13 @@ risks:
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    status: RESOLVED_BY_LIVE_E2E_AND_G5_FORWARD_PROMISE_PREFLIGHT
+    status: RESOLVED_BY_LIVE_E2E_AND_G5_COUNTABLE_GRID_PAIR
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    status: RESOLVED_G4_LIVE_BINDING__G5_FORWARD_BINDING_PREFLIGHT_PASS
+    status: RESOLVED_G4_LIVE_BINDING__G5_COUNTABLE_GRID_BINDING_PASS
   - id: A-06
     severity: CRITICAL
     risk: TermiX-style observed baselines cannot be collected reproducibly before deadline.
-    mitigation: Historical harness proved reproducibility; forward marketplace runner now passes full preflight with same-window baseline, exact round verification and transaction-tape design.
-    status: PARTIAL_FIRST_COUNTABLE_PAIR_EXECUTION_STILL_REQUIRED
+    mitigation: Grid job 962 proved one full marketplace-hired forward pair with preserved same-window baseline and raw evidence; repeat the pattern for two additional tasks.
+    status: PARTIALLY_RESOLVED_ONE_OF_THREE_COUNTABLE_PAIRS_COMPLETE

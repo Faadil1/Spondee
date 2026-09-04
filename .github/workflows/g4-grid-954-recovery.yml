@@ -1,0 +1,88 @@
+name: G4 Grid 954 Read-Only Recovery
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'backend/src/verify-g4-grid-954.ts'
+      - 'backend/src/verify-g4-grid-954-cli.ts'
+      - 'backend/src/probe-g4-grid-954.ts'
+      - 'scripts/g4-verify-grid-job-954.ps1'
+      - '.github/workflows/g4-grid-954-recovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression suite
+        working-directory: backend
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Prove dedicated CLI entrypoint executes
+        working-directory: backend
+        env:
+          SPONDEE_G4_GRID_954_ENTRYPOINT_SMOKE: '1'
+        run: |
+          out="$(npx tsx src/verify-g4-grid-954-cli.ts)"
+          printf '%s\n' "$out"
+          printf '%s\n' "$out" | grep -F 'SPONDEE G4 GRID 954 CLI ENTRYPOINT: PASS'
+      - name: Direct receipt-based Grid 954 chain proof
+        working-directory: backend
+        run: npx tsx src/probe-g4-grid-954.ts
+
+  windows-parse:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Parse fail-closed local recovery runner
+        shell: powershell
+        run: |
+          $path = 'scripts/g4-verify-grid-job-954.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+            exit 1
+          }
+          $text = Get-Content $path -Raw
+          if ($text -match 'WALLET_PASSWORD') { throw 'read-only recovery runner must not request a wallet password' }
+          if ($text -match 'notify_funded') { throw 'read-only recovery runner must not invoke provider submission' }
+          if ($text -match 'live:g4-category') { throw 'read-only recovery runner must not invoke the live G4 writer' }
+          if ($text -notmatch 'SPONDEE G4 GRID JOB 954 VERIFICATION: PASS') { throw 'required PASS terminal missing' }
+          Write-Host 'Grid 954 read-only Windows runner parse/safety: PASS'
+      - name: Prove CLI entrypoint executes on Windows Node 24
+        working-directory: backend
+        shell: powershell
+        run: |
+          npm install --no-audit --no-fund
+          $env:SPONDEE_G4_GRID_954_ENTRYPOINT_SMOKE = '1'
+          $out = @(& npx tsx src/verify-g4-grid-954-cli.ts 2>&1)
+          $exit = $LASTEXITCODE
+          $out | ForEach-Object { Write-Host $_ }
+          if ($exit -ne 0) { throw "CLI smoke failed with exit $exit" }
+          if (-not ($out -contains 'SPONDEE G4 GRID 954 CLI ENTRYPOINT: PASS')) {
+            throw 'CLI smoke marker missing on Windows'
+          }

@@ -27,6 +27,7 @@ export const ObservedArtifactSchema = z.object({
   captured_at: z.string().datetime(),
   source_type: z.enum([
     "BSC_TESTNET_RPC",
+    "BSC_MAINNET_RPC_READ_ONLY",
     "PUBLIC_MARKET_DATA",
     "PUBLIC_PROTOCOL_API",
     "LOCAL_RUNTIME_MEASUREMENT",
@@ -87,6 +88,51 @@ const MetricSchema = z.object({
   higher_is_better: z.boolean(),
 });
 
+export const MarketplaceHireEvidenceSchema = z.object({
+  mode: z.enum([
+    "DRY_RUN_REFERENCE_AGENT",
+    "LIVE_BSC_TESTNET_MARKETPLACE",
+  ]),
+  agent_transport: z.enum([
+    "LOCAL_REFERENCE_AGENT",
+    "ERC8183_BSC_TESTNET",
+  ]),
+  promise_before_observation: z.boolean(),
+  activation_reference: z.string().min(1).nullable(),
+  countable_for_final_report: z.boolean(),
+}).superRefine((hire, ctx) => {
+  const issue = (path: string, message: string) => {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: [path], message });
+  };
+
+  if (hire.mode === "DRY_RUN_REFERENCE_AGENT") {
+    if (hire.agent_transport !== "LOCAL_REFERENCE_AGENT") {
+      issue("agent_transport", "dry-run hire evidence must use LOCAL_REFERENCE_AGENT");
+    }
+    if (hire.activation_reference !== null) {
+      issue("activation_reference", "dry-run hire evidence cannot claim a marketplace activation reference");
+    }
+    if (hire.countable_for_final_report) {
+      issue("countable_for_final_report", "dry-run reference-agent evidence is never countable for the final Agent Advantage report");
+    }
+  }
+
+  if (hire.mode === "LIVE_BSC_TESTNET_MARKETPLACE") {
+    if (hire.agent_transport !== "ERC8183_BSC_TESTNET") {
+      issue("agent_transport", "live marketplace evidence must use ERC8183_BSC_TESTNET transport");
+    }
+    if (!hire.activation_reference) {
+      issue("activation_reference", "live marketplace evidence requires a concrete activation reference");
+    }
+    if (!hire.promise_before_observation) {
+      issue("promise_before_observation", "countable live marketplace evidence requires the promise before the observation window");
+    }
+    if (!hire.countable_for_final_report) {
+      issue("countable_for_final_report", "validated live marketplace evidence must be countable for the final report");
+    }
+  }
+});
+
 export const ObservedPairBundleSchema = z.object({
   schema: z.literal("spondee.agent-advantage-pair.v1"),
   pair_id: z.string().min(1).max(160),
@@ -101,12 +147,13 @@ export const ObservedPairBundleSchema = z.object({
   observation_window: ObservationWindowSchema,
   initial_state_sha256: z.string().regex(SHA256_HEX),
   input_snapshot_sha256: z.string().regex(SHA256_HEX),
+  marketplace_hire: MarketplaceHireEvidenceSchema,
   agent_run: EvidenceRunInputSchema,
   baseline_run: EvidenceRunInputSchema,
   time_seconds: MetricSchema,
   cost: MetricSchema,
   output_quality: MetricSchema,
-  artifacts: z.array(ObservedArtifactSchema).min(3),
+  artifacts: z.array(ObservedArtifactSchema).min(5),
   trading_record: TradingRecordSchema.nullable().optional(),
   limitations: z.array(z.string().min(1)).min(1),
   claim_guardrail: z.literal(
@@ -148,7 +195,13 @@ export const ObservedPairBundleSchema = z.object({
   }
 
   const kinds = new Set(bundle.artifacts.map((artifact) => artifact.kind));
-  for (const required of ["INPUT_SNAPSHOT", "AGENT_OUTPUT", "BASELINE_OUTPUT"] as const) {
+  for (const required of [
+    "INPUT_SNAPSHOT",
+    "AGENT_OUTPUT",
+    "BASELINE_OUTPUT",
+    "TIMING_LOG",
+    "COST_LOG",
+  ] as const) {
     if (!kinds.has(required)) {
       issue(["artifacts"], `missing required raw artifact kind ${required}`);
     }
@@ -157,25 +210,42 @@ export const ObservedPairBundleSchema = z.object({
   const sourceTypes = new Set(bundle.artifacts.map((artifact) => artifact.source_type));
   if (
     !sourceTypes.has("BSC_TESTNET_RPC") &&
+    !sourceTypes.has("BSC_MAINNET_RPC_READ_ONLY") &&
     !sourceTypes.has("PUBLIC_MARKET_DATA") &&
     !sourceTypes.has("PUBLIC_PROTOCOL_API")
   ) {
     issue(
       ["artifacts"],
-      "OBSERVED pair requires external observed provenance from BSC testnet, public market data, or a public protocol API",
+      "OBSERVED pair requires external observed provenance from BSC/public market/protocol data",
     );
   }
 
+  if (bundle.marketplace_hire.countable_for_final_report) {
+    if (bundle.observation_mode === "HISTORICAL_OBSERVED_DATA_REPLAY") {
+      issue(["observation_mode"], "historical replay cannot count as a final marketplace-hired observed pair");
+    }
+    if (Date.parse(bundle.frozen_at) > Date.parse(bundle.observation_window.start_at)) {
+      issue(["frozen_at"], "countable pair must be frozen before the observation window starts");
+    }
+    if (Date.parse(agent.promise_timestamp) > Date.parse(bundle.observation_window.start_at)) {
+      issue(["agent_run", "promise_timestamp"], "countable pair promise must predate the observation window");
+    }
+    if (!kinds.has("TRANSACTION_TAPE")) {
+      issue(["artifacts"], "countable marketplace pair requires a TRANSACTION_TAPE artifact");
+    }
+  }
+
   if (bundle.category === "Grid Trading") {
+    if (!kinds.has("MARKET_DATA")) {
+      issue(["artifacts"], "Grid Trading observed pair requires preserved MARKET_DATA");
+    }
     if (!bundle.trading_record) {
       issue(["trading_record"], "Grid Trading observed pair requires a real record with window, outcomes and risk");
-    } else {
-      if (
-        bundle.trading_record.window_start_at !== bundle.observation_window.start_at ||
-        bundle.trading_record.window_end_at !== bundle.observation_window.end_at
-      ) {
-        issue(["trading_record"], "trading record window must exactly match observation window");
-      }
+    } else if (
+      bundle.trading_record.window_start_at !== bundle.observation_window.start_at ||
+      bundle.trading_record.window_end_at !== bundle.observation_window.end_at
+    ) {
+      issue(["trading_record"], "trading record window must exactly match observation window");
     }
   }
 });
@@ -190,23 +260,34 @@ export function validateObservedPairBundle(value: unknown): ObservedPairBundle {
   return ObservedPairBundleSchema.parse(value);
 }
 
+export function isCountableObservedPair(value: unknown): boolean {
+  const bundle = validateObservedPairBundle(value);
+  return bundle.marketplace_hire.countable_for_final_report;
+}
+
 export function buildValidatedObservedAdvantageReport(
   bundles: unknown[],
 ): AgentAdvantageReport {
   const validated = bundles.map(validateObservedPairBundle);
   const pairIds = new Set<string>();
-  const runs: EvidenceRun[] = [];
 
   for (const bundle of validated) {
     if (pairIds.has(bundle.pair_id)) {
       throw new Error(`duplicate observed pair_id: ${bundle.pair_id}`);
     }
     pairIds.add(bundle.pair_id);
+  }
+
+  const countable = validated.filter(
+    (bundle) => bundle.marketplace_hire.countable_for_final_report,
+  );
+  const runs: EvidenceRun[] = [];
+  for (const bundle of countable) {
     runs.push(bundle.baseline_run, bundle.agent_run);
   }
 
   const report = buildAgentAdvantageReport(runs);
-  const tradingPairs = validated.filter((bundle) => bundle.category === "Grid Trading").length;
+  const tradingPairs = countable.filter((bundle) => bundle.category === "Grid Trading").length;
   if (report.status === "READY" && tradingPairs < 1) {
     return { ...report, status: "INSUFFICIENT_OBSERVED_EVIDENCE" };
   }

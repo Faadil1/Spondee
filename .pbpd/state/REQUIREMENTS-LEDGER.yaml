@@ -3,26 +3,24 @@ requirements:
   - id: MUST-01
     class: MUST
     requirement: Surface all four official categories at equal product depth.
-    status: PARTIAL_TWO_OF_FOUR_LIVE_PASS_REBALANCING_FUNDED_RECOVERY_YIELD_PENDING
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
-    evidence_plan: Recover existing Rebalancing job 955, then complete Yield live proof.
+    status: PARTIAL_THREE_OF_FOUR_LIVE_VERIFIED_YIELD_EXECUTION_READY
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    evidence_plan: Complete Yield live activation with the isolated runner.
   - id: MUST-02
     class: MUST
     requirement: Anything represented as activatable must use a real BSC-live agent/path.
-    status: VERIFIED_GUARDRAIL_HEALTH_FACTOR_GRID_LIVE_REBALANCING_NOT_YET_PROMOTED
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
-    note: Rebalancing remains pending until job 955 provider submit + receipt recovery passes; Yield remains blocked.
+    status: VERIFIED_HEALTH_FACTOR_GRID_REBALANCING__YIELD_PENDING_LIVE
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: MUST-03
     class: MUST
     requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
     status: PARTIAL_BACKEND_SUBSTRATE_BOUNDARY_VERIFIED_DYNAMIC_INTEGRATION_PENDING
     evidence: backend/src/catalog.ts
-    evidence_plan: Preserve qualified ERC-8004 candidates as discovery/comparison data while controlled Spondee paths provide activation proof.
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
-    status: VERIFIED_BACKEND_SIMULATION_HEALTH_FACTOR_GRID_AND_REBALANCING_SIGNED_JOB
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
+    status: VERIFIED_BACKEND_SIMULATION_AND_THREE_LIVE_CATEGORIES
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: MUST-05
     class: MUST
     requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
@@ -31,37 +29,34 @@ requirements:
   - id: MUST-06
     class: MUST
     requirement: Category to successful activation has no dead end.
-    status: PARTIAL_HEALTH_FACTOR_GRID_PASS_REBALANCING_FUNDED_RECOVERY_YIELD_PENDING
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
-    evidence_plan: Finish existing job 955 without replacement, then prove Yield.
+    status: PARTIAL_THREE_LIVE_E2E_PASS_YIELD_READY
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: MUST-07
     class: MUST
     requirement: Delegated execution authority is visibly bounded.
     status: PARTIAL_TESTNET_ZERO_PRICE_BOUNDARY_VERIFIED_PRODUCT_VISIBLE_AUTHORITY_UI_PENDING
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
-    evidence_plan: Allowlist/cap/expiry/revoke evidence in judge-facing activation UI; Altana remains optional.
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: MUST-08
     class: MUST
     requirement: Every completed measured run creates an Outcome Receipt.
-    status: PARTIAL_HEALTH_FACTOR_GRID_RECEIPTS_VERIFIED_REBALANCING_RECEIPT_PENDING_JOB_955_RECOVERY
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
+    status: PARTIAL_THREE_LIVE_TRANSPORT_RECEIPTS_VERIFIED_SIMULATION_OBSERVED_RUNS_PENDING
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: MUST-09
     class: MUST
     requirement: Outcome Receipt binds original promise to actual result.
-    status: VERIFIED_HEALTH_FACTOR_GRID_BINDING_REBALANCING_PENDING_FINAL_RECEIPT
-    evidence: evidence/g4-grid-job-954-final-pass/README.md
-    note: Existing verified receipts remain SIMULATION and are not observed Agent Advantage.
+    status: VERIFIED_HEALTH_FACTOR_GRID_REBALANCING_LIVE_PROMISE_RECEIPT_BINDING_SIMULATION_EVIDENCE
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    note: Binding is proven for three live categories; receipts remain SIMULATION and are not observed Agent Advantage.
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
     status: PENDING_OBSERVED_RUNS
-    evidence_plan: Final report and raw observed outputs; live transport proof does not count as observed advantage.
+    evidence_plan: Final report and raw observed outputs.
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
     status: PARTIAL_GRID_LIVE_TRANSPORT_VERIFIED_SIMULATION_OUTCOME_OBSERVED_TRADING_RUN_PENDING
     evidence: evidence/g4-grid-job-954-final-pass/README.md
-    evidence_plan: Run a genuinely observed Grid Trading comparison before claiming measured trading advantage.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
@@ -80,9 +75,9 @@ requirements:
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
-    status: VERIFIED_GRID_AND_REBALANCING_RUNTIME_FAIL_CLOSED_WITH_DETERMINISTIC_RECOVERY_GATES
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
-    note: Rebalancing preserved the FUNDED partial state, stopped Yield, used a write-free chain probe, and forbids a replacement job during recovery.
+    status: VERIFIED_CI_AND_LIVE_RUNTIME_FAIL_CLOSED_PATHS
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    note: Rebalancing preserved the FUNDED partial state, diagnosed deterministically, and recovered the same job without recreating chain state.
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
@@ -120,11 +115,11 @@ requirements:
   - id: MUST_NOT-04
     class: MUST_NOT
     requirement: Do not show an agent as activatable when activation does not work.
-    status: ACTIVE_HEALTH_FACTOR_GRID_VERIFIED_REBALANCING_NOT_PROMOTED_YIELD_BLOCKED
+    status: ACTIVE_AND_THREE_LIVE_CATEGORIES_VERIFIED_GUARDRAIL
   - id: MUST_NOT-05
     class: MUST_NOT
     requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.
-    status: ACTIVE_LIVE_DEPTH_GAP_REDUCED_GRID_PASS_REBALANCING_FUNDED_YIELD_PENDING
+    status: ACTIVE_LIVE_DEPTH_GAP_REDUCED_THREE_OF_FOUR_PASS_YIELD_READY
   - id: MUST_NOT-06
     class: MUST_NOT
     requirement: Do not add bonds, auctions, leagues, generic red-team systems or orchestration platforms before core gates pass.

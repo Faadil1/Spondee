@@ -227,7 +227,7 @@ try {
             $env:SPONDEE_LOCAL_DELIVERABLE_DIR = $agentData
             $env:ERC8183_AGENT_URL = "$bridgeBase/erc8183"
 
-            Write-Step "$slug: starting LocalStorage HTTP deliverable bridge"
+            Write-Step "${slug}: starting LocalStorage HTTP deliverable bridge"
             $bridgeProcess = Start-Process `
                 -FilePath (Get-Command node).Source `
                 -ArgumentList @($serverScript) `
@@ -252,7 +252,7 @@ try {
             }
             if (-not $bridgeReady) { Fail "$slug deliverable bridge did not become healthy." }
 
-            Write-Step "$slug: starting seller with MegaFuel enabled"
+            Write-Step "${slug}: starting seller with MegaFuel enabled"
             $env:BNBAGENT_USE_PAYMASTER = '1'
             $env:AGENT_BIND_HOST = '127.0.0.1'
             $env:AGENT_PORT = "$agentPort"
@@ -273,11 +273,12 @@ try {
             Remove-Item Env:WALLET_PASSWORD -ErrorAction SilentlyContinue
             Remove-Item Env:SPONDEE_WALLETS_DIR -ErrorAction SilentlyContinue
 
-            Write-Step "$slug: waiting for seller /ping"
+            Write-Step "${slug}: waiting for seller /ping"
             $sellerReady = $false
             $sellerDeadline = (Get-Date).AddSeconds(75)
             while ((Get-Date) -lt $sellerDeadline) {
                 if ($sellerProcess.HasExited) {
+                    Write-Host 'Seller exited before becoming ready.' -ForegroundColor Red
                     Write-Host '--- seller stdout ---'
                     Tail-File $sellerOut
                     Write-Host '--- seller stderr ---'
@@ -299,7 +300,7 @@ try {
             }
             Write-Host "$slug seller A2A: HEALTHY" -ForegroundColor Green
 
-            Write-Step "$slug: executing Promise -> signed quote -> MegaFuel ERC-8183 -> verified Outcome Receipt"
+            Write-Step "${slug}: executing Promise -> signed quote -> MegaFuel ERC-8183 -> verified Outcome Receipt"
             $env:SPONDEE_LIVE_TESTNET_ENABLED = 'true'
             $env:SPONDEE_SELLER_A2A_URL = $sellerUrl
             $env:SPONDEE_PROVIDER_ADDRESS = $expectedProvider

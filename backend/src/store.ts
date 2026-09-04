@@ -25,6 +25,8 @@ export interface SpondeeStore {
   listReceipts(): Promise<OutcomeReceipt[]>;
   putEvidence(value: EvidenceRun): Promise<void>;
   listEvidence(): Promise<EvidenceRun[]>;
+  claimOperation(key: string, ttlSeconds: number): Promise<boolean>;
+  releaseOperation(key: string): Promise<void>;
   close(): Promise<void>;
 }
 
@@ -33,6 +35,7 @@ export class MemoryStore implements SpondeeStore {
   readonly activations = new Map<string, ActivationRecord>();
   readonly receipts = new Map<string, OutcomeReceipt>();
   readonly evidence = new Map<string, EvidenceRun>();
+  readonly operationLocks = new Map<string, number>();
 
   async init(): Promise<void> {}
   async close(): Promise<void> {}
@@ -72,6 +75,16 @@ export class MemoryStore implements SpondeeStore {
   }
   async listEvidence(): Promise<EvidenceRun[]> {
     return [...this.evidence.values()].map((value) => structuredClone(value));
+  }
+  async claimOperation(key: string, ttlSeconds: number): Promise<boolean> {
+    const now = Date.now();
+    const existing = this.operationLocks.get(key);
+    if (existing && existing > now) return false;
+    this.operationLocks.set(key, now + Math.max(1, ttlSeconds) * 1000);
+    return true;
+  }
+  async releaseOperation(key: string): Promise<void> {
+    this.operationLocks.delete(key);
   }
 }
 
@@ -113,9 +126,15 @@ CREATE TABLE IF NOT EXISTS spondee_evidence_runs (
   payload JSONB NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS spondee_operation_locks (
+  operation_key TEXT PRIMARY KEY,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 CREATE INDEX IF NOT EXISTS idx_spondee_promises_category ON spondee_promises(category);
 CREATE INDEX IF NOT EXISTS idx_spondee_activations_status ON spondee_activations(status);
 CREATE INDEX IF NOT EXISTS idx_spondee_evidence_class ON spondee_evidence_runs(evidence_class);
+CREATE INDEX IF NOT EXISTS idx_spondee_operation_locks_expiry ON spondee_operation_locks(expires_at);
 `;
 
 export class PostgresStore implements SpondeeStore {
@@ -244,6 +263,24 @@ export class PostgresStore implements SpondeeStore {
       "SELECT payload FROM spondee_evidence_runs ORDER BY created_at ASC",
     );
     return result.rows.map((row) => row.payload);
+  }
+
+  async claimOperation(key: string, ttlSeconds: number): Promise<boolean> {
+    const seconds = Math.max(1, Math.trunc(ttlSeconds));
+    const result = await this.pool.query<{ operation_key: string }>(
+      `INSERT INTO spondee_operation_locks (operation_key, expires_at)
+       VALUES ($1, NOW() + ($2::text || ' seconds')::interval)
+       ON CONFLICT (operation_key) DO UPDATE
+         SET expires_at = EXCLUDED.expires_at, created_at = NOW()
+       WHERE spondee_operation_locks.expires_at <= NOW()
+       RETURNING operation_key`,
+      [key, String(seconds)],
+    );
+    return result.rowCount === 1;
+  }
+
+  async releaseOperation(key: string): Promise<void> {
+    await this.pool.query("DELETE FROM spondee_operation_locks WHERE operation_key=$1", [key]);
   }
 }
 

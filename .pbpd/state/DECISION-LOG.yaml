@@ -92,10 +92,51 @@ decisions:
   - id: DEC-014
     date: '2026-09-03'
     decision: After compact commitment, sanitizer-safe task and 1600-byte budget CI passed, authorize exactly one new human-local MegaFuel Health Factor E2E retry under the existing testnet authority; any new failure closes the gate again.
-    status: ACCEPTED
+    status: CONSUMED_BY_FOURTH_ATTEMPT_PARTIAL_SUCCESS
     authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
     evidence:
       - GitHub Actions run 33817822355
       - GitHub Actions run 33817846752
+  - id: DEC-015
+    date: '2026-09-03'
+    decision: For local/testnet LocalStorageProvider delivery, expose the generated ERC-8183 manifest through a bounded HTTP bridge and set ERC8183_AGENT_URL before the seller starts; a raw file:// deliverable URL is not acceptable for on-chain publication.
+    status: ACCEPTED
+    authority: PBPD_RUNTIME_PROTOCOL_RECONCILIATION
+    evidence:
+      - scripts/local-erc8183-deliverable-server.mjs
+      - scripts/g3-megafuel-live-e2e-localstorage.ps1
+      - GitHub Actions run 33819012423
+      - GitHub Actions run 33819854509
+  - id: DEC-016
+    date: '2026-09-03'
+    decision: Job 948 is terminal for provider submit and must never be retried because its ERC-8183 submission deadline expired before recovery; preserve it as live-chain partial evidence only.
+    status: ACCEPTED
+    authority: PBPD_RUNTIME_EVIDENCE
+    evidence:
+      - human local recovery failure at 2026-09-03T23:53:03.692Z
+      - error submit_deadline_passed
+      - .pbpd/state/EVIDENCE-LEDGER.yaml EV-017
+  - id: DEC-017
+    date: '2026-09-03'
+    decision: Newly created G3 jobs use a 30-day provider submission horizon, computed as expiredAt = now + disputeWindow + 30 days, instead of the 600-second quickstart demonstration slack.
+    status: ACCEPTED
+    authority: PBPD_PROTOCOL_RUNTIME_HARDENING
+    constraints:
+      - submit remains valid only until expiredAt - disputeWindow
+      - 30-day horizon is testnet/runtime robustness, not a product promise
+      - job 948 is not retroactively modified or retried
+      - exactly one new corrected live E2E attempt may be run after CI passes
+    evidence:
+      - backend/src/erc8183.ts
+      - backend/src/g3-expiry.test.ts
+      - GitHub Actions run 33819854509
+      - official BNB ERC-8183 protocol guidance
+  - id: DEC-018
+    date: '2026-09-03'
+    decision: After LocalStorage HTTP integration and 30-day submission-horizon preflight 33819854509 passed, authorize exactly one new complete local Health Factor E2E attempt using the existing seller keystore and MegaFuel; no tBNB is required before the attempt and any new failure closes the gate again.
+    status: ACCEPTED
+    authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
+    evidence:
+      - GitHub Actions run 33819854509
       - .pbpd/state/PROJECT-STATE.yaml
       - .pbpd/state/HANDOVER.yaml

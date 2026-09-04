@@ -1,5 +1,5 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: G4_4_OF_4_PASS__G5_GRID_DRY_RUN_PASS_NON_COUNTABLE
+preflight_status: G4_4_OF_4_PASS__G5_GRID_FORWARD_RUNNER_PREFLIGHT_PASS_EXECUTION_SEALED
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
@@ -13,6 +13,8 @@ capabilities:
   observed_agent_advantage_required_pairs: 3
   observed_grid_pair_required: true
   grid_historical_observed_dry_run: PASS_NON_COUNTABLE
+  grid_forward_runner_preflight: PASS
+  grid_forward_runner_execution_sealed: true
   g4_closed_jobs_guard: ACTIVE_949_954_955_957
 connectors:
   github:
@@ -24,7 +26,7 @@ connectors:
     testnet_chain_id: 97
     mainnet_readonly_chain_id: 56
   chainlink_bnb_usd:
-    status: READ_ONLY_SOURCE_QUALIFIED_AND_DRY_RUN_USED
+    status: READ_ONLY_SOURCE_QUALIFIED_AND_FORWARD_PREFLIGHT_PASS
     network: bsc-mainnet
     feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
 validation:
@@ -34,35 +36,48 @@ validation:
   g5_grid_market_source_ci_status: PASS
   g5_grid_observed_dry_run_ci: 33843581388
   g5_grid_observed_dry_run_ci_status: PASS
-  g5_grid_observed_dry_run_artifact_id: '9925716870'
-  g5_grid_observed_dry_run_artifact_zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
-  g5_grid_observed_rounds: 25
-  g5_grid_structural_pair_validation: PASS
-  g5_grid_countable_for_final_report: false
+  g5_grid_forward_runner_ci: 33857461378
+  g5_grid_forward_runner_ci_status: PASS
+  g5_grid_forward_runner_validated_head: 19cdf217e9b579dc8c114bedfe742ef500273bff
+  g5_grid_forward_backend_contract: PASS
+  g5_grid_forward_windows_safety: PASS
+  g5_grid_forward_preflight_wallet_used: false
+  g5_grid_forward_preflight_chain_write_attempted: false
+  g5_grid_forward_preflight_countable_pair_created: false
   g5_final_paired_run_count: 0
 current_gate:
-  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-  status: READY_TO_BUILD
-  action_class: CODE_AND_READ_ONLY_PREFLIGHT
-  wallet_unlock_required: false
-  chain_write_allowed: false
+  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  status: HUMAN_AUTHORIZATION_REQUIRED
+  action_class: ONE_BOUNDED_BSC_TESTNET_MARKETPLACE_WRITE_PLUS_FORWARD_READONLY_OBSERVATION
+  runner: scripts/g5-grid-forward-observed-pair.ps1
+  execute_switch_required: true
+  exact_authorization_token: I_AUTHORIZE_ONE_ZERO_PRICE_BSC_TESTNET_GRID_FORWARD_OBSERVED_ACTIVATION
+  wallet_unlock_required: true_local_masked_prompt_after_authorization_guard
+  create_job_allowed: ONE_NEW_GRID_JOB_ONLY
+  service_price_raw: '0'
+  megafuel_primary: true
   bsc_mainnet_read_allowed: true
   bsc_mainnet_write_allowed: false
-  bsc_testnet_write_allowed: false_at_preflight
+  bsc_testnet_write_allowed: true_only_after_explicit_human_gate
   user_capital_allowed: false
   deployment_allowed: false_at_current_subgate
   merge_main_allowed: false
 limitations:
-  - The successful Grid dry run is historical observed-data replay and contributes zero countable pairs.
-  - A countable Grid pair still requires a forward observation window and concrete BSC-testnet marketplace activation reference.
+  - Zero countable Agent Advantage pairs exist so far.
+  - Historical Grid dry-run remains non-countable.
+  - Execution must create a fresh Grid scenario; closed G4 jobs cannot be reused.
+  - Future Chainlink rounds must all occur strictly after marketplace activation completion.
   - Health Factor observed event tape is pending.
   - Public judge deployment is pending.
 next_required_checks:
-  - implement forward-window Grid runner
-  - freeze Promise/config before observation start
-  - preserve a future zero-price BSC-testnet marketplace activation plan without opening writes in CI
-  - collect future Chainlink rounds after activation during later execution
-  - preserve TRANSACTION_TAPE, MARKET_DATA, input, agent, baseline, timing and cost artifacts
-  - run same-state agent-vs-baseline evaluation
-  - keep execution fail-closed until explicit human authorization
-next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
+  - explicit human authorization for one Grid forward execution
+  - pull current branch and verify expected HEAD
+  - freeze fresh Chainlink anchor before wallet prompt/activation
+  - one zero-price BSC-testnet Grid marketplace activation only
+  - preserve exact provider submit tx and transaction tape
+  - collect at least 12 strictly future Chainlink rounds read-only
+  - finalize same-window agent-vs-baseline pair
+  - require countable_for_final_report=true and paired_run_count=1
+  - preserve no-realized-mainnet-PnL claim
+  - stop on first failure with no blind retry
+next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED

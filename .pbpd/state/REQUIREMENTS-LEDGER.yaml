@@ -18,8 +18,8 @@ requirements:
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
-    status: VERIFIED_FOUR_LIVE_CATEGORIES
-    evidence: evidence/g4-yield-job-957-final-pass/README.md
+    status: VERIFIED_FOUR_LIVE_CATEGORIES_AND_G5_FORWARD_FREEZE_PATH
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: MUST-05
     class: MUST
     requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
@@ -48,21 +48,21 @@ requirements:
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
-    status: BLOCKING_0_OF_3_COUNTABLE_PAIRS__GRID_HARNESS_DRY_RUN_PASS_NON_COUNTABLE
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
-    evidence_plan: Execute three forward/countable marketplace-hired pairs; historical dry runs remain excluded.
+    status: BLOCKING_0_OF_3_COUNTABLE_PAIRS__GRID_FORWARD_RUNNER_PREFLIGHT_PASS_EXECUTION_REQUIRED
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    evidence_plan: Execute three countable marketplace-hired forward pairs; first is Grid.
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
-    status: PARTIAL_GRID_OBSERVED_HARNESS_PASS__COUNTABLE_FORWARD_TRADING_PAIR_PENDING
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
-    evidence_plan: Run one forward Grid pair with Promise/marketplace activation before the observation window and preserved transaction tape.
+    status: BLOCKING_GRID_FORWARD_TRADING_RUNNER_PASS__EXECUTION_REQUIRED
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    evidence_plan: Execute one newly frozen zero-price BSC-testnet Grid marketplace activation before the future Chainlink window and preserve transaction tape.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
-    status: VERIFIED_GRID_DRY_RUN_REPRODUCIBILITY__COUNTABLE_FORWARD_PAIR_PENDING
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
-    note: Dry run preserved same immutable 25-round BNB/USD window for agent and baseline plus raw timing/cost/output artifacts.
+    status: VERIFIED_DRY_RUN_AND_FORWARD_RUNNER_REPRODUCIBILITY__COUNTABLE_EXECUTION_PENDING
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    note: Forward runner enforces same future market window, anchor-only configuration and raw timing/cost/output artifacts.
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
@@ -77,7 +77,7 @@ requirements:
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
     status: VERIFIED_CI_AND_LIVE_RUNTIME_FAIL_CLOSED_PATHS
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
@@ -104,7 +104,7 @@ requirements:
     class: MUST_NOT
     requirement: Do not present estimated or synthetic performance as observed real evidence.
     status: ACTIVE_AND_G5_COUNTABILITY_CI_VERIFIED_GUARDRAIL
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: MUST_NOT-02
     class: MUST_NOT
     requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.

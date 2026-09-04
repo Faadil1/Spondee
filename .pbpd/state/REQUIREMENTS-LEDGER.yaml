@@ -3,26 +3,26 @@ requirements:
   - id: MUST-01
     class: MUST
     requirement: Surface all four official categories at equal product depth.
-    status: PARTIAL_BACKEND_EQUAL_DEPTH_VERIFIED_HEALTH_FACTOR_LIVE_OTHER_3_LIVE_PATHS_PENDING
-    evidence: evidence/backend-ci-001/README.md
-    evidence_plan: Qualify and then implement comparable live find-understand-activate depth for Grid, Rebalancing and Yield.
+    status: PARTIAL_BACKEND_EQUAL_DEPTH_VERIFIED_HEALTH_FACTOR_AND_GRID_LIVE_REBALANCING_YIELD_PENDING
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    evidence_plan: Complete comparable live find-understand-activate proof for Rebalancing and Yield.
   - id: MUST-02
     class: MUST
     requirement: Anything represented as activatable must use a real BSC-live agent/path.
-    status: VERIFIED_GUARDRAIL_PLUS_HEALTH_FACTOR_LIVE_PATH
-    evidence: evidence/g3-job-949-final-pass/README.md
-    note: Non-qualified Grid/Rebalancing/Yield paths must remain non-activatable until their live paths are proven.
+    status: VERIFIED_GUARDRAIL_PLUS_HEALTH_FACTOR_AND_GRID_LIVE_PATHS
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    note: Rebalancing and Yield remain non-proven in live until their sequential testnet slices pass.
   - id: MUST-03
     class: MUST
     requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
     status: PARTIAL_BACKEND_SUBSTRATE_BOUNDARY_VERIFIED_DYNAMIC_INTEGRATION_PENDING
     evidence: backend/src/catalog.ts
-    evidence_plan: Use G4 qualification to bind remaining category candidates to 8004scan/ERC-8004 provenance.
+    evidence_plan: Preserve qualified ERC-8004 candidates as discovery/comparison data while controlled Spondee paths provide activation proof.
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
-    status: VERIFIED_BACKEND_SIMULATION_AND_HEALTH_FACTOR_LIVE_PATH
-    evidence: evidence/g3-job-949-final-pass/README.md
+    status: VERIFIED_BACKEND_SIMULATION_HEALTH_FACTOR_AND_GRID_LIVE
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: MUST-05
     class: MUST
     requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
@@ -31,26 +31,26 @@ requirements:
   - id: MUST-06
     class: MUST
     requirement: Category to successful activation has no dead end.
-    status: PARTIAL_HEALTH_FACTOR_LIVE_E2E_PASS_OTHER_3_LIVE_PATHS_PENDING
-    evidence: evidence/g3-job-949-final-pass/README.md
-    evidence_plan: Equivalent activation evidence for Grid, Rebalancing and Yield after G4 qualification.
+    status: PARTIAL_HEALTH_FACTOR_AND_GRID_LIVE_E2E_PASS_REBALANCING_YIELD_PENDING
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    evidence_plan: Equivalent live activation evidence for Rebalancing and Yield.
   - id: MUST-07
     class: MUST
     requirement: Delegated execution authority is visibly bounded.
-    status: PARTIAL_G3_TESTNET_ZERO_PRICE_BOUNDARY_VERIFIED_PRODUCT_VISIBLE_AUTHORITY_UI_PENDING
-    evidence: evidence/g3-job-949-final-pass/README.md
+    status: PARTIAL_G3_G4_TESTNET_ZERO_PRICE_BOUNDARY_VERIFIED_PRODUCT_VISIBLE_AUTHORITY_UI_PENDING
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
     evidence_plan: Allowlist/cap/expiry/revoke evidence in judge-facing activation UI; Altana remains optional.
   - id: MUST-08
     class: MUST
     requirement: Every completed measured run creates an Outcome Receipt.
-    status: PARTIAL_HEALTH_FACTOR_LIVE_TRANSPORT_OUTCOME_RECEIPT_VERIFIED_SIMULATION_OBSERVED_RUNS_PENDING
-    evidence: evidence/g3-job-949-final-pass/README.md
+    status: PARTIAL_HEALTH_FACTOR_AND_GRID_LIVE_TRANSPORT_RECEIPTS_VERIFIED_SIMULATION_OBSERVED_RUNS_PENDING
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: MUST-09
     class: MUST
     requirement: Outcome Receipt binds original promise to actual result.
-    status: VERIFIED_HEALTH_FACTOR_LIVE_PROMISE_RECEIPT_BINDING_SIMULATION_EVIDENCE
-    evidence: evidence/g3-job-949-final-pass/README.md
-    note: Binding is proven; the result remains SIMULATION and is not observed Agent Advantage.
+    status: VERIFIED_HEALTH_FACTOR_AND_GRID_LIVE_PROMISE_RECEIPT_BINDING_SIMULATION_EVIDENCE
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    note: Binding is proven for Health Factor and Grid; both receipts remain SIMULATION and are not observed Agent Advantage.
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
@@ -59,9 +59,9 @@ requirements:
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
-    status: PARTIAL_GRID_BACKEND_SIMULATION_VERIFIED_OBSERVED_TRADING_RUN_PENDING
-    evidence: backend/src/engines.test.ts
-    evidence_plan: Observed Grid Trading experiment after a live Grid path is qualified.
+    status: PARTIAL_GRID_LIVE_TRANSPORT_VERIFIED_SIMULATION_OUTCOME_OBSERVED_TRADING_RUN_PENDING
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    evidence_plan: Run a genuinely observed Grid Trading comparison before claiming measured trading advantage.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
@@ -78,13 +78,13 @@ requirements:
     class: MUST
     requirement: Public product remains accessible during judging.
     status: PENDING_PUBLIC_DEPLOYMENT
-    evidence_plan: Public URL smoke check. Current loopback deliverable URL is not judge-accessible.
+    evidence_plan: Public URL smoke check. Current loopback deliverable URLs are not judge-accessible.
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
     status: VERIFIED_CI_AND_LIVE_RUNTIME_FAIL_CLOSED_PATHS
-    evidence: evidence/g3-job-949-cli-fix/README.md
-    note: Multiple G3 failures were preserved truthfully; Windows false-zero CLI behavior was corrected to require an explicit PASS terminal.
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    note: Grid preserved a truthful post-submit RPC failure, stopped the sequence, recovered without a write retry, and added a CI invariant forbidding the failing historical log-scan path.
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
@@ -122,11 +122,11 @@ requirements:
   - id: MUST_NOT-04
     class: MUST_NOT
     requirement: Do not show an agent as activatable when activation does not work.
-    status: ACTIVE_AND_HEALTH_FACTOR_LIVE_VERIFIED_GUARDRAIL
+    status: ACTIVE_AND_HEALTH_FACTOR_GRID_LIVE_VERIFIED_GUARDRAIL
   - id: MUST_NOT-05
     class: MUST_NOT
     requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.
-    status: ACTIVE_BACKEND_EQUAL_DEPTH_VERIFIED_LIVE_DEPTH_GAP_NOW_PRIMARY
+    status: ACTIVE_LIVE_DEPTH_GAP_REDUCED_GRID_PASS_REBALANCING_YIELD_PENDING
   - id: MUST_NOT-06
     class: MUST_NOT
     requirement: Do not add bonds, auctions, leagues, generic red-team systems or orchestration platforms before core gates pass.

@@ -16,15 +16,16 @@
  *                     once, then in the BACKGROUND: LLM work → `signing.submitResult`
  *
  * `notify_funded` is the buyer's "I funded job X — please deliver"
- * notification. Because the work takes time, the executor does NOT block the
- * caller: the core verifies the funded job synchronously (a couple of
- * eth_calls) to ACK accepted/rejected, then runs the slow LLM work + on-chain
- * `submit` in a background task and replies immediately. The buyer reads the
- * deliverable back from the CHAIN (SUBMITTED / `getDeliverableUrl`) — the
- * chain is the source of truth. While any background delivery is in flight
- * `isBusy` (from `SellerCore`) reports busy, which `main.ts` feeds to
- * AgentCore's `/ping` as `HEALTHY_BUSY` so the scale-to-zero runtime stays
- * warm until the work lands (within the session max-lifetime).
+ * notification. Because the work takes time, the default executor path does
+ * NOT block the caller: the core verifies the funded job synchronously (a
+ * couple of eth_calls) to ACK accepted/rejected, then runs the slow work +
+ * on-chain `submit` in a background task and replies immediately.
+ *
+ * Spondee's bounded local G4 proof may additionally set
+ * `wait_for_result:true`. That opt-in path preserves the same verify-before-
+ * work boundary but waits for the fixed-code submit result so the buyer can
+ * read the exact submit transaction receipt without any historical log scan.
+ * The default Agent Studio contract remains asynchronous.
  *
  * ALL signing is FIXED code in `signing.ts` — NEVER an LLM-callable tool
  * (money is never in the LLM; the LLM only produces the work text, via the
@@ -43,8 +44,8 @@ import {
   type ExecutionEventBus,
   type RequestContext,
 } from "@a2a-js/sdk/server";
-import { isCommerceRateLimitError } from "./requestLimits.js";
-import { SellerCore } from "./sellerCore.js";
+import { isCommerceRateLimitError, limitCommerceOperation } from "./requestLimits.js";
+import { parseJobId, SellerCore } from "./sellerCore.js";
 
 const log = {
   error: (msg: string, e?: unknown) =>
@@ -59,12 +60,50 @@ const log = {
  * `sellerCore.ts` `SellerCore`; this class adds only the A2A entrypoints and
  * request/response wire helpers.
  *
- * The agent exposes ONLY the two paid, structured skills — there is no
- * free-form chat skill. A plain text message (no `{"skill": ...}` DataPart)
- * is rejected: negotiate / notify_funded always need a structured DataPart,
- * so prose never triggers an LLM call or a paid action.
+ * The agent exposes ONLY structured skills — there is no free-form chat
+ * skill. A plain text message (no `{"skill": ...}` DataPart) is rejected.
  */
 export class SellerAgentExecutor extends SellerCore implements AgentExecutor {
+  /**
+   * Spondee-only bounded sync extension for controlled local proof/recovery.
+   *
+   * The normal Agent Studio notify contract remains asynchronous. Only when
+   * `wait_for_result:true` is explicitly supplied do we verify the named
+   * FUNDED job and await its fixed-code submit result. This yields the exact
+   * submit tx hash and deliverable URL without `eth_getLogs` discovery.
+   */
+  async notifyFunded(
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    if (data.wait_for_result !== true) {
+      return super.notifyFunded(data);
+    }
+    if (!this.skills().includes("notify_funded")) {
+      throw new Error("8183 rail disabled");
+    }
+    await limitCommerceOperation("notify_funded");
+    const raw = data.job_id;
+    if (raw === undefined || raw === null || String(raw) === "") {
+      return { status: "rejected", error: "wait_for_result requires job_id" };
+    }
+    let jobId: number;
+    try {
+      jobId = parseJobId(raw);
+    } catch {
+      return { status: "rejected", error: `invalid job_id: ${JSON.stringify(raw)}` };
+    }
+    const verified = await this.signing.verifySignedJob(jobId);
+    if (!verified.ok) {
+      return {
+        status: "rejected",
+        job_id: jobId,
+        reason: verified.reason,
+        permanent: verified.permanent,
+      };
+    }
+    return this.doWorkAndSubmit(jobId, AbortSignal.timeout(120_000));
+  }
+
   /**
    * Text-carrier entrypoint (Foundry invocations / responses SkillRouter).
    *
@@ -88,15 +127,11 @@ export class SellerAgentExecutor extends SellerCore implements AgentExecutor {
       if (skill === "notify_funded") {
         return await this.notifyFunded(data);
       }
-      // Includes a plain text message (no skill envelope → skill is
-      // undefined): the seller has no free-form skill, so prose is rejected
-      // here.
       return {
         error: `unknown skill: ${JSON.stringify(skill)}`,
         skills: this.skills(),
       };
     } catch (e) {
-      // a skill failure must still ACK the buyer
       log.error(`skill ${JSON.stringify(skill)} failed`, e);
       if (isCommerceRateLimitError(e)) {
         return { status: "retry", error: "seller rate limit exceeded", skill };
@@ -121,26 +156,16 @@ export class SellerAgentExecutor extends SellerCore implements AgentExecutor {
       } else if (skill === "notify_funded") {
         result = await this.notifyFunded(data);
       } else {
-        // Includes a plain text message (no DataPart → skill is undefined):
-        // the seller has no free-form skill, so prose is rejected here.
         result = {
           error: `unknown skill: ${JSON.stringify(skill)}`,
           skills: this.skills(),
         };
         if (skill === undefined) {
-          // Most common cause: the caller put the JSON envelope in a
-          // "text" part. Structured skill calls must ride in a DataPart.
           result.hint =
             'send the skill envelope as an A2A data part: parts:[{"kind":"data","data":{"skill":"negotiate",...}}]';
         }
       }
     } catch (e) {
-      // A genuine internal fault is surfaced as a JSON-RPC error, NOT masked
-      // as a successful result. Throwing `A2AError.internalError` is caught
-      // by @a2a-js/sdk's request handler and serialized to a proper -32603
-      // carrying the request id. CLASSIFIED business outcomes are
-      // returned as a result above (peer of the MCP runtime: faults →
-      // isError, business outcomes → result).
       log.error(`skill ${JSON.stringify(skill)} failed`, e);
       if (isCommerceRateLimitError(e)) {
         result = {
@@ -159,11 +184,6 @@ export class SellerAgentExecutor extends SellerCore implements AgentExecutor {
     _taskId: string,
     _eventBus: ExecutionEventBus,
   ): Promise<void> => {
-    // negotiate is synchronous; notify_funded acks then delivers on-chain in
-    // the background — once submitted it is anchored on-chain and cannot be
-    // cancelled via A2A. Nothing to cancel here. (@a2a-js/sdk hands cancel
-    // only a taskId — no message to reply to — so this surfaces as the
-    // standard JSON-RPC unsupported-operation error.)
     throw A2AError.unsupportedOperation("cancel");
   };
 }
@@ -189,8 +209,6 @@ function reply(
     contextId: context.contextId,
     taskId: context.taskId,
   };
-  // publish + finished() — without finished() the event stream never closes
-  // and the caller hangs.
   eventBus.publish(message);
   eventBus.finished();
 }

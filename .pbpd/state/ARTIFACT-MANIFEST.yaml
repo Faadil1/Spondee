@@ -1,259 +1,151 @@
 schema: PBPD-ARTIFACT-MANIFEST-v0.1
-artifacts:
-  - id: ART-001
-    path: README.md
-    type: project_readme
-    status: PRESENT
-  - id: ART-002
+revision: ARTIFACTS-R036-BACKEND-CODE-COMPLETE
+history:
+  previous_manifest_blob_sha: 087a5524f83ccd7a9fcd0aafbb240e01a5ed9a95
+  previous_detail_preserved_in_git_history: true
+canonical_artifacts:
+  - id: ART-R036-001
     path: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
     type: authorization
     status: CANONICAL
-  - id: ART-003
-    path: incoming/PROJECT-BRIEF.md
-    type: project_brief
-    status: CANONICAL
-  - id: ART-004
+  - id: ART-R036-002
     path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
     type: product_requirements_document
     version: '0.1'
-    status: PRD_READY_BY_DECLARATION
-  - id: ART-005
-    external_reference: Faadil1/hackathon-opportunity-intelligence#55
-    type: hoi_authorization_and_concept_lock
-    status: EXTERNAL_REFERENCE
-  - id: ART-006
-    external_reference: Faadil1/pbpd-cowork-system#78
-    type: pbpd_handoff
-    status: EXTERNAL_REFERENCE
-  - id: ART-007
-    path: references/EXTERNAL-RECON-2026-09-03.md
-    type: bounded_external_reconnaissance
-    status: PRESENT
-  - id: ART-008
-    path: work/PRD-VALIDATION-001.md
-    type: prd_validation
-    status: PASS
-  - id: ART-009
-    path: .github/workflows/bnb-agent-studio-preflight.yml
-    type: reproducible_runtime_preflight
-    status: PASS
-    external_run: 33752070626
-  - id: ART-010
-    path: evidence/runtime-preflight-001/README.md
-    type: runtime_preflight_evidence
-    status: PASS
-  - id: ART-011
-    path: work/PRD-READY-DECLARATION.md
-    type: prd_ready_declaration
-    status: PRD_READY
-  - id: ART-012
-    path: reference-agents/health-factor
-    type: specialized_agent_studio_reference_agent
-    status: G3_LIVE_E2E_PASS
-  - id: ART-013
-    path: evidence/g3-health-factor-ci-001/README.md
-    type: g3_health_factor_build_evidence
-    status: PASS_SIMULATION_BUILD
-  - id: ART-014
-    path: backend
-    type: marketplace_backend
-    status: CI_VERIFIED
-    branch: build/backend-complete
-  - id: ART-015
+    status: PRD_READY_CANONICAL
+  - id: ART-R036-003
     path: backend/src/app.ts
-    type: marketplace_rest_api
-    status: CI_VERIFIED
-  - id: ART-016
-    path: backend/src/engines.ts
-    type: four_category_promise_receipt_engines
-    status: CI_VERIFIED_SIMULATION
-  - id: ART-017
+    type: marketplace_rest_api_and_protected_action_surface
+    status: BACKEND_COMPLETE_CI_VERIFIED
+  - id: ART-R036-004
+    path: backend/src/contracts.ts
+    type: product_and_evidence_contracts
+    status: BACKEND_COMPLETE_CI_VERIFIED
+  - id: ART-R036-005
+    path: backend/src/product.ts
+    type: stable_product_bootstrap_metadata
+    status: BACKEND_COMPLETE
+  - id: ART-R036-006
     path: backend/src/store.ts
-    type: memory_and_postgres_persistence
-    status: CI_VERIFIED_CODE
-  - id: ART-018
+    type: memory_postgres_persistence_and_operation_locks
+    status: BACKEND_COMPLETE_CI_VERIFIED
+  - id: ART-R036-007
     path: backend/sql/001_init.sql
-    type: postgres_schema
-    status: PRESENT_NOT_DEPLOYED
-  - id: ART-019
+    type: postgres_schema_including_operation_locks
+    status: DEPLOYABLE_PRESENT
+  - id: ART-R036-008
+    path: backend/src/security.ts
+    type: protected_scopes_and_deployment_readiness
+    status: BACKEND_COMPLETE_CI_VERIFIED
+  - id: ART-R036-009
+    path: backend/src/replay.ts
+    type: read_only_decision_replay
+    schema: spondee.decision-replay.v1
+    status: BACKEND_COMPLETE_CI_VERIFIED
+  - id: ART-R036-010
+    path: backend/src/discovery.ts
+    type: official_8004scan_server_side_readonly_discovery
+    schema: spondee.8004scan-discovery.v1
+    status: BACKEND_COMPLETE_OFFICIAL_API_CI_VERIFIED
+  - id: ART-R036-011
     path: backend/src/evidence.ts
-    type: agent_advantage_and_calibration_engine
-    status: CI_VERIFIED_LOGIC_OBSERVED_DATA_PENDING
-  - id: ART-020
-    path: backend/src/erc8183.ts
-    type: signed_zero_price_erc8183_live_driver
-    status: G3_LIVE_VERIFIED_JOB_949
-  - id: ART-021
-    path: .github/workflows/backend-ci.yml
-    type: complete_backend_ci
-    status: PASS
-  - id: ART-022
-    path: evidence/backend-ci-001/README.md
-    type: backend_evidence_path
-    status: PRESENT
-  - id: ART-023
-    external_reference: Faadil1/Spondee#1
-    type: draft_backend_review_pull_request
-    status: DRAFT_DO_NOT_MERGE
-  - id: ART-024
-    path: backend/src/megafuel-smoke.ts
-    type: bounded_zero_balance_paymaster_probe
-    status: PASS_RUNTIME_EXECUTED
-    external_run: 33802027942
-  - id: ART-025
-    path: .github/workflows/megafuel-smoke.yml
-    type: reproducible_megafuel_runtime_probe
-    status: PASS
-    external_run: 33802027942
-  - id: ART-026
-    path: evidence/megafuel-smoke-001/README.md
-    type: megafuel_zero_balance_sponsorship_evidence
-    status: PASS
-    external_run: 33802027942
-  - id: ART-027
-    path: reference-agents/health-factor/app/agent/src/healthFactor.ts
-    type: compact_promise_commitment_and_task_carrier
-    status: LIVE_FINAL_VERIFIED
-    promise_carrier_prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
-    task_carrier_prefix: 'SPONDEE_TASK_B64_V1:'
-  - id: ART-028
-    path: backend/src/erc8183.test.ts
-    type: compact_commitment_and_megafuel_size_regression_tests
-    status: PASS
-  - id: ART-029
-    path: .github/workflows/g3-health-factor-ci.yml
-    type: g3_compact_commitment_validation
-    status: PASS
-    external_run: 33817846752
-  - id: ART-030
-    path: reference-agents/health-factor/app/agent/src/demoEvidence.ts
-    type: deterministic_evidence_export_using_compact_commitment
-    status: PASS
-  - id: ART-031
-    path: scripts/g3-megafuel-live-e2e.ps1
-    type: canonical_inner_live_e2e_runner
-    status: HISTORICAL_G3_NO_NEW_RUN_AUTHORIZED
-  - id: ART-032
-    path: .pbpd/state/HANDOVER.yaml
-    type: canonical_handover
-    status: CURRENT_G3_PASS_G4_QUALIFICATION_NEXT
-  - id: ART-033
+    type: observed_agent_advantage_and_calibration
+    status: BACKEND_COMPLETE
+  - id: ART-R036-012
+    path: backend/src/observed-evidence.ts
+    type: hardened_countable_observed_pair_contract
+    schema: spondee.agent-advantage-pair.v1
+    status: VERIFIED
+  - id: ART-R036-013
+    path: backend/src/backend-completion.test.ts
+    type: final_backend_integration_regression
+    status: PASS_RUN_33866229883
+  - id: ART-R036-014
+    path: backend/src/security.test.ts
+    type: protected_scope_regression
+    status: PASS_RUN_33866229883
+  - id: ART-R036-015
+    path: backend/src/replay.test.ts
+    type: decision_replay_regression
+    status: PASS_RUN_33866229883
+  - id: ART-R036-016
+    path: backend/src/discovery.test.ts
+    type: dynamic_discovery_regression
+    status: PASS_RUN_33866229883
+  - id: ART-R036-017
+    path: .github/workflows/backend-final-completion.yml
+    type: authoritative_backend_completion_ci
+    status: PASS_RUN_33866229883
+  - id: ART-R036-018
+    path: evidence/backend-final-completion/README.md
+    type: backend_final_completion_evidence
+    status: VERIFIED_PASS
+  - id: ART-R036-019
+    path: backend/README.md
+    type: backend_production_contract_documentation
+    status: FINAL_BACKEND_COMPLETE
+  - id: ART-R036-020
+    path: backend/FRONTEND-CONTRACT.md
+    type: frontend_integration_contract
+    status: FROZEN_FOR_FRONTEND_V1_AFTER_BACKEND_COMPLETION
+  - id: ART-R036-021
+    path: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
+    type: final_product_and_frontend_handoff
+    status: READY_FOR_BENITA
+  - id: ART-R036-022
+    path: .pbpd/state/FRONTEND-HANDOFF.yaml
+    type: machine_readable_frontend_handoff
+    status: READY_FOR_BENITA
+  - id: ART-R036-023
+    path: evidence/g3-job-949-final-pass/README.md
+    type: health_factor_live_transport_evidence
+    status: VERIFIED_CLOSED_SIMULATION_RECEIPT
+  - id: ART-R036-024
+    path: evidence/g4-grid-job-954-final-pass/README.md
+    type: grid_live_transport_evidence
+    status: VERIFIED_CLOSED_SIMULATION_RECEIPT
+  - id: ART-R036-025
+    path: evidence/g4-rebalancing-job-955-final-pass/README.md
+    type: rebalancing_live_transport_evidence
+    status: VERIFIED_CLOSED_SIMULATION_RECEIPT
+  - id: ART-R036-026
+    path: evidence/g4-yield-job-957-final-pass/README.md
+    type: yield_live_transport_evidence
+    status: VERIFIED_CLOSED_SIMULATION_RECEIPT
+  - id: ART-R036-027
+    path: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    type: first_countable_observed_agent_advantage_pair
+    status: VERIFIED_CLOSED_OBSERVED_1_OF_3
+  - id: ART-R036-028
     path: .pbpd/state/PROJECT-STATE.yaml
     type: canonical_project_state
-    status: STATE_R019_G3_PASS
-  - id: ART-034
-    external_reference: human_local_runtime_failure_v1_2026-09-03T23:21:21.084Z
-    type: third_live_e2e_fail_closed_evidence
-    status: VERIFIED_PUBLIC_OUTPUT
-  - id: ART-035
-    external_reference: GitHub Actions run 33817822355
-    type: compact_commitment_backend_ci
-    status: PASS
-    artifact_id: 9917173773
-  - id: ART-036
-    external_reference: GitHub Actions run 33817846752
-    type: compact_commitment_g3_ci
-    status: PASS
-  - id: ART-037
-    path: reference-agents/health-factor/app/agent/src/healthFactor.test.ts
-    type: sanitizer_safe_task_and_commitment_tests
-    status: PASS
-  - id: ART-038
-    path: reference-agents/health-factor/app/agent/src/executorSpondee.test.ts
-    type: encoded_task_notify_funded_roundtrip_tests
-    status: PASS
-  - id: ART-039
-    path: .pbpd/state/DECISION-LOG.yaml
-    type: protocol_decision_record
-    status: CURRENT_G3_CLOSURE_AND_G4_SEQUENCE
-  - id: ART-040
-    external_reference: human_local_runtime_job_948_partial_success_2026-09-03T23:41:03.555Z
-    type: fourth_live_e2e_partial_success_evidence
-    status: VERIFIED_LIVE_CHAIN_THROUGH_FUND
-    job_id: '948'
-  - id: ART-041
-    path: scripts/local-erc8183-deliverable-server.mjs
-    type: localstorage_http_bridge
-    status: LIVE_VERIFIED_JOB_949_MANIFEST
-  - id: ART-042
-    path: backend/src/resume-g3-funded.ts
-    type: funded_job_recovery_verifier
-    status: HISTORICAL_JOB_948_TERMINAL
-  - id: ART-043
-    path: scripts/g3-resume-funded-job.ps1
-    type: funded_job_recovery_runner
-    status: HISTORICAL_DO_NOT_RETRY_JOB_948
-  - id: ART-044
-    path: .github/workflows/g3-funded-recovery-ci.yml
-    type: funded_job_recovery_ci
-    status: PASS
-    external_run: 33819012423
-  - id: ART-045
-    external_reference: human_local_runtime_recovery_failure_2026-09-03T23:53:03.692Z
-    type: job_948_submission_deadline_evidence
-    status: VERIFIED_TERMINAL
-  - id: ART-046
-    path: scripts/g3-megafuel-live-e2e-localstorage.ps1
-    type: integrated_localstorage_live_e2e_wrapper
-    status: HISTORICAL_CONSUMED_BY_JOB_949_NO_NEW_RUN_AUTHORIZED
-  - id: ART-047
-    path: backend/src/g3-expiry.test.ts
-    type: thirty_day_submission_horizon_regression_test
-    status: PASS_AND_LIVE_VERIFIED_JOB_949
-  - id: ART-048
-    path: .github/workflows/g3-live-localstorage-preflight.yml
-    type: final_localstorage_30d_live_preflight
-    status: PASS
-    external_run: 33819854509
-  - id: ART-049
-    external_reference: human_local_runtime_job_949_2026-09-04T00:05:40.534Z
-    type: fifth_live_e2e_runtime_evidence
-    status: VERIFIED_PROVIDER_SUBMIT_CONFIRMED
-    job_id: '949'
-    submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-  - id: ART-050
-    path: evidence/g3-job-949-submitted/README.md
-    type: job_949_chain_proof_record
-    status: VERIFIED_CHAIN_SUBMIT
-  - id: ART-051
-    path: backend/src/verify-g3-submitted.ts
-    type: receipt_based_job_949_and_local_manifest_verifier
-    status: FINAL_HUMAN_PASS
-  - id: ART-052
-    path: backend/src/probe-g3-submit-949.ts
-    type: live_read_only_known_submit_receipt_probe
-    status: PASS_LIVE_CHAIN
-    external_run: 33820803719
-  - id: ART-053
-    path: scripts/g3-verify-submitted-job-949.ps1
-    type: local_read_only_job_949_manifest_verification_runner
-    status: FINAL_HUMAN_PASS
-  - id: ART-054
-    path: .github/workflows/g3-submitted-949-verification.yml
-    type: job_949_receipt_based_verification_ci
-    status: PASS
-    external_runs: [33820803719, 33823556651]
-  - id: ART-055
-    external_reference: GitHub Actions run 33820803719
-    type: independent_job_949_chain_receipt_proof
-    status: PASS
-    job_status: SUBMITTED
-    submit_block: '128964136'
-    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
-  - id: ART-056
-    path: backend/src/verify-g3-submitted-cli.ts
-    type: cross_platform_job_949_verification_cli
-    status: PASS_WINDOWS_NODE24_AND_UBUNTU
-    external_run: 33823556651
-  - id: ART-057
-    path: evidence/g3-job-949-cli-fix/README.md
-    type: windows_false_zero_exit_remediation_evidence
-    status: PASS
-  - id: ART-058
-    path: evidence/g3-job-949-final-pass/README.md
-    type: final_g3_live_e2e_evidence
-    status: VERIFIED_FINAL_PASS
-  - id: ART-059
-    external_reference: Faadil1/spec-kit-orchestration/projects/bnb_agent_studio_build_the_era_2026/convergence.md
-    type: spec_kit_g3_convergence
-    status: CONVERGED_G3_SLICE_NOT_BUILD_CANDIDATE
+    status: STATE_R036_BACKEND_CODE_COMPLETE
+  - id: ART-R036-029
+    path: .pbpd/state/HANDOVER.yaml
+    type: canonical_handover
+    status: CURRENT
+  - id: ART-R036-030
+    path: .pbpd/state/REQUIREMENTS-LEDGER.yaml
+    type: requirements_ledger
+    status: CURRENT
+  - id: ART-R036-031
+    path: .pbpd/state/EVIDENCE-LEDGER.yaml
+    type: evidence_ledger
+    status: CURRENT_R036
+  - id: ART-R036-032
+    path: .pbpd/state/RISK-REGISTER.yaml
+    type: risk_register
+    status: CURRENT
+  - id: ART-R036-033
+    path: .pbpd/state/RUNTIME-STATUS.yaml
+    type: runtime_status
+    status: CURRENT_R036
+external_canonical_refs:
+  - id: EXT-R036-001
+    reference: Faadil1/spec-kit-orchestration/projects/bnb_agent_studio_build_the_era_2026/EXECUTION.yaml
+    type: spec_kit_execution_state
+    status: CONVERGED_BACKEND_COMPLETE
+  - id: EXT-R036-002
+    reference: Faadil1/hackathon-opportunity-intelligence
+    type: winner_intelligence_source_system
+    status: POST_V1_REVIEW_SOURCE

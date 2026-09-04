@@ -1,8 +1,10 @@
 # Spondee Backend → Frontend Contract
 
-Status: `FROZEN_FOR_FRONTEND_V1_PASS`
+Status: `FROZEN_FOR_FRONTEND_V1_AFTER_BACKEND_COMPLETION`
 
-Authoritative backend-freeze CI: `33864316044`; final handoff regression: `33864582617` — PASS.
+Source branch: `build/backend-completion-final`
+
+Authoritative backend-completion CI: `33866229883` — PASS.
 
 Primary source: `GET /v1/product/bootstrap`.
 
@@ -40,20 +42,24 @@ Top-level fields:
 - `evidence`
 - `endpoints`
 
-Use this response to seed navigation, category cards, agent states, demo task templates, live-write readiness and evidence status.
+Use this response to seed navigation, category cards, agent states, demo task templates, live-write readiness, discovery links, replay links and evidence status.
 
-## Catalog semantics
+## Catalog + discovery semantics
 
 `agent.activatable=true` means Spondee has a **verified activation path** for that controlled reference agent.
 
-It does **not** mean a live write is open right now. Before enabling a live action, check:
+It does **not** mean a live write is open right now. Before enabling any live action, check:
 
 - `bootstrap.runtime.live_testnet_write_ready`, or
 - `GET /v1/runtime/readiness`.
 
 `agent.activation_proof.status=VERIFIED_LIVE_TESTNET` is safe to display as a verification badge.
 
-External 8004scan agents remain `UNVERIFIED_EXTERNAL` / discovery-only until an adapter is independently verified.
+Dynamic external discovery is available via:
+
+`GET /v1/discovery/agents?search=&chain_id=&limit=`
+
+External 8004scan agents returned by discovery are always discovery-only and `activatable: false` until an adapter is independently verified. Do not transform discovery metadata into a performance badge.
 
 ## Promise flow
 
@@ -67,8 +73,9 @@ External 8004scan agents remain `UNVERIFIED_EXTERNAL` / discovery-only until an 
 1. `POST /v1/activations` with `{ promise_id, task, mode }`.
 2. `mode` is `SIMULATION` or `LIVE_TESTNET`.
 3. A live activation can be returned as `BLOCKED_LIVE_GATE`; this is a valid truthful state.
-4. For a prepared live activation, the protected runtime action is `POST /v1/activations/:id/live-testnet`.
-5. During long-running live work, poll `GET /v1/activations/:id` to render progress/status while the action request remains pending.
+4. The actual live write endpoint is `POST /v1/activations/:id/live-testnet`.
+5. **Do not call the live write endpoint directly from a browser with a server secret.** It requires the server-only `SPONDEE_ACTION_TOKEN`. A public frontend should either keep live writes disabled for judges or use a trusted server/BFF route with its own user/session authorization.
+6. During long-running live work, poll `GET /v1/activations/:id` to render progress/status while the trusted action request remains pending.
 
 Possible activation statuses:
 
@@ -79,6 +86,29 @@ Possible activation statuses:
 - `CHAIN_SUBMITTED`
 - `COMPLETED`
 - `FAILED`
+
+A backend live action already in `CHAIN_FUNDED`, `CHAIN_SUBMITTED`, `COMPLETED` or `FAILED` is intentionally not auto-retried.
+
+## Decision Replay
+
+Read-only replay:
+
+`GET /v1/activations/:id/replay`
+
+Schema:
+
+`spondee.decision-replay.v1`
+
+Use it to render:
+
+- preserved task inputs;
+- Promise Card;
+- activation authority/network;
+- job/transaction references;
+- Outcome Receipt;
+- update/failure timeline.
+
+Replay never re-executes a financial action.
 
 ## Receipts
 
@@ -91,19 +121,32 @@ Receipt truth rule for current G3/G4 category receipts:
 
 `evidence_class = SIMULATION`
 
-Live BSC transport does not automatically make the scenario observed market evidence.
+Live BSC transport does not automatically make a declared scenario observed market evidence.
 
 ## Evidence / Agent Advantage
 
 Read:
 
 - `GET /v1/evidence/runs`
+- `GET /v1/evidence/runs/:id`
 - `GET /v1/evidence/agent-advantage`
 - `GET /v1/agents/:id/calibration`
 
 The first countable observed pair is Grid job 962. Current product status is 1/3 required pairs. Frontend must support the count changing without architecture changes.
 
 Negative deltas are valid evidence and must not be visually converted into success.
+
+`POST /v1/evidence/baselines` is a **protected server-side ingestion endpoint**, not a normal browser action. It requires `SPONDEE_EVIDENCE_INGEST_TOKEN` and treats existing `run_id` evidence as immutable.
+
+## Production/backend readiness
+
+Read:
+
+`GET /v1/runtime/backend-readiness`
+
+The backend separates code completeness from production configuration. The endpoint can return backend code complete while public deployment is still blocked by missing environment configuration such as durable database/CORS/protected tokens.
+
+The response never returns token values.
 
 ## List APIs
 
@@ -112,7 +155,7 @@ Negative deltas are valid evidence and must not be visually converted into succe
 - `GET /v1/receipts`
 - `GET /v1/evidence/runs`
 
-These are intended for history/evidence views and frontend integration; do not scrape local state files from the browser.
+These are intended for history/evidence views and frontend integration; do not scrape PBPD/local state files from the browser.
 
 ## Hard UI truth boundaries
 
@@ -122,6 +165,7 @@ These are intended for history/evidence views and frontend integration; do not s
 - Verified activation path != currently-open write authority.
 - Failure != valid negative outcome.
 - Insufficient calibration history != a confidence score.
+- External discovery != Spondee activation compatibility.
 
 ## Recommended polling
 
@@ -134,6 +178,8 @@ Frontend V1 may rely on:
 - `spondee.frontend-bootstrap.v1`
 - Promise Card schema `spondee.promise-card.v1`
 - Outcome Receipt schema `spondee.outcome-receipt.v1`
+- Decision Replay schema `spondee.decision-replay.v1`
+- 8004scan discovery schema `spondee.8004scan-discovery.v1`
 - category names/slugs from backend
 - activation status enum above
 

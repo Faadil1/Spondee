@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R030-G5-GRID-OBSERVED-DRY-RUN-PASS-FORWARD-RUNNER-PREFLIGHT-NEXT
+revision: STATE-R031-G5-GRID-FORWARD-RUNNER-PREFLIGHT-PASS-EXECUTION-HUMAN-GATE-NEXT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -10,13 +10,15 @@ authority:
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
   completed_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
   completed_human_gate_status: PASS_2026_09_04
-  current_human_gate: NONE_REQUIRED_FOR_FORWARD_RUNNER_PREFLIGHT
+  completed_implementation_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
+  completed_implementation_gate_status: PASS_RUN_33845758154
+  current_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED_NOT_AUTHORIZED
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_GRID_DRY_RUN_PASS__ZERO_COUNTABLE_PAIRS
+  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_GRID_FORWARD_RUNNER_PREFLIGHT_PASS__ZERO_COUNTABLE_PAIRS
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -29,9 +31,10 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_r030: false
+  material_product_change_from_r031: false
 build:
-  active_branch: build/g4-sequential-live-e2e
+  active_branch: build/g5-grid-forward-observed
+  parent_branch: build/g4-sequential-live-e2e
   base_branch: build/backend-complete
   merge_to_main: NOT_AUTHORIZED
   four_category_live_transport_status: PASS_CLOSED
@@ -45,13 +48,16 @@ build:
   g5_grid_market_source_ci_run: 33842784851
   g5_grid_observed_dry_run_status: PASS_NON_COUNTABLE
   g5_grid_observed_dry_run_ci_run: 33843581388
+  g5_grid_forward_runner_status: PREFLIGHT_PASS_EXECUTION_NOT_AUTHORIZED
+  g5_grid_forward_runner_ci_run: 33845758154
+  g5_grid_forward_validated_head: c59725553793e6927479077205d4e4a91a7e78bb
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   password_or_key_chat_exposure: FORBIDDEN
   create_new_wallet: FORBIDDEN
-  wallet_unlock_required_for_current_gate: false
+  wallet_unlock_required_for_current_gate: false_until_human_execution_gate
 historical_runtime:
   job_948:
     result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
@@ -109,6 +115,7 @@ g5_observed_evidence_protocol:
     - BASELINE_OUTPUT
     - TIMING_LOG
     - COST_LOG
+    - TRANSACTION_TAPE
 g5_grid_market_source:
   status: PASS_READ_ONLY
   source_type: BSC_MAINNET_CHAINLINK_READ_ONLY
@@ -129,7 +136,7 @@ g5_grid_dry_run:
   observation_window:
     start_at: '2026-09-04T06:01:57.000Z'
     end_at: '2026-09-04T06:15:10.000Z'
-  no_lookahead_configuration: true
+  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
   agent_terminal_equity_usd: 9993.479936
   agent_net_return_pct: -0.065201
   agent_max_drawdown_pct: 0.074543
@@ -138,9 +145,6 @@ g5_grid_dry_run:
   baseline_terminal_equity_usd: 9998.06652
   baseline_net_return_pct: -0.019335
   baseline_max_drawdown_pct: 0.056784
-  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-  approximate_terminal_equity_delta_usd: -4.586584
-  approximate_net_return_delta_percentage_points: -0.045866
   structural_pair_validation: PASS
   external_observed_provenance: true
   marketplace_hire_mode: DRY_RUN_REFERENCE_AGENT
@@ -156,7 +160,46 @@ g5_grid_dry_run:
     id: '9925716870'
     name: spondee-g5-grid-observed-dry-run
     zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
-  evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+g5_grid_forward_runner:
+  status: PREFLIGHT_PASS_EXECUTION_GATE_CLOSED
+  authoritative_ci_run: 33845758154
+  validated_head: c59725553793e6927479077205d4e4a91a7e78bb
+  branch: build/g5-grid-forward-observed
+  runner: scripts/g5-grid-forward-observed-pair.ps1
+  backend_task_contract: backend/src/g5-grid-forward.ts
+  backend_activation_verifier: backend/src/g5-grid-forward-erc8183.ts
+  backend_execution_cli: backend/src/live-g5-grid-forward.ts
+  seller_engine: reference-agents/grid/app/agent/src/g5ForwardObserved.ts
+  seller_server: reference-agents/grid/app/agent/src/g5ForwardServer.ts
+  default_runner_mode: READ_ONLY_PREFLIGHT
+  execute_switch_protected: true
+  required_future_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  future_job_scope: ONE_NEW_GRID_G5_BSC_TESTNET_JOB_ONLY
+  service_price_raw: '0'
+  gas_path: MEGAFUEL
+  source_mainnet_mode: READ_ONLY_CHAINLINK_ONLY
+  mainnet_value_movement_implemented: false
+  observation_rule: FIRST_COUNTED_ROUND_STRICTLY_AFTER_PROMISE_FREEZE_AND_MARKETPLACE_FUNDING
+  buyer_round_verification: EXACT_CHAINLINK_ROUND_ID_REREAD
+  baseline: SAME_VERIFIED_FORWARD_ROUNDS_STATIC_50_50
+  preflight_snapshot:
+    source_block: '119873132'
+    freeze_round_id: '55340232221132058636'
+    freeze_price_usd: 721.15762341
+    freeze_updated_at: '2026-09-04T06:46:33.000Z'
+    preflight_frozen_at: '2026-09-04T06:46:46.764Z'
+    target_future_rounds: 8
+    max_wait_seconds: 480
+    encoded_task_bytes: 1216
+    sample_promise_id: spg5_b1e2027530ec7ed48230bd60
+    sample_promise_sha256: bc9eda0feebd000402ef63fb871fbe3a3fe8c08ec4df1378ec7a23b6ff2870bf
+  preflight_wallet_used: false
+  preflight_chain_write_attempted: false
+  preflight_user_capital_used: false
+  preflight_mainnet_value_moved: false
+  execution_gate_open: false
+  countable_pair_created: false
+  evidence: evidence/g5-grid-forward-runner-preflight/README.md
 critical_remaining_gaps:
   observed_agent_advantage:
     required_pairs: 3
@@ -180,27 +223,29 @@ killing_assumptions:
   A-03:
     status: RESOLVED_BY_LIVE_E2E
   A-06:
-    status: PARTIAL_DRY_RUN_PROVES_REPRODUCIBLE_PAIR_HARNESS__COUNTABLE_FORWARD_PAIR_STILL_REQUIRED
+    status: PARTIAL_FORWARD_RUNNER_PREFLIGHT_PASS__FIRST_COUNTABLE_FORWARD_PAIR_EXECUTION_STILL_REQUIRED
 current_gate:
-  id: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
   status: PASS
-  action_class: CODE_AND_READ_ONLY_EXTERNAL_DATA
+  action_class: CODE_AND_READ_ONLY_PREFLIGHT
   chain_write_used: false
   wallet_unlock_used: false
   user_capital_used: false
-next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
+  countable_pair_created: false
+next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
 next_action:
-  owner: PBPD_IMPLEMENTATION
-  action_class: CODE_AND_READ_ONLY_PREFLIGHT
-  primary: Build a forward-window Grid runner that freezes Promise/config before observation, prepares one new zero-price BSC-testnet marketplace activation path, collects future Chainlink rounds, generates the exact same agent/baseline artifact bundle, and remains fail-closed without live credentials/writes during CI.
+  owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
+  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
+  authorization_status: HUMAN_GO_REQUIRED
+  primary: If explicitly authorized, execute exactly one new zero-price G5 Grid BSC-testnet marketplace job, freeze Promise/config before the future window, collect eight future Chainlink BNB/USD rounds after funding, independently verify them, compute the same-window baseline, and validate the first countable Agent Advantage pair.
   constraints:
     - do not rerun jobs 949, 954, 955, or 957
-    - do not count the dry-run pair toward TermiX
-    - no chain write during runner/preflight construction
-    - no wallet unlock during CI/preflight
-    - mainnet data read-only only
+    - exactly one new G5 Grid job if execution gate is opened
+    - no chain write before explicit human gate
+    - mainnet access remains read-only only
     - no meaningful user/mainnet capital
     - no realized-mainnet-PnL claim
-    - execution must be a later explicit human-authorized gate
+    - zero service price and MegaFuel only
+    - fail closed on timeout or first execution error; no blind retry
     - no merge to main
     - no final submission

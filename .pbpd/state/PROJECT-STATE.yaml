@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R029-G5-OBSERVED-EVIDENCE-PREFLIGHT-PASS-GRID-SOURCE-QUALIFIED
+revision: STATE-R030-G5-GRID-OBSERVED-DRY-RUN-PASS-FORWARD-RUNNER-PREFLIGHT-NEXT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -10,13 +10,13 @@ authority:
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
   completed_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
   completed_human_gate_status: PASS_2026_09_04
-  current_human_gate: NONE_REQUIRED_FOR_G5_GRID_IMPLEMENTATION_DRY_RUN
+  current_human_gate: NONE_REQUIRED_FOR_FORWARD_RUNNER_PREFLIGHT
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_OBSERVED_PROTOCOL_PASS__GRID_SOURCE_QUALIFIED
+  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_GRID_DRY_RUN_PASS__ZERO_COUNTABLE_PAIRS
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -29,20 +29,22 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_r029: false
+  material_product_change_from_r030: false
 build:
   active_branch: build/g4-sequential-live-e2e
   base_branch: build/backend-complete
   merge_to_main: NOT_AUTHORIZED
+  four_category_live_transport_status: PASS_CLOSED
   health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED
   grid_status: LIVE_E2E_PASS_JOB_954_CLOSED
   rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED
   yield_status: LIVE_E2E_PASS_JOB_957_CLOSED
-  four_category_live_transport_status: PASS
-  g5_observed_evidence_contract_status: PASS
-  g5_observed_evidence_ci_run: 33842602119
+  g5_observed_evidence_contract_status: PASS_HARDENED_COUNTABILITY
+  g5_observed_evidence_ci_run: 33843642146
   g5_grid_market_source_status: PASS_READ_ONLY
   g5_grid_market_source_ci_run: 33842784851
+  g5_grid_observed_dry_run_status: PASS_NON_COUNTABLE
+  g5_grid_observed_dry_run_ci_run: 33843581388
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
@@ -57,52 +59,23 @@ historical_runtime:
   job_949:
     category: health_factor
     result: G3_FINAL_PASS
-    status: SUBMITTED
-    receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
     no_further_live_run: true
-    evidence: evidence/g3-job-949-final-pass/README.md
+    receipt_evidence_class: SIMULATION
   job_954:
     category: grid
     result: G4_FINAL_PASS_AFTER_READ_ONLY_RECOVERY
-    status: COMPLETED
-    provider_submit_tx: '0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3'
-    receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
     no_further_live_run: true
-    evidence: evidence/g4-grid-job-954-final-pass/README.md
+    receipt_evidence_class: SIMULATION
   job_955:
     category: rebalancing
     result: G4_FINAL_PASS_AFTER_EXISTING_FUNDED_JOB_RECOVERY
-    status: SUBMITTED
-    provider_submit_tx: '0xb69e799bb8668eb93c9d724e42fd3351e13b10a75c22b7236eb58ed680cf3149'
-    receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
     no_further_live_run: true
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    receipt_evidence_class: SIMULATION
   job_957:
     category: yield
     result: G4_FINAL_PASS
-    status: SUBMITTED
-    buyer_address: '0xa9C2A1397F7E5901Af2BB8C40CC9acEdC5aeD770'
-    buyer_balance_before_wei: '0'
-    buyer_balance_after_wei: '0'
-    create_job_tx: '0xa62ec234e3d1d348a56b72fd0974f229c73371787ccc8148f251aab54a5610bd'
-    register_job_tx: '0xcc674932bff4f0842e9078642c77c29f4af8b97eb8b2d9665c9d9ffb8264eb16'
-    set_budget_tx: '0x649ec3dce10b4184f2288db5c6538dff7de6074c124e45eed18e324087fb1d7e'
-    fund_tx: '0xf4b07f73f023922d9560e536710eb956e0fb6be16d514434f630b972eb31455a'
-    provider_submit_tx: '0x35de5f07749c3d0cc6471b20272100b8eeb8b3424a62ecee357904ddfb8800f7'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/957/response'
-    promise_id: sp_54d1d6a04418f5a2f4e5c79c
-    promise_sha256: 3aae9cea505146218d1c3518e625b885983a043ff20635ae08f64beab3a204d6
-    task_schema: spondee.yield.task.v1
-    scenario_id: spondee-yield-live-001
-    manifest_hash_verified: true
-    spondee_receipt_verified: true
-    receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
     no_further_live_run: true
-    evidence: evidence/g4-yield-job-957-final-pass/README.md
+    receipt_evidence_class: SIMULATION
 four_category_closure:
   status: PASS
   live_transport_count: 4
@@ -110,62 +83,86 @@ four_category_closure:
   all_receipt_truth_class: SIMULATION
   observed_agent_advantage_count: 0
   no_further_g4_category_live_runs_authorized: true
-  evidence:
-    - evidence/g3-job-949-final-pass/README.md
-    - evidence/g4-grid-job-954-final-pass/README.md
-    - evidence/g4-rebalancing-job-955-final-pass/README.md
-    - evidence/g4-yield-job-957-final-pass/README.md
 g5_observed_evidence_protocol:
-  status: PASS
+  status: PASS_HARDENED
   schema: spondee.agent-advantage-pair.v1
   implementation: backend/src/observed-evidence.ts
   tests: backend/src/observed-evidence.test.ts
   protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
-  authoritative_ci_run: 33842602119
-  evidence: evidence/g5-observed-evidence-preflight/README.md
+  authoritative_ci_run: 33843642146
   required_pairs: 3
-  observed_pairs: 0
+  countable_pairs: 0
   grid_pair_required: true
   simulation_promotion_allowed: false
+  historical_replay_countable: false
+  dry_run_reference_agent_countable: false
+  countable_marketplace_requirements:
+    - LIVE_BSC_TESTNET_MARKETPLACE
+    - ERC8183_BSC_TESTNET
+    - activation_reference
+    - Promise/freeze before observation window
+    - TRANSACTION_TAPE
+    - non-historical observation mode
   required_raw_artifacts:
     - INPUT_SNAPSHOT
     - AGENT_OUTPUT
     - BASELINE_OUTPUT
-  required_metrics:
-    - time
-    - cost
-    - output_quality
-  grid_record_required:
-    - observation_window
-    - wins_losses_flat
-    - gross_return
-    - net_return
-    - max_drawdown
-    - risk_basis
+    - TIMING_LOG
+    - COST_LOG
 g5_grid_market_source:
   status: PASS_READ_ONLY
   source_type: BSC_MAINNET_CHAINLINK_READ_ONLY
   network: bsc-mainnet
   chain_id: 56
-  feed: BNB_USD
   feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
-  rpc: 'https://bsc-dataseed.bnbchain.org'
-  authoritative_ci_run: 33842784851
-  probe_block: '119867346'
-  observed_round_count: 5
-  latest_probe_price_usd: 724.12684
-  latest_probe_updated_at: '2026-09-04T06:03:03Z'
   wallet_used: false
   chain_write_attempted: false
   user_capital_used: false
-  eligible_as_external_observed_provenance: true
-  evidence: evidence/g5-grid-market-source-readonly/README.md
+g5_grid_dry_run:
+  status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
+  authoritative_ci_run: 33843581388
+  hardened_contract_ci_run: 33843642146
+  pair_id: g5-grid-dry-55340232221132058579
+  scenario_id: g5-grid-dry-run-55340232221132058555-55340232221132058579
+  source_block: '119868943'
+  observed_round_count: 25
+  observation_window:
+    start_at: '2026-09-04T06:01:57.000Z'
+    end_at: '2026-09-04T06:15:10.000Z'
+  no_lookahead_configuration: true
+  agent_terminal_equity_usd: 9993.479936
+  agent_net_return_pct: -0.065201
+  agent_max_drawdown_pct: 0.074543
+  agent_estimated_execution_friction_usd: 4.583333
+  agent_fill_count: 11
+  baseline_terminal_equity_usd: 9998.06652
+  baseline_net_return_pct: -0.019335
+  baseline_max_drawdown_pct: 0.056784
+  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+  approximate_terminal_equity_delta_usd: -4.586584
+  approximate_net_return_delta_percentage_points: -0.045866
+  structural_pair_validation: PASS
+  external_observed_provenance: true
+  marketplace_hire_mode: DRY_RUN_REFERENCE_AGENT
+  activation_reference: null
+  countable_for_final_report: false
+  paired_run_count_after_dry_run: 0
+  final_report_status_after_dry_run: INSUFFICIENT_OBSERVED_EVIDENCE
+  wallet_used: false
+  chain_write_attempted: false
+  user_capital_used: false
+  realized_mainnet_pnl_claimed: false
+  artifact:
+    id: '9925716870'
+    name: spondee-g5-grid-observed-dry-run
+    zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
+  evidence: evidence/g5-grid-observed-pair-dry-run/README.md
 critical_remaining_gaps:
   observed_agent_advantage:
     required_pairs: 3
-    observed_pairs: 0
+    countable_pairs: 0
     trading_pair_required: true
-    trading_pair_observed: false
+    trading_pair_countable: false
     status: BLOCKING
   health_factor_event_tape:
     status: PENDING
@@ -183,32 +180,27 @@ killing_assumptions:
   A-03:
     status: RESOLVED_BY_LIVE_E2E
   A-06:
-    status: OPEN_GRID_FIRST_OBSERVED_PAIR_NOT_YET_EXECUTED
+    status: PARTIAL_DRY_RUN_PROVES_REPRODUCIBLE_PAIR_HARNESS__COUNTABLE_FORWARD_PAIR_STILL_REQUIRED
 current_gate:
   id: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  status: OPEN_NO_CHAIN_WRITE_REQUIRED
+  status: PASS
   action_class: CODE_AND_READ_ONLY_EXTERNAL_DATA
-  objective: Build the first Grid agent-vs-without-agent observed pair harness around qualified BNB/USD provenance, with marketplace-hire semantics and no meaningful capital movement.
-  chain_write_allowed: false
-  wallet_unlock_allowed: false
-  mainnet_read_allowed: true_read_only_only
-  mainnet_write_allowed: false
-  user_capital_allowed: false
-  material_paid_spend_allowed: false
-  observed_claim_allowed_before_valid_pair: false
-  merge_main_allowed: false
-  final_submission_allowed: false
+  chain_write_used: false
+  wallet_unlock_used: false
+  user_capital_used: false
+next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
 next_action:
   owner: PBPD_IMPLEMENTATION
-  action_class: CODE_AND_READ_ONLY_EXTERNAL_DATA
-  primary: Add a separate Grid observed-task/harness that freezes a live BNB/USD observation window, produces actual agent and baseline outputs from the same input, records time/cost/quality/trading metrics, validates the pair bundle, and dry-runs without chain writes.
+  action_class: CODE_AND_READ_ONLY_PREFLIGHT
+  primary: Build a forward-window Grid runner that freezes Promise/config before observation, prepares one new zero-price BSC-testnet marketplace activation path, collects future Chainlink rounds, generates the exact same agent/baseline artifact bundle, and remains fail-closed without live credentials/writes during CI.
   constraints:
-    - do not modify or rerun closed G4 jobs
-    - keep existing SIMULATION task/receipt schemas backward compatible
-    - observed path must have external provenance
-    - with-agent side must preserve marketplace-hire semantics before it can count for TermiX
-    - without-agent baseline must use the same frozen state/window
-    - no realized-mainnet-PnL claim from paper/observed-data execution
-    - no meaningful mainnet/user capital
-    - no new chain write until a later explicit execution gate
-next_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+    - do not rerun jobs 949, 954, 955, or 957
+    - do not count the dry-run pair toward TermiX
+    - no chain write during runner/preflight construction
+    - no wallet unlock during CI/preflight
+    - mainnet data read-only only
+    - no meaningful user/mainnet capital
+    - no realized-mainnet-PnL claim
+    - execution must be a later explicit human-authorized gate
+    - no merge to main
+    - no final submission

@@ -1,5 +1,5 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: G5_GRID_FORWARD_RUNNER_PASS__EXECUTION_GATE_CLOSED
+preflight_status: G5_GRID_FORWARD_RUNNER_PASS__EXECUTION_GATE_AUTHORIZED_NOT_RUN
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
@@ -24,7 +24,7 @@ connectors:
     repository: Faadil1/Spondee
     active_branch: build/g5-grid-forward-observed
   bnb_external_runtime:
-    status: G4_FOUR_OF_FOUR_CLOSED__G5_FORWARD_EXECUTION_NOT_AUTHORIZED
+    status: G4_FOUR_OF_FOUR_CLOSED__G5_ONE_GRID_FORWARD_EXECUTION_AUTHORIZED
     testnet_chain_id: 97
     mainnet_readonly_chain_id: 56
     seller_provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
@@ -71,16 +71,21 @@ validation:
   preflight_chain_write_attempted: false
   preflight_user_capital_used: false
   preflight_mainnet_value_moved: false
+human_authorization:
+  gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  status: AUTHORIZED_2026_09_04_NOT_YET_EXECUTED
+  evidence: evidence/g5-grid-forward-execution-human-go/README.md
+  execution_budget: ONE_NEW_GRID_G5_BSC_TESTNET_JOB_ONLY
 current_gate:
   id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  status: HUMAN_GO_REQUIRED
+  status: AUTHORIZED_NOT_YET_EXECUTED
   action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
   runner: scripts/g5-grid-forward-observed-pair.ps1
   execution_switch: '-Execute'
   exact_human_gate_env: SPONDEE_G5_GRID_FORWARD_HUMAN_GATE=SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  wallet_unlock_required: true_only_if_human_gate_opens
-  new_job_allowed: false_until_human_gate
-  future_new_job_scope: ONE_GRID_G5_JOB_ONLY
+  wallet_unlock_required: true_local_only
+  new_job_allowed: true_exactly_one_grid_g5_job
+  second_job_allowed: false_without_new_human_gate
   g4_jobs_write_allowed: false
   bsc_mainnet_read_allowed: true
   bsc_mainnet_write_allowed: false
@@ -96,8 +101,9 @@ limitations:
   - Public judge deployment is still pending.
   - Health Factor observed warning/intervention evidence remains pending.
 next_required_checks:
-  - human explicitly opens SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  - checkout/pull build/g5-grid-forward-observed
+  - pull the authorized canonical state on build/g5-grid-forward-observed
+  - set the exact human gate environment variable locally
+  - execute the canonical runner once with -Execute
   - verify canonical seller locally without exposing secrets
   - freeze live Chainlink round before marketplace activation
   - create exactly one new zero-price G5 Grid BSC-testnet marketplace job through MegaFuel

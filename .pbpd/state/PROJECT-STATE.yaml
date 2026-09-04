@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R035-BACKEND-PRODUCT-FREEZE-PASS__FRONTEND-HANDOFF-READY
+revision: STATE-R036-BACKEND-CODE-COMPLETE__FINAL-BENITA-HANDOFF-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -10,16 +10,17 @@ authority:
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
   completed_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
   completed_human_gate_status: PASS_JOB_962_2026_09_04
-  completed_backend_gate: SPONDEE_BACKEND_PRODUCT_FREEZE_AND_FRONTEND_HANDOFF
-  completed_backend_gate_status: PASS_RUN_33864316044
-  current_implementation_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  current_implementation_gate_status: NOT_YET_OPENED
+  completed_backend_gate: SPONDEE_BACKEND_FINAL_COMPLETION
+  completed_backend_gate_status: PASS_RUN_33866229883
+  current_backend_gate: NONE_BACKEND_CODE_COMPLETE
+  current_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  current_project_gate_status: NOT_YET_OPENED
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: PARALLEL_FRONTEND_AND_EVIDENCE_BUILD
-  status: BACKEND_FRONTEND_CONTRACT_FROZEN__BENITA_V1_READY__ONE_OF_THREE_OBSERVED_PAIRS
+  status: BACKEND_CODE_COMPLETE__FINAL_FRONTEND_HANDOFF_READY__ONE_OF_THREE_OBSERVED_PAIRS
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -33,56 +34,64 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_r034: false
+  material_product_change_from_r035: false
 build:
-  active_branch: build/backend-product-freeze
-  parent_branch: build/g5-grid-forward-observed
-  parent_head: dcc10efee8a36ce17e7b303fb51fcdb4c5b5481d
+  active_branch: build/backend-completion-final
+  parent_branch: build/backend-product-freeze
   base_branch: build/backend-complete
   merge_to_main: NOT_AUTHORIZED
-  backend_frontend_contract_status: PASS_FROZEN_FOR_V1
-  backend_frontend_contract_ci_run: 33864316044
-  backend_frontend_contract_validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
+  backend_code_status: COMPLETE_FOR_FRONTEND_V1
+  backend_remaining_percentage: 0
+  backend_final_completion_ci_run: 33866229883
+  backend_final_completion_validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
   frontend_bootstrap_schema: spondee.frontend-bootstrap.v1
   frontend_bootstrap_endpoint: /v1/product/bootstrap
-  frontend_handoff_document: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+  frontend_handoff_document: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
   frontend_technical_contract: backend/FRONTEND-CONTRACT.md
   frontend_machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
+  backend_completion_evidence: evidence/backend-final-completion/README.md
   four_category_live_transport_status: PASS_CLOSED
   health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED_SIMULATION_RECEIPT
   grid_status: G4_JOB_954_CLOSED__G5_COUNTABLE_PAIR_JOB_962_CLOSED_PASS
   rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED_SIMULATION_RECEIPT
   yield_status: LIVE_E2E_PASS_JOB_957_CLOSED_SIMULATION_RECEIPT
-backend_freeze:
-  status: PASS_FRONTEND_CONTRACT_FROZEN
-  authoritative_ci_run: 33864316044
-  validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
-  evidence: evidence/backend-product-freeze-frontend-handoff/README.md
-  tests: PASS
+backend_completion:
+  status: PASS_CODE_COMPLETE
+  authoritative_ci_run: 33866229883
+  validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
+  chain_write_attempted_by_completion_ci: false
+  full_backend_regression: PASS
   strict_typescript: PASS
-  four_category_smoke: PASS
-  simulation_truth_boundary: PASS
-  frontend_bootstrap_smoke: PASS
-  cors_allowlist_smoke: PASS
-  bsc_readiness_probe: PASS_READ_ONLY
-  chain_write_attempted: false
-  new_frontend_surfaces:
-    - GET /v1/product/bootstrap
-    - GET /v1/promises
-    - GET /v1/activations
-    - GET /v1/receipts
-    - GET /v1/evidence/runs
-  cors_configuration: SPONDEE_CORS_ORIGINS
-  catalog_activation_proof_model: VERIFIED_PATH_SEPARATE_FROM_CURRENT_WRITE_GATE
-  controlled_reference_agents_live_verified: 4
+  four_category_truth_smoke: PASS
+  simulation_promotion_guard: PASS
+  protected_mutation_surfaces: PASS_IMPLEMENTED
+  decision_replay: PASS_IMPLEMENTED_READ_ONLY
+  dynamic_8004scan_discovery: PASS_IMPLEMENTED_SERVER_SIDE_READ_ONLY
+  official_8004scan_integration_smoke: PASS
+  bsc_testnet_readiness: PASS_READ_ONLY
+  durable_postgres_operation_locks: IMPLEMENTED
+  immutable_evidence_ingestion: IMPLEMENTED
+  deployment_readiness_contract: IMPLEMENTED
+  production_security:
+    live_action_scope: SPONDEE_ACTION_TOKEN
+    evidence_ingest_scope: SPONDEE_EVIDENCE_INGEST_TOKEN
+    tokens_browser_safe: false
+    secret_values_exposed_by_readiness: false
+  schemas:
+    frontend_bootstrap: spondee.frontend-bootstrap.v1
+    decision_replay: spondee.decision-replay.v1
+    discovery: spondee.8004scan-discovery.v1
+    backend_readiness: spondee.backend-deployment-readiness.v1
   backend_architecture_change_required_for_benita_v1: false
+  public_deployment_configuration_complete: false
+  public_deployment_configuration_is_backend_code_gap: false
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   password_or_key_chat_exposure: FORBIDDEN
   create_new_wallet: FORBIDDEN
-  wallet_unlock_required_for_current_gate: false
+  wallet_unlock_required_for_current_project_gate: false
 historical_runtime:
   job_948:
     result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
@@ -147,17 +156,29 @@ g5_observed_evidence_protocol:
   simulation_promotion_allowed: false
   historical_replay_countable: false
   dry_run_reference_agent_countable: false
+frontend_handoff:
+  status: FINAL_BACKEND_COMPLETE_HANDOFF_READY
+  collaborator: Benita
+  source_branch: build/backend-completion-final
+  primary_contract: /v1/product/bootstrap
+  human_handoff: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
+  technical_contract: backend/FRONTEND-CONTRACT.md
+  machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
+  backend_architecture_change_required_before_start: false
+  winner_intelligence_required_before_start: false
+  protected_server_tokens_must_not_be_embedded_in_browser: true
 winner_intelligence_overlay:
-  status: DOCUMENTED_NON_BLOCKING_FOR_BENITA_V1
+  status: DOCUMENTED_POST_V1_FRONTEND_REVIEW
   source_system: Faadil1/hackathon-opportunity-intelligence
   winning_laws_promoted: 0
   win_probability_score_allowed: false
+  frontend_blocker: false
+  backend_rearchitecture_expected: false
   checks:
     - SPONSOR_NATIVE_NECESSITY_CHECK
     - WHOLE_RUBRIC_COVERAGE_CHECK
     - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
     - JUDGE_PATH_LEGIBILITY_CHECK
-  apply_after_frontend_v1_exists: true
   high_priority_blind_spots:
     - FIRST_5S_CORE_CLARITY
     - FIRST_15S_PROGRESS_CLARITY
@@ -165,7 +186,7 @@ winner_intelligence_overlay:
     - RUBRIC_EVIDENCE_SURFACING
     - TRUTHFUL_WAIT_AND_FAILURE_STATES
     - MOBILE_KEYBOARD_REDUCED_MOTION_LEGIBILITY
-critical_remaining_gaps:
+remaining_project_work_not_backend_code:
   observed_agent_advantage:
     required_pairs: 3
     countable_pairs: 1
@@ -175,43 +196,46 @@ critical_remaining_gaps:
   health_factor_event_tape:
     status: PENDING_BLOCKING
     next_pair_target: true
-  public_judge_deployment:
+  public_backend_frontend_deployment:
     status: PENDING_BLOCKING
-  visible_authority_controls:
-    status: BACKEND_GATES_IMPLEMENTED_FRONTEND_SURFACING_PENDING
-  dynamic_8004scan_refresh:
-    status: PARTIAL_NON_BLOCKING_FOR_CONTROLLED_REFERENCE_PATH
+    deployment_configuration_required:
+      - DATABASE_URL
+      - SPONDEE_CORS_ORIGINS
+      - SPONDEE_ACTION_TOKEN
+      - SPONDEE_EVIDENCE_INGEST_TOKEN
+  frontend_v1:
+    status: READY_FOR_BENITA
+  winner_intelligence_trace_review:
+    status: AFTER_FRONTEND_V1
   project_finisher:
     status: NOT_STARTED
-parallel_workstreams:
-  frontend_benita:
-    status: READY_TO_START_V1
-    branch: build/backend-product-freeze
-    primary_contract: /v1/product/bootstrap
-    winner_intelligence_required_before_start: false
-  backend_evidence:
-    status: NEXT_GATE_NOT_OPENED
-    next: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  merge_main:
+    status: NOT_AUTHORIZED
+  final_submission:
+    status: HUMAN_ONLY
 current_gate:
   id: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
   status: NOT_YET_OPENED
+  gate_class: PROJECT_EVIDENCE_NOT_BACKEND_COMPLETION
   action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
   chain_write_allowed: false
   wallet_unlock_allowed: false
+  bsc_mainnet_read_allowed: true_if_required
+  bsc_mainnet_write_allowed: false
   meaningful_user_capital_allowed: false
   material_paid_spend_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
-next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+next_backend_gate: NONE_BACKEND_CODE_COMPLETE
+next_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
 next_action:
-  owner: PBPD_AFTER_GATE_OPEN
-  action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
-  primary: Build and dry-run a Health Factor observed-pair protocol that also closes MUST-13 warning lead-time/response-latency event-tape evidence, while Benita proceeds independently on frontend V1 from the frozen backend contract.
+  owner: PBPD_AFTER_PROJECT_GATE_OPEN
+  primary: Complete the Health Factor observed pair/event tape while Benita builds frontend V1 from the completed backend contract.
   constraints:
     - do not touch closed jobs 949, 954, 955, 957, or 962
     - no mainnet value movement
     - no wallet unlock or BSC-testnet write during implementation/dry-run
     - no guaranteed liquidation-prevention or safety claim
-    - frontend V1 contract changes must be versioned rather than silently breaking spondee.frontend-bootstrap.v1
+    - do not silently break spondee.frontend-bootstrap.v1
     - no merge to main
     - no final submission

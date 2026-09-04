@@ -32,6 +32,16 @@ jobs:
       - name: Install backend dependencies
         working-directory: backend
         run: npm install --no-audit --no-fund --ignore-scripts
+      - name: Prove CLI entrypoint executes on Ubuntu
+        working-directory: backend
+        env:
+          SPONDEE_G3_VERIFY_ENTRYPOINT_SMOKE: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(npx tsx src/verify-g3-submitted-cli.ts)"
+          printf '%s\n' "$output"
+          grep -Fxq 'SPONDEE G3 SUBMITTED JOB 949 CLI ENTRYPOINT: PASS' <<< "$output"
       - name: Backend regression suite
         working-directory: backend
         env:
@@ -72,3 +82,19 @@ jobs:
           if ($errors.Count -gt 0) { throw ($errors | Out-String) }
       - name: Check LocalStorage bridge syntax on Windows Node 24
         run: node --check scripts/local-erc8183-deliverable-server.mjs
+      - name: Install backend dependencies on Windows
+        working-directory: backend
+        run: npm install --no-audit --no-fund --ignore-scripts
+      - name: Prove CLI entrypoint executes on Windows Node 24
+        working-directory: backend
+        shell: powershell
+        env:
+          SPONDEE_G3_VERIFY_ENTRYPOINT_SMOKE: '1'
+        run: |
+          $output = @(& npx tsx src/verify-g3-submitted-cli.ts 2>&1)
+          $exitCode = $LASTEXITCODE
+          $output | ForEach-Object { Write-Host $_ }
+          if ($exitCode -ne 0) { throw "CLI entrypoint smoke failed with exit code $exitCode" }
+          if (-not ($output -contains 'SPONDEE G3 SUBMITTED JOB 949 CLI ENTRYPOINT: PASS')) {
+            throw 'CLI entrypoint did not emit the required Windows smoke terminal.'
+          }

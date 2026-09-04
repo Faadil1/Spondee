@@ -1,0 +1,88 @@
+schema: PBPD-FRONTEND-HANDOFF-v0.1
+project_id: bnb_agent_studio_build_the_era_2026
+project_name: Spondee
+audience: Benita
+source_branch: build/backend-product-freeze
+product_authority: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
+human_handoff: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+technical_contract: backend/FRONTEND-CONTRACT.md
+status: BACKEND_FRONTEND_CONTRACT_FREEZE_PENDING_CI
+product:
+  tagline: Agents, measured by what they deliver.
+  concept: Calibrated Outcome Marketplace + Intervention Advantage
+  hero_category: Health Factor Monitoring
+  primary_path:
+    - LAND
+    - CATEGORY
+    - AGENT
+    - PROMISE_CARD
+    - BOUNDED_ACTIVATE
+    - OUTCOME_RECEIPT
+    - PROMISE_VS_ACTUAL
+    - AGENT_ADVANTAGE_WHEN_AVAILABLE
+categories:
+  - Health Factor Monitoring
+  - Grid Trading
+  - Rebalancing
+  - Yield Optimisation
+backend_contract:
+  bootstrap_endpoint: /v1/product/bootstrap
+  bootstrap_schema: spondee.frontend-bootstrap.v1
+  cors_env: SPONDEE_CORS_ORIGINS
+  promise_schema: spondee.promise-card.v1
+  receipt_schema: spondee.outcome-receipt.v1
+  list_endpoints:
+    - /v1/promises
+    - /v1/activations
+    - /v1/receipts
+    - /v1/evidence/runs
+  live_readiness_endpoint: /v1/runtime/readiness
+verified_activation_paths:
+  health_factor: { job_id: '949', status: VERIFIED_LIVE_TESTNET }
+  grid: { job_id: '954', status: VERIFIED_LIVE_TESTNET }
+  rebalancing: { job_id: '955', status: VERIFIED_LIVE_TESTNET }
+  yield: { job_id: '957', status: VERIFIED_LIVE_TESTNET }
+observed_evidence:
+  required_pairs: 3
+  countable_pairs: 1
+  trading_requirement_satisfied: true
+  first_pair:
+    category: Grid Trading
+    job_id: '962'
+    pair_id: g5-grid-forward-job-962
+    result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD_ON_OBSERVED_WINDOW
+    countable_for_final_report: true
+remaining_evidence_work:
+  - HEALTH_FACTOR_OBSERVED_PAIR_AND_EVENT_TAPE
+  - THIRD_COUNTABLE_OBSERVED_PAIR
+  - PUBLIC_JUDGE_DEPLOYMENT
+winner_intelligence:
+  role: POST_V1_BLIND_SPOT_AND_PRE_SUBMISSION_HEURISTIC_OVERLAY
+  frontend_blocker: false
+  winning_laws_promoted: 0
+  win_probability_score: FORBIDDEN
+  checks:
+    - SPONSOR_NATIVE_NECESSITY_CHECK
+    - WHOLE_RUBRIC_COVERAGE_CHECK
+    - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
+    - JUDGE_PATH_LEGIBILITY_CHECK
+  high_value_frontend_blind_spots:
+    - FIRST_5S_CORE_CLARITY
+    - FIRST_15S_PROGRESS_CLARITY
+    - SIGNATURE_ACTION_TO_VISIBLE_CONSEQUENCE
+    - RUBRIC_EVIDENCE_SURFACING
+    - TRUTHFUL_WAIT_STATE
+    - TRUTHFUL_FAILURE_STATE
+    - MOBILE_GEOMETRY
+    - KEYBOARD_NAVIGATION
+    - REDUCED_MOTION_LEGIBILITY
+truth_boundaries:
+  - SIMULATION_NE_OBSERVED
+  - PAPER_PNL_NE_REALIZED_PNL
+  - IDENTITY_NE_PERFORMANCE
+  - VERIFIED_PATH_NE_CURRENT_WRITE_AUTHORITY
+  - FAILURE_NE_VALID_NEGATIVE_OUTCOME
+  - INSUFFICIENT_HISTORY_NE_CONFIDENCE_SCORE
+benita_v1_can_start_now: true
+benita_v1_should_not_wait_for_winner_intelligence: true
+next_backend_gate_after_freeze: HEALTH_FACTOR_OBSERVED_PAIR_AND_EVENT_TAPE

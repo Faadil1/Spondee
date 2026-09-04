@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R019-G3-HEALTH-FACTOR-LIVE-E2E-PASS
+revision: STATE-R020-G4-LIVE-PATH-QUALIFICATION-PASS
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -12,7 +12,7 @@ authority:
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_HEALTH_FACTOR_LIVE_E2E_COMPLETE__G4_LIVE_PATH_QUALIFICATION_NEXT
+  status: G4_LIVE_PATH_CANDIDATES_QUALIFIED__EXTERNAL_TASK_SURFACE_PROBE_NEXT
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -29,12 +29,12 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_g3: false
+  material_product_change_from_g4: false
 build:
   active_branch: build/backend-complete
   parent_branch: build/g3-health-factor
   backend_status: CI_VERIFIED
-  evidence_class: LIVE_CHAIN_VERIFIED_PLUS_SIMULATION_OUTCOME_RECEIPT
+  evidence_class: LIVE_CHAIN_VERIFIED_HEALTH_FACTOR_PLUS_QUALIFIED_EXTERNAL_DISCOVERY_CANDIDATES
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
@@ -56,72 +56,118 @@ historical_runtime:
     result: G3_FINAL_PASS
     status: SUBMITTED
     buyer_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
-    create_job_tx: '0x7d4c6b2528841068de045a7e037a4f1c88f6adf6f34ee9c353c30b49c110da4c'
-    register_job_tx: '0x64e290a8c119cb3be5dfe27b3126adc7e3932ad86053bb4667acb92615628766'
-    set_budget_tx: '0xc28452786f9be893663f5f0a7c2fef72330341b76e811cf4a76cd2ab3eca9b6d'
-    fund_tx: '0x3e6d9bb9d504d1c80a8dbd32cc65a234cf91c6e503afccff48222f03873a95ef'
     provider_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
     submit_block: '128964136'
-    submitted_at: '1788480369'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
     deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
     promise_id: 'sp_87c1d19f5bc0cda01d586131'
-    promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
     scenario_id: spondee-hf-demo-001
     manifest_hash_verified: true
     spondee_receipt_verified: true
     receipt_evidence_class: SIMULATION
     observed_agent_advantage_claimed: false
-    secrets_printed: false
-    final_conclusion: SPONDEE_G3_SUBMITTED_JOB_949_RECEIPT_VERIFICATION_PASS
     evidence: evidence/g3-job-949-final-pass/README.md
 g3_closure:
   status: PASS
-  live_chain_verified:
-    - signed Promise commitment
-    - sanitizer-safe task carrier
-    - createJob
-    - registerJob
-    - setBudget(0)
-    - fund(0)
-    - provider submit
-    - on-chain deliverable URL/hash
-    - manifest hash verification
-    - Outcome Receipt verification
+  no_further_g3_live_run_authorized: true
   truth_boundary:
     outcome_receipt: SIMULATION
     observed_agent_advantage: NOT_CLAIMED
     public_judging_deployment: NOT_VERIFIED
-  no_further_g3_live_run_authorized: true
+g4_live_path_qualification:
+  status: PASS_WITH_ACTIVATION_PROOF_FOLLOW_ON_REQUIRED
+  evidence: evidence/g4-four-category-live-path-qualification/README.md
+  method: READ_ONLY_8004SCAN_ERC8004_AGENT_STUDIO_AND_PUBLIC_METADATA_RECONNAISSANCE
+  official_constraints_reconfirmed:
+    four_categories_first_class: true
+    activatable_agents_must_be_live_on_bsc: true
+    full_journey_requires_activation_without_dead_end: true
+    observed_agent_advantage_still_required: true
+  architecture_decision: HYBRID_DISCOVERY_PLUS_VERIFIED_EXTERNAL_ACTIVATION_OR_SPONDEE_AGENT_STUDIO_FALLBACK
+  candidate_truth_rule: ERC8004_REGISTRATION_OR_ADVERTISED_ENDPOINT_DOES_NOT_EQUAL_SPONDEE_ACTIVATION_PROOF
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
     live_testnet: G3_LIVE_E2E_PASS
+    activation_status: VERIFIED
   grid:
     backend: SIMULATION_CI_VERIFIED
-    live_path: UNQUALIFIED
+    primary_candidate:
+      name: DeFiBot.agent
+      erc8004_agent_id: '172801'
+      chain: 56
+      category_fit: STRONG
+      provenance: BSC_ERC8004_REGISTRATION_CROSS_CHECKED
+      advertised_protocol: A2A
+      status: QUALIFIED_DISCOVERY_PRIMARY__ACTIVATION_NOT_PROVEN
+    fallback_external:
+      name: TradePilot.agent
+      erc8004_agent_id: '177310'
+      status: QUALIFIED_FALLBACK__ACTIVATION_NOT_PROVEN
+    controlled_fallback: SPONDEE_GRID_AGENT_STUDIO_NOT_DEPLOYED
+    activatable: false
   rebalancing:
     backend: SIMULATION_CI_VERIFIED
-    live_path: UNQUALIFIED
+    primary_candidate:
+      name: BNB LP Range Rebalancer
+      erc8004_agent_id: '265375'
+      chain: 56
+      category_fit: VERY_STRONG_PANCAKESWAP_V3_RANGE_REBALANCING
+      registration_tx: '0x5b9a412ad3157f54ca94c18a547bb5c69bfaeee4c96fdd11dedf949c586c40fb'
+      advertised_protocol: A2A
+      advertised_agent_card: 'https://bnb-lp.172-104-171-139.nip.io/.well-known/agent-card.json'
+      status: QUALIFIED_PRIMARY__PUBLIC_A2A_SURFACE_ADVERTISED__TASK_EXECUTION_NOT_PROVEN
+    fallback_external:
+      name: positioncrew-lp-rebalance.agent
+      erc8004_agent_id: '266231'
+      status: QUALIFIED_FALLBACK__ACTIVATION_NOT_PROVEN
+    controlled_fallback: SPONDEE_REBALANCING_AGENT_STUDIO_NOT_DEPLOYED
+    activatable: false
   yield:
     backend: SIMULATION_CI_VERIFIED
-    live_path: UNQUALIFIED
+    primary_candidate:
+      name: DeFi Trading Agent SperaxOS
+      erc8004_agent_id: '6441'
+      chain: 56
+      category_fit: STRONG
+      provenance: DIRECT_8004SCAN_ACTIVE_BSC
+      advertised_protocols: [A2A, Web]
+      status: QUALIFIED_DISCOVERY_PRIMARY__ACTIVATION_NOT_PROVEN
+    fallback_external:
+      name: DeFiMatrix.agent
+      erc8004_agent_id: '171927'
+      provenance: DIRECT_8004SCAN_ACTIVE_BSC
+      status: QUALIFIED_FALLBACK__ACTIVATION_NOT_PROVEN
+    controlled_fallback: SPONDEE_YIELD_AGENT_STUDIO_NOT_DEPLOYED
+    activatable: false
+killing_assumptions:
+  A-01:
+    prior: NO_CREDIBLE_LIVE_PATH_MAY_EXIST_FOR_REMAINING_CATEGORY
+    current: CANDIDATES_QUALIFIED__ACTIVATION_SURFACE_UNVERIFIED
+    resolved_at_candidate_availability_level: true
+    fully_resolved_for_judge_activation: false
+  A-02:
+    status: RESOLVED_BY_G3_LIVE_E2E
+  A-03:
+    status: RESOLVED_BY_G3_LIVE_E2E
 next_risk:
-  id: A-01
+  id: G4-ACTIVATION-SURFACE
   severity: CRITICAL
-  statement: Credible BSC-live paths for Grid, Rebalancing and Yield remain unqualified; four-category equal depth is the primary submission metric.
+  statement: External candidates are live/registered on BSC but their actual task invocation surfaces are not yet proven sufficiently to mark them activatable in Spondee.
 next_action:
   owner: PBPD_ORCHESTRATION
-  action_class: READ_ONLY_RECONNAISSANCE_AND_QUALIFICATION
-  primary: Qualify one credible BSC-live/Agent Studio or discoverable ERC-8004 path for Grid Trading, Rebalancing and Yield Optimisation; record provenance, activation feasibility and blockers before consequential deployment/build expansion.
+  action_class: READ_ONLY_ENDPOINT_AND_TASK_SURFACE_PROBE
+  primary: Probe the public Agent Card/service/task metadata for DeFiBot 172801, BNB LP Range Rebalancer 265375 and SperaxOS 6441; verify identity binding, auth/payment requirements and usable invocation surface without signing, paying or sending a transaction.
+  fallback_rule: If a primary cannot be verified quickly, probe its named external fallback; if no clean external activation surface is proven for that category, promote the corresponding Spondee Agent Studio reference-agent build fallback at the next consequential build gate.
   constraints:
-    - do not create new live jobs merely for reconnaissance
+    - do not create new live jobs merely for probing
     - do not unlock seller wallet
     - do not acquire tBNB
-    - do not deploy remaining categories yet
-    - do not start Altana or PancakeSwap bonus-depth work
+    - do not pay x402 or sign auth
+    - do not grant Altana sessions
+    - do not perform PancakeSwap or other DeFi transactions
+    - do not deploy remaining Spondee category agents yet
     - do not merge to main
     - do not invoke Project Finisher
     - do not submit
-next_gate: SPONDEE_G4_FOUR_CATEGORY_LIVE_PATH_QUALIFICATION_REQUIRED
+next_gate: SPONDEE_G4_EXTERNAL_A2A_TASK_SURFACE_READ_ONLY_PROBE_REQUIRED

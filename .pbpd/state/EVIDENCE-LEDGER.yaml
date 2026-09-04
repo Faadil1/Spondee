@@ -2,12 +2,12 @@ schema: PBPD-EVIDENCE-LEDGER-v0.1
 claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
-    truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_LIVE_CHAIN_THROUGH_PROVIDER_SUBMIT_LOCAL_RECEIPT_VERIFY_PENDING
+    truth_class: FACT
+    status: VERIFIED_HEALTH_FACTOR_G3_LIVE_E2E
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
     truth_class: FACT
-    status: VERIFIED_ALL_FOUR_BACKEND_CATEGORIES_IN_SIMULATION
+    status: VERIFIED_ALL_FOUR_BACKEND_CATEGORIES_IN_SIMULATION_AND_HEALTH_FACTOR_LIVE
   - id: CLM-003
     claim: Promise-to-actual calibration can be measured from preserved evidence.
     truth_class: HYPOTHESIS
@@ -15,7 +15,7 @@ claims:
   - id: CLM-004
     claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION_LIVE_SUBMIT_PROVEN_LOCAL_RECEIPT_VERIFY_PENDING
+    status: PARTIALLY_VERIFIED_LIVE_ACTIVATION_AND_SIMULATION_RECEIPT_OBSERVED_EVENT_TAPE_PENDING
   - id: CLM-005
     claim: Three observed Agent Advantage paired experiments can be completed before submission.
     truth_class: HYPOTHESIS
@@ -23,7 +23,7 @@ claims:
   - id: CLM-006
     claim: All four required categories can reach comparable find-understand-activate depth.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_BACKEND_SIMULATION_DEPTH_ONLY
+    status: PARTIALLY_VERIFIED_BACKEND_SIMULATION_HEALTH_FACTOR_LIVE_ONLY
   - id: CLM-007
     claim: The current Agent Studio runtime can install, reach BSC testnet, scaffold and diagnose a Spondee reference-agent workspace without secrets.
     truth_class: FACT
@@ -31,11 +31,11 @@ claims:
   - id: CLM-008
     claim: The G3 Health Factor Promise provenance can be bound into ERC-8183 signable terms before signing.
     truth_class: FACT
-    status: VERIFIED_LIVE_CREATE_JOB_WITH_COMPACT_SUCCESS_CRITERIA_COMMITMENT
+    status: VERIFIED_LIVE_COMPACT_COMMITMENT_THROUGH_FINAL_RECEIPT
   - id: CLM-009
     claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
     truth_class: FACT
-    status: VERIFIED_LOCAL_RUNTIME_MANIFEST_GENERATION_AND_ONCHAIN_SUBMIT_LOCAL_MANIFEST_HASH_VERIFY_PENDING
+    status: VERIFIED_LIVE_JOB_949_MANIFEST_AND_OUTCOME_RECEIPT
   - id: CLM-010
     claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
     truth_class: FACT
@@ -47,7 +47,7 @@ claims:
   - id: CLM-012
     claim: Spondee backend automatically excludes simulation evidence from observed Agent Advantage and calibration statistics.
     truth_class: FACT
-    status: VERIFIED_CI
+    status: VERIFIED_CI_AND_FINAL_G3_TRUTH_BOUNDARY
   - id: CLM-013
     claim: Spondee backend has a deployable durable persistence path without requiring it for local demo/CI.
     truth_class: FACT
@@ -59,7 +59,7 @@ claims:
   - id: CLM-015
     claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
     truth_class: FACT
-    status: VERIFIED_CODE_FAIL_CLOSED_TESTS_AND_LIVE_CHAIN_THROUGH_PROVIDER_SUBMIT
+    status: VERIFIED_CODE_FAIL_CLOSED_TESTS_AND_LIVE_G3_COMPLETE
   - id: CLM-016
     claim: MegaFuel can sponsor bounded ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
     truth_class: FACT
@@ -67,11 +67,11 @@ claims:
   - id: CLM-017
     claim: Spondee can preserve Promise provenance across official SDK negotiation serialization without embedding the full Promise Card on chain.
     truth_class: FACT
-    status: VERIFIED_LIVE_COMPACT_SHA256_COMMITMENT_THROUGH_SUBMIT_RECEIPT
+    status: VERIFIED_LIVE_COMPACT_SHA256_COMMITMENT_THROUGH_FINAL_RECEIPT
   - id: CLM-018
     claim: Health Factor stress_path task arrays can survive official SDK claim sanitization without semantic corruption.
     truth_class: FACT
-    status: VERIFIED_LIVE_TASK_RECONSTRUCTION_AND_LOCAL_DELIVERABLE_GENERATION
+    status: VERIFIED_LIVE_TASK_RECONSTRUCTION_AND_OUTCOME_RECEIPT
   - id: CLM-019
     claim: A representative compact Health Factor live JobDescription fits the Spondee 1600-byte conservative MegaFuel application budget.
     truth_class: FACT
@@ -88,6 +88,10 @@ claims:
     claim: A known provider submit transaction receipt can deterministically prove JobSubmitted and JobInitialised for job 949 without a historical eth_getLogs scan.
     truth_class: FACT
     status: VERIFIED_LIVE_CI_JOB_949
+  - id: CLM-023
+    claim: The existing local job 949 manifest matches the on-chain deliverable hash and contains a valid Spondee Outcome Receipt bound to the signed Promise/scenario.
+    truth_class: FACT
+    status: VERIFIED_HUMAN_LOCAL_READ_ONLY_FINAL_PASS
 
 evidence:
   - id: EV-001
@@ -163,24 +167,11 @@ evidence:
     head_commit: 3a5445d5b9967cf4553cb485fc6426cce9a8c448
     artifact_id: 9917173773
     artifact_digest: sha256:9b76397096b106dc4d9e455b6a97402311cb08981537fb9bd30e48008e93e736
-    supports:
-      - 28/28 backend tests
-      - compact signed Promise commitment
-      - tamper guards
-      - Base64URL sanitizer-safe task
-      - representative live JobDescription within 1600-byte budget
-      - strict TypeScript build
-      - read-only BSC readiness
     status: VERIFIED_PASS
   - id: EV-015
     type: compact_commitment_g3_ci
     workflow_run_id: 33817846752
     head_commit: 2c86096949c27b354bef68154e93c54abb016ab9
-    supports:
-      - seller compact Promise commitment
-      - encoded task through negotiate and notify_funded
-      - deterministic Promise reconstruction
-      - Ubuntu and Windows validation
     status: VERIFIED_PASS
   - id: EV-016
     type: fourth_live_health_factor_partial_success
@@ -194,13 +185,6 @@ evidence:
       register_job: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
       set_budget: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
       fund: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
-    supports:
-      - compact signed Promise commitment accepted live
-      - sanitizer-safe task accepted live
-      - MegaFuel sponsored complete buyer chain sequence through fund
-      - seller reconstructed deterministic work and generated local deliverable
-      - zero user funds/tBNB used
-      - provider submit blocked only by missing HTTP deliverable URL configuration
     status: VERIFIED_LIVE_CHAIN_PARTIAL_SUCCESS
   - id: EV-017
     type: job_948_recovery_public_failure
@@ -209,28 +193,11 @@ evidence:
     failed_at: '2026-09-03T23:53:03.692Z'
     job_id: '948'
     error_class: SUBMISSION_DEADLINE_PASSED
-    supports:
-      - job 948 remained FUNDED
-      - HTTP bridge was no longer the observed blocker
-      - provider submit was rejected before broadcast because expiredAt - disputeWindow was already in the past
-      - 600-second quickstart slack is insufficient for deterministic recovery
     status: VERIFIED_TERMINAL_RUNTIME_EVIDENCE
   - id: EV-018
     type: final_localstorage_30d_preflight
     workflow_run_id: 33819854509
     head_commit: 1c4b83b92524808731271e132981e4c48c3b62e3
-    artifacts:
-      - scripts/local-erc8183-deliverable-server.mjs
-      - scripts/g3-megafuel-live-e2e-localstorage.ps1
-      - backend/src/g3-expiry.test.ts
-      - backend/src/erc8183.ts
-    supports:
-      - integrated LocalStorage HTTP bridge
-      - 30-day provider submission horizon
-      - backend regression suite
-      - strict TypeScript build
-      - Ubuntu wrapper parsing and HTTP bridge health
-      - Windows wrapper parsing and Node 24 server syntax
     status: VERIFIED_PASS
   - id: EV-019
     type: fifth_live_health_factor_job_949_runtime
@@ -252,11 +219,6 @@ evidence:
       wallet_paid_wei: '0'
       deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
     runner_error: JobInitialised scan for job 949 hit the RPC range/rate limit; retry later
-    supports:
-      - five-stage live chain path through provider submit
-      - LocalStorage HTTP deliverable URL publication
-      - zero wallet-paid gas on provider submit
-      - runner failure occurred only after submit confirmation
     status: VERIFIED_LIVE_CHAIN_SUBMITTED
   - id: EV-020
     type: job_949_receipt_based_chain_verification
@@ -277,16 +239,28 @@ evidence:
     backend_tests: PASS_29_OF_29
     typescript_build: PASS
     windows_parse: PASS
-    supports:
-      - known submit transaction receipt is successful
-      - JobSubmitted and JobInitialised for job 949 are present in the same receipt
-      - both receipt events bind the same deliverable hash
-      - on-chain getJob(949) status is SUBMITTED
-      - on-chain provider is canonical Spondee seller
-      - on-chain deliverable hash matches receipt
-      - signed task and Promise commitment resolve to the canonical scenario and Promise
-      - no eth_getLogs scan is required for this proof
     status: VERIFIED_PASS
+  - id: EV-021
+    type: job_949_final_local_manifest_and_outcome_receipt_verification
+    source: human_local_runtime_public_pass_v1
+    evidence_record: evidence/g3-job-949-final-pass/README.md
+    job_id: '949'
+    job_status: SUBMITTED
+    submit_transaction_hash: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
+    submit_block: '128964136'
+    submitted_at: '1788480369'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
+    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
+    promise_id: 'sp_87c1d19f5bc0cda01d586131'
+    promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
+    scenario_id: spondee-hf-demo-001
+    manifest_hash_verified: true
+    spondee_receipt_verified: true
+    evidence_class: SIMULATION
+    observed_agent_advantage_claimed: false
+    secrets_printed: false
+    conclusion: SPONDEE_G3_SUBMITTED_JOB_949_RECEIPT_VERIFICATION_PASS
+    status: VERIFIED_FINAL_G3_PASS
 
 verification_events:
   - id: VER-001
@@ -361,12 +335,17 @@ verification_events:
     event: Independent receipt-based verifier proved job 949 SUBMITTED, canonical provider, on-chain LocalStorage URL, matching deliverable hash and signed Promise commitment without eth_getLogs.
     result: PASS_JOB_949_SUBMITTED_RECEIPT_PROOF_NO_ETH_GETLOGS
     evidence: GitHub Actions run 33820803719 / EV-020
+  - id: VER-016
+    at: '2026-09-04T00:51:00Z'
+    event: Human-local read-only verifier served the existing job 949 manifest, matched its hash to the on-chain deliverable and verified the Spondee Outcome Receipt against the signed Promise/scenario.
+    result: PASS_G3_FINAL_MANIFEST_AND_OUTCOME_RECEIPT
+    evidence: EV-021
 
 contradictions:
   - id: CON-001
     topic: testnet_gas_sponsorship
     observation: Earlier signals conflicted on whether tBNB was required for ERC-8183 writes.
-    handling: Runtime evidence now includes the complete Spondee live sequence through provider submit with zero wallet-paid gas; tBNB remains fallback-only.
+    handling: Runtime evidence includes the complete Spondee live sequence through provider submit with zero wallet-paid gas; tBNB remains fallback-only.
     status: RESOLVED_BY_RUNTIME_PROOF
   - id: CON-002
     topic: custom_negotiation_term_survival
@@ -398,3 +377,8 @@ contradictions:
     observation: The SDK deliverable URL resolver hit an RPC range/rate limit after job 949 provider submit had already been confirmed, causing the local runner to report failure despite the successful lifecycle transition.
     handling: Use the known submit transaction receipt to decode JobSubmitted and JobInitialised directly, plus direct getJob(949), eliminating historical eth_getLogs from the recovery proof.
     status: RESOLVED_BY_RECEIPT_BASED_LIVE_CI_PROOF
+  - id: CON-008
+    topic: windows_cli_zero_exit_vs_actual_verification_execution
+    observation: Two local Windows runs exited 0 without executing the verifier because a hand-built import.meta.url guard did not match Windows file URL semantics.
+    handling: Dedicated CLI entrypoint plus wrapper requirement for an explicit PASS terminal; cross-platform run 33823556651 passed including Windows Node 24.
+    status: RESOLVED_AND_FINAL_HUMAN_PASS_CONFIRMED

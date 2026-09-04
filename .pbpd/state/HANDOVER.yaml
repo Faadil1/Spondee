@@ -10,99 +10,91 @@ handover:
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    G4 four-category live transport is closed PASS. Health Factor 949, Grid 954,
-    Rebalancing 955 and Yield 957 MUST NOT be rerun. All four current Outcome Receipts
-    are SIMULATION and MUST NOT be counted as observed Agent Advantage.
+    G4 four-category live transport is closed PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
+    All current G3/G4 Outcome Receipts are SIMULATION and count as zero observed Agent Advantage pairs.
 
-  current_milestone: G4_FOUR_CATEGORY_LIVE_TRANSPORT_PASS__G5_OBSERVED_EVIDENCE_PREFLIGHT
-  lifecycle_status: G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN
+  current_milestone: G5_OBSERVED_EVIDENCE_PREFLIGHT_PASS__GRID_MARKET_SOURCE_READONLY_PASS
+  lifecycle_status: G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN
 
   authority:
     project: PROJECT_AUTHORIZED
     completed_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
     completed_gate_status: PASS
-    current_gate: SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED
-    current_action_class: CODE_AND_READ_ONLY_EVIDENCE_DESIGN
+    current_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+    current_action_class: CODE_AND_READ_ONLY_EXTERNAL_DATA
     production_owner: PBPD
-    local_runtime_owner: HUMAN_WHEN_LATER_REQUIRED
+    protected_external_action_owner: HUMAN
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY
     merge_to_main: NOT_AUTHORIZED
 
   four_category_live_transport:
     status: PASS_CLOSED
-    count: 4
-    required: 4
-    health_factor:
-      job_id: '949'
-      status: PASS_CLOSED
-      evidence: evidence/g3-job-949-final-pass/README.md
-    grid:
-      job_id: '954'
-      status: PASS_CLOSED
-      evidence: evidence/g4-grid-job-954-final-pass/README.md
-    rebalancing:
-      job_id: '955'
-      status: PASS_CLOSED
-      evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-    yield:
-      job_id: '957'
-      status: PASS_CLOSED
-      buyer_address: '0xa9C2A1397F7E5901Af2BB8C40CC9acEdC5aeD770'
-      provider_submit_tx: '0x35de5f07749c3d0cc6471b20272100b8eeb8b3424a62ecee357904ddfb8800f7'
-      promise_id: sp_54d1d6a04418f5a2f4e5c79c
-      promise_sha256: 3aae9cea505146218d1c3518e625b885983a043ff20635ae08f64beab3a204d6
-      buyer_balance_before_wei: '0'
-      buyer_balance_after_wei: '0'
-      manifest_hash_verified: true
-      spondee_receipt_verified: true
-      evidence: evidence/g4-yield-job-957-final-pass/README.md
+    jobs:
+      health_factor: '949'
+      grid: '954'
+      rebalancing: '955'
+      yield: '957'
+    receipts: SIMULATION_ONLY
+    observed_pairs_contributed: 0
 
-  truth_boundary:
-    current_live_receipts: SIMULATION_ONLY
-    observed_agent_advantage_pairs: 0
-    required_observed_pairs: 3
-    trading_pair_required: true
-    simulation_can_count_as_observed: false
+  g5_observed_evidence_contract:
+    status: PASS
+    schema: spondee.agent-advantage-pair.v1
+    implementation: backend/src/observed-evidence.ts
+    tests: backend/src/observed-evidence.test.ts
+    protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+    authoritative_ci_run: 33842602119
+    evidence: evidence/g5-observed-evidence-preflight/README.md
+    required_pairs: 3
+    grid_pair_required: true
+    simulation_to_observed_promotion: FORBIDDEN
 
-  g5_observed_evidence:
-    status: DESIGN_AND_PREFLIGHT_REQUIRED
-    prd_requirements:
-      - MUST-10 three observed paired tasks
-      - MUST-11 at least one trading-related measured task
-      - MUST-12 observed or reproducible baseline timings/costs/results
-      - MUST-13 Health Factor useful warning lead time and response latency
-    existing_report_engine: backend/src/evidence.ts
-    current_report_behavior: SIMULATION_EXCLUDED_AND_READY_ONLY_AT_THREE_OBSERVED_PAIRS
-    first_priority: FREEZE_OBSERVED_EVIDENCE_PROTOCOL
-    candidate_pair_sequence:
-      - GRID_TRADING_OBSERVED_PAIR_REQUIRED
-      - HEALTH_FACTOR_OBSERVED_EVENT_TAPE_PAIR
-      - YIELD_OR_REBALANCING_OBSERVED_PAIR
-    constraints:
-      - same initial state/window or reproducible baseline protocol
-      - immutable scenario/run IDs
-      - preserve raw timings costs and outputs
-      - no synthetic estimate promoted to OBSERVED
-      - no meaningful mainnet/user capital without explicit human authority
+  g5_grid_market_source:
+    status: PASS_READ_ONLY
+    implementation: backend/src/probe-g5-grid-market-source.ts
+    authoritative_ci_run: 33842784851
+    source: Chainlink BNB/USD on BNB Chain mainnet
+    feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
+    probe_block: '119867346'
+    observed_round_count: 5
+    latest_probe_price_usd: 724.12684
+    latest_probe_updated_at: '2026-09-04T06:03:03Z'
+    wallet_used: false
+    chain_write_attempted: false
+    user_capital_used: false
+    evidence: evidence/g5-grid-market-source-readonly/README.md
+
+  g5_first_pair_target:
+    category: Grid Trading
+    requirement_reason: TermiX requires at least one trading/stock/security pair and trading agents need a record with window and risk.
+    execution_goal: actual with-agent output vs actual without-agent baseline under the same frozen observed BNB/USD window.
+    marketplace_hire_semantics_required: true
+    raw_outputs_required: true
+    time_cost_quality_required: true
+    trading_record_required: true
+    meaningful_capital_required: false
+    current_status: IMPLEMENTATION_AND_DRY_RUN_REQUIRED
 
   public_deployment:
-    status: PENDING_AFTER_OR_IN_PARALLEL_WITH_OBSERVED_EVIDENCE_BUILD
+    status: PENDING
     current_loopback_deliverables_judge_accessible: false
 
-  exact_next_gate: SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED
+  exact_next_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
   exact_next_owner: PBPD_IMPLEMENTATION
   exact_next_action: >-
-    Freeze the observed paired-experiment protocol, add raw evidence schemas and validators,
-    add negative tests preventing SIMULATION-to-OBSERVED promotion, and identify a first bounded
-    observed experiment that does not require meaningful real mainnet/user capital.
+    Implement a backward-compatible Grid observed-task/harness using qualified Chainlink BNB/USD
+    provenance, same-state/window agent-vs-baseline measurement and strict pair validation. Dry-run
+    the full evidence pipeline with no chain writes before opening an observed experiment execution gate.
 
   stop_conditions:
     - do not rerun jobs 949, 954, 955, or 957
-    - do not claim observed Agent Advantage from any existing simulation receipt
-    - no meaningful mainnet/user capital without explicit human authority
+    - do not relabel existing SIMULATION receipts as OBSERVED
+    - no chain write at the current gate
+    - mainnet access is read-only only
+    - no meaningful user/mainnet capital
     - no material paid spend
-    - no unsupported return/safety claim
+    - no realized-mainnet-PnL claim from paper or observed-data execution
     - no merge to main
     - no Project Finisher yet
     - no final submission

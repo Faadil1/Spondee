@@ -5,114 +5,122 @@ handover:
   date: 2026-09-04
   source_of_truth: GITHUB
   repository: Faadil1/Spondee
-  branch: build/g5-grid-forward-observed
+  branch: build/backend-product-freeze
 
   resume_rule: >-
-    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
-    evidence, runtime and risk ledgers. Canonical GitHub state outranks chat memory.
-    G4 is closed 4/4 PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
-    G5 Grid job 962 is also CLOSED after producing the first countable observed Agent Advantage pair.
-    The pair underperformed the baseline and that negative result is part of the preserved evidence.
+    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, FRONTEND-HANDOFF,
+    REQUIREMENTS-LEDGER, RUNTIME-STATUS and RISK-REGISTER. The backend/frontend contract is frozen
+    on build/backend-product-freeze after CI run 33864316044. Benita may build frontend V1 from
+    /v1/product/bootstrap without waiting for remaining observed-pair evidence. Jobs 949, 954, 955,
+    957 and 962 are CLOSED and MUST NOT be rerun or mutated.
 
-  current_milestone: G5_GRID_FIRST_COUNTABLE_PAIR_PASS
-  lifecycle_status: ONE_OF_THREE_COUNTABLE_PAIRS_COMPLETE__TRADING_REQUIREMENT_SATISFIED__HEALTH_FACTOR_OBSERVED_PAIR_NEXT
+  current_milestone: BACKEND_PRODUCT_FREEZE_AND_FRONTEND_HANDOFF_PASS
+  lifecycle_status: FRONTEND_V1_READY_IN_PARALLEL__ONE_OF_THREE_COUNTABLE_PAIRS_COMPLETE
 
   authority:
     project: PROJECT_AUTHORIZED
-    completed_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-    completed_gate_status: PASS_JOB_962_2026_09_04
-    current_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-    current_gate_status: NOT_YET_OPENED
-    current_action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
+    completed_backend_gate: SPONDEE_BACKEND_PRODUCT_FREEZE_AND_FRONTEND_HANDOFF
+    completed_backend_gate_status: PASS_RUN_33864316044
+    current_backend_evidence_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+    current_backend_evidence_gate_status: NOT_YET_OPENED
+    current_action_class: NO_CHAIN_WRITE__PARALLEL_FRONTEND_AND_EVIDENCE_BUILD
     production_owner: PBPD
+    frontend_collaborator: Benita
     protected_external_action_owner: HUMAN
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY_NOT_OPENED
     merge_to_main: NOT_AUTHORIZED
 
-  four_category_live_transport:
-    status: PASS_CLOSED
-    jobs:
-      health_factor: '949'
-      grid: '954'
-      rebalancing: '955'
-      yield: '957'
-    receipts: SIMULATION_ONLY
-    observed_pairs_contributed: 0
+  backend_freeze:
+    status: PASS_FROZEN_FOR_FRONTEND_V1
+    branch: build/backend-product-freeze
+    authoritative_ci_run: 33864316044
+    validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
+    evidence: evidence/backend-product-freeze-frontend-handoff/README.md
+    product_handoff: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+    technical_contract: backend/FRONTEND-CONTRACT.md
+    machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
+    bootstrap_endpoint: /v1/product/bootstrap
+    bootstrap_schema: spondee.frontend-bootstrap.v1
+    cors_env: SPONDEE_CORS_ORIGINS
+    tests: PASS
+    strict_typescript: PASS
+    bootstrap_smoke: PASS
+    cors_smoke: PASS
+    bsc_readiness_probe: PASS_READ_ONLY
+    chain_write_attempted: false
 
-  g5_observed_evidence_contract:
-    status: PASS_HARDENED
-    schema: spondee.agent-advantage-pair.v1
-    authoritative_ci_run: 33843642146
+  frontend_contract:
+    list_endpoints:
+      - /v1/promises
+      - /v1/activations
+      - /v1/receipts
+      - /v1/evidence/runs
+    activation_proof_semantics: VERIFIED_PATH_SEPARATE_FROM_CURRENT_RUNTIME_WRITE_READINESS
+    controlled_reference_agents:
+      health_factor: { status: LIVE_TESTNET_VERIFIED, proof_job: '949' }
+      grid: { status: LIVE_TESTNET_VERIFIED, proof_job: '954' }
+      rebalancing: { status: LIVE_TESTNET_VERIFIED, proof_job: '955' }
+      yield: { status: LIVE_TESTNET_VERIFIED, proof_job: '957' }
+    v1_breaking_changes_allowed: false_without_new_contract_version
+
+  observed_evidence:
     required_pairs: 3
     countable_pairs: 1
     remaining_pairs: 2
-    grid_pair_required: true
-    grid_pair_requirement_satisfied: true
-    historical_replay_countable: false
-    countable_pair_requires_marketplace_activation: true
+    trading_requirement_satisfied: true
+    first_countable_pair:
+      category: Grid Trading
+      job_id: '962'
+      pair_id: g5-grid-forward-job-962
+      result: GRID_UNDERPERFORMED_BASELINE_BY_2_50_USD_ON_OBSERVED_WINDOW
+      countable_for_final_report: true
     final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
 
-  g5_grid_dry_run:
-    status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
-    ci_run: 33843581388
-    pair_id: g5-grid-dry-55340232221132058579
-    result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-    countable_for_final_report: false
+  winner_intelligence_overlay:
+    status: DOCUMENTED_FOR_POST_V1_REVIEW
+    frontend_blocker: false
+    winning_laws_promoted: 0
+    checks:
+      - SPONSOR_NATIVE_NECESSITY_CHECK
+      - WHOLE_RUBRIC_COVERAGE_CHECK
+      - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
+      - JUDGE_PATH_LEGIBILITY_CHECK
+    priority_blind_spots:
+      - FIRST_5S_CORE_CLARITY
+      - FIRST_15S_PROGRESS_CLARITY
+      - SIGNATURE_ACTION_TO_VISIBLE_CONSEQUENCE
+      - RUBRIC_EVIDENCE_SURFACING
+      - TRUTHFUL_WAIT_AND_FAILURE_STATES
+      - MOBILE_KEYBOARD_REDUCED_MOTION_LEGIBILITY
 
-  g5_grid_forward_pair:
-    status: PASS_COUNTABLE_CLOSED
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-    job_id: '962'
-    pair_id: g5-grid-forward-job-962
-    promise_id: spg5_6be8ca0d0f37354475b0f656
-    scenario_id: g5-grid-forward-55340232221132059004-1788516525376
-    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    buyer_address: '0x9423f5B1Ae49A93Ee8757D5793b3019d17a12023'
-    observed_round_count: 8
-    observation_window:
-      start_at: '2026-09-04T10:09:09.000Z'
-      end_at: '2026-09-04T10:13:00.000Z'
-    transactions:
-      create_job: '0x8d502976faa5c47bd2d73e842a7ed083576ad07a301c4232fa4b6d9e940a81f1'
-      register_job: '0x8e1f998d56e8c7cafc25b5c5e7b72b6129b98f0247288dfdd0295478a6415c2e'
-      set_budget: '0xc0582528b34183387e9183d0a3bfee50fe925849fd8b7387ab0076346f11aea2'
-      fund: '0x434223db54f30510616e74ae6e2c554ecc9a26a6017ea172df4eff29a4e8b266'
-      submit: '0xd1273c9d11c88fbd92d73ff595ac507db718c88ac0c3896a8105854550d488d5'
-    external_round_verification: PASS
-    manifest_hash_verified: true
-    buyer_balance_before_wei: '0'
-    buyer_balance_after_wei: '0'
-    service_price_raw: '0'
-    mainnet_value_moved: false
-    countable_for_final_report: true
-    paired_run_count_after_pair: 1
-    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-    agent_terminal_equity_usd: 9996.660009
-    baseline_terminal_equity_usd: 9999.160009
-    terminal_equity_delta_usd: -2.5
-    realized_mainnet_pnl_claimed: false
-    rerun_allowed: false
+  parallel_tracks:
+    frontend:
+      owner: Benita
+      status: READY_TO_START_V1
+      source_branch: build/backend-product-freeze
+      primary_contract: /v1/product/bootstrap
+      wait_for_winner_intelligence: false
+    backend_evidence:
+      owner: PBPD
+      status: NEXT_GATE_NOT_OPENED
+      next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+      chain_write_allowed: false
 
   exact_next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
   exact_next_owner: PBPD_AFTER_GATE_OPEN
   exact_next_action: >-
-    Implement and dry-run a Health Factor observed-pair protocol that targets both the second countable
-    Agent Advantage pair and the required warning/intervention event tape. Use frozen position/rules,
-    externally observed market inputs, a same-window precommitted without-agent baseline, and raw warning,
-    intervention/recommendation and adverse-event timestamps. The dry-run remains non-countable and no
-    wallet or chain write is permitted in this implementation gate.
+    Implement and dry-run the Health Factor observed pair/event-tape protocol while Benita proceeds
+    independently on frontend V1 from the frozen backend contract. The evidence work may update pair
+    counts/data but must not silently break spondee.frontend-bootstrap.v1.
 
   stop_conditions:
     - do not rerun jobs 949, 954, 955, 957, or 962
-    - do not count the historical Grid dry-run
-    - do not rewrite job 962 underperformance as an Agent Advantage win
-    - countable pair total is exactly 1/3 until another dedicated live observed marketplace pair passes
-    - no BSC-testnet write during the next implementation/dry-run gate
-    - BSC mainnet remains read-only unless a later human gate explicitly changes authority
+    - do not rewrite job 962 underperformance as a performance win
+    - frontend V1 must preserve SIMULATION vs OBSERVED truth boundaries
+    - no BSC-testnet write during the next Health Factor implementation/dry-run gate
     - no meaningful user/mainnet capital
     - no material paid spend
     - no guaranteed profit, safety or liquidation-prevention claim
     - no merge to main
-    - no Project Finisher yet
     - no final submission

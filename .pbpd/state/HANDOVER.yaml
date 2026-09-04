@@ -10,131 +10,102 @@ handover:
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    G3 Health Factor is complete. G4 candidate qualification is complete. Do not create a live job,
-    unlock the seller wallet, acquire tBNB, sign/pay an external task, grant an Altana session,
-    deploy the remaining Spondee category agents, merge to main or submit from the current gate.
+    Health Factor G3 is complete. Remaining-category discovery candidates are qualified, but external
+    activation surfaces failed closed as unproven. The next gate is build/CI only for three Spondee-owned
+    Agent Studio reference-agent paths. No deployment, live job, wallet unlock, tBNB, DeFi transaction,
+    merge to main, Project Finisher or submission is authorized by this handover.
 
-  current_milestone: G4_REMAINING_CATEGORY_CANDIDATES_QUALIFIED__EXTERNAL_ACTIVATION_SURFACE_UNVERIFIED
-  lifecycle_status: READ_ONLY_EXTERNAL_A2A_TASK_SURFACE_PROBE_REQUIRED
+  current_milestone: G4_EXTERNAL_TASK_SURFACES_UNPROVEN__SPONDEE_CONTROLLED_FALLBACKS_PROMOTED
+  lifecycle_status: THREE_REFERENCE_AGENTS_BUILD_AND_CI_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate_action_class: READ_ONLY_ENDPOINT_AND_TASK_SURFACE_PROBE
+    current_gate_action_class: CONSEQUENTIAL_BUILD_CI_ONLY_NO_LIVE_DEPLOYMENT
     production_owner: PBPD
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: HUMAN_ONLY
     merge_to_main: NOT_AUTHORIZED
 
-  g3_final_result:
+  g3:
     status: PASS
     evidence: evidence/g3-job-949-final-pass/README.md
     job_id: '949'
-    network: bsc-testnet
-    chain_id: 97
-    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
     provider_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    manifest_hash_verified: true
-    spondee_receipt_verified: true
-    evidence_class: SIMULATION
+    outcome_receipt_evidence_class: SIMULATION
     observed_agent_advantage_claimed: false
+    no_further_g3_live_run: true
 
-  g4_qualification:
-    result: PASS_WITH_ACTIVATION_PROOF_FOLLOW_ON_REQUIRED
+  g4_candidate_qualification:
+    status: PASS
     evidence: evidence/g4-four-category-live-path-qualification/README.md
-    official_marketplace_requirement:
-      all_four_categories_first_class: true
-      surfaced_activatable_agents_live_on_bsc: true
-      full_journey_requires_activation: true
-    architecture_recommendation: >-
-      Use ERC-8004/8004scan for external discovery and identity. Promote an external candidate to activatable
-      only after its task surface is directly verified. Otherwise use the corresponding Spondee Agent Studio
-      reference-agent fallback, reusing the Promise/Receipt contract and runtime shape proven by Health Factor.
+    candidate_availability_resolved: true
+    selected_external_discovery:
+      grid: DeFiBot.agent #172801
+      rebalancing: BNB LP Range Rebalancer #265375
+      yield: DeFi Trading Agent SperaxOS #6441
 
-  candidate_matrix:
+  g4_external_task_surface_probe:
+    status: FAIL_CLOSED_EXTERNAL_ACTIVATION_NOT_PROVEN__CONTROLLED_SPONDEE_FALLBACKS_PROMOTED
+    evidence: evidence/g4-external-task-surface-probe/README.md
+    findings:
+      grid: advertised A2A surface not sufficiently verified for Spondee activation
+      rebalancing: concrete A2A card advertised but registry verification not positive and no Spondee task-path proof
+      yield: live ERC-8004 identity and executable description, but no independently proven Spondee task surface
+    truth_rule: >-
+      ERC-8004 registration, wallet activity, advertised A2A/x402 metadata and third-party activation UI are
+      not sufficient to set activatable=true.
+
+  architecture_decision:
+    discovery: Keep external ERC-8004 candidates for real marketplace identity/data/comparison.
+    activation: Build controlled Spondee Agent Studio reference agents for Grid, Rebalancing and Yield.
+    reason: Deadline reliability and truthfulness outweigh dependence on opaque external task surfaces.
+    reuse: Health Factor's proven Agent Studio / compact Promise commitment / ERC-8183 / Outcome Receipt shape.
+
+  controlled_build_targets:
     grid:
-      primary:
-        name: DeFiBot.agent
-        erc8004_agent_id: '172801'
-        network: bsc-mainnet
-        registration: VERIFIED_BY_REVIEWED_BSC_EVIDENCE
-        category_fit: STRONG_GRID_DCA_YIELD
-        advertised_protocol: A2A
-        status: QUALIFIED_DISCOVERY_PRIMARY__ACTIVATION_NOT_PROVEN
-      external_fallback:
-        name: TradePilot.agent
-        erc8004_agent_id: '177310'
-      controlled_fallback: Spondee Grid Agent Studio reference agent
-      current_activatable: false
-
+      name: Spondee Grid
+      existing_backend_engine: true
+      required_specialization:
+        - canonical Grid task carrier/validation
+        - Promise reconstruction and compact commitment
+        - deterministic grid outcome receipt
+        - fail-closed malformed/range cases
+      deploy_now: false
     rebalancing:
-      primary:
-        name: BNB LP Range Rebalancer
-        erc8004_agent_id: '265375'
-        network: bsc-mainnet
-        registration_tx: '0x5b9a412ad3157f54ca94c18a547bb5c69bfaeee4c96fdd11dedf949c586c40fb'
-        registered_block: '115479018'
-        category_fit: VERY_STRONG_PANCAKESWAP_V3_LP_RANGE
-        advertised_protocol: A2A
-        advertised_agent_card: 'https://bnb-lp.172-104-171-139.nip.io/.well-known/agent-card.json'
-        status: QUALIFIED_PRIMARY__TASK_EXECUTION_NOT_PROVEN
-      external_fallback:
-        name: positioncrew-lp-rebalance.agent
-        erc8004_agent_id: '266231'
-      controlled_fallback: Spondee Rebalancing Agent Studio reference agent
-      current_activatable: false
-
+      name: Spondee Rebalancing
+      existing_backend_engine: true
+      required_specialization:
+        - canonical LP-range task validation
+        - bounded reset-plan Promise
+        - deterministic rebalancing receipt
+        - fail-closed unsafe/malformed cases
+      deploy_now: false
     yield:
-      primary:
-        name: DeFi Trading Agent SperaxOS
-        erc8004_agent_id: '6441'
-        network: bsc-mainnet
-        registration: DIRECT_8004SCAN_ACTIVE
-        category_fit: STRONG_YIELD_LIQUIDITY_SWAP_FARMING
-        advertised_protocols: [A2A, Web]
-        status: QUALIFIED_DISCOVERY_PRIMARY__ACTIVATION_NOT_PROVEN
-      external_fallback:
-        name: DeFiMatrix.agent
-        erc8004_agent_id: '171927'
-        registration: DIRECT_8004SCAN_ACTIVE
-      controlled_fallback: Spondee Yield Agent Studio reference agent
-      current_activatable: false
+      name: Spondee Yield
+      existing_backend_engine: true
+      required_specialization:
+        - canonical yield-comparison task validation
+        - risk-filtered allocation/HOLD Promise
+        - deterministic yield receipt
+        - fail-closed missing/invalid venue data cases
+      deploy_now: false
 
-  truth_boundary:
-    - ERC-8004 registration proves identity/registration, not successful task execution.
-    - Non-zero wallet activity does not prove the advertised agent strategy produced those transactions.
-    - An advertised A2A/x402 endpoint does not become Spondee activation evidence until directly verified.
-    - Third-party activation UI is discovery evidence only unless Spondee independently proves the path.
-    - No external candidate is activatable=true yet.
-    - Spondee-controlled fallback agents are build paths, not live agents yet.
-
-  killing_assumption_A_01:
-    prior: KILLING_ASSUMPTION_PARTIALLY_RESOLVED_HEALTH_FACTOR_ONLY
-    current: CANDIDATES_QUALIFIED__ACTIVATION_SURFACE_UNVERIFIED
-    candidate_availability: RESOLVED
-    judge_ready_activation: NOT_RESOLVED
-
-  environment_note:
-    direct_http_probe_attempt: >-
-      A direct container HTTP probe was attempted for the advertised A2A surfaces, but the container runtime
-      had no public DNS resolution. This tool limitation is not treated as endpoint failure or endpoint success.
-      The task-surface proof therefore remains the explicit next read-only gate.
-
-  exact_next_gate: SPONDEE_G4_EXTERNAL_A2A_TASK_SURFACE_READ_ONLY_PROBE_REQUIRED
-  exact_next_owner: PBPD_ORCHESTRATION
+  exact_next_gate: SPONDEE_G4_THREE_REFERENCE_AGENTS_BUILD_AND_CI_REQUIRED
+  exact_next_owner: PBPD_IMPLEMENTATION
   exact_next_action: >-
-    Probe the advertised public Agent Card/service/task metadata for DeFiBot 172801, BNB LP Range Rebalancer
-    265375 and SperaxOS 6441. Confirm identity binding and usable invocation semantics, and record auth/payment
-    requirements without signing, paying or broadcasting anything. If a primary fails quickly, probe the named
-    fallback. If a category has no clean external task surface, promote the Spondee Agent Studio controlled
-    fallback at the next consequential build gate.
+    Implement the three Spondee Agent Studio reference-agent paths on build/backend-complete by reusing
+    the proven Health Factor seller/runtime pattern and shared backend contracts. Add category-specific
+    deterministic validation, Promise commitment/Outcome Receipt roundtrip tests and negative paths.
+    Run CI for all three. Stop before deployment or any live ERC-8183 transaction.
 
   stop_conditions:
-    - stop before any ERC-8183 live job
-    - stop before x402 payment
-    - stop before wallet unlock or tBNB acquisition
-    - stop before Altana grantSession
-    - stop before PancakeSwap/Venus/Lista transaction
-    - stop before remaining-category deployment
-    - stop before merge to main
-    - stop before Project Finisher
-    - stop before final submission
+    - no seller-wallet unlock
+    - no tBNB acquisition
+    - no live ERC-8183 job for new categories
+    - no x402 payment
+    - no Altana grantSession
+    - no PancakeSwap/Venus/Lista transaction
+    - no remaining-category deployment
+    - no merge to main
+    - no Project Finisher
+    - no final submission

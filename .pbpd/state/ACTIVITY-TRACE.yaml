@@ -1,309 +1,116 @@
 schema: PBPD-ACTIVITY-TRACE-v0.1
+revision: ACTIVITY-R036-BACKEND-CODE-COMPLETE
+history:
+  previous_trace_blob_sha: b2bca6b757390e14d987004d86ff03cc8134c872
+  previous_detail_preserved_in_git_history: true
+  note: Earlier granular G3 build/runtime activity remains durable in Git history and evidence directories. This roll-forward captures current milestone activity through backend final completion.
 entries:
-  - id: ACT-001
-    at: '2026-09-03T07:25:00-04:00'
-    actor: human
-    action: repository_created_and_shared
-    result: Faadil1/Spondee bound as dedicated product repository
-  - id: ACT-002
-    at: '2026-09-03T07:26:00-04:00'
-    actor: PBPD_orchestrator
-    action: bootstrap_repository_governance
-    result: README and incoming authorization/brief/PRD created
-  - id: ACT-003
-    at: '2026-09-03T07:27:00-04:00'
-    actor: PBPD_orchestrator
-    action: initialize_canonical_state
-    result: project, authority, decision, requirements, evidence, risk and artifact state initialized
-  - id: ACT-004
-    at: '2026-09-03T07:27:00-04:00'
-    actor: PBPD_orchestrator
-    action: enforce_prebuild_gate
-    result: consequential implementation remains blocked until PRD validation and reconciliation complete
-  - id: ACT-005
-    at: '2026-09-03T07:31:00-04:00'
-    actor: PBPD_orchestrator
-    action: bounded_external_reconnaissance
-    result: Official BNB sources confirmed Agent Studio reference-agent creation/deployment path.
-  - id: ACT-006
-    at: '2026-09-03T07:32:00-04:00'
-    actor: PBPD_orchestrator
-    action: validate_prd_v0_1
-    result: PRD_VALIDATED; runtime preflight remained before PRD_READY.
-  - id: ACT-007
-    at: '2026-09-03T07:52:25-04:00'
-    actor: PBPD_orchestrator
-    action: launch_reproducible_agent_studio_runtime_preflight
-    result: GitHub Actions preflight triggered without secrets or funded wallet.
-  - id: ACT-008
+  - id: ACT-R036-001
+    at: '2026-09-03'
+    actor: human_plus_PBPD
+    action: authorize_and_define_spondee
+    result: Spondee product/PRD locked with four first-class categories and Health Factor hero.
+  - id: ACT-R036-002
     at: '2026-09-03T07:53:12-04:00'
     actor: github_actions
-    action: complete_agent_studio_runtime_preflight
-    result: PASS; Node 22, pnpm 10, Studio CLI, BSC testnet, bag init/scan/doctor succeeded.
-    external_run: 33752070626
-  - id: ACT-009
-    at: '2026-09-03T07:54:00-04:00'
+    action: verify_agent_studio_runtime_preflight
+    result: PASS_RUN_33752070626
+  - id: ACT-R036-003
+    at: '2026-09-04'
+    actor: PBPD_plus_human_local_runtime
+    action: close_health_factor_g3
+    result: PASS_JOB_949_SIMULATION_RECEIPT
+    evidence: evidence/g3-job-949-final-pass/README.md
+  - id: ACT-R036-004
+    at: '2026-09-04'
+    actor: PBPD_plus_human_local_runtime
+    action: close_grid_g4
+    result: PASS_JOB_954_SIMULATION_RECEIPT
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
+  - id: ACT-R036-005
+    at: '2026-09-04'
+    actor: PBPD_plus_human_local_runtime
+    action: close_rebalancing_g4
+    result: PASS_JOB_955_AFTER_EXISTING_FUNDED_JOB_RECOVERY_SIMULATION_RECEIPT
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+  - id: ACT-R036-006
+    at: '2026-09-04'
+    actor: PBPD_plus_human_local_runtime
+    action: close_yield_g4
+    result: PASS_JOB_957_SIMULATION_RECEIPT
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
+  - id: ACT-R036-007
+    at: '2026-09-04'
+    actor: PBPD_plus_human_local_runtime
+    action: execute_first_countable_grid_observed_pair
+    result: PASS_JOB_962_COUNTABLE_1_OF_3__AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+  - id: ACT-R036-008
+    at: '2026-09-04'
     actor: PBPD_orchestrator
-    action: promote_prd_ready
-    result: PRD_READY; consequential product build authority opened within scope.
-  - id: ACT-010
-    at: '2026-09-03T08:01:00-04:00'
-    actor: PBPD_orchestrator
-    action: start_g3_health_factor_branch
-    result: build/g3-health-factor created; merge to main not authorized.
-  - id: ACT-011
-    at: '2026-09-03T08:02:00-04:00'
-    actor: github_actions
-    action: scaffold_official_agent_studio_reference_agent
-    result: PASS; credential-free Agent Studio scaffold generated.
-    external_run: 33752538013
-  - id: ACT-012
-    at: '2026-09-03T08:04:08-04:00'
-    actor: PBPD_orchestrator
-    action: specialize_health_factor_reference_agent
-    result: Deterministic Promise Card, Outcome Receipt and Agent Studio wiring implemented.
-  - id: ACT-013
-    at: '2026-09-03T08:06:32-04:00'
-    actor: github_actions
-    action: verify_g3_health_factor_code
-    result: PASS; deterministic tests, TypeScript, bag scan and bag doctor succeeded.
-    external_run: 33753280627
-  - id: ACT-014
-    at: '2026-09-03T08:07:41-04:00'
-    actor: PBPD_orchestrator
-    action: harden_g3_financial_surface
-    result: Service price fixed at zero; x402/B402 and LLM auto-renew disabled; BSC testnet only.
-  - id: ACT-015
-    at: '2026-09-03T08:12:12-04:00'
-    actor: github_actions
-    action: verify_and_export_g3_demo_evidence
-    result: PASS; tests, build, evidence export and diagnostics succeeded.
-    external_run: 33753788773
-  - id: ACT-016
-    at: '2026-09-03T08:13:00-04:00'
-    actor: PBPD_orchestrator
-    action: preserve_g3_claim_boundary
-    result: Simulation/CI only; live wallet-backed claims remain unclaimed.
-  - id: ACT-017
-    at: '2026-09-03T09:08:00-04:00'
+    action: freeze_initial_frontend_contract
+    result: spondee.frontend-bootstrap.v1 established with four-category catalog/read surfaces and explicit CORS.
+  - id: ACT-R036-009
+    at: '2026-09-04'
     actor: human
-    action: authorize_testnet_wallet_and_gas
-    result: Explicit GO for bounded BSC-testnet wallet/gas/live ERC-8183 testing; no mainnet, merge, deployment or submission.
-  - id: ACT-018
-    at: '2026-09-03T18:02:00Z'
-    actor: human_local_runtime
-    action: create_and_verify_spondee_testnet_wallet
-    result: PASS; encrypted local Keystore V3 and signing verification. Public seller address only returned.
-  - id: ACT-019
-    at: '2026-09-03T18:04:06Z'
+    action: require_full_remaining_backend_completion_before_benita_handoff
+    result: Initial frontend freeze held; remaining backend hardening opened on build/backend-completion-final.
+  - id: ACT-R036-010
+    at: '2026-09-04'
+    actor: PBPD_orchestrator
+    action: implement_backend_mutation_protection
+    result: Server-only live-action/evidence-ingest scopes, immutable evidence and durable operation locks implemented.
+  - id: ACT-R036-011
+    at: '2026-09-04'
+    actor: PBPD_orchestrator
+    action: implement_read_only_decision_replay
+    result: spondee.decision-replay.v1 implemented with no financial re-execution.
+  - id: ACT-R036-012
+    at: '2026-09-04'
+    actor: PBPD_orchestrator
+    action: implement_dynamic_8004scan_discovery
+    result: spondee.8004scan-discovery.v1 implemented server-side, cached and discovery-only.
+  - id: ACT-R036-013
+    at: '2026-09-04'
+    actor: PBPD_orchestrator
+    action: implement_backend_deployment_readiness
+    result: spondee.backend-deployment-readiness.v1 separates code completeness from deployment configuration.
+  - id: ACT-R036-014
+    at: '2026-09-04T11:05:15Z'
     actor: github_actions
-    action: verify_testnet_wallet_public_balance
-    result: Seller balance 0 tBNB; no transaction attempted.
-    external_run: 33788242671
-  - id: ACT-020
-    at: '2026-09-03T20:04:00Z'
+    action: verify_backend_final_completion
+    result: PASS_RUN_33866229883
+    checks:
+      - full_backend_regression
+      - strict_typescript
+      - four_category_truth_smoke
+      - protected_surface_and_replay
+      - official_8004scan_readonly_integration
+      - bsc_testnet_readiness
+      - static_backend_completion_guards
+      - artifact_upload
+    chain_write_attempted: false
+  - id: ACT-R036-015
+    at: '2026-09-04'
     actor: PBPD_orchestrator
-    action: start_complete_backend_branch
-    result: build/backend-complete created.
-  - id: ACT-021
-    at: '2026-09-03T20:05:00Z'
+    action: promote_backend_code_complete
+    result: STATE_R036_BACKEND_CODE_COMPLETE__REMAINING_BACKEND_PERCENTAGE_ZERO
+  - id: ACT-R036-016
+    at: '2026-09-04'
     actor: PBPD_orchestrator
-    action: implement_full_spondee_backend
-    result: Four-category backend, API, persistence, evidence/calibration and ERC-8183 driver implemented.
-  - id: ACT-022
-    at: '2026-09-03T20:20:02Z'
-    actor: github_actions
-    action: verify_hardened_complete_backend
-    result: PASS; backend tests/build/smoke/read-only BSC probes succeeded.
-    external_run: 33801590780
-  - id: ACT-023
-    at: '2026-09-03T20:21:00Z'
+    action: produce_final_benita_handoff
+    result: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md and updated backend/FRONTEND-CONTRACT.md ready.
+  - id: ACT-R036-017
+    at: '2026-09-04'
     actor: PBPD_orchestrator
-    action: preserve_backend_live_boundary
-    result: Full seller-backed live ERC-8183 remained unclaimed.
-  - id: ACT-024
-    at: '2026-09-03T20:24:02Z'
-    actor: PBPD_orchestrator
-    action: launch_bounded_megafuel_runtime_probe
-    result: Zero-balance ephemeral paymaster smoke launched.
-  - id: ACT-025
-    at: '2026-09-03T20:24:31Z'
-    actor: github_actions
-    action: prove_megafuel_zero_balance_erc8183_writes
-    result: PASS; zero-balance createJob and cancelOpen both mined.
-    external_run: 33802027942
-  - id: ACT-026
-    at: '2026-09-03T20:25:00Z'
-    actor: PBPD_orchestrator
-    action: resolve_testnet_gas_blocker
-    result: MegaFuel promoted to runtime-proven primary gas path; tBNB fallback-only.
-  - id: ACT-027
-    at: '2026-09-03T20:39:58Z'
-    actor: human_local_runtime
-    action: attempt_full_health_factor_megafuel_e2e
-    result: FAIL_CLOSED_PRE_WRITE; quote envelope assumption failed before createJob; zero transactions.
-  - id: ACT-028
-    at: '2026-09-03T21:00:00Z'
-    actor: PBPD_orchestrator
-    action: fix_official_quote_provider_identity_validation
-    result: provider_address assumption removed; verifyQuoteSignature used. CI passed.
-  - id: ACT-029
-    at: '2026-09-03T22:37:15.505Z'
-    actor: human_local_runtime
-    action: retry_full_health_factor_megafuel_e2e_after_quote_fix
-    result: FAIL_CLOSED_PRE_WRITE; custom terms.spondee_promise absent after SDK serialization; zero transactions.
-  - id: ACT-030
-    at: '2026-09-03T23:05:00Z'
-    actor: PBPD_orchestrator
-    action: audit_official_sdk_negotiation_term_contract
-    result: TermSpecification drops arbitrary custom terms; success_criteria identified as preserved signed surface.
-  - id: ACT-031
-    at: '2026-09-03T23:09:00Z'
-    actor: PBPD_orchestrator
-    action: implement_signed_promise_success_criteria_carrier
-    result: Full Promise Card moved into signed success_criteria with strict uniqueness/equality/signature guards.
-    external_run: 33816310524
-  - id: ACT-032
-    at: '2026-09-03T23:12:04Z'
-    actor: PBPD_orchestrator
-    action: reconcile_stale_g3_test_and_demo_fixtures
-    result: Stale custom-term fixtures migrated to success_criteria.
-  - id: ACT-033
-    at: '2026-09-03T23:13:11Z'
-    actor: github_actions
-    action: validate_signed_promise_carrier_g3_retry_candidate
-    result: PASS; Ubuntu and Windows G3 validation succeeded.
-    external_run: 33816544907
-  - id: ACT-034
-    at: '2026-09-03T23:14:00Z'
-    actor: PBPD_orchestrator
-    action: promote_one_local_g3_retry_ready
-    result: Exactly one local retry authorized.
-  - id: ACT-035
-    at: '2026-09-03T23:21:21.084Z'
-    actor: human_local_runtime
-    action: execute_third_full_health_factor_megafuel_e2e
-    result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE; relay rejected oversized createJob, SDK self-pay fallback was rejected for zero balance, progress remained empty, no transaction mined and no user funds used.
-  - id: ACT-036
-    at: '2026-09-03T23:22:00Z'
-    actor: PBPD_orchestrator
-    action: diagnose_megafuel_transaction_size
-    result: Full Promise Card in success_criteria produced a 2223-byte JobDescription before ABI/RLP overhead; MegaFuel relay size rejection isolated.
-  - id: ACT-037
-    at: '2026-09-03T23:23:00Z'
-    actor: PBPD_orchestrator
-    action: discover_sdk_task_sanitizer_hazard
-    result: Official claim sanitizer mutates square brackets, making raw JSON stress_path arrays unsafe for signed/on-chain task transport.
-  - id: ACT-038
-    at: '2026-09-03T23:29:00Z'
-    actor: PBPD_orchestrator
-    action: implement_compact_promise_commitment_and_sanitizer_safe_task
-    result: Full Promise moved to read-only preview; signed success_criteria reduced to p/s/r/SHA-256 commitment; task encoded as SPONDEE_TASK_B64_V1 Base64URL; 1600-byte pre-createJob budget enforced.
-  - id: ACT-039
-    at: '2026-09-03T23:29:57Z'
-    actor: github_actions
-    action: validate_compact_backend_protocol
-    result: PASS 28/28; compact commitment, tamper guards, sanitizer-safe task and representative MegaFuel JobDescription budget passed; TypeScript and BSC probe passed.
-    external_run: 33817822355
-  - id: ACT-040
-    at: '2026-09-03T23:31:00Z'
-    actor: github_actions
-    action: validate_compact_g3_protocol_windows_and_ubuntu
-    result: PASS; G3 Ubuntu verify and Windows PowerShell/Node24 encrypted wallet roundtrip succeeded.
-    external_run: 33817846752
-  - id: ACT-041
-    at: '2026-09-03T23:33:00Z'
-    actor: PBPD_orchestrator
-    action: promote_one_new_compact_commitment_retry_ready
-    result: Exactly one new local retry authorized under existing testnet authority; no new wallet or tBNB required before retry; any new failure closes the gate again.
-  - id: ACT-042
-    at: '2026-09-03T23:41:03.555Z'
-    actor: human_local_runtime
-    action: execute_fourth_full_health_factor_megafuel_e2e
-    result: LIVE_CHAIN_PARTIAL_SUCCESS; job 948 mined createJob/registerJob/setBudget(0)/fund(0) via MegaFuel, then provider delivery failed before submit because LocalStorage returned file:// and ERC8183_AGENT_URL was unset.
-  - id: ACT-043
-    at: '2026-09-03T23:46:40Z'
-    actor: github_actions
-    action: validate_funded_job_948_recovery_path
-    result: PASS; LocalStorage HTTP response route, recovery verifier, backend tests/build and Windows parsing were validated.
-    external_run: 33819012423
-  - id: ACT-044
-    at: '2026-09-03T23:53:03.692Z'
-    actor: human_local_runtime
-    action: execute_job_948_funded_recovery
-    result: FAIL_CLOSED_SUBMISSION_DEADLINE_PASSED; job 948 remained FUNDED, provider submit was not broadcast, and runtime proved the submission deadline had expired before recovery.
-  - id: ACT-045
-    at: '2026-09-03T23:54:00Z'
-    actor: PBPD_orchestrator
-    action: classify_job_948_terminal_and_audit_expiry_semantics
-    result: Job 948 marked non-retryable for provider submit; long-lived submission horizon required.
-  - id: ACT-046
-    at: '2026-09-03T23:58:32Z'
-    actor: PBPD_orchestrator
-    action: integrate_localstorage_bridge_and_30_day_submission_horizon
-    result: Canonical live path starts the LocalStorage HTTP bridge before seller activation and computes a 30-day submission window; regression test added.
-  - id: ACT-047
-    at: '2026-09-03T23:59:02Z'
-    actor: github_actions
-    action: validate_final_localstorage_30d_live_preflight
-    result: PASS; Ubuntu wrapper/server/backend tests/build and Windows wrapper/server syntax all passed.
-    external_run: 33819854509
-  - id: ACT-048
-    at: '2026-09-04T00:00:00Z'
-    actor: PBPD_orchestrator
-    action: reopen_one_corrected_complete_g3_live_attempt
-    result: Exactly one new live BSC-testnet attempt authorized using the existing seller keystore, MegaFuel, LocalStorage HTTP bridge and 30-day submission horizon.
-  - id: ACT-049
-    at: '2026-09-04T00:07:18.579Z'
-    actor: human_local_runtime
-    action: execute_fifth_health_factor_live_e2e_job_949
-    result: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT; job 949 mined createJob/registerJob/setBudget(0)/fund(0), provider submit confirmed with effective gas price 0, then buyer post-submit JobInitialised scan hit an RPC range/rate limit.
-  - id: ACT-050
-    at: '2026-09-04T00:08:00Z'
-    actor: PBPD_orchestrator
-    action: classify_job_949_post_submit_rpc_read_failure
-    result: Post-submit read-path failure only; no replacement job or new on-chain write authorized.
-  - id: ACT-051
-    at: '2026-09-04T00:11:57Z'
-    actor: PBPD_orchestrator
-    action: implement_receipt_based_job_949_read_only_verification
-    result: Added known-submit-receipt verifier, chain probe, read-only local runner and CI workflow; path avoids historical eth_getLogs scanning.
-  - id: ACT-052
-    at: '2026-09-04T00:12:31Z'
-    actor: github_actions
-    action: prove_job_949_submitted_from_known_transaction_receipt
-    result: PASS; run 33820803719 verified job 949 SUBMITTED, canonical provider, receipt consistency, LocalStorage URL, deliverable hash, signed Promise commitment and getJob state without eth_getLogs.
-    external_run: 33820803719
-  - id: ACT-053
-    at: '2026-09-04T00:14:19Z'
-    actor: PBPD_orchestrator
-    action: promote_job_949_read_only_local_outcome_receipt_gate
-    result: PROJECT-STATE promoted to R017. Live-write gate closed; only existing local manifest hash and Outcome Receipt verification remained.
-  - id: ACT-054
-    at: '2026-09-04T00:51:00Z'
-    actor: human_local_runtime
-    action: expose_windows_false_zero_verifier_behavior
-    result: Two read-only runs returned exit 0 without PASS/FAIL because verifier CLI entrypoint did not execute; no chain impact.
-  - id: ACT-055
-    at: '2026-09-04T00:52:46Z'
-    actor: github_actions
-    action: validate_cross_platform_job_949_cli_fix
-    result: PASS; dedicated CLI entrypoint, mandatory PASS terminal, Ubuntu tests/build/chain probe and Windows Node24 CLI execution all passed.
-    external_run: 33823556651
-  - id: ACT-056
-    at: '2026-09-04T00:51:00Z'
-    actor: human_local_runtime
-    action: execute_final_read_only_job_949_manifest_and_receipt_verification
-    result: PASS; manifest hash verified against on-chain deliverable, Outcome Receipt verified against Promise/scenario, evidence class remained SIMULATION, observed Agent Advantage remained false.
-  - id: ACT-057
-    at: '2026-09-04T00:56:00Z'
-    actor: PBPD_orchestrator
-    action: close_g3_health_factor_live_e2e
-    result: G3 promoted to PASS; no additional G3 live run authorized; killing assumptions A-02 and A-03 resolved.
-  - id: ACT-058
-    at: '2026-09-04T00:57:00Z'
-    actor: spec_kit_orchestration
-    action: converge_g3_slice_and_open_g4_qualification
-    result: Spec Kit result CONVERGED_G3_SLICE__NOT_BUILD_CANDIDATE; exact next gate set to read-only four-category live-path qualification.
-next_action: PBPD performs read-only 8004scan/Agent Studio/ERC-8004 qualification for Grid Trading, Rebalancing and Yield Optimisation, then returns a candidate matrix and recommended build slice without deploying or activating new live jobs.
-next_gate: SPONDEE_G4_FOUR_CATEGORY_LIVE_PATH_QUALIFICATION_REQUIRED
+    action: reconcile_spec_kit_and_pbpd_state
+    result: Spec Kit source branch moved to build/backend-completion-final; remaining work classified as evidence/runtime/frontend/submission rather than backend code.
+current_parallel_tracks:
+  frontend:
+    owner: Benita
+    status: READY_TO_START_V1
+    source_branch: build/backend-completion-final
+  evidence:
+    owner: PBPD
+    status: NEXT_GATE_NOT_OPENED
+    next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED

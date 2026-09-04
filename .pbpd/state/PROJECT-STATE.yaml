@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R022-G4-SEQUENTIAL-LIVE-E2E-AUTHORIZED-PREFLIGHT
+revision: STATE-R023-G4-SEQUENTIAL-LIVE-PREFLIGHT-PASS-GRID-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -15,7 +15,7 @@ authority:
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_SEQUENTIAL_LIVE_TESTNET_E2E_AUTHORIZED__PREFLIGHT_AND_LOCAL_EXECUTION_REQUIRED
+  status: G4_SEQUENTIAL_LIVE_PREFLIGHT_PASS__GRID_LOCAL_EXECUTION_READY
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -41,7 +41,10 @@ build:
   three_reference_agents_status: CI_VERIFIED
   g4_reference_agent_ci_run: 33826331454
   g4_backend_driver_ci_run: 33826671823
-  evidence_class: HEALTH_FACTOR_LIVE_CHAIN_VERIFIED_PLUS_GRID_REBALANCING_YIELD_BUILD_CI_VERIFIED
+  g4_sequential_live_preflight_run: 33827625957
+  g4_sequential_live_preflight_head: 01050a567bbd4a670a0663702c5a581e8c9dbe96
+  g4_sequential_live_preflight_status: PASS
+  evidence_class: HEALTH_FACTOR_LIVE_CHAIN_VERIFIED_PLUS_GRID_REBALANCING_YIELD_BUILD_CI_AND_SEQUENTIAL_PREFLIGHT_VERIFIED
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
@@ -88,6 +91,20 @@ g4_build_ci:
     cli: backend/src/live-g4-category.ts
     backend_ci_run: 33826671823
     post_submit_resolution: BOUNDED_JOB_SUBMITTED_SCAN_THEN_KNOWN_SUBMIT_RECEIPT_DECODE
+g4_sequential_preflight:
+  status: PASS
+  evidence: evidence/g4-sequential-live-preflight/README.md
+  authoritative_run: 33827625957
+  validated_head: 01050a567bbd4a670a0663702c5a581e8c9dbe96
+  backend_tests: PASS_31_OF_31
+  backend_typescript: PASS
+  scenarios: PASS_GRID_REBALANCING_YIELD
+  credential_free_fail_closed: PASS
+  grid_agent: PASS
+  rebalancing_agent: PASS
+  yield_agent: PASS
+  windows_runner_parse_and_safety: PASS
+  g4_chain_write_attempted_during_preflight: false
 external_candidates:
   grid:
     primary: DeFiBot.agent_172801
@@ -104,18 +121,21 @@ controlled_activation_paths:
     workspace: reference-agents/grid
     task_schema: spondee.grid.task.v1
     build_status: PASS
-    live_status: PENDING_FIRST
+    preflight_status: PASS
+    live_status: READY_FIRST
   rebalancing:
     agent: Spondee Rebalancing
     workspace: reference-agents/rebalancing
     task_schema: spondee.rebalancing.task.v1
     build_status: PASS
+    preflight_status: PASS
     live_status: BLOCKED_UNTIL_GRID_PASS
   yield:
     agent: Spondee Yield
     workspace: reference-agents/yield
     task_schema: spondee.yield.task.v1
     build_status: PASS
+    preflight_status: PASS
     live_status: BLOCKED_UNTIL_REBALANCING_PASS
 category_depth:
   health_factor:
@@ -123,17 +143,17 @@ category_depth:
     activation_status: VERIFIED
   grid:
     discovery: EXTERNAL_CANDIDATE_QUALIFIED
-    controlled_activation: BUILD_CI_PASS
-    live_testnet: PENDING
+    controlled_activation: BUILD_CI_AND_PREFLIGHT_PASS
+    live_testnet: READY_FOR_EXECUTION
     activatable: LOCAL_TESTNET_PROOF_PENDING
   rebalancing:
     discovery: EXTERNAL_CANDIDATE_QUALIFIED
-    controlled_activation: BUILD_CI_PASS
+    controlled_activation: BUILD_CI_AND_PREFLIGHT_PASS
     live_testnet: BLOCKED_UNTIL_GRID_PASS
     activatable: LOCAL_TESTNET_PROOF_PENDING
   yield:
     discovery: EXTERNAL_CANDIDATE_QUALIFIED
-    controlled_activation: BUILD_CI_PASS
+    controlled_activation: BUILD_CI_AND_PREFLIGHT_PASS
     live_testnet: BLOCKED_UNTIL_REBALANCING_PASS
     activatable: LOCAL_TESTNET_PROOF_PENDING
 killing_assumptions:
@@ -141,6 +161,7 @@ killing_assumptions:
     candidate_availability: RESOLVED
     external_activation: NOT_PROVEN
     controlled_spondee_build: RESOLVED_CI_PASS
+    sequential_preflight: RESOLVED_PASS
     judge_ready_activation: LIVE_PROOF_PENDING
   A-02:
     status: RESOLVED_BY_G3_LIVE_E2E
@@ -148,8 +169,9 @@ killing_assumptions:
     status: RESOLVED_BY_G3_LIVE_E2E
 current_gate:
   id: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  status: AUTHORIZED
-  evidence: evidence/g4-sequential-live-gate/README.md
+  status: AUTHORIZED_AND_PREFLIGHT_PASS
+  authorization_evidence: evidence/g4-sequential-live-gate/README.md
+  preflight_evidence: evidence/g4-sequential-live-preflight/README.md
   sequence:
     - grid
     - rebalancing
@@ -162,8 +184,8 @@ current_gate:
   ephemeral_buyer_zero_balance_required: true
   receipt_truth_class: SIMULATION
   observed_agent_advantage_claim_allowed: false
-  create_job_allowed: SEQUENTIAL_ONE_CATEGORY_AT_A_TIME
-  provider_submit_allowed: SEQUENTIAL_ONE_CATEGORY_AT_A_TIME
+  create_job_allowed: GRID_FIRST_THEN_PRIOR_PASS_GATED
+  provider_submit_allowed: GRID_FIRST_THEN_PRIOR_PASS_GATED
   tBNB_acquisition_allowed: false
   mainnet_allowed: false
   user_capital_allowed: false
@@ -173,7 +195,7 @@ current_gate:
 next_action:
   owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
-  primary: Pull and check out build/g4-sequential-live-e2e, wait for G4 Sequential Live Preflight PASS, then run scripts/g4-sequential-live-e2e-localstorage.ps1. The runner must execute Grid first and stop immediately on any failure.
+  primary: Pull and check out build/g4-sequential-live-e2e and run scripts/g4-sequential-live-e2e-localstorage.ps1. Enter the existing seller wallet password only in the masked local prompt. Grid executes first. Rebalancing and Yield remain locked behind prior-category PASS.
   constraints:
     - existing canonical seller wallet only
     - masked local password prompt only

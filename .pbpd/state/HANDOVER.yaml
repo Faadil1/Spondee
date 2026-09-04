@@ -8,120 +8,115 @@ handover:
   branch: build/g4-sequential-live-e2e
 
   resume_rule: >-
-    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
-    evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    Health Factor G3 and Grid G4 are complete. Grid job 954 is closed and MUST NOT be rerun.
-    Rebalancing is the only live category currently authorized. Yield remains blocked until Rebalancing PASS.
+    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the evidence/runtime/risk/requirements ledgers.
+    Canonical GitHub state outranks chat memory. Health Factor 949 and Grid 954 are closed PASS and MUST NOT be rerun.
+    Rebalancing job 955 already exists and is FUNDED. Do not create a replacement. The only authorized write is provider submit
+    recovery for existing job 955. Yield remains blocked until 955 PASS.
 
-  current_milestone: G4_GRID_LIVE_E2E_PASS__DIRECT_SUBMIT_RECEIPT_REMEDIATED__REBALANCING_READY
-  lifecycle_status: G4_REBALANCING_LOCAL_LIVE_TESTNET_E2E_READY
+  current_milestone: G4_REBALANCING_JOB_955_FUNDED__RECOVERY_PREFLIGHT_PASS
+  lifecycle_status: G4_REBALANCING_JOB_955_PROVIDER_SUBMIT_RECOVERY_READY
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate: SPONDEE_G4_REBALANCING_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
+    current_gate: SPONDEE_G4_REBALANCING_JOB_955_PROVIDER_SUBMIT_AND_RECEIPT_RECOVERY_REQUIRED
     parent_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
     gate_status: HUMAN_AUTHORIZED_AND_PREFLIGHT_PASS
-    current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
+    current_action_class: EXISTING_FUNDED_JOB_PROVIDER_SUBMIT_RECOVERY
     production_owner: PBPD
     local_runtime_owner: HUMAN
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY
     merge_to_main: NOT_AUTHORIZED
 
-  g3_health_factor:
-    status: PASS
-    evidence: evidence/g3-job-949-final-pass/README.md
-    job_id: '949'
-    no_further_live_run: true
+  closed_live_categories:
+    health_factor:
+      status: PASS
+      job_id: '949'
+      no_further_live_run: true
+      outcome_receipt_evidence_class: SIMULATION
+    grid:
+      status: PASS
+      job_id: '954'
+      final_chain_status: COMPLETED
+      provider_submit_tx: '0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3'
+      no_further_live_run: true
+      outcome_receipt_evidence_class: SIMULATION
 
-  g4_grid:
-    status: PASS
-    evidence: evidence/g4-grid-job-954-final-pass/README.md
-    job_id: '954'
-    final_chain_status: COMPLETED
-    buyer_address: '0xaCFe38292DdFC028CD3D9e1900B590Ef8C99c3a1'
-    provider_submit_tx: '0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3'
-    submit_block: '128979779'
-    submitted_at: '1788487408'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/954/response'
-    deliverable_hash: '0x60d6559e9d8e9f5c6982cbe427d0f42538d7086508f5c30d3ac550292f33d26f'
-    promise_id: 'sp_2bd9d0cfdf390f09ddafd8a0'
-    promise_sha256: '30b221979b30d33a006ec1fe42cb2a70a92f311c00ca2542086826937680ccb0'
-    scenario_id: spondee-grid-live-001
-    manifest_hash_verified: true
-    spondee_receipt_verified: true
-    outcome_receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
-    recovery_used_write_retry: false
-    no_further_grid_live_run: true
+  rebalancing_955:
+    status: FUNDED_RECOVERY_READY
+    buyer_address: '0xbe9775807767c36A2ae4c2b88c1Fc08722273D37'
+    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    create_job_tx: '0x91be2b383238e90ed206859f8da57262331459dd8cf5a2c3db158d836d0c9615'
+    register_job_tx: '0xbaa83e00fc05b636401d1ffed6586d04a537cdd764c792c6cca5830b105facee'
+    set_budget_tx: '0x2aedd782b65ae6b531071e1c34da8b32f55c94570dcf47b58641778890467129'
+    fund_tx: '0xa82b4eababc631cc8af66dfa2f35fd88a04d53c7306f143314ca3ed470340e16'
+    read_only_probe_run: 33840042425
+    read_only_probe_status: PASS_FUNDED
+    submitted_at: '0'
+    deliverable_hash: ZERO
+    buyer_balance_wei: '0'
+    provider_submit_tx: PENDING
+    replacement_job_allowed: false
+    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
 
-  grid_failure_and_recovery_truth:
-    initial_writer_result: FAIL_CLOSED_AFTER_CONFIRMED_PROVIDER_SUBMIT
-    cause: BUYER_IGNORED_NOTIFY_FUNDED_TX_AND_USED_GETJOBSUBMITTEDEVENTS_ETH_GETLOGS
-    chain_write_retried: false
-    chain_recovery_ci_run: 33828319822
-    local_manifest_recovery: PASS
-    remediation_evidence: evidence/g4-grid-submit-receipt-remediation/README.md
+  transport_diagnosis:
+    default_notify_funded: ASYNC_STATUS_ACCEPTED_THEN_BACKGROUND_SUBMIT
+    wrong_intermediate_assumption: DEFAULT_NOTIFY_SYNCHRONOUS_OK_TRUE
+    wrong_intermediate_assumption_status: SUPERSEDED
+    final_controlled_mode: EXPLICIT_WAIT_FOR_RESULT_TRUE
+    default_agent_studio_behavior_preserved: true
+    provider_submit_resolution: EXACT_RETURNED_TX_RECEIPT
+    historical_getJobSubmittedEvents: FORBIDDEN
+    corrected_evidence: evidence/g4-grid-submit-receipt-remediation/README.md
 
-  g4_multi_category_buyer:
-    status: REMEDIATED_CI_PASS
-    implementation: backend/src/category-erc8183.ts
-    behavior: EXACT_NOTIFY_FUNDED_SUBMIT_TX_RECEIPT
-    forbidden_behavior: getJobSubmittedEvents
-    tests:
-      - valid notify_funded submit response is parsed and bound to exact job
-      - wrong job id fails closed
-      - malformed submit tx fails closed
-    authoritative_ci_run: 33839234808
-    authoritative_ci_status: PASS
-    ci_invariant: getJobSubmittedEvents in category-erc8183.ts fails CI
+  recovery_implementation:
+    backend: backend/src/resume-g4-rebalancing-955.ts
+    runner: scripts/g4-rebalancing-job-955-recovery.ps1
+    generic_buyer: backend/src/category-erc8183.ts
+    seller_extension:
+      rebalancing: reference-agents/rebalancing/app/agent/src/executor.ts
+      yield: reference-agents/yield/app/agent/src/executor.ts
+    preflight_run: 33840652210
+    preflight_status: PASS
+    validated_head: cda3ea81ecf449591c4ee766b50cf376604f7953
+    guarantees:
+      - default async notify contract remains available
+      - bounded local proof explicitly sends wait_for_result=true
+      - job 955 recovery prechecks FUNDED before seller unlock/write
+      - no createJob/registerJob/setBudget/fund in recovery backend
+      - no buyer wallet unlock in recovery runner
+      - no historical JobSubmitted log scan
+      - exact provider submit receipt is decoded
+      - manifest and Outcome Receipt must verify before PASS
+      - buyer balance remains zero
+      - Outcome Receipt remains SIMULATION
 
-  g4_rebalancing:
-    workspace: reference-agents/rebalancing
-    task_schema: spondee.rebalancing.task.v1
-    scenario: reference-agents/rebalancing/demo/g4-live-scenario.json
-    build_test_status: PASS
-    live_status: READY_NOW
-    runner: scripts/g4-rebalancing-live-e2e-localstorage.ps1
-    isolated_runner_ci_run: 33839458498
-    isolated_runner_ci_status: PASS
-    runner_guards:
-      - rebalancing-only category pin
-      - no Grid scenario path
-      - no Yield scenario path
-      - Grid job 954 closure banner
-      - no wallet creation
-      - no mainnet
-      - stop on failure
+  yield:
+    status: BLOCKED_UNTIL_REBALANCING_955_PASS
 
-  g4_yield:
-    workspace: reference-agents/yield
-    task_schema: spondee.yield.task.v1
-    build_test_status: PASS
-    live_status: BLOCKED_UNTIL_REBALANCING_PASS
-
-  exact_next_gate: SPONDEE_G4_REBALANCING_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
+  exact_next_gate: SPONDEE_G4_REBALANCING_JOB_955_PROVIDER_SUBMIT_AND_RECEIPT_RECOVERY_REQUIRED
   exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   exact_next_action: >-
     Pull build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
-    .\scripts\g4-rebalancing-live-e2e-localstorage.ps1 exactly once. Enter the existing seller wallet
-    password only into the masked local prompt. Return only public PASS/FAIL evidence. Do not run the
-    original sequential runner again.
+    .\scripts\g4-rebalancing-job-955-recovery.ps1 exactly once. The script first proves job 955 is still FUNDED,
+    then asks for the existing canonical seller password through the masked local prompt and may submit only job 955.
+    Return only public PASS/FAIL evidence.
 
   stop_conditions:
-    - stop immediately on any Rebalancing failure
-    - no retry after partial chain write until deterministic diagnosis
+    - no rerun of scripts/g4-rebalancing-live-e2e-localstorage.ps1
+    - no rerun of scripts/g4-sequential-live-e2e-localstorage.ps1
+    - no new Rebalancing job
+    - no create/register/setBudget/fund during recovery
+    - stop on any recovery failure and do not retry blindly
     - no new seller wallet
     - no seller password/private key/seed/keystore in chat or Git
-    - no Grid job recreation or mutation
-    - no Yield live write until Rebalancing PASS
-    - no tBNB acquisition if MegaFuel fails
+    - no Grid write
+    - no Yield live write until Rebalancing 955 PASS
+    - no tBNB acquisition
     - no non-zero service price
     - no x402/B402 payment
-    - no Altana grantSession
-    - no PancakeSwap/Venus/Lista value-moving transaction
     - no mainnet or meaningful user capital
-    - no observed Agent Advantage claim from simulation receipts
+    - no observed Agent Advantage claim from SIMULATION receipts
     - no merge to main
     - no Project Finisher
     - no final submission

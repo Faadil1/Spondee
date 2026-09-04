@@ -3,18 +3,18 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze MVP; recover Rebalancing 955 and finish Yield live proof before optional integrations; prioritize observed evidence and public judging availability.
+    mitigation: Freeze MVP; complete Yield live proof next, then prioritize observed evidence and public judging availability over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
     risk: Four-category depth becomes cosmetic or uneven.
-    mitigation: Health Factor and Grid have verified live testnet paths; recover existing Rebalancing job 955, then require equivalent Yield proof before closing four-category depth.
-    status: OPEN_REBALANCING_RECOVERY_AND_YIELD_LIVE_PROOF
+    mitigation: Health Factor, Grid and Rebalancing now have verified live testnet paths; require the same bounded proof for Yield before closing equal depth.
+    status: OPEN_YIELD_LIVE_PROOF_PENDING
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Keep Health Factor as hero only; Grid is live-verified, Rebalancing is FUNDED/recoverable, and Yield remains the final unstarted controlled live slice.
-    status: OPEN_REBALANCING_RECOVERY_AND_YIELD_LIVE_PROOF
+    mitigation: Keep Health Factor as hero only; Grid and Rebalancing are live-verified and Yield has an isolated validated runner.
+    status: OPEN_UNTIL_YIELD_LIVE_PASS
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
@@ -32,7 +32,7 @@ risks:
     status: CONTROLLED_BY_SPONDEE_FALLBACK_PATHS
   - id: R-07
     severity: MEDIUM
-    risk: Altana integration consumes time before core Main/TermiX paths work.
+    risk: Altana integration consumes time before core paths work.
     mitigation: Altana writes remain blocked until all four core categories and observed evidence are credible.
     status: CONTROLLED_BLOCKED
   - id: R-08
@@ -58,34 +58,36 @@ risks:
   - id: R-12
     severity: HIGH
     risk: BSC Testnet RPC eth_getLogs limits can falsely fail a live path after provider submit.
-    mitigation: Resolve provider submit from a known exact transaction receipt. Historical getJobSubmittedEvents scans are forbidden in the G4 buyer and recovery paths.
-    status: CONTROLLED_BY_EXACT_RECEIPT_NO_HISTORICAL_SCAN
-    evidence: evidence/g4-grid-submit-receipt-remediation/README.md
+    mitigation: The G4 buyer consumes the exact provider submit transaction and decodes that receipt directly. CI forbids getJobSubmittedEvents in the live driver.
+    status: RESOLVED_BY_DIRECT_SUBMIT_RECEIPT_AND_CI_INVARIANT
+    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: R-13
     severity: HIGH
-    risk: The default Agent Studio asynchronous notify_funded ACK is mistaken for a synchronous terminal provider-submit result.
-    mitigation: Preserve default status=accepted behavior; Spondee controlled local proof explicitly opts into wait_for_result=true, which is covered by Rebalancing/Yield seller tests and backend parser tests.
-    status: RESOLVED_IN_CODE_CI_RECOVERY_RUNTIME_PENDING
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
+    risk: Buyer and seller disagree on notify_funded response semantics, causing a false failure after FUND.
+    mitigation: Preserve Agent Studio default async ACK, but use explicit wait_for_result=true only for bounded Spondee local proof so the exact provider submit tx is returned synchronously; tests cover async default and bounded sync mode.
+    status: RESOLVED_BY_EXPLICIT_BOUNDED_WAIT_FOR_RESULT
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: R-14
     severity: HIGH
-    risk: A failed Rebalancing retry creates a replacement job and strands funded job 955.
-    mitigation: Job 955 is the sole recovery target. Recovery backend contains no create/register/setBudget/fund primitive, runner prechecks FUNDED, and replacement-job creation is canonically forbidden.
-    status: CONTROLLED_RECOVERY_GATE_ACTIVE
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
+    risk: Rebalancing job 955 is accidentally recreated or mutated after successful recovery.
+    mitigation: Job 955 is canonically closed; Yield runner has no Rebalancing scenario/category path and explicitly treats 955 as CLOSED.
+    status: CONTROLLED_CLOSED_JOB_GUARD
+    evidence: evidence/g4-yield-isolated-runner-preflight/README.md
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
-    mitigation: Health Factor and Grid have verified controlled live paths; Rebalancing has a funded controlled job with recovery preflight PASS; Yield controlled path remains built/CI-verified but unproven live.
-    status: PARTIALLY_RESOLVED_TWO_LIVE_ONE_FUNDED_ONE_PENDING
-    evidence: evidence/g4-rebalancing-job-955-funded-failclosed/README.md
+    mitigation: Health Factor, Grid and Rebalancing have verified controlled live BSC-testnet paths; Yield controlled Agent Studio path is build/test/preflight verified and awaits one bounded live execution.
+    status: PARTIALLY_RESOLVED_THREE_OF_FOUR_LIVE_YIELD_READY
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    mitigation: Resolved by signed Promise commitments in Health Factor, Grid and Rebalancing job 955.
-    status: RESOLVED_BY_LIVE_PATHS
+    mitigation: Resolved by signed Promise commitments and final receipt verification across Health Factor, Grid and Rebalancing.
+    status: RESOLVED_BY_LIVE_E2E
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    mitigation: Resolved for completed Health Factor/Grid paths; Rebalancing job 955 final binding remains pending provider submit + manifest verification.
-    status: RESOLVED_FOR_CLOSED_PATHS_REBALANCING_RECOVERY_PENDING
+    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt across three live categories.
+    status: RESOLVED_BY_LIVE_E2E
+    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md

@@ -1,12 +1,8 @@
 schema: PBPD-EVIDENCE-LEDGER-v0.1
-revision: EVIDENCE-R036-BACKEND-CODE-COMPLETE
+revision: EVIDENCE-R038-OBSERVED-3_OF_3-READY
 history:
-  previous_ledger_blob_sha: 2b6ed35ce3ed60fe98b4bbd24c321211aecc3ea0
+  previous_ledger_blob_sha: f084d8b28cb32d6c1547467fbf5e16bff8eadd7d
   previous_detail_preserved_in_git_history: true
-  compaction_reason: >-
-    Roll the canonical ledger forward after G4/G5 and backend-final-completion so current claims do not
-    remain anchored to the earlier Health-Factor-only state. Detailed earlier EV/VER/CON records remain
-    durable in Git history and individual evidence directories.
 claims:
   - id: CLM-001
     claim: Spondee supports four required categories through verified bounded BSC-testnet activation paths.
@@ -20,10 +16,10 @@ claims:
   - id: CLM-002
     claim: A task-specific Promise Card is created before Spondee activation and can be bound to the resulting outcome.
     truth_class: FACT
-    status: VERIFIED_G3_G4_AND_G5
+    status: VERIFIED_G3_G4_AND_THREE_COUNTABLE_G5_PAIRS
     evidence:
       - backend/src/contracts.ts
-      - evidence/g5-grid-forward-job-962-countable-pass/README.md
+      - evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: CLM-003
     claim: SIMULATION evidence is excluded from observed Agent Advantage and calibration statistics.
     truth_class: FACT
@@ -33,32 +29,37 @@ claims:
       - backend/src/backend-completion.test.ts
       - evidence/backend-final-completion/README.md
   - id: CLM-004
-    claim: Spondee has at least one countable observed Agent Advantage pair using a verified marketplace activation and same-window baseline.
+    claim: Spondee has three countable observed Agent Advantage pairs using verified marketplace activations and precommitted reproducible baselines.
     truth_class: FACT
-    status: VERIFIED_GRID_JOB_962_COUNTABLE_1_OF_3
+    status: VERIFIED_READY_3_OF_3
     evidence:
       - evidence/g5-grid-forward-job-962-countable-pass/README.md
-    measured_result:
-      agent_terminal_equity_usd: 9996.660009
-      baseline_terminal_equity_usd: 9999.160009
-      delta_usd: -2.5
-      interpretation: AGENT_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+      - evidence/g5-health-forward-job-971-countable-pass/README.md
+      - evidence/g5-rebalancing-forward-job-973-countable-pass/README.md
+      - evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: CLM-005
-    claim: Three countable observed Agent Advantage pairs will be complete before final submission.
-    truth_class: HYPOTHESIS
-    status: PARTIAL_1_OF_3
-    remaining: 2
+    claim: The required trading-related observed pair is satisfied.
+    truth_class: FACT
+    status: VERIFIED_GRID_JOB_962
+    evidence:
+      - evidence/g5-grid-forward-job-962-countable-pass/README.md
   - id: CLM-006
-    claim: Health Factor observed warning lead time and response latency will satisfy the hero evidence requirement.
-    truth_class: HYPOTHESIS
-    status: PENDING_OBSERVED_EVENT_TAPE
+    claim: Health Factor observed warning lead time and response latency satisfy the hero evidence requirement under the frozen protocol.
+    truth_class: FACT
+    status: VERIFIED_JOB_971
+    measured_result:
+      warning_lead_time_seconds: 95.829
+      response_latency_ms: 0
+      adverse_event_observed: false
+      liquidation_prevention_claimed: false
+    evidence:
+      - evidence/g5-health-forward-job-971-countable-pass/README.md
   - id: CLM-007
     claim: Backend code is complete for frontend V1 and no backend architecture work is required before Benita starts.
     truth_class: FACT
-    status: VERIFIED_PASS_RUN_33866229883
+    status: VERIFIED_PASS_RUN_33867168666
     evidence:
       - evidence/backend-final-completion/README.md
-      - backend/README.md
       - backend/FRONTEND-CONTRACT.md
   - id: CLM-008
     claim: Consequential live actions and canonical evidence ingestion are protected from unauthenticated mutation.
@@ -107,91 +108,113 @@ claims:
   - id: CLM-014
     claim: Public judge availability is complete.
     truth_class: HYPOTHESIS
-    status: UNVERIFIED_PUBLIC_DEPLOYMENT_PENDING
+    status: DELEGATED_TO_BENITA_PUBLIC_DEPLOYMENT_AND_SMOKE_PENDING
   - id: CLM-015
     claim: Winner Intelligence findings can be applied after frontend V1 without requiring backend rearchitecture.
     truth_class: HYPOTHESIS
     status: BOUNDED_POST_V1_REVIEW_PLANNED
 
 canonical_evidence:
-  - id: EV-R036-001
+  - id: EV-R038-001
     type: backend_final_completion_ci
-    workflow_run_id: 33866229883
-    validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
+    workflow_run_id: 33867168666
     artifact: evidence/backend-final-completion/README.md
     result: PASS
-    verified_steps:
-      - FULL_BACKEND_REGRESSION
-      - STRICT_TYPESCRIPT
-      - FOUR_CATEGORY_TRUTH_SMOKE
-      - NO_SIMULATION_PROMOTION
-      - PROTECTED_SURFACE_AND_REPLAY
-      - OFFICIAL_8004SCAN_READONLY_INTEGRATION
-      - BSC_TESTNET_READONLY_READINESS
-      - STATIC_BACKEND_COMPLETION_GUARDS
-      - ARTIFACT_UPLOAD
     chain_write_attempted: false
-  - id: EV-R036-002
-    type: backend_final_frontend_handoff
-    artifact: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
-    status: PRESENT
-  - id: EV-R036-003
-    type: frontend_technical_contract
-    artifact: backend/FRONTEND-CONTRACT.md
-    status: PRESENT
-  - id: EV-R036-004
-    type: machine_frontend_handoff
-    artifact: .pbpd/state/FRONTEND-HANDOFF.yaml
-    status: PRESENT
-  - id: EV-R036-005
-    type: health_factor_live_transport
-    artifact: evidence/g3-job-949-final-pass/README.md
-    job_id: '949'
-    receipt_truth_class: SIMULATION
-    status: VERIFIED_CLOSED
-  - id: EV-R036-006
-    type: grid_live_transport
-    artifact: evidence/g4-grid-job-954-final-pass/README.md
-    job_id: '954'
-    receipt_truth_class: SIMULATION
-    status: VERIFIED_CLOSED
-  - id: EV-R036-007
-    type: rebalancing_live_transport
-    artifact: evidence/g4-rebalancing-job-955-final-pass/README.md
-    job_id: '955'
-    receipt_truth_class: SIMULATION
-    status: VERIFIED_CLOSED
-  - id: EV-R036-008
-    type: yield_live_transport
-    artifact: evidence/g4-yield-job-957-final-pass/README.md
-    job_id: '957'
-    receipt_truth_class: SIMULATION
-    status: VERIFIED_CLOSED
-  - id: EV-R036-009
-    type: first_countable_observed_pair
-    artifact: evidence/g5-grid-forward-job-962-countable-pass/README.md
+  - id: EV-R038-002
+    type: pre_frontend_observed_closure_preflight
+    workflow_run_id: 33868671297
+    artifact: evidence/g5-pre-frontend-observed-closure-preflight/README.md
+    result: PASS
+    chain_write_attempted: false
+  - id: EV-R038-003
+    type: countable_observed_grid_pair
     job_id: '962'
     pair_id: g5-grid-forward-job-962
-    evidence_class: OBSERVED
+    artifact: evidence/g5-grid-forward-job-962-countable-pass/README.md
     countable_for_final_report: true
     measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
     agent_terminal_equity_usd: 9996.660009
     baseline_terminal_equity_usd: 9999.160009
     delta_usd: -2.5
+    status: VERIFIED_CLOSED
+  - id: EV-R038-004
+    type: countable_observed_health_factor_pair
+    job_id: '971'
+    pair_id: g5-health-forward-job-971
+    artifact: evidence/g5-health-forward-job-971-countable-pass/README.md
+    countable_for_final_report: true
+    observed_round_count: 6
+    warning_lead_time_seconds: 95.829
+    response_latency_ms: 0
+    adverse_event_observed: false
+    external_round_verification: PASS
+    manifest_hash_verified: true
+    liquidation_prevention_claimed: false
     mainnet_value_moved: false
     status: VERIFIED_CLOSED
+  - id: EV-R038-005
+    type: countable_observed_rebalancing_pair
+    job_id: '973'
+    pair_id: g5-rebalancing-forward-job-973
+    artifact: evidence/g5-rebalancing-forward-job-973-countable-pass/README.md
+    countable_for_final_report: true
+    observed_round_count: 6
+    measured_result: NEUTRAL_AGENT_EQUALS_BASELINE_ON_THIS_WINDOW
+    agent_terminal_deviation_bps: 1.363132
+    baseline_terminal_deviation_bps: 1.363132
+    agent_terminal_equity_usd: 10002.727008
+    baseline_terminal_equity_usd: 10002.727008
+    external_round_verification: PASS
+    manifest_hash_verified: true
+    realized_mainnet_pnl_claimed: false
+    mainnet_value_moved: false
+    status: VERIFIED_CLOSED
+  - id: EV-R038-006
+    type: aggregate_agent_advantage_report
+    artifact: evidence/g5-agent-advantage-3-of-3-final/README.md
+    required_pairs: 3
+    countable_pairs: 3
+    trading_requirement_satisfied: true
+    health_event_tape_satisfied: true
+    status: READY
+  - id: EV-R038-007
+    type: public_deployment_contract_preflight
+    workflow_run_id: 33869418246
+    artifact: evidence/public-backend-deployment-preflight/README.md
+    result: PASS
+    deployment_created: false
+  - id: EV-R038-008
+    type: raw_bundle_archive_helper
+    artifact: scripts/archive-g5-pre-frontend-evidence.ps1
+    status: READY_FOR_LOCAL_ARCHIVE
 
 verification_events:
-  - id: VER-R036-001
-    at: '2026-09-04T11:05:15Z'
-    event: Authoritative Backend Final Completion workflow finished successfully.
-    result: PASS_RUN_33866229883
-    evidence: EV-R036-001
-  - id: VER-R036-002
+  - id: VER-R038-001
+    at: '2026-09-04T13:35:43Z'
+    event: Health Factor forward observed pair began its bounded observation window after marketplace activation.
+    result: PASS_JOB_971
+    evidence: EV-R038-004
+  - id: VER-R038-002
+    at: '2026-09-04T13:38:11Z'
+    event: Health Factor pair closed countable with measured warning lead and response latency.
+    result: WARNING_LEAD_95_829S_RESPONSE_LATENCY_0MS
+    evidence: EV-R038-004
+  - id: VER-R038-003
+    at: '2026-09-04T13:38:55Z'
+    event: Rebalancing forward observed pair began its bounded observation window.
+    result: PASS_JOB_973
+    evidence: EV-R038-005
+  - id: VER-R038-004
+    at: '2026-09-04T13:41:40Z'
+    event: Rebalancing pair closed countable with neutral agent-vs-baseline result.
+    result: AGENT_EQUALS_BASELINE
+    evidence: EV-R038-005
+  - id: VER-R038-005
     at: '2026-09-04'
-    event: Backend completion was promoted from frontend-contract freeze to backend-code-complete canonical state.
-    result: STATE_R036
-    evidence: .pbpd/state/PROJECT-STATE.yaml
+    event: Agent Advantage requirement reconciled from 1/3 to 3/3 and Health Factor event tape closed.
+    result: STATE_R038_READY
+    evidence: EV-R038-006
 
 truth_boundaries:
   - SIMULATION_NE_OBSERVED
@@ -200,14 +223,19 @@ truth_boundaries:
   - EXTERNAL_DISCOVERY_NE_ACTIVATION_COMPATIBILITY
   - VERIFIED_PATH_NE_CURRENT_WRITE_AUTHORITY
   - FAILURE_NE_VALID_NEGATIVE_OUTCOME
-  - INSUFFICIENT_HISTORY_NE_CONFIDENCE_SCORE
-  - BACKEND_CODE_COMPLETE_NE_SUBMISSION_COMPLETE
+  - NEGATIVE_OR_NEUTRAL_OBSERVED_RESULT_NE_FAILURE
+  - HEALTH_WARNING_LEAD_NE_LIQUIDATION_PREVENTION_GUARANTEE
+  - BACKEND_AND_EVIDENCE_COMPLETE_NE_PUBLIC_DEPLOYMENT_COMPLETE
 
 remaining_evidence_gates:
-  - SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  - THIRD_COUNTABLE_OBSERVED_PAIR
-  - PUBLIC_JUDGE_DEPLOYMENT_AND_SMOKE
+  - PUBLIC_JUDGE_DEPLOYMENT_AND_SMOKE_BY_BENITA
+  - WINNER_INTELLIGENCE_TRACE_FRONTEND_REVIEW
 
 closed_job_guards:
-  jobs: ['949', '954', '955', '957', '962']
+  jobs: ['949', '954', '955', '957', '962', '971', '973']
   rerun_or_mutation_allowed: false
+
+raw_bundle_preservation:
+  health_job_971: LOCAL_TEMP_PENDING_REPO_ARCHIVE
+  rebalancing_job_973: LOCAL_TEMP_PENDING_REPO_ARCHIVE
+  archive_script: scripts/archive-g5-pre-frontend-evidence.ps1

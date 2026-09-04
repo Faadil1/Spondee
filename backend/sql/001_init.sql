@@ -39,9 +39,17 @@ CREATE TABLE IF NOT EXISTS spondee_evidence_runs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS spondee_operation_locks (
+  operation_key TEXT PRIMARY KEY,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE INDEX IF NOT EXISTS idx_spondee_promises_category
   ON spondee_promises(category);
 CREATE INDEX IF NOT EXISTS idx_spondee_activations_status
   ON spondee_activations(status);
 CREATE INDEX IF NOT EXISTS idx_spondee_evidence_class
   ON spondee_evidence_runs(evidence_class);
+CREATE INDEX IF NOT EXISTS idx_spondee_operation_locks_expiry
+  ON spondee_operation_locks(expires_at);

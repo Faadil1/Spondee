@@ -9,19 +9,20 @@ handover:
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
-    evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    G4 four-category live transport is closed PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
-    All current G3/G4 Outcome Receipts are SIMULATION and count as zero observed Agent Advantage pairs.
+    evidence, runtime and risk ledgers. Canonical GitHub state outranks chat memory.
+    G4 is closed 4/4 PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
+    Existing G3/G4 receipts are SIMULATION. The G5 Grid historical dry-run is structurally OBSERVED
+    but explicitly non-countable because no forward marketplace hire occurred.
 
-  current_milestone: G5_OBSERVED_EVIDENCE_PREFLIGHT_PASS__GRID_MARKET_SOURCE_READONLY_PASS
-  lifecycle_status: G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN
+  current_milestone: G5_GRID_OBSERVED_PAIR_DRY_RUN_PASS_NON_COUNTABLE
+  lifecycle_status: G5_GRID_FORWARD_RUNNER_AND_PREFLIGHT_NEXT
 
   authority:
     project: PROJECT_AUTHORIZED
-    completed_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+    completed_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
     completed_gate_status: PASS
-    current_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-    current_action_class: CODE_AND_READ_ONLY_EXTERNAL_DATA
+    current_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
+    current_action_class: CODE_AND_READ_ONLY_PREFLIGHT
     production_owner: PBPD
     protected_external_action_owner: HUMAN
     final_submission: HUMAN
@@ -39,62 +40,68 @@ handover:
     observed_pairs_contributed: 0
 
   g5_observed_evidence_contract:
-    status: PASS
+    status: PASS_HARDENED
     schema: spondee.agent-advantage-pair.v1
     implementation: backend/src/observed-evidence.ts
     tests: backend/src/observed-evidence.test.ts
     protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
-    authoritative_ci_run: 33842602119
-    evidence: evidence/g5-observed-evidence-preflight/README.md
+    authoritative_ci_run: 33843642146
     required_pairs: 3
+    countable_pairs: 0
     grid_pair_required: true
     simulation_to_observed_promotion: FORBIDDEN
+    historical_replay_countable: false
+    countable_pair_requires_marketplace_activation: true
 
-  g5_grid_market_source:
-    status: PASS_READ_ONLY
-    implementation: backend/src/probe-g5-grid-market-source.ts
-    authoritative_ci_run: 33842784851
-    source: Chainlink BNB/USD on BNB Chain mainnet
-    feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
-    probe_block: '119867346'
-    observed_round_count: 5
-    latest_probe_price_usd: 724.12684
-    latest_probe_updated_at: '2026-09-04T06:03:03Z'
+  g5_grid_dry_run:
+    status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
+    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    ci_run: 33843581388
+    pair_id: g5-grid-dry-55340232221132058579
+    scenario_id: g5-grid-dry-run-55340232221132058555-55340232221132058579
+    source: Chainlink BNB/USD read-only on BNB Chain mainnet
+    source_block: '119868943'
+    rounds: 25
+    window_start: '2026-09-04T06:01:57.000Z'
+    window_end: '2026-09-04T06:15:10.000Z'
+    agent:
+      terminal_equity_usd: 9993.479936
+      net_return_pct: -0.065201
+      max_drawdown_pct: 0.074543
+      estimated_execution_friction_usd: 4.583333
+      fill_count: 11
+    baseline:
+      terminal_equity_usd: 9998.06652
+      net_return_pct: -0.019335
+      max_drawdown_pct: 0.056784
+    result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+    countable_for_final_report: false
+    paired_run_count_after: 0
+    report_status_after: INSUFFICIENT_OBSERVED_EVIDENCE
+    artifact_id: '9925716870'
+    artifact_zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
     wallet_used: false
     chain_write_attempted: false
     user_capital_used: false
-    evidence: evidence/g5-grid-market-source-readonly/README.md
+    realized_mainnet_pnl_claimed: false
 
-  g5_first_pair_target:
-    category: Grid Trading
-    requirement_reason: TermiX requires at least one trading/stock/security pair and trading agents need a record with window and risk.
-    execution_goal: actual with-agent output vs actual without-agent baseline under the same frozen observed BNB/USD window.
-    marketplace_hire_semantics_required: true
-    raw_outputs_required: true
-    time_cost_quality_required: true
-    trading_record_required: true
-    meaningful_capital_required: false
-    current_status: IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-
-  public_deployment:
-    status: PENDING
-    current_loopback_deliverables_judge_accessible: false
-
-  exact_next_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  exact_next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
   exact_next_owner: PBPD_IMPLEMENTATION
   exact_next_action: >-
-    Implement a backward-compatible Grid observed-task/harness using qualified Chainlink BNB/USD
-    provenance, same-state/window agent-vs-baseline measurement and strict pair validation. Dry-run
-    the full evidence pipeline with no chain writes before opening an observed experiment execution gate.
+    Build and CI-gate a forward-window Grid observed-pair runner. It must freeze Promise/config before
+    the future market window, prepare exactly one future zero-price BSC-testnet marketplace activation,
+    collect read-only Chainlink rounds after activation, run the same agent/baseline measurement, and
+    remain unable to write chain state in CI. Execution itself remains a later human-authorized gate.
 
   stop_conditions:
     - do not rerun jobs 949, 954, 955, or 957
-    - do not relabel existing SIMULATION receipts as OBSERVED
-    - no chain write at the current gate
-    - mainnet access is read-only only
+    - do not count the historical Grid dry-run
+    - no chain write in runner/preflight construction
+    - no wallet unlock in CI/preflight
+    - BSC mainnet is read-only only
     - no meaningful user/mainnet capital
     - no material paid spend
-    - no realized-mainnet-PnL claim from paper or observed-data execution
+    - no realized-mainnet-PnL claim
     - no merge to main
     - no Project Finisher yet
     - no final submission

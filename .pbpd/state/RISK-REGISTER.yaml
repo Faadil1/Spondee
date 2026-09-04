@@ -3,7 +3,7 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze G4 at 4/4 PASS; first countable Grid pair is closed; prioritize Health Factor observed pair/event tape, one additional pair, and public judging availability over optional integrations.
+    mitigation: Backend code is now closed; prioritize Health Factor observed pair/event tape, one additional pair, public deployment and judge-path quality over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
@@ -30,13 +30,14 @@ risks:
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Controlled Spondee Agent Studio paths own activation proof; external discovery candidates remain secondary when activation is opaque.
-    status: CONTROLLED_BY_SPONDEE_FALLBACK_PATHS
+    mitigation: Controlled Spondee Agent Studio paths own activation proof; 8004scan discovery is read-only, cached and secondary. Static controlled reference agents remain available if discovery is unavailable.
+    status: CONTROLLED_BY_SPONDEE_REFERENCE_PATHS_AND_CACHED_DISCOVERY
+    evidence: backend/src/discovery.ts
   - id: R-07
     severity: MEDIUM
     risk: Altana integration consumes time before core evidence and deployment are complete.
-    mitigation: Keep Altana writes blocked until observed evidence and public judging build are credible.
-    status: CONTROLLED_BLOCKED
+    mitigation: Keep Altana optional and blocked until submission-critical evidence/deployment are healthy.
+    status: CONTROLLED_DEFERRED_OPTIONAL
   - id: R-08
     severity: HIGH
     risk: Financial wording implies guarantees.
@@ -46,7 +47,7 @@ risks:
   - id: R-09
     severity: HIGH
     risk: JigJoy/Syndicate collision consumes the available build window.
-    mitigation: Strict gate sequencing and no optional platform expansion until Spondee is submission-ready.
+    mitigation: Backend code is closed; use strict parallel workstreams for evidence and Benita frontend without reopening backend scope.
     status: OPEN_CAPACITY_RISK
   - id: R-10
     severity: CRITICAL
@@ -71,7 +72,7 @@ risks:
   - id: R-14
     severity: HIGH
     risk: Closed jobs are accidentally recreated or mutated.
-    mitigation: Jobs 949/954/955/957 and now 962 are canonically closed; future pairs require a dedicated gate and new task scope.
+    mitigation: Jobs 949/954/955/957 and 962 are canonically closed; future pairs require a dedicated gate and new task scope.
     status: CONTROLLED_CLOSED_JOB_GUARD_949_954_955_957_962
   - id: R-15
     severity: CRITICAL
@@ -112,12 +113,42 @@ risks:
     severity: CRITICAL
     risk: Health Factor event tape is generated from simulation or post-hoc thresholds and presented as observed warning advantage.
     mitigation: Next Health Factor pair must freeze position, warning threshold, intervention rule and without-agent baseline before the observation window; preserve raw observed inputs and warning/intervention/adverse-event timestamps; dry-run remains non-countable until a dedicated marketplace activation exists.
-    status: OPEN_NEXT_GATE_BLOCKER
+    status: OPEN_NEXT_EVIDENCE_GATE_BLOCKER
   - id: R-22
     severity: HIGH
     risk: Health Factor baseline cadence is chosen after seeing the event, biasing warning lead-time or response-latency comparison.
     mitigation: Baseline cadence/rule must be precommitted in the frozen input snapshot and run against the exact same observed window and initial state.
-    status: OPEN_NEXT_GATE_DESIGN_RISK
+    status: OPEN_NEXT_EVIDENCE_GATE_DESIGN_RISK
+  - id: R-23
+    severity: CRITICAL
+    risk: Public deployment exposes consequential live-action or evidence-ingestion mutation endpoints without product-level authorization.
+    mitigation: Separate server-only Bearer scopes protect live action and evidence ingestion; tokens are compared in constant time and readiness fails closed when production protection is unconfigured.
+    status: RESOLVED_BACKEND
+    evidence: backend/src/security.ts
+  - id: R-24
+    severity: CRITICAL
+    risk: Browser retry, double click or concurrent requests create duplicate live blockchain jobs.
+    mitigation: Live action accepts only PREPARED/BLOCKED_LIVE_GATE states, refuses non-retryable states, and claims a durable PostgreSQL operation lock before any live execution. Memory lock covers local/CI.
+    status: RESOLVED_BACKEND
+    evidence: backend/src/store.ts
+  - id: R-25
+    severity: HIGH
+    risk: A later request silently overwrites canonical evidence under the same run_id.
+    mitigation: Evidence ingestion is protected, immutable by run_id, returns idempotent success for identical payloads and conflict for changed payloads.
+    status: RESOLVED_BACKEND
+    evidence: backend/src/app.ts
+  - id: R-26
+    severity: HIGH
+    risk: 8004scan API credentials are exposed in the browser or external discovery metadata is treated as performance proof.
+    mitigation: Dynamic 8004scan discovery runs server-side, optionally uses X-API-Key server-side, caches read results and emits activatable=false with explicit claim guardrails.
+    status: RESOLVED_BACKEND
+    evidence: backend/src/discovery.ts
+  - id: R-27
+    severity: MEDIUM
+    risk: Judges or developers cannot reconstruct why an activation produced an outcome without re-running it.
+    mitigation: Read-only Decision Replay reconstructs preserved task, Promise, authority, transaction references and Outcome Receipt without re-execution.
+    status: RESOLVED_BACKEND
+    evidence: backend/src/replay.ts
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.

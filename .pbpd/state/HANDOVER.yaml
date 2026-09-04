@@ -5,24 +5,25 @@ handover:
   date: 2026-09-04
   source_of_truth: GITHUB
   repository: Faadil1/Spondee
-  branch: build/g4-sequential-live-e2e
+  branch: build/g5-grid-forward-observed
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime and risk ledgers. Canonical GitHub state outranks chat memory.
     G4 is closed 4/4 PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
-    Existing G3/G4 receipts are SIMULATION. The G5 Grid historical dry-run is structurally OBSERVED
-    but explicitly non-countable because no forward marketplace hire occurred.
+    Existing G3/G4 receipts are SIMULATION. The G5 historical Grid dry-run is structurally OBSERVED
+    but non-countable. The forward Grid runner preflight is PASS, but no execution authority is open.
 
-  current_milestone: G5_GRID_OBSERVED_PAIR_DRY_RUN_PASS_NON_COUNTABLE
-  lifecycle_status: G5_GRID_FORWARD_RUNNER_AND_PREFLIGHT_NEXT
+  current_milestone: G5_GRID_FORWARD_RUNNER_PREFLIGHT_PASS
+  lifecycle_status: G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_HUMAN_GATE_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
-    completed_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-    completed_gate_status: PASS
-    current_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-    current_action_class: CODE_AND_READ_ONLY_PREFLIGHT
+    completed_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
+    completed_gate_status: PASS_RUN_33845758154
+    current_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+    current_gate_status: HUMAN_GO_REQUIRED
+    current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
     production_owner: PBPD
     protected_external_action_owner: HUMAN
     final_submission: HUMAN
@@ -42,9 +43,6 @@ handover:
   g5_observed_evidence_contract:
     status: PASS_HARDENED
     schema: spondee.agent-advantage-pair.v1
-    implementation: backend/src/observed-evidence.ts
-    tests: backend/src/observed-evidence.test.ts
-    protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
     authoritative_ci_run: 33843642146
     required_pairs: 3
     countable_pairs: 0
@@ -58,50 +56,53 @@ handover:
     evidence: evidence/g5-grid-observed-pair-dry-run/README.md
     ci_run: 33843581388
     pair_id: g5-grid-dry-55340232221132058579
-    scenario_id: g5-grid-dry-run-55340232221132058555-55340232221132058579
-    source: Chainlink BNB/USD read-only on BNB Chain mainnet
-    source_block: '119868943'
-    rounds: 25
-    window_start: '2026-09-04T06:01:57.000Z'
-    window_end: '2026-09-04T06:15:10.000Z'
-    agent:
-      terminal_equity_usd: 9993.479936
-      net_return_pct: -0.065201
-      max_drawdown_pct: 0.074543
-      estimated_execution_friction_usd: 4.583333
-      fill_count: 11
-    baseline:
-      terminal_equity_usd: 9998.06652
-      net_return_pct: -0.019335
-      max_drawdown_pct: 0.056784
     result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
     countable_for_final_report: false
     paired_run_count_after: 0
-    report_status_after: INSUFFICIENT_OBSERVED_EVIDENCE
-    artifact_id: '9925716870'
-    artifact_zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
     wallet_used: false
     chain_write_attempted: false
-    user_capital_used: false
     realized_mainnet_pnl_claimed: false
 
-  exact_next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-  exact_next_owner: PBPD_IMPLEMENTATION
+  g5_grid_forward_runner:
+    status: PREFLIGHT_PASS_EXECUTION_NOT_AUTHORIZED
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+    authoritative_ci_run: 33845758154
+    validated_head: c59725553793e6927479077205d4e4a91a7e78bb
+    runner: scripts/g5-grid-forward-observed-pair.ps1
+    default_mode: READ_ONLY_PREFLIGHT
+    required_execution_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+    future_job_scope: ONE_NEW_GRID_G5_BSC_TESTNET_JOB_ONLY
+    service_price_raw: '0'
+    megafuel_required: true
+    mainnet_mode: READ_ONLY_CHAINLINK_ONLY
+    first_round_rule: STRICTLY_AFTER_PROMISE_FREEZE_AND_BSC_TESTNET_FUNDING
+    independent_round_verification: EXACT_CHAINLINK_ROUND_ID_REREAD
+    same_window_baseline: STATIC_50_50_BUY_AND_HOLD
+    target_future_rounds: 8
+    max_wait_seconds: 480
+    preflight_wallet_used: false
+    preflight_chain_write_attempted: false
+    preflight_mainnet_value_moved: false
+    countable_pairs_after_preflight: 0
+
+  exact_next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   exact_next_action: >-
-    Build and CI-gate a forward-window Grid observed-pair runner. It must freeze Promise/config before
-    the future market window, prepare exactly one future zero-price BSC-testnet marketplace activation,
-    collect read-only Chainlink rounds after activation, run the same agent/baseline measurement, and
-    remain unable to write chain state in CI. Execution itself remains a later human-authorized gate.
+    If and only if the human explicitly opens the gate, execute one new zero-price Grid G5
+    BSC-testnet marketplace job, freeze the Promise before the future window, collect eight future
+    Chainlink BNB/USD rounds after funding, independently verify them, compute the same-window baseline,
+    and validate the first countable Agent Advantage pair.
 
   stop_conditions:
     - do not rerun jobs 949, 954, 955, or 957
     - do not count the historical Grid dry-run
-    - no chain write in runner/preflight construction
-    - no wallet unlock in CI/preflight
-    - BSC mainnet is read-only only
+    - do not execute the forward runner without the exact human gate
+    - exactly one new G5 Grid job if authorized
+    - BSC mainnet remains read-only only
     - no meaningful user/mainnet capital
     - no material paid spend
     - no realized-mainnet-PnL claim
+    - fail closed on timeout or first execution failure; no blind retry
     - no merge to main
     - no Project Finisher yet
     - no final submission

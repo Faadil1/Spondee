@@ -216,5 +216,42 @@ entries:
     actor: PBPD_orchestrator
     action: promote_one_new_compact_commitment_retry_ready
     result: Exactly one new local retry authorized under existing testnet authority; no new wallet or tBNB required before retry; any new failure closes the gate again.
-next_action: Human pulls build/backend-complete and runs scripts/g3-megafuel-live-e2e.ps1 exactly once using the existing seller keystore. Return public PASS evidence or failure.v1 only; no blind retry.
-next_gate: SPONDEE_G3_MEGAFUEL_COMPACT_COMMITMENT_LIVE_E2E_RETRY_LOCAL_EXECUTION_REQUIRED
+  - id: ACT-042
+    at: '2026-09-03T23:41:03.555Z'
+    actor: human_local_runtime
+    action: execute_fourth_full_health_factor_megafuel_e2e
+    result: LIVE_CHAIN_PARTIAL_SUCCESS; job 948 mined createJob/registerJob/setBudget(0)/fund(0) via MegaFuel, then provider delivery failed before submit because LocalStorage returned file:// and ERC8183_AGENT_URL was unset.
+  - id: ACT-043
+    at: '2026-09-03T23:46:40Z'
+    actor: github_actions
+    action: validate_funded_job_948_recovery_path
+    result: PASS; LocalStorage HTTP response route, recovery verifier, backend tests/build and Windows parsing were validated.
+    external_run: 33819012423
+  - id: ACT-044
+    at: '2026-09-03T23:53:03.692Z'
+    actor: human_local_runtime
+    action: execute_job_948_funded_recovery
+    result: FAIL_CLOSED_SUBMISSION_DEADLINE_PASSED; job 948 remained FUNDED, provider submit was not broadcast, and runtime proved the submission deadline had expired before recovery.
+  - id: ACT-045
+    at: '2026-09-03T23:54:00Z'
+    actor: PBPD_orchestrator
+    action: classify_job_948_terminal_and_audit_expiry_semantics
+    result: Job 948 marked non-retryable for provider submit; official ERC-8183 rule confirmed submit must occur before or at expiredAt - disputeWindow and long-lived jobs around 30 days are recommended.
+  - id: ACT-046
+    at: '2026-09-03T23:58:32Z'
+    actor: PBPD_orchestrator
+    action: integrate_localstorage_bridge_and_30_day_submission_horizon
+    result: Canonical live path now starts the LocalStorage HTTP bridge before seller activation and computes expiredAt as now + disputeWindow + 30 days; regression test added.
+  - id: ACT-047
+    at: '2026-09-03T23:59:02Z'
+    actor: github_actions
+    action: validate_final_localstorage_30d_live_preflight
+    result: PASS; Ubuntu wrapper/server/backend tests/build and Windows wrapper/server syntax all passed on the corrected live path.
+    external_run: 33819854509
+  - id: ACT-048
+    at: '2026-09-04T00:00:00Z'
+    actor: PBPD_orchestrator
+    action: reopen_one_corrected_complete_g3_live_attempt
+    result: Exactly one new live BSC-testnet attempt authorized using the existing seller keystore, MegaFuel, LocalStorage HTTP bridge and 30-day submission horizon. Job 948 must not be retried; no tBNB required first.
+next_action: Human pulls build/backend-complete and runs scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once using the existing seller keystore. Return public PASS evidence or a new failure block only; no blind retry and no retry of job 948.
+next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED

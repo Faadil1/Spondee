@@ -1,6 +1,8 @@
 # Spondee Backend → Frontend Contract
 
-Status: `FROZEN_FOR_FRONTEND_V1_PENDING_CI`
+Status: `FROZEN_FOR_FRONTEND_V1_PASS`
+
+Authoritative backend-freeze CI: `33864316044`; final handoff regression: `33864582617` — PASS.
 
 Primary source: `GET /v1/product/bootstrap`.
 

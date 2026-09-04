@@ -60,8 +60,16 @@ try {
         if ($LASTEXITCODE -ne 0) { Fail "backend npm install failed" }
 
         Write-Host "`n==> Verifying known submit transaction + job 949 + manifest + Outcome Receipt"
-        npx tsx src/verify-g3-submitted.ts
-        if ($LASTEXITCODE -ne 0) { Fail "read-only verification failed" }
+        $verifyOutput = @(& npx tsx src/verify-g3-submitted-cli.ts 2>&1)
+        $verifyExit = $LASTEXITCODE
+        $verifyOutput | ForEach-Object { Write-Host $_ }
+
+        if ($verifyExit -ne 0) { Fail "read-only verification failed" }
+
+        $passTerminal = "SPONDEE G3 SUBMITTED JOB 949 VERIFICATION: PASS"
+        if (-not ($verifyOutput -contains $passTerminal)) {
+            Fail "Verifier exited 0 without the required PASS terminal; failing closed instead of accepting silent success."
+        }
     }
     finally {
         Pop-Location

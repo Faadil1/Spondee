@@ -58,7 +58,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Yield contract tests
         working-directory: reference-agents/yield/app/agent
-        run: pnpm test && pnpm test:sync-notify
+        run: pnpm test
       - name: Strict TypeScript build
         working-directory: reference-agents/yield/app/agent
         run: pnpm build

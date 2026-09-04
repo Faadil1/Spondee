@@ -3,7 +3,8 @@
 **Audience:** Benita + frontend collaborators  
 **Project:** Spondee — BNB Agent Studio / Build the Era  
 **Branch:** `build/backend-product-freeze`  
-**Status:** `BACKEND_PRODUCT_CONTRACT_FREEZE_IN_VALIDATION`  
+**Status:** `BACKEND_PRODUCT_CONTRACT_FROZEN_PASS`  
+**Authoritative CI:** `33864316044` + final handoff regression `33864582617` — PASS  
 **Product authority:** `incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md` remains canonical. This handoff is the implementation/frontend translation of that PRD; it does not replace it.
 
 ---
@@ -397,7 +398,7 @@ These can be added only if core evidence, public deployment and judge path are a
 
 ## 11. Definition of “backend frozen for frontend”
 
-The backend can be treated as **frontend-contract frozen** when CI confirms:
+The backend is **frontend-contract frozen** because CI has confirmed:
 
 - tests pass;
 - strict TypeScript passes;

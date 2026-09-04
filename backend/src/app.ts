@@ -8,6 +8,7 @@ import {
   type OutcomeReceipt,
 } from "./contracts.js";
 import { getAgent, listAgents, referenceAgentForCategory } from "./catalog.js";
+import { discover8004scanAgents } from "./discovery.js";
 import { buildPromiseCard, buildSimulationReceipt, taskCategory } from "./engines.js";
 import { buildAgentAdvantageReport, calibrationSummary } from "./evidence.js";
 import {
@@ -18,6 +19,8 @@ import {
 } from "./erc8183.js";
 import { DEMO_TASKS } from "./examples.js";
 import { BACKEND_CAPABILITY_MATRIX, CATEGORY_PRESENTATION, SPONDEE_PRODUCT } from "./product.js";
+import { buildDecisionReplay } from "./replay.js";
+import { authorizeProtectedScope, backendDeploymentReadiness } from "./security.js";
 import type { SpondeeStore } from "./store.js";
 
 function errorMessage(error: unknown): string {
@@ -31,9 +34,7 @@ function objectOrEmpty(value: unknown): Record<string, unknown> {
 }
 
 function appendTx(activation: ActivationRecord, tx?: string): void {
-  if (tx && !activation.chain.tx_hashes.includes(tx)) {
-    activation.chain.tx_hashes.push(tx);
-  }
+  if (tx && !activation.chain.tx_hashes.includes(tx)) activation.chain.tx_hashes.push(tx);
 }
 
 function allowedCorsOrigins(env: NodeJS.ProcessEnv): Set<string> {
@@ -49,11 +50,25 @@ function allowedCorsOrigins(env: NodeJS.ProcessEnv): Set<string> {
   return new Set(configured.length > 0 ? configured : localDefaults);
 }
 
+function queryNumber(value: unknown, fallback: number): number {
+  if (typeof value !== "string" || !/^\d+$/.test(value)) return fallback;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? parsed : fallback;
+}
+
+function sameJson(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.env) {
   const app = express();
   const corsOrigins = allowedCorsOrigins(env);
   app.disable("x-powered-by");
   app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("X-Spondee-Request-Id", req.header("x-request-id")?.slice(0, 128) || randomUUID());
     const origin = req.header("origin");
     if (!origin) return next();
     if (!corsOrigins.has(origin)) {
@@ -63,14 +78,14 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,Idempotency-Key,X-Request-Id");
     if (req.method === "OPTIONS") return res.status(204).end();
     return next();
   });
   app.use(express.json({ limit: "256kb" }));
 
   app.get("/healthz", (_req, res) => {
-    res.json({ ok: true, service: "spondee-backend", version: "0.2.0-backend-freeze" });
+    res.json({ ok: true, service: "spondee-backend", version: "0.3.0-backend-completion" });
   });
 
   app.get("/v1/product/bootstrap", async (_req, res, next) => {
@@ -95,8 +110,9 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
         agents,
         demo_tasks: DEMO_TASKS,
         runtime: {
-          live_testnet_write_ready: liveGateStatus().ready_for_live_write,
+          live_testnet_write_ready: liveGateStatus(env).ready_for_live_write,
           public_readiness_endpoint: "/v1/runtime/readiness",
+          backend_deployment_readiness_endpoint: "/v1/runtime/backend-readiness",
         },
         evidence: {
           agent_advantage_report: report,
@@ -107,13 +123,16 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
         endpoints: {
           categories: "/v1/categories",
           agents: "/v1/agents",
+          discovery_agents: "/v1/discovery/agents",
           promises: "/v1/promises",
           promise_preview: "/v1/promises/preview",
           activations: "/v1/activations",
+          activation_replay_template: "/v1/activations/:id/replay",
           receipts: "/v1/receipts",
           evidence_runs: "/v1/evidence/runs",
           agent_advantage: "/v1/evidence/agent-advantage",
           runtime_readiness: "/v1/runtime/readiness",
+          backend_readiness: "/v1/runtime/backend-readiness",
         },
       });
     } catch (error) {
@@ -137,6 +156,18 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
     const parsed = CategorySchema.safeParse(raw);
     if (!parsed.success) return res.status(400).json({ error: "invalid category" });
     return res.json({ agents: listAgents(parsed.data) });
+  });
+
+  app.get("/v1/discovery/agents", async (req, res, next) => {
+    try {
+      const search = typeof req.query.search === "string" ? req.query.search : null;
+      const chainId = queryNumber(req.query.chain_id, 56);
+      const limit = queryNumber(req.query.limit, 12);
+      const result = await discover8004scanAgents({ search, chainId, limit }, env);
+      return res.json(result);
+    } catch (error) {
+      return next(error);
+    }
   });
 
   app.get("/v1/agents/:id", (req, res) => {
@@ -252,7 +283,7 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
         await store.putReceipt(receipt);
         activation.receipt_id = receipt.receipt_id;
         activation.status = "SIMULATED";
-      } else if (!liveGateStatus().ready_for_live_write) {
+      } else if (!liveGateStatus(env).ready_for_live_write) {
         activation.status = "BLOCKED_LIVE_GATE";
         activation.failure_reason =
           "Live testnet execution is prepared but disabled until explicit runtime gate + buyer keystore + seller endpoint are configured.";
@@ -274,13 +305,47 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
     }
   });
 
+  app.get("/v1/activations/:id/replay", async (req, res, next) => {
+    try {
+      const activation = await store.getActivation(req.params.id);
+      if (!activation) return res.status(404).json({ error: "activation not found" });
+      const receipt = activation.receipt_id
+        ? await store.getReceipt(activation.receipt_id)
+        : null;
+      return res.json({ replay: buildDecisionReplay(activation, receipt) });
+    } catch (error) {
+      return next(error);
+    }
+  });
+
   app.post("/v1/activations/:id/live-testnet", async (req, res, next) => {
+    const auth = authorizeProtectedScope(req, "ACTION", env);
+    if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
+
+    let lockKey: string | null = null;
     try {
       const activation = await store.getActivation(req.params.id);
       if (!activation) return res.status(404).json({ error: "activation not found" });
       if (activation.mode !== "LIVE_TESTNET") {
         return res.status(409).json({ error: "activation was not prepared for LIVE_TESTNET" });
       }
+      if (!["PREPARED", "BLOCKED_LIVE_GATE"].includes(activation.status)) {
+        return res.status(409).json({
+          error: `activation status ${activation.status} is not retryable; inspect replay/state before any new write`,
+        });
+      }
+      if (!liveGateStatus(env).ready_for_live_write) {
+        return res.status(503).json({ error: "live testnet runtime gate is not ready" });
+      }
+
+      lockKey = `live-testnet:${activation.activation_id}`;
+      if (!(await store.claimOperation(lockKey, 900))) {
+        return res.status(409).json({ error: "live activation operation is already in progress" });
+      }
+      activation.failure_reason = null;
+      activation.status = "PREPARED";
+      activation.updated_at = new Date().toISOString();
+      await store.putActivation(activation);
 
       const onProgress = async (progress: LiveActivationProgress) => {
         activation.chain.job_id = progress.job_id;
@@ -294,11 +359,7 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
         await store.putActivation(activation);
       };
 
-      const result = await runSignedZeroPriceTestnetActivation(
-        activation.task,
-        env,
-        onProgress,
-      );
+      const result = await runSignedZeroPriceTestnetActivation(activation.task, env, onProgress);
       if (result.promise_id !== activation.promise_id) {
         throw new Error("live signed Promise Card does not match the stored activation Promise Card");
       }
@@ -351,6 +412,8 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
         await store.putActivation(activation).catch(() => undefined);
       }
       return next(error);
+    } finally {
+      if (lockKey) await store.releaseOperation(lockKey).catch(() => undefined);
     }
   });
 
@@ -380,16 +443,51 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
     }
   });
 
+  app.get("/v1/evidence/runs/:id", async (req, res, next) => {
+    try {
+      const evidence = await store.getEvidence(req.params.id);
+      if (!evidence) return res.status(404).json({ error: "evidence run not found" });
+      return res.json({ evidence });
+    } catch (error) {
+      return next(error);
+    }
+  });
+
   app.post("/v1/evidence/baselines", async (req, res, next) => {
+    const auth = authorizeProtectedScope(req, "EVIDENCE_INGEST", env);
+    if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
+    let lockKey: string | null = null;
     try {
       const parsed = EvidenceRunInputSchema.safeParse(req.body);
       if (!parsed.success) {
         return res.status(400).json({ error: "invalid evidence run", details: parsed.error.flatten() });
       }
+      const existing = await store.getEvidence(parsed.data.run_id);
+      if (existing) {
+        if (sameJson(existing, parsed.data)) {
+          return res.status(200).json({ evidence: existing, idempotent: true });
+        }
+        return res.status(409).json({
+          error: "evidence run_id already exists with different content; canonical evidence is immutable",
+        });
+      }
+      lockKey = `evidence:${parsed.data.run_id}`;
+      if (!(await store.claimOperation(lockKey, 30))) {
+        return res.status(409).json({ error: "evidence ingestion already in progress" });
+      }
+      const afterLock = await store.getEvidence(parsed.data.run_id);
+      if (afterLock) {
+        if (sameJson(afterLock, parsed.data)) {
+          return res.status(200).json({ evidence: afterLock, idempotent: true });
+        }
+        return res.status(409).json({ error: "evidence run_id collision" });
+      }
       await store.putEvidence(parsed.data);
-      return res.status(201).json({ evidence: parsed.data });
+      return res.status(201).json({ evidence: parsed.data, idempotent: false });
     } catch (error) {
       return next(error);
+    } finally {
+      if (lockKey) await store.releaseOperation(lockKey).catch(() => undefined);
     }
   });
 
@@ -410,14 +508,21 @@ export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.
     }
   });
 
+  app.get("/v1/runtime/backend-readiness", (_req, res) => {
+    const readiness = backendDeploymentReadiness(env);
+    return res.status(readiness.public_deployment_ready ? 200 : 503).json(readiness);
+  });
+
   app.get("/v1/runtime/readiness", async (_req, res) => {
-    const gate = liveGateStatus();
+    const gate = liveGateStatus(env);
+    const backend = backendDeploymentReadiness(env);
     try {
       const publicChain = await publicTestnetReadiness();
-      return res.json({ live_gate: gate, public_chain: publicChain });
+      return res.json({ live_gate: gate, backend, public_chain: publicChain });
     } catch (error) {
       return res.status(503).json({
         live_gate: gate,
+        backend,
         public_chain: null,
         read_probe_error: errorMessage(error),
         live_write_attempted: false,

@@ -12,6 +12,7 @@ on:
       - 'reference-agents/rebalancing/**'
       - 'reference-agents/yield/**'
       - 'scripts/g4-sequential-live-e2e-localstorage.ps1'
+      - 'scripts/g4-rebalancing-live-e2e-localstorage.ps1'
       - '.github/workflows/g4-sequential-live-preflight.yml'
       - '.pbpd/state/**'
       - 'evidence/g4-sequential-live-gate/**'
@@ -148,3 +149,26 @@ jobs:
           if ($text -notmatch 'Stop-on-first-failure') { throw 'sequential fail-closed banner missing' }
           if ($text -notmatch 'build/g4-sequential-live-e2e') { throw 'gate branch guard missing' }
           Write-Host 'G4 sequential Windows runner parse/safety: PASS'
+      - name: Parse isolated Rebalancing runner
+        shell: powershell
+        run: |
+          $path = 'scripts/g4-rebalancing-live-e2e-localstorage.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+            exit 1
+          }
+          $text = Get-Content $path -Raw
+          if ($text -match 'wallet:create') { throw 'Rebalancing runner must never create a seller wallet' }
+          if ($text -match 'bsc-mainnet') { throw 'Rebalancing runner must never target mainnet' }
+          if ($text -notmatch "SPONDEE_G4_CATEGORY = 'rebalancing'") { throw 'Rebalancing category pin missing' }
+          if ($text -match 'reference-agents\\grid\\demo') { throw 'Rebalancing runner must not contain a Grid scenario path' }
+          if ($text -match 'reference-agents\\yield\\demo') { throw 'Rebalancing runner must not contain a Yield scenario path' }
+          if ($text -notmatch 'Grid job 954 is CLOSED') { throw 'Grid closure guard missing from Rebalancing runner' }
+          Write-Host 'G4 Rebalancing-only Windows runner parse/safety: PASS'

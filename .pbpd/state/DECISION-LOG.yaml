@@ -134,9 +134,39 @@ decisions:
   - id: DEC-018
     date: '2026-09-03'
     decision: After LocalStorage HTTP integration and 30-day submission-horizon preflight 33819854509 passed, authorize exactly one new complete local Health Factor E2E attempt using the existing seller keystore and MegaFuel; no tBNB is required before the attempt and any new failure closes the gate again.
-    status: ACCEPTED
+    status: CONSUMED_BY_FIFTH_ATTEMPT_JOB_949_SUBMITTED
     authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
     evidence:
       - GitHub Actions run 33819854509
-      - .pbpd/state/PROJECT-STATE.yaml
-      - .pbpd/state/HANDOVER.yaml
+      - job 949 live runtime output
+  - id: DEC-019
+    date: '2026-09-04'
+    decision: Classify the fifth runner failure as a post-submit RPC read-path failure, not an ERC-8183 activation failure, because provider submit transaction 0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74 was already confirmed and job 949 is SUBMITTED.
+    status: ACCEPTED
+    authority: PBPD_RUNTIME_EVIDENCE
+    constraints:
+      - do not create a replacement job
+      - do not re-submit job 949
+      - preserve the original runner failure as evidence of SDK eth_getLogs rate/range sensitivity
+      - use the known transaction receipt for deterministic verification
+    evidence:
+      - human local runtime output 2026-09-04T00:05:40.534Z to 2026-09-04T00:07:18.579Z
+      - GitHub Actions run 33820803719
+      - evidence/g3-job-949-submitted/README.md
+  - id: DEC-020
+    date: '2026-09-04'
+    decision: Final G3 verification for job 949 is read-only and uses the known provider submit transaction receipt plus getJob(949), then verifies the existing local manifest and Outcome Receipt; eth_getLogs scanning is not required for this recovery proof.
+    status: ACCEPTED
+    authority: PBPD_PROTOCOL_RUNTIME_HARDENING
+    constraints:
+      - no seller process or wallet unlock
+      - no createJob/registerJob/setBudget/fund/submit transaction
+      - no tBNB or mainnet activity
+      - JobSubmitted and JobInitialised must be decoded from the known receipt
+      - manifest hash must equal the already-proven on-chain deliverable hash
+      - Outcome Receipt must match the signed Promise commitment and remain SIMULATION
+    evidence:
+      - backend/src/verify-g3-submitted.ts
+      - backend/src/probe-g3-submit-949.ts
+      - scripts/g3-verify-submitted-job-949.ps1
+      - GitHub Actions run 33820803719

@@ -253,5 +253,31 @@ entries:
     actor: PBPD_orchestrator
     action: reopen_one_corrected_complete_g3_live_attempt
     result: Exactly one new live BSC-testnet attempt authorized using the existing seller keystore, MegaFuel, LocalStorage HTTP bridge and 30-day submission horizon. Job 948 must not be retried; no tBNB required first.
-next_action: Human pulls build/backend-complete and runs scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once using the existing seller keystore. Return public PASS evidence or a new failure block only; no blind retry and no retry of job 948.
-next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED
+  - id: ACT-049
+    at: '2026-09-04T00:07:18.579Z'
+    actor: human_local_runtime
+    action: execute_fifth_health_factor_live_e2e_job_949
+    result: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT; job 949 mined createJob/registerJob/setBudget(0)/fund(0), provider submit tx 0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74 was confirmed with effective gas price 0 and wallet paid 0, then buyer post-submit JobInitialised scan hit an RPC range/rate limit.
+  - id: ACT-050
+    at: '2026-09-04T00:08:00Z'
+    actor: PBPD_orchestrator
+    action: classify_job_949_post_submit_rpc_read_failure
+    result: Official SDK semantics confirm RpcRangeLimitError is retryable and is not evidence that JobInitialised is absent; no replacement job or new on-chain write authorized.
+  - id: ACT-051
+    at: '2026-09-04T00:11:57Z'
+    actor: PBPD_orchestrator
+    action: implement_receipt_based_job_949_read_only_verification
+    result: Added known-submit-receipt verifier, chain probe, read-only local runner and CI workflow; path avoids historical eth_getLogs scanning.
+  - id: ACT-052
+    at: '2026-09-04T00:12:31Z'
+    actor: github_actions
+    action: prove_job_949_submitted_from_known_transaction_receipt
+    result: PASS; run 33820803719 verified job 949 SUBMITTED at block 128964136, canonical provider, JobSubmitted/JobInitialised receipt consistency, LocalStorage URL, deliverable hash, signed Promise commitment and getJob state without eth_getLogs; backend 29/29, TypeScript and Windows checks passed.
+    external_run: 33820803719
+  - id: ACT-053
+    at: '2026-09-04T00:14:19Z'
+    actor: PBPD_orchestrator
+    action: promote_job_949_read_only_local_outcome_receipt_gate
+    result: PROJECT-STATE promoted to R017. Live-write gate closed; only existing local manifest hash and Outcome Receipt verification remains, with no seller process, wallet unlock or transaction.
+next_action: Human pulls build/backend-complete and runs scripts/g3-verify-submitted-job-949.ps1 exactly once. This gate is read-only and must not request a wallet password or create any transaction. Return the public PASS or failure block only; no new live E2E retry.
+next_gate: SPONDEE_G3_JOB_949_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED

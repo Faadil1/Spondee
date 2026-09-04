@@ -3,7 +3,7 @@ claims:
   - id: CLM-001
     claim: Spondee can surface a real BSC-live agent and activate it through a bounded path.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_LIVE_CHAIN_THROUGH_FUND_FULL_SUBMIT_RECEIPT_PENDING
+    status: PARTIALLY_VERIFIED_LIVE_CHAIN_THROUGH_PROVIDER_SUBMIT_LOCAL_RECEIPT_VERIFY_PENDING
   - id: CLM-002
     claim: A task-specific Promise Card can be generated before activation.
     truth_class: FACT
@@ -15,7 +15,7 @@ claims:
   - id: CLM-004
     claim: Health Factor Monitoring can produce a credible Intervention Advantage hero demo.
     truth_class: HYPOTHESIS
-    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION_LIVE_SUBMIT_RECEIPT_PENDING
+    status: PARTIALLY_VERIFIED_DETERMINISTIC_SIMULATION_LIVE_SUBMIT_PROVEN_LOCAL_RECEIPT_VERIFY_PENDING
   - id: CLM-005
     claim: Three observed Agent Advantage paired experiments can be completed before submission.
     truth_class: HYPOTHESIS
@@ -35,11 +35,11 @@ claims:
   - id: CLM-009
     claim: Structured G3 Health Factor fulfillment produces a deterministic Outcome Receipt without generic LLM generation.
     truth_class: FACT
-    status: VERIFIED_LOCAL_RUNTIME_MANIFEST_GENERATION_LIVE_ONCHAIN_RECEIPT_VERIFY_PENDING
+    status: VERIFIED_LOCAL_RUNTIME_MANIFEST_GENERATION_AND_ONCHAIN_SUBMIT_LOCAL_MANIFEST_HASH_VERIFY_PENDING
   - id: CLM-010
     claim: G3 can run with zero service price and with x402/B402 and LLM auto-renew disabled.
     truth_class: FACT
-    status: VERIFIED_CONFIGURATION_CI_AND_LIVE_ZERO_BUDGET_FUND
+    status: VERIFIED_CONFIGURATION_CI_AND_LIVE_ZERO_PRICE_THROUGH_PROVIDER_SUBMIT
   - id: CLM-011
     claim: One shared backend contract supports Health Factor, Grid, Rebalancing and Yield through Task -> Promise -> Activation -> Receipt.
     truth_class: FACT
@@ -59,15 +59,15 @@ claims:
   - id: CLM-015
     claim: The signed zero-price ERC-8183 buyer sequence is implemented and cannot execute by default.
     truth_class: FACT
-    status: VERIFIED_CODE_FAIL_CLOSED_TESTS_AND_LIVE_CHAIN_THROUGH_FUND
+    status: VERIFIED_CODE_FAIL_CLOSED_TESTS_AND_LIVE_CHAIN_THROUGH_PROVIDER_SUBMIT
   - id: CLM-016
     claim: MegaFuel can sponsor bounded ERC-8183 writes for a zero-tBNB Spondee-compatible client on BSC Testnet in the pinned runtime.
     truth_class: FACT
-    status: VERIFIED_LIVE_COMPLETE_SPONDEE_SEQUENCE_THROUGH_FUND
+    status: VERIFIED_LIVE_COMPLETE_SPONDEE_SEQUENCE_THROUGH_PROVIDER_SUBMIT
   - id: CLM-017
     claim: Spondee can preserve Promise provenance across official SDK negotiation serialization without embedding the full Promise Card on chain.
     truth_class: FACT
-    status: VERIFIED_LIVE_COMPACT_SHA256_COMMITMENT_THROUGH_CREATE_JOB
+    status: VERIFIED_LIVE_COMPACT_SHA256_COMMITMENT_THROUGH_SUBMIT_RECEIPT
   - id: CLM-018
     claim: Health Factor stress_path task arrays can survive official SDK claim sanitization without semantic corruption.
     truth_class: FACT
@@ -79,11 +79,15 @@ claims:
   - id: CLM-020
     claim: The corrected G3 live path exposes LocalStorage deliverables through an HTTP URL acceptable to the pinned ERC-8183 runtime.
     truth_class: FACT
-    status: VERIFIED_CI_LOCAL_HTTP_BRIDGE_LIVE_SUBMIT_PENDING
+    status: VERIFIED_LIVE_ONCHAIN_HTTP_DELIVERABLE_URL_JOB_949
   - id: CLM-021
     claim: Newly created G3 jobs use a provider submission horizon long enough to survive deterministic recovery rather than the 10-minute quickstart slack.
     truth_class: FACT
-    status: VERIFIED_CODE_TEST_AND_CI_30_DAY_HORIZON_LIVE_NEW_JOB_PENDING
+    status: VERIFIED_LIVE_JOB_949_NON_EXPIRED_AND_SUBMITTED
+  - id: CLM-022
+    claim: A known provider submit transaction receipt can deterministically prove JobSubmitted and JobInitialised for job 949 without a historical eth_getLogs scan.
+    truth_class: FACT
+    status: VERIFIED_LIVE_CI_JOB_949
 
 evidence:
   - id: EV-001
@@ -228,6 +232,61 @@ evidence:
       - Ubuntu wrapper parsing and HTTP bridge health
       - Windows wrapper parsing and Node 24 server syntax
     status: VERIFIED_PASS
+  - id: EV-019
+    type: fifth_live_health_factor_job_949_runtime
+    source: human_local_runtime_public_failure_v1_and_seller_audit
+    started_at: '2026-09-04T00:05:40.534Z'
+    runner_failed_at: '2026-09-04T00:07:18.579Z'
+    job_id: '949'
+    buyer_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
+    transactions:
+      create_job: '0x7d4c6b2528841068de045a7e037a4f1c88f6adf6f34ee9c353c30b49c110da4c'
+      register_job: '0x64e290a8c119cb3be5dfe27b3126adc7e3932ad86053bb4667acb92615628766'
+      set_budget: '0xc28452786f9be893663f5f0a7c2fef72330341b76e811cf4a76cd2ab3eca9b6d'
+      fund: '0x3e6d9bb9d504d1c80a8dbd32cc65a234cf91c6e503afccff48222f03873a95ef'
+      provider_submit: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
+    provider_submit:
+      confirmed: true
+      gas_used: '248654'
+      effective_gas_price_wei: '0'
+      wallet_paid_wei: '0'
+      deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
+    runner_error: JobInitialised scan for job 949 hit the RPC range/rate limit; retry later
+    supports:
+      - five-stage live chain path through provider submit
+      - LocalStorage HTTP deliverable URL publication
+      - zero wallet-paid gas on provider submit
+      - runner failure occurred only after submit confirmation
+    status: VERIFIED_LIVE_CHAIN_SUBMITTED
+  - id: EV-020
+    type: job_949_receipt_based_chain_verification
+    workflow_run_id: 33820803719
+    head_commit: 1a613ba4de74a5a0181247dc4c5a86f3d61c49af
+    evidence_record: evidence/g3-job-949-submitted/README.md
+    job_id: '949'
+    job_status: SUBMITTED
+    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    submit_transaction_hash: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
+    submit_block: '128964136'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
+    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
+    promise_id: 'sp_87c1d19f5bc0cda01d586131'
+    promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
+    scenario_id: spondee-hf-demo-001
+    receipt_log_scan_used: false
+    backend_tests: PASS_29_OF_29
+    typescript_build: PASS
+    windows_parse: PASS
+    supports:
+      - known submit transaction receipt is successful
+      - JobSubmitted and JobInitialised for job 949 are present in the same receipt
+      - both receipt events bind the same deliverable hash
+      - on-chain getJob(949) status is SUBMITTED
+      - on-chain provider is canonical Spondee seller
+      - on-chain deliverable hash matches receipt
+      - signed task and Promise commitment resolve to the canonical scenario and Promise
+      - no eth_getLogs scan is required for this proof
+    status: VERIFIED_PASS
 
 verification_events:
   - id: VER-001
@@ -292,12 +351,22 @@ verification_events:
     event: Integrated LocalStorage HTTP bridge and 30-day submission horizon passed cross-platform final preflight.
     result: PASS
     evidence: GitHub Actions run 33819854509
+  - id: VER-014
+    at: '2026-09-04T00:07:18.579Z'
+    event: Fifth local E2E created job 949, completed all buyer-side writes and confirmed the provider submit transaction; the runner then failed only while scanning JobInitialised logs under RPC range/rate limiting.
+    result: LIVE_CHAIN_SUBMITTED_POST_SUBMIT_READ_FAILURE
+    evidence: EV-019
+  - id: VER-015
+    at: '2026-09-04T00:12:31Z'
+    event: Independent receipt-based verifier proved job 949 SUBMITTED, canonical provider, on-chain LocalStorage URL, matching deliverable hash and signed Promise commitment without eth_getLogs.
+    result: PASS_JOB_949_SUBMITTED_RECEIPT_PROOF_NO_ETH_GETLOGS
+    evidence: GitHub Actions run 33820803719 / EV-020
 
 contradictions:
   - id: CON-001
     topic: testnet_gas_sponsorship
     observation: Earlier signals conflicted on whether tBNB was required for ERC-8183 writes.
-    handling: Runtime evidence now includes complete Spondee buyer writes through fund with zero tBNB; tBNB remains fallback-only.
+    handling: Runtime evidence now includes the complete Spondee live sequence through provider submit with zero wallet-paid gas; tBNB remains fallback-only.
     status: RESOLVED_BY_RUNTIME_PROOF
   - id: CON-002
     topic: custom_negotiation_term_survival
@@ -318,9 +387,14 @@ contradictions:
     topic: localstorage_file_url_vs_onchain_deliverable_url
     observation: LocalStorageProvider generated a file:// manifest while the runtime requires ERC8183_AGENT_URL to publish a fetchable HTTP deliverable URL.
     handling: Start a bounded local HTTP bridge before the seller and inject ERC8183_AGENT_URL=http://127.0.0.1:9100/erc8183 into the live seller process.
-    status: RESOLVED_IN_CODE_AND_CI_LIVE_SUBMIT_PENDING
+    status: RESOLVED_LIVE_JOB_949_ONCHAIN_HTTP_URL
   - id: CON-006
     topic: quickstart_600_second_slack_vs_recoverable_e2e
     observation: The quickstart-style 600-second provider submission slack expired before job 948 recovery, making the already-funded job permanently unsubmittable.
-    handling: New G3 jobs use expiredAt = now + disputeWindow + 30 days, matching official protocol guidance for long-lived jobs; regression test and cross-platform preflight pass.
-    status: RESOLVED_IN_CODE_TEST_AND_CI_LIVE_NEW_JOB_PENDING
+    handling: New G3 jobs use expiredAt = now + disputeWindow + 30 days; job 949 was created under that rule and submitted successfully.
+    status: RESOLVED_LIVE_JOB_949_SUBMITTED_WITH_30_DAY_HORIZON
+  - id: CON-007
+    topic: post_submit_eth_getlogs_limit_vs_actual_submit_state
+    observation: The SDK deliverable URL resolver hit an RPC range/rate limit after job 949 provider submit had already been confirmed, causing the local runner to report failure despite the successful lifecycle transition.
+    handling: Use the known submit transaction receipt to decode JobSubmitted and JobInitialised directly, plus direct getJob(949), eliminating historical eth_getLogs from the recovery proof.
+    status: RESOLVED_BY_RECEIPT_BASED_LIVE_CI_PROOF

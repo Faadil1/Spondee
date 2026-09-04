@@ -1,26 +1,26 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: BACKEND_COMPACT_PROTOCOL_LIVE_CHAIN_THROUGH_FUND_AND_LOCALSTORAGE_30D_PREFLIGHT_PASS
+preflight_status: G3_JOB_949_SUBMITTED_RECEIPT_PROVEN_READ_ONLY_LOCAL_VERIFY_READY
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
   node_22: PASS
   pnpm_10: PASS
   bnb_agent_sdk_wallet_provider: PASS_WINDOWS_NODE24_AND_GITHUB_ACTIONS
-  bsc_testnet_rpc: PASS
+  bsc_testnet_rpc: PASS_DIRECT_RECEIPT_AND_GETJOB
   reference_agent_scaffold: PASS
-  health_factor_specialization: PASS_SIMULATION_CI
+  health_factor_specialization: PASS_SIMULATION_CI_AND_LIVE_SUBMIT
   complete_backend_ci: PASS
   four_category_backend_smoke: PASS
-  erc8183_live_driver: CODED_FAIL_CLOSED_COMPACT_COMMITMENT_LIVE_CHAIN_THROUGH_FUND
-  megafuel_erc8183_paymaster: PASS_COMPLETE_SPONDEE_BUYER_WRITES_THROUGH_FUND
-  localstorage_http_bridge: PASS_CI_CROSS_PLATFORM
-  g3_submission_horizon: PASS_30_DAY_CODE_TEST_CI
+  erc8183_live_driver: LIVE_CHAIN_VERIFIED_THROUGH_PROVIDER_SUBMIT
+  megafuel_erc8183_paymaster: PASS_COMPLETE_SPONDEE_WRITES_THROUGH_PROVIDER_SUBMIT
+  localstorage_http_bridge: PASS_LIVE_JOB_949_ONCHAIN_URL
+  g3_submission_horizon: PASS_LIVE_30_DAY_JOB_949_SUBMITTED
 connectors:
   github:
     status: CONNECTED
     repository: Faadil1/Spondee
   bnb_external_runtime:
-    status: LIVE_CHAIN_THROUGH_FUND__SUBMIT_RECEIPT_RETRY_READY_WITH_LOCALSTORAGE_AND_30D_FIX
+    status: JOB_949_SUBMITTED_RECEIPT_PROVEN_LOCAL_MANIFEST_VERIFY_PENDING
     sdk_package: '@bnbagent/sdk'
     sdk_version: 0.5.5
     network: bsc-testnet
@@ -30,115 +30,90 @@ connectors:
     megafuel_smoke_run_id: 33802027942
     compact_backend_ci_run_id: 33817822355
     compact_g3_ci_run_id: 33817846752
-    funded_recovery_ci_run_id: 33819012423
     final_localstorage_preflight_run_id: 33819854509
+    submitted_job_949_verification_run_id: 33820803719
 wallets:
   seller:
     address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
     type: encrypted_v3_local_only
-    local_signing_check: PASS
     network_scope: bsc-testnet-only
     balance_tbnb: '0'
-    recreate_for_next_retry: false
+    current_gate_unlock_required: false
   buyer_strategy:
-    type: EPHEMERAL_ZERO_BALANCE_PER_RUN_DESTROY_AFTER_RUN
+    type: EPHEMERAL_ZERO_BALANCE_PER_LIVE_RUN_DESTROY_AFTER_RUN
+    fifth_attempt_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
     password_and_keystore_chat_exposure: FORBIDDEN
 live_chain_evidence:
   job_948:
     status: FUNDED_TERMINAL_FOR_PROVIDER_SUBMIT_DEADLINE_EXPIRED
-    create_job_tx: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
-    register_job_tx: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
-    set_budget_tx: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
-    fund_tx: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
-    provider_submit_tx: null
+    retry: FORBIDDEN
+  job_949:
+    status: SUBMITTED
+    create_job_tx: '0x7d4c6b2528841068de045a7e037a4f1c88f6adf6f34ee9c353c30b49c110da4c'
+    register_job_tx: '0x64e290a8c119cb3be5dfe27b3126adc7e3932ad86053bb4667acb92615628766'
+    set_budget_tx: '0xc28452786f9be893663f5f0a7c2fef72330341b76e811cf4a76cd2ab3eca9b6d'
+    fund_tx: '0x3e6d9bb9d504d1c80a8dbd32cc65a234cf91c6e503afccff48222f03873a95ef'
+    provider_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
+    submit_block: '128964136'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
+    deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
+    promise_id: 'sp_87c1d19f5bc0cda01d586131'
+    promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
+    scenario_id: spondee-hf-demo-001
+    submit_gas_used: '248654'
+    effective_gas_price_wei: '0'
+    wallet_paid_wei: '0'
     user_funds_used: false
-    retry_for_submit: FORBIDDEN
-    proof:
-      - compact Promise commitment accepted live
-      - Base64URL task accepted live
-      - MegaFuel sponsored all four buyer-side writes through fund
-      - seller generated deterministic local deliverable
-      - recovery failed only after provider submission deadline had expired
-compact_protocol:
-  status: LIVE_PARTIALLY_VERIFIED_AND_CI_VERIFIED
-  full_promise: OFF_CHAIN_READ_ONLY_PREVIEW
-  signed_promise_commitment:
-    carrier: success_criteria
-    prefix: 'SPONDEE_PROMISE_COMMITMENT_V1:'
-    fields: [promise_id, scenario_id, price_raw, promise_sha256]
-    compact_wire_keys: [p, s, r, h]
-  signed_task:
-    prefix: 'SPONDEE_TASK_B64_V1:'
-    encoding: BASE64URL_JSON
-    sanitizer_safe: true
-  description_budget:
-    sdk_cap_bytes: 4096
-    spondee_cap_bytes: 1600
-    enforcement: BEFORE_CREATE_JOB
-localstorage_delivery:
-  status: CI_VERIFIED_INTEGRATED_NEXT_LIVE_ATTEMPT
-  server: scripts/local-erc8183-deliverable-server.mjs
-  wrapper: scripts/g3-megafuel-live-e2e-localstorage.ps1
-  storage_root: reference-agents/health-factor/app/agent/.agent-data
-  agent_url: 'http://127.0.0.1:9100/erc8183'
-  runtime_env: ERC8183_AGENT_URL
-  expected_url_shape: 'http://127.0.0.1:9100/erc8183/job/{id}/response'
-expiry_policy:
-  status: CI_VERIFIED_NEXT_LIVE_JOB_PENDING
-  previous_quickstart_slack_seconds: 600
-  previous_result: JOB_948_SUBMISSION_DEADLINE_EXPIRED_BEFORE_RECOVERY
-  corrected_submission_window_seconds: 2592000
-  corrected_submission_window_days: 30
-  formula: expiredAt = now + disputeWindow + 30_days
-  regression_test: backend/src/g3-expiry.test.ts
-validation:
-  compact_backend_ci:
-    run: 33817822355
-    result: PASS_28_OF_28
-  compact_g3_ci:
-    run: 33817846752
-    result: PASS
-  funded_recovery_ci:
-    run: 33819012423
-    result: PASS
-  final_localstorage_preflight:
-    run: 33819854509
-    head: 1c4b83b92524808731271e132981e4c48c3b62e3
-    result: PASS
-    ubuntu_wrapper_parse: PASS
-    local_http_bridge_health: PASS
-    backend_regression_suite: PASS
-    typescript_build: PASS
-    windows_wrapper_parse: PASS
-    windows_node24_server_syntax: PASS
-live_write_gate:
-  default_enabled: false
-  current_ready_for_full_health_factor_e2e: true
-  readiness_scope: ONE_NEW_HUMAN_LOCAL_ATTEMPT_ONLY
-  local_runner: scripts/g3-megafuel-live-e2e-localstorage.ps1
-  seller_wallet_rule: REUSE_EXISTING_ENCRYPTED_KEYSTORE
-  buyer_rule: CREATE_EPHEMERAL_ZERO_BALANCE_BUYER_AND_DESTROY_AFTER_RUN
-  job_948_rule: DO_NOT_RETRY
-  gas_requirement:
-    primary: MEGAFUEL
-    fallback: TBNB_ONLY_IF_NEW_VERIFIED_RELAY_AVAILABILITY_BLOCKER
-    tBNB_required_before_next_attempt: false
-  expected_progress:
-    - CREATE_JOB
-    - REGISTER_JOB
-    - SET_BUDGET
-    - FUND
-    - SUBMIT_OBSERVED
-    - DELIVERABLE_VERIFIED
+post_submit_rpc_finding:
+  original_error: JobInitialised scan for job 949 hit the RPC range/rate limit; retry later
+  sdk_semantics: RpcRangeLimitError is retryable and is not proof that JobInitialised is absent
+  classification: POST_SUBMIT_READ_PATH_ONLY
+  remediation: Decode JobSubmitted and JobInitialised directly from the known submit transaction receipt, then read getJob(949); do not use eth_getLogs for recovery proof.
+receipt_based_verification:
+  status: PASS
+  workflow_run: 33820803719
+  validated_head: 1a613ba4de74a5a0181247dc4c5a86f3d61c49af
+  method: TRANSACTION_RECEIPT_PLUS_GETJOB
+  eth_getlogs_used: false
+  backend_tests: PASS_29_OF_29
+  typescript_build: PASS
+  windows_runner_parse: PASS
+  chain_probe: PASS
+  evidence_record: evidence/g3-job-949-submitted/README.md
+local_manifest_verification:
+  status: READY_READ_ONLY
+  manifest_path: reference-agents/health-factor/app/agent/.agent-data/erc8183-job-949.json
+  local_runner: scripts/g3-verify-submitted-job-949.ps1
+  verifier: backend/src/verify-g3-submitted.ts
+  chain_probe: backend/src/probe-g3-submit-949.ts
+  expected_checks:
+    - serve existing manifest through local HTTP bridge
+    - direct known submit receipt verification
+    - getJob(949) status/provider/deliverable verification
+    - manifest hash equals on-chain deliverable hash
+    - manifest response.content parses as Spondee Outcome Receipt
+    - receipt promise_id and scenario match signed commitment
+    - receipt remains SIMULATION and ineligible for observed Agent Advantage
+current_gate:
+  action_class: READ_ONLY
+  seller_process_required: false
+  seller_wallet_unlock_required: false
+  create_job_allowed: false
+  register_job_allowed: false
+  set_budget_allowed: false
+  fund_allowed: false
+  provider_submit_allowed: false
+  tBNB_required: false
+  mainnet_allowed: false
 limitations:
-  - Full seller-backed Health Factor E2E has not passed yet.
-  - No provider submit transaction or live verified Outcome Receipt exists yet.
+  - Local manifest hash and Outcome Receipt have not yet been verified against job 949 on this human machine.
   - No observed Agent Advantage evidence exists yet.
   - Grid, Rebalancing and Yield live reference agents remain later gates.
   - Public judging deployment and final submission remain protected later gates.
 next_required_checks:
   - human pulls build/backend-complete
-  - human runs scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once using the existing masked seller password prompt
+  - human runs scripts/g3-verify-submitted-job-949.ps1 exactly once
+  - no password prompt or transaction should occur
   - preserve complete public PASS evidence if successful
-  - if failure occurs, stop and return only the new public failure block without another blind retry
-next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED
+  - if failure occurs, stop and return only the read-only verification failure block
+next_gate: SPONDEE_G3_JOB_949_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED

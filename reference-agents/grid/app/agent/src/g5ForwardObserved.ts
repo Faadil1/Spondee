@@ -1,11 +1,14 @@
 import { createHash } from "node:crypto";
-import { createPublicClient, getAddress, http } from "viem";
 import { z } from "zod";
 
 export const G5_GRID_FEED = "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE" as const;
 export const G5_GRID_TASK_PREFIX = "SPONDEE_G5_GRID_FORWARD_TASK_B64_V1:";
 export const G5_GRID_COMMITMENT_PREFIX = "SPONDEE_G5_GRID_FORWARD_COMMITMENT_V1:";
 const RPC = () => process.env.SPONDEE_G5_BSC_MAINNET_RPC?.trim() || "https://bsc-dataseed.bnbchain.org";
+
+const DECIMALS_SELECTOR = "0x313ce567";
+const LATEST_ROUND_DATA_SELECTOR = "0xfeaf968c";
+const GET_ROUND_DATA_SELECTOR = "0x9a6fc8f5";
 
 const taskSchema = z.object({
   schema: z.literal("spondee.grid-forward-observed.task.v1"),
@@ -26,19 +29,7 @@ const taskSchema = z.object({
   claim_guardrail: z.string().min(1),
 });
 export type ForwardTask = z.infer<typeof taskSchema>;
-
 export type ForwardRound = { round_id: string; price_usd: number; updated_at: string };
-
-const abi = [
-  { type: "function", name: "decimals", stateMutability: "view", inputs: [], outputs: [{ name: "", type: "uint8" }] },
-  { type: "function", name: "description", stateMutability: "view", inputs: [], outputs: [{ name: "", type: "string" }] },
-  { type: "function", name: "latestRoundData", stateMutability: "view", inputs: [], outputs: [
-    { name: "roundId", type: "uint80" }, { name: "answer", type: "int256" }, { name: "startedAt", type: "uint256" }, { name: "updatedAt", type: "uint256" }, { name: "answeredInRound", type: "uint80" },
-  ] },
-  { type: "function", name: "getRoundData", stateMutability: "view", inputs: [{ name: "_roundId", type: "uint80" }], outputs: [
-    { name: "roundId", type: "uint80" }, { name: "answer", type: "int256" }, { name: "startedAt", type: "uint256" }, { name: "updatedAt", type: "uint256" }, { name: "answeredInRound", type: "uint80" },
-  ] },
-] as const;
 
 function stable(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`;
@@ -171,33 +162,86 @@ export function evaluateForwardGrid(task: ForwardTask, rounds: ForwardRound[]) {
   };
 }
 
-async function readRound(client: ReturnType<typeof createPublicClient>, decimals: number, roundId: bigint): Promise<ForwardRound | null> {
+type JsonRpcEnvelope = { result?: unknown; error?: { message?: string } };
+
+async function rpc(method: string, params: unknown[] = []): Promise<unknown> {
+  const response = await fetch(RPC(), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!response.ok) throw new Error(`BSC mainnet read-only RPC HTTP ${response.status}`);
+  const body = await response.json() as JsonRpcEnvelope;
+  if (body.error) throw new Error(`BSC mainnet read-only RPC failed: ${body.error.message ?? "unknown"}`);
+  if (body.result === undefined) throw new Error("BSC mainnet read-only RPC returned no result");
+  return body.result;
+}
+
+async function ethCall(data: string): Promise<string> {
+  const result = await rpc("eth_call", [{ to: G5_GRID_FEED, data }, "latest"]);
+  if (typeof result !== "string" || !/^0x[0-9a-fA-F]*$/.test(result)) throw new Error("invalid eth_call result");
+  return result;
+}
+
+function words(hex: string): string[] {
+  const clean = hex.slice(2);
+  if (clean.length % 64 !== 0) throw new Error("unexpected ABI word length");
+  const out: string[] = [];
+  for (let i = 0; i < clean.length; i += 64) out.push(clean.slice(i, i + 64));
+  return out;
+}
+function uintWord(word: string): bigint { return BigInt(`0x${word}`); }
+function intWord(word: string): bigint {
+  const unsigned = uintWord(word);
+  return (unsigned & (1n << 255n)) !== 0n ? unsigned - (1n << 256n) : unsigned;
+}
+
+async function readDecimals(): Promise<number> {
+  const result = words(await ethCall(DECIMALS_SELECTOR));
+  const value = Number(uintWord(result[0] ?? "0"));
+  if (!Number.isInteger(value) || value < 0 || value > 36) throw new Error(`invalid feed decimals: ${value}`);
+  return value;
+}
+
+async function latestRoundId(): Promise<bigint> {
+  const result = words(await ethCall(LATEST_ROUND_DATA_SELECTOR));
+  if (result.length < 5) throw new Error("latestRoundData returned too few words");
+  return uintWord(result[0]!);
+}
+
+async function readRound(decimals: number, roundId: bigint): Promise<ForwardRound | null> {
   try {
-    const r = await client.readContract({ address: getAddress(G5_GRID_FEED), abi, functionName: "getRoundData", args: [roundId] });
-    const [observedRoundId, answer, , updatedAt] = r;
+    const arg = roundId.toString(16).padStart(64, "0");
+    const result = words(await ethCall(`${GET_ROUND_DATA_SELECTOR}${arg}`));
+    if (result.length < 5) return null;
+    const observedRoundId = uintWord(result[0]!);
+    const answer = intWord(result[1]!);
+    const updatedAt = uintWord(result[3]!);
     if (answer <= 0n || updatedAt <= 0n) return null;
-    return { round_id: observedRoundId.toString(), price_usd: Number(answer) / 10 ** decimals, updated_at: new Date(Number(updatedAt) * 1000).toISOString() };
+    return {
+      round_id: observedRoundId.toString(),
+      price_usd: Number(answer) / 10 ** decimals,
+      updated_at: new Date(Number(updatedAt) * 1000).toISOString(),
+    };
   } catch { return null; }
 }
 
 export async function observeForwardRounds(task: ForwardTask, observationStartedAt = new Date().toISOString()): Promise<ForwardRound[]> {
-  const client = createPublicClient({ transport: http(RPC(), { timeout: 15_000 }) });
-  if (await client.getChainId() !== 56) throw new Error("forward Grid source is not BSC mainnet");
-  const [decimals, description] = await Promise.all([
-    client.readContract({ address: getAddress(G5_GRID_FEED), abi, functionName: "decimals" }),
-    client.readContract({ address: getAddress(G5_GRID_FEED), abi, functionName: "description" }),
-  ]);
-  if (!String(description).toUpperCase().includes("BNB")) throw new Error(`unexpected feed description: ${description}`);
+  const chainIdRaw = await rpc("eth_chainId");
+  if (typeof chainIdRaw !== "string" || BigInt(chainIdRaw) !== 56n) throw new Error("forward Grid source is not BSC mainnet");
+  const code = await rpc("eth_getCode", [G5_GRID_FEED, "latest"]);
+  if (typeof code !== "string" || code === "0x") throw new Error("Chainlink feed contract code is unavailable");
+  const decimals = await readDecimals();
   const deadline = Date.now() + task.observation_rule.max_wait_seconds * 1000;
   const rounds: ForwardRound[] = [];
   let cursor = BigInt(task.freeze.round_id) + 1n;
   const seen = new Set<string>();
 
   while (Date.now() < deadline && rounds.length < task.observation_rule.target_future_rounds) {
-    const latest = await client.readContract({ address: getAddress(G5_GRID_FEED), abi, functionName: "latestRoundData" });
-    const latestId = latest[0];
+    const latestId = await latestRoundId();
     while (cursor <= latestId && rounds.length < task.observation_rule.target_future_rounds) {
-      const r = await readRound(client, Number(decimals), cursor);
+      const r = await readRound(decimals, cursor);
       cursor += 1n;
       if (r === null || seen.has(r.round_id)) continue;
       if (Date.parse(r.updated_at) <= Date.parse(observationStartedAt)) continue;

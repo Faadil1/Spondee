@@ -5,140 +5,121 @@ handover:
   date: 2026-09-04
   source_of_truth: GITHUB
   repository: Faadil1/Spondee
-  branch: build/backend-completion-final
+  branch: build/pre-frontend-closure
 
   resume_rule: >-
-    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, FRONTEND-HANDOFF,
-    REQUIREMENTS-LEDGER, RUNTIME-STATUS, RISK-REGISTER and EVIDENCE-LEDGER. Backend code is complete
-    for frontend V1 after authoritative CI run 33866229883. Do not reopen backend architecture to
-    complete evidence/runtime/frontend work. Benita uses build/backend-completion-final and
-    /v1/product/bootstrap. Jobs 949, 954, 955, 957 and 962 are CLOSED and MUST NOT be rerun or mutated.
+    Read PROJECT-STATE first, then this HANDOVER, RUNTIME-STATUS, REQUIREMENTS-LEDGER,
+    RISK-REGISTER and EVIDENCE-LEDGER. Backend code is complete. The user asked to close observed
+    Agent Advantage 3/3, Health Factor event tape and public backend deployment before releasing the
+    frontend to Benita. The combined Health + Rebalancing runner passed authoritative no-write
+    preflight run 33868671297. Jobs 949, 954, 955, 957 and 962 are CLOSED and MUST NOT be rerun or mutated.
 
-  current_milestone: BACKEND_FINAL_COMPLETION_PASS
-  lifecycle_status: BACKEND_CODE_COMPLETE__BENITA_FINAL_HANDOFF_READY__EVIDENCE_AND_FRONTEND_PARALLEL
+  current_milestone: PRE_FRONTEND_OBSERVED_CLOSURE_PREFLIGHT_PASS
+  lifecycle_status: PAIR_2_AND_PAIR_3_LOCAL_EXECUTION_READY__PUBLIC_DEPLOYMENT_PREPARED
 
   authority:
     project: PROJECT_AUTHORIZED
     completed_backend_gate: SPONDEE_BACKEND_FINAL_COMPLETION
-    completed_backend_gate_status: PASS_RUN_33866229883
-    current_backend_gate: NONE_BACKEND_CODE_COMPLETE
-    current_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-    current_project_gate_status: NOT_YET_OPENED
-    production_owner: PBPD
-    frontend_collaborator: Benita
-    protected_external_action_owner: HUMAN
-    final_submission: HUMAN
-    mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY_NOT_OPENED
+    completed_backend_gate_status: PASS_RUN_33867168666
+    completed_observed_closure_preflight: PASS_RUN_33868671297
+    current_project_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
+    current_project_gate_status: READY_FOR_HUMAN_LOCAL_EXECUTION
     merge_to_main: NOT_AUTHORIZED
+    final_submission: HUMAN
+    mainnet_or_meaningful_user_capital: FORBIDDEN_WITHOUT_NEW_HUMAN_AUTHORITY
 
-  backend_completion:
-    status: PASS_CODE_COMPLETE_FOR_FRONTEND_V1
-    branch: build/backend-completion-final
-    authoritative_ci_run: 33866229883
-    validated_code_head: 2994eace95042b577fcd5f7910ac40d2f3f8968b
-    evidence: evidence/backend-final-completion/README.md
-    product_handoff: work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md
-    technical_contract: backend/FRONTEND-CONTRACT.md
-    machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
-    bootstrap_endpoint: /v1/product/bootstrap
-    bootstrap_schema: spondee.frontend-bootstrap.v1
-    tests: PASS
-    strict_typescript: PASS
-    simulation_truth_smoke: PASS
-    mutation_protection: PASS
-    durable_operation_idempotency: PASS
-    immutable_evidence_ingestion: PASS
-    decision_replay: PASS_READ_ONLY
-    dynamic_8004scan_discovery: PASS_OFFICIAL_API_READ_ONLY
-    bsc_readiness_probe: PASS_READ_ONLY
-    deployment_readiness_contract: PASS_IMPLEMENTED
-    chain_write_attempted: false
-    remaining_backend_percentage: 0
-
-  frontend_contract:
-    source_branch: build/backend-completion-final
-    schemas:
-      bootstrap: spondee.frontend-bootstrap.v1
-      replay: spondee.decision-replay.v1
-      discovery: spondee.8004scan-discovery.v1
-      backend_readiness: spondee.backend-deployment-readiness.v1
-    server_only_protected_actions:
-      - POST /v1/activations/:id/live-testnet
-      - POST /v1/evidence/baselines
-    server_only_tokens:
-      - SPONDEE_ACTION_TOKEN
-      - SPONDEE_EVIDENCE_INGEST_TOKEN
-    browser_secret_embedding: FORBIDDEN
-    v1_breaking_changes_allowed: false_without_new_contract_version
-    controlled_reference_agents:
-      health_factor: { status: LIVE_TESTNET_VERIFIED, proof_job: '949' }
-      grid: { status: LIVE_TESTNET_VERIFIED, proof_job: '954' }
-      rebalancing: { status: LIVE_TESTNET_VERIFIED, proof_job: '955' }
-      yield: { status: LIVE_TESTNET_VERIFIED, proof_job: '957' }
+  backend:
+    status: COMPLETE_FOR_FRONTEND_V1
+    remaining_percentage: 0
+    stable_contract: spondee.frontend-bootstrap.v1
+    decision_replay: IMPLEMENTED
+    dynamic_8004scan_discovery: IMPLEMENTED_READ_ONLY
+    protected_mutations: IMPLEMENTED
+    deployment_readiness: IMPLEMENTED
 
   observed_evidence:
     required_pairs: 3
-    countable_pairs: 1
-    remaining_pairs: 2
-    trading_requirement_satisfied: true
-    first_countable_pair:
+    countable_pairs_before_current_gate: 1
+    pair_1:
       category: Grid Trading
       job_id: '962'
-      pair_id: g5-grid-forward-job-962
-      result: GRID_UNDERPERFORMED_BASELINE_BY_2_50_USD_ON_OBSERVED_WINDOW
-      countable_for_final_report: true
-    final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
+      status: PASS_COUNTABLE_CLOSED
+      measured_result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD
+    pair_2:
+      category: Health Factor Monitoring
+      status: PREFLIGHT_PASS_EXECUTION_PENDING
+      goal: countable observed pair plus warning/intervention event tape
+      market_data: BSC_MAINNET_CHAINLINK_BNB_USD_READ_ONLY
+      position: FROZEN_HYPOTHETICAL
+      baseline: WITHOUT_AGENT_PERIODIC_CHECK_EVERY_4_FUTURE_ROUNDS
+      mainnet_value_movement: false
+      liquidation_prevention_claim: false
+    pair_3:
+      category: Rebalancing
+      status: PREFLIGHT_PASS_EXECUTION_PENDING
+      market_data: BSC_MAINNET_CHAINLINK_BNB_USD_READ_ONLY
+      portfolio: FROZEN_HYPOTHETICAL_PAPER_50_50
+      baseline: NO_REBALANCE_STATIC_HOLD_SAME_WINDOW
+      mainnet_value_movement: false
+      realized_mainnet_pnl_claim: false
 
-  remaining_project_work_not_backend_code:
-    - HEALTH_FACTOR_OBSERVED_PAIR_AND_EVENT_TAPE
-    - THIRD_COUNTABLE_OBSERVED_PAIR
-    - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
-    - BENITA_FRONTEND_V1
-    - WINNER_INTELLIGENCE_AND_TRACE_JUDGE_PATH_REVIEW
-    - PROJECT_FINISHER
-    - MERGE_MAIN
-    - HUMAN_FINAL_SUBMISSION
+  combined_runner:
+    path: scripts/g5-pre-frontend-observed-closure.ps1
+    preflight_run: 33868671297
+    preflight_status: PASS
+    human_gate_env: SPONDEE_PRE_FRONTEND_HUMAN_GATE
+    human_gate_value: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
+    order: HEALTH_THEN_REBALANCING
+    seller_password: MASKED_LOCAL_PROMPT_ONCE
+    stop_on_first_failure: true
+    retry_automatically: false
+    service_price_raw: '0'
+    paymaster: MEGAFUEL
 
-  winner_intelligence_overlay:
-    status: DOCUMENTED_FOR_POST_V1_REVIEW
-    frontend_blocker: false
-    backend_rearchitecture_expected: false
-    winning_laws_promoted: 0
-    checks:
-      - SPONSOR_NATIVE_NECESSITY_CHECK
-      - WHOLE_RUBRIC_COVERAGE_CHECK
-      - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
-      - JUDGE_PATH_LEGIBILITY_CHECK
+  public_deployment:
+    status: PREPARED_EXTERNAL_DEPLOY_BLOCKED
+    adapter: api/index.mjs
+    vercel_config: vercel.json
+    deployment_preflight: .github/workflows/public-backend-deployment-preflight.yml
+    required_env:
+      - DATABASE_URL
+      - SPONDEE_CORS_ORIGINS
+      - SPONDEE_ACTION_TOKEN
+      - SPONDEE_EVIDENCE_INGEST_TOKEN
+    vercel_api_attempt:
+      status: FAIL_CLOSED_QUOTA
+      limit: 100
+      remaining: 0
+      reset_at_america_toronto: '2026-09-05T07:40:52.876-04:00'
+      spondee_deployment_created: false
+    do_not_repurpose_unrelated_existing_projects: true
 
-  parallel_tracks:
-    frontend:
-      owner: Benita
-      status: READY_TO_START_V1
-      source_branch: build/backend-completion-final
-      primary_contract: /v1/product/bootstrap
-      wait_for_winner_intelligence: false
-    evidence:
-      owner: PBPD
-      status: NEXT_PROJECT_GATE_NOT_OPENED
-      next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-      chain_write_allowed: false
+  frontend_benita:
+    status: HELD_BY_USER_UNTIL_PRE_FRONTEND_CLOSURE_COMPLETE
+    release_condition:
+      - OBSERVED_AGENT_ADVANTAGE_3_OF_3
+      - HEALTH_EVENT_TAPE_CLOSED
+      - PUBLIC_BACKEND_JUDGE_SMOKE_PASS
 
-  exact_next_backend_gate: NONE_BACKEND_CODE_COMPLETE
-  exact_next_project_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  exact_next_owner: PBPD_AFTER_PROJECT_GATE_OPEN
+  exact_next_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
+  exact_next_owner: HUMAN_LOCAL_RUNNER
   exact_next_action: >-
-    Complete the Health Factor observed pair/event-tape evidence while Benita builds frontend V1 from
-    the completed backend contract. Evidence progress may change data/counts but must not silently break
-    spondee.frontend-bootstrap.v1.
+    Run scripts/g5-pre-frontend-observed-closure.ps1 -Execute exactly once with the gate environment
+    variable set. Send only public PASS/failure JSON back. Never send wallet password or keystore material.
+
+  after_pass:
+    - independently reconcile Health and Rebalancing public evidence
+    - promote observed Agent Advantage to 3/3 only if both pair bundles validate
+    - close Health Factor event-tape requirement
+    - finish public backend deployment and public smoke
+    - then issue the final Benita frontend handoff
 
   stop_conditions:
-    - do not rerun jobs 949, 954, 955, 957, or 962
-    - do not rewrite job 962 underperformance as a performance win
-    - do not expose SPONDEE_ACTION_TOKEN or SPONDEE_EVIDENCE_INGEST_TOKEN in browser code
-    - do not promote SIMULATION to OBSERVED
-    - no BSC-testnet write during the Health Factor implementation/dry-run gate
-    - no meaningful user/mainnet capital
-    - no material paid spend
+    - do not rerun or mutate jobs 949, 954, 955, 957, or 962
+    - stop on first new-pair failure; diagnose before retry
+    - do not expose wallet secrets or protected server tokens
+    - no mainnet write or value movement
+    - preserve negative/neutral outcomes
     - no guaranteed profit, safety or liquidation-prevention claim
     - no merge to main
     - no final submission

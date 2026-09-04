@@ -1,58 +1,70 @@
-# Spondee G4 — Direct provider submit receipt remediation
+# Spondee G4 — Provider submit receipt remediation history
 
 Date: 2026-09-04 UTC
-Scope: Grid failure diagnosis + Rebalancing/Yield prevention
+Scope: Grid 954 recovery history + Rebalancing/Yield transport correction
 
-## Trigger
+## Grid trigger
 
-Grid job `954` reached provider submit successfully, but the buyer process then failed because `backend/src/category-erc8183.ts` ignored the exact submit transaction returned by the seller `notify_funded` response and instead called `getJobSubmittedEvents`, which invoked `eth_getLogs` over a block range. The BSC Testnet RPC rejected the request with `limit exceeded`.
+Grid job `954` reached provider submit successfully, but the buyer then called `getJobSubmittedEvents`, which invoked `eth_getLogs` over a block range. The BSC Testnet RPC rejected that scan with `limit exceeded`.
 
-No Grid write was retried.
+No Grid write was retried. Grid was recovered read-only from its already-known provider submit transaction and later closed PASS.
 
-## Remediation
+## Important correction discovered by Rebalancing 955
 
-The G4 live buyer now:
+The first post-Grid remediation assumed the A2A `notify_funded` response synchronously contained `{ok:true, tx_hash, deliverable_url}`. That assumption was incorrect for the default Agent Studio seller contract.
 
-1. validates the `notify_funded` response;
-2. requires the exact expected job ID;
-3. requires a valid provider submit transaction hash;
-4. calls `getTransactionReceipt` on that exact transaction;
-5. decodes `JobInitialised` from the known receipt;
-6. compares the receipt deliverable URL with the seller response when present;
-7. performs no `getJobSubmittedEvents` scan.
+The actual default seller behavior is intentionally asynchronous:
 
-`parseNotifyFundedSubmit` has positive and negative unit tests.
+1. verify the funded job enough to ACK;
+2. return `{status:"accepted", job_id, ...}` immediately;
+3. execute work and provider submit in a background task;
+4. log the eventual `{ok:true, tx_hash, deliverable_url}` internally.
 
-## CI invariant
+The `ok:true` object observed in Grid seller stdout was the background completion log, not the A2A response.
 
-The G4 Sequential Live Preflight now fails if `backend/src/category-erc8183.ts` contains `getJobSubmittedEvents`.
+Rebalancing job `955` exposed this mismatch: the buyer received the correct asynchronous `status:"accepted"` ACK but the temporary parser required `ok:true`, so it failed closed immediately after FUND. A later read-only probe proved job 955 remained `FUNDED`; no provider submit was mined during that failed attempt.
 
-Authoritative remediation run: `33839234808` — PASS.
+## Final bounded Spondee transport
 
-Validated:
-- backend unit/integration tests: PASS
-- strict TypeScript build: PASS
-- direct notify_funded submit receipt invariant: PASS
-- Grid/Rebalancing/Yield scenarios: PASS
-- credential-free live gate remains fail-closed: PASS
-- Grid/Rebalancing/Yield reference agents: PASS
-- Windows runner parse: PASS
+The default Agent Studio asynchronous contract remains unchanged.
 
-## Rebalancing isolation
+For Spondee's bounded local G4 proof only, Rebalancing and Yield sellers now support an explicit opt-in field:
 
-A dedicated `scripts/g4-rebalancing-live-e2e-localstorage.ps1` was added so Grid job 954 cannot be recreated by re-running the original sequential runner.
+`wait_for_result: true`
 
-Authoritative isolated-runner preflight: `33839458498` — PASS.
+When this opt-in is present, the seller:
 
-Windows CI verifies:
-- PowerShell parses;
-- category is pinned to `rebalancing`;
-- no Grid scenario path;
-- no Yield scenario path;
-- no seller wallet creation;
-- no mainnet target;
-- explicit Grid job 954 closure guard.
+1. verifies the named funded job;
+2. runs the existing fixed-code work + submit path;
+3. waits within a bounded timeout;
+4. returns the exact terminal `{ok:true, job_id, tx_hash, deliverable_url}` result.
+
+The buyer then reads that exact transaction receipt directly and decodes `JobInitialised`. It performs no `getJobSubmittedEvents` historical scan.
+
+The generic G4 buyer explicitly sends the bounded opt-in for future controlled live proof. The default seller behavior for ordinary callers remains asynchronous.
+
+## Verification
+
+Grid read-only recovery CI: `33828319822` — PASS.
+
+Intermediate direct-receipt CI: `33839234808` — PASS as code/tests, but its assumption about the *default* `notify_funded` response was later superseded by the Rebalancing 955 diagnosis above.
+
+Rebalancing 955 read-only status probe: `33840042425` — PASS, showing:
+- job `955` = `FUNDED`;
+- submitted_at = `0`;
+- deliverable hash = zero;
+- buyer balance = `0 wei`;
+- no wallet and no chain write used by the probe.
+
+Final bounded-sync recovery preflight: `33840652210` — PASS, validating:
+- backend tests and strict TypeScript build;
+- explicit `wait_for_result:true` buyer contract;
+- default async ACK is not mistaken for terminal submit;
+- Rebalancing and Yield bounded-sync seller tests/builds;
+- no `getJobSubmittedEvents` in the G4 buyer;
+- job 955 recovery code contains no `createJob`, `registerJob`, `setBudget` or `fund` primitive;
+- Windows recovery runner parses and is pinned to existing job 955.
 
 ## Truth boundary
 
-This remediation changes transport verification only. It does not create observed Agent Advantage evidence and does not upgrade any SIMULATION receipt to observed market performance.
+This is transport/runtime evidence only. All Spondee Outcome Receipts in this workstream remain `SIMULATION` unless separately proven otherwise. No observed Agent Advantage or real trading performance is created by this remediation.

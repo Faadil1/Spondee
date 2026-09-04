@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R017-G3-JOB-949-SUBMITTED-VERIFY-READY
+revision: STATE-R018-G3-JOB-949-CLI-FIX-VERIFIED-LOCAL-VERIFY-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_JOB_949_SUBMITTED_RECEIPT_PROVEN_LOCAL_MANIFEST_VERIFY_READY
+  status: G3_JOB_949_SUBMITTED_CLI_FIX_CI_VERIFIED_LOCAL_MANIFEST_VERIFY_READY
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -108,6 +108,26 @@ verified_live_properties:
   - JobSubmitted and JobInitialised receipt logs bind the same deliverable hash
   - on-chain getJob deliverable hash matches the submit receipt
   - signed Promise commitment on job 949 resolves to the canonical Promise/scenario
+local_verification_silent_exit_incident:
+  observed_runs: 2
+  platform: windows_node24
+  result: NO_VERIFICATION_EXECUTED_FALSE_ZERO_EXIT
+  chain_impact: NONE
+  root_cause: verify-g3-submitted.ts hand-built import.meta.url direct-execution guard did not match canonical Windows file URL, so verifySubmittedJob949 was never called.
+  secondary_gap: PowerShell wrapper accepted exit code 0 without requiring a PASS terminal.
+  remediation:
+    dedicated_cli: backend/src/verify-g3-submitted-cli.ts
+    wrapper: scripts/g3-verify-submitted-job-949.ps1
+    fail_closed_rule: Exit code 0 without exact PASS terminal is rejected.
+    evidence: evidence/g3-job-949-cli-fix/README.md
+  validation:
+    workflow_run: '33823556651'
+    result: PASS
+    ubuntu_cli_entrypoint: PASS
+    backend_regression_suite: PASS
+    typescript_build: PASS
+    chain_receipt_probe: PASS
+    windows_node24_cli_entrypoint: PASS
 not_yet_verified:
   - local manifest file hash matches the already-proven on-chain deliverable hash
   - manifest response.content verifies as the Spondee Outcome Receipt
@@ -115,13 +135,17 @@ not_yet_verified:
   - four deployed live reference agents
   - public judging deployment
 job_949_read_only_verification:
-  status: CI_VERIFIED_LOCAL_EXECUTION_READY
+  status: CROSS_PLATFORM_CLI_FIX_CI_VERIFIED_LOCAL_EXECUTION_READY
   evidence_record: evidence/g3-job-949-submitted/README.md
-  verifier: backend/src/verify-g3-submitted.ts
+  cli_fix_evidence: evidence/g3-job-949-cli-fix/README.md
+  verifier_library: backend/src/verify-g3-submitted.ts
+  verifier_cli: backend/src/verify-g3-submitted-cli.ts
   chain_probe: backend/src/probe-g3-submit-949.ts
   local_runner: scripts/g3-verify-submitted-job-949.ps1
   ci_workflow: .github/workflows/g3-submitted-949-verification.yml
+  ci_validation_run: '33823556651'
   local_manifest: reference-agents/health-factor/app/agent/.agent-data/erc8183-job-949.json
+  required_success_terminal: 'SPONDEE G3 SUBMITTED JOB 949 VERIFICATION: PASS'
   execution_contract:
     create_job: FORBIDDEN
     register_job: FORBIDDEN
@@ -149,5 +173,5 @@ category_depth:
     reference_agent: NOT_YET_DEPLOYED_LIVE
 next_action:
   owner: HUMAN_LOCAL_RUNTIME
-  primary: Pull build/backend-complete and execute scripts/g3-verify-submitted-job-949.ps1 exactly once. This is read-only and must not request the seller wallet password or create any transaction. Return the public PASS or failure block, then stop.
+  primary: Pull build/backend-complete and execute scripts/g3-verify-submitted-job-949.ps1 exactly once. This remains read-only, must not request the seller wallet password or create any transaction, and must emit an explicit PASS or fail closed. Return the public PASS or failure block, then stop.
 next_gate: SPONDEE_G3_JOB_949_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED

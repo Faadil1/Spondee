@@ -1,168 +1,148 @@
 schema: PBPD-RISK-REGISTER-v0.1
+revision: RISK-R038-OBSERVED-3_OF_3-CLOSED__FRONTEND-DEPLOYMENT-NEXT
+history:
+  previous_blob_sha: d480bbdd11cb0abc82d55f10b2bc8340b5124f66
+  prior_detail_preserved_in_git_history: true
 risks:
   - id: R-01
     severity: CRITICAL
-    risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Backend code is now closed; prioritize Health Factor observed pair/event tape, one additional pair, public deployment and judge-path quality over optional integrations.
-    status: OPEN_PRIMARY_SCHEDULE_RISK
+    risk: Scope exceeds the remaining hackathon capacity window.
+    mitigation: Backend code and observed evidence are closed. Benita owns frontend + deployment; remaining internal work is Winner Intelligence/TRACE, Project Finisher and submission packaging.
+    status: CONTROLLED_NARROWED_SCOPE
   - id: R-02
     severity: CRITICAL
     risk: Four-category depth becomes cosmetic or uneven.
-    mitigation: All four categories have verified bounded live BSC-testnet paths with Promise and Outcome Receipt plumbing.
-    status: RESOLVED_LIVE_TRANSPORT_4_OF_4
-    evidence: evidence/g4-yield-job-957-final-pass/README.md
+    mitigation: All four categories have verified bounded BSC-testnet paths. Frontend must preserve comparable structural depth.
+    status: CONTROLLED_BACKEND_AND_TRANSPORT_CLOSED_UI_REVIEW_PENDING
   - id: R-03
     severity: HIGH
-    risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Grid, Rebalancing and Yield have equivalent live transport proof; Grid also has the first countable observed pair. Preserve comparable UI depth in public judge build.
-    status: CONTROLLED_LIVE_DEPTH_CLOSED_UI_REVIEW_PENDING
+    risk: Health Factor hero dominates the product and weakens Agent Diversity.
+    mitigation: Grid/Rebalancing/Yield have equivalent live transport; Grid, Health and Rebalancing now also provide countable observed evidence diversity.
+    status: CONTROLLED_FRONTEND_REVIEW_PENDING
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
-    mitigation: Preserve forecast provenance, track calibration only against observed outcomes, and label insufficient history.
-    status: OPEN_OBSERVED_CALIBRATION_HISTORY_INSUFFICIENT
+    mitigation: Preserve calibration-only confidence behavior and show insufficient history when appropriate.
+    status: CONTROLLED_FRONTEND_PRESENTATION_PENDING
   - id: R-05
     severity: CRITICAL
     risk: Baseline comparisons are biased, synthetic or invented but presented as observed Agent Advantage.
-    mitigation: G5 countable schema requires marketplace activation, future/non-historical window, transaction tape, same scenario/input, raw outputs and measured metrics. Grid job 962 independently re-read every Chainlink round and computed the baseline from exactly those rounds.
-    status: CONTROLLED_AND_FIRST_COUNTABLE_PAIR_VERIFIED__MUST_REPEAT_FOR_REMAINING_PAIRS
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    mitigation: Three forward countable pairs now use precommitted baselines, verified marketplace activations and observed windows; negative and neutral outcomes are preserved.
+    status: RESOLVED_3_OF_3_COUNTABLE_FORWARD_PAIRS
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Controlled Spondee Agent Studio paths own activation proof; 8004scan discovery is read-only, cached and secondary. Static controlled reference agents remain available if discovery is unavailable.
-    status: CONTROLLED_BY_SPONDEE_REFERENCE_PATHS_AND_CACHED_DISCOVERY
-    evidence: backend/src/discovery.ts
-  - id: R-07
-    severity: MEDIUM
-    risk: Altana integration consumes time before core evidence and deployment are complete.
-    mitigation: Keep Altana optional and blocked until submission-critical evidence/deployment are healthy.
-    status: CONTROLLED_DEFERRED_OPTIONAL
+    mitigation: Controlled Spondee agents own activation paths; 8004scan discovery is read-only/cached/secondary.
+    status: CONTROLLED
   - id: R-08
     severity: HIGH
     risk: Financial wording implies guarantees.
-    mitigation: Use forecast/probability/outcome language and visible limitations. Grid job 962 explicitly preserves underperformance and labels paper accounting as non-realized PnL.
+    mitigation: Preserve Grid negative result, Rebalancing neutral result and Health no-liquidation-prevention boundary.
     status: CONTROLLED_GUARDRAIL_ACTIVE
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-  - id: R-09
-    severity: HIGH
-    risk: JigJoy/Syndicate collision consumes the available build window.
-    mitigation: Backend code is closed; use strict parallel workstreams for evidence and Benita frontend without reopening backend scope.
-    status: OPEN_CAPACITY_RISK
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: R-10
     severity: CRITICAL
-    risk: Current verified deliverable URLs are loopback-only and cannot serve judges publicly.
-    mitigation: Preserve local/testnet evidence, then deploy a public judging build and verify public URL/journey health before submission.
-    status: OPEN_PUBLIC_DEPLOYMENT_BLOCKER
+    risk: Product is not publicly accessible to judges.
+    mitigation: Deployment adapter/config and contract preflight are PASS. Benita owns Vercel project, DB/server env, CORS and public smoke with frontend V1.
+    status: OPEN_DELEGATED_TO_BENITA
   - id: R-11
     severity: CRITICAL
-    risk: A live ERC-8004 registration is mistaken for a proven Spondee activation path.
-    mitigation: Keep external candidates activatable=false until their Spondee task interface is independently verified; controlled Spondee paths own activation proof.
-    status: CONTROLLED_EXTERNAL_CANDIDATES_DISCOVERY_ONLY
-  - id: R-12
-    severity: HIGH
-    risk: BSC Testnet RPC eth_getLogs limits can falsely fail a live path after provider submit.
-    mitigation: Live buyers consume exact provider submit transactions and decode exact receipts; historical submit log scans remain forbidden.
-    status: RESOLVED_BY_DIRECT_SUBMIT_RECEIPT_AND_CI_INVARIANT
-  - id: R-13
-    severity: HIGH
-    risk: Buyer and seller disagree on notify_funded response semantics, causing a false failure after FUND.
-    mitigation: Observed forward sellers use an explicit bounded wait contract and return the exact submit transaction after the observation completes.
-    status: CONTROLLED_AND_VERIFIED_JOB_962
+    risk: External ERC-8004/8004scan identity is mistaken for proven Spondee activation/performance.
+    mitigation: External candidates remain activatable=false until verified adapters exist.
+    status: CONTROLLED
   - id: R-14
     severity: HIGH
     risk: Closed jobs are accidentally recreated or mutated.
-    mitigation: Jobs 949/954/955/957 and 962 are canonically closed; future pairs require a dedicated gate and new task scope.
-    status: CONTROLLED_CLOSED_JOB_GUARD_949_954_955_957_962
+    mitigation: Jobs 949/954/955/957/962/971/973 are canonically closed; no current chain-write gate is open.
+    status: CONTROLLED_CLOSED_JOB_GUARD_949_954_955_957_962_971_973
   - id: R-15
     severity: CRITICAL
-    risk: Existing SIMULATION receipts or the historical observed dry-run are accidentally counted toward the required three pairs.
-    mitigation: Countability requires LIVE_BSC_TESTNET_MARKETPLACE, activation reference, transaction tape and non-historical mode. Only Grid job 962 currently satisfies this contract.
-    status: RESOLVED_AT_SCHEMA_LEVEL__FIRST_REAL_COUNTABLE_PAIR_RECORDED_1_OF_3
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    risk: SIMULATION or non-countable historical evidence is counted toward the required three pairs.
+    mitigation: Final 3/3 uses only jobs 962/971/973, all explicitly countable observed forward pairs.
+    status: RESOLVED_FINAL_3_OF_3
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: R-16
     severity: HIGH
-    risk: Observed trading evidence requires meaningful real capital or introduces unacceptable financial risk.
-    mitigation: Grid job 962 used zero-price BSC-testnet marketplace transport plus read-only BNB-mainnet Chainlink data and paper accounting; no mainnet value moved.
-    status: RESOLVED_FOR_REQUIRED_TRADING_PAIR
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    risk: Observed evidence requires meaningful real capital.
+    mitigation: Marketplace writes are BSC testnet, service price zero, market evidence mainnet read-only, paper/hypothetical accounting only.
+    status: RESOLVED_FOR_ALL_THREE_COUNTABLE_PAIRS
   - id: R-17
     severity: HIGH
-    risk: A paper Grid record is described as realized mainnet trading performance.
-    mitigation: Task, seller output, pair limitations and final result explicitly state paper accounting and no realized mainnet PnL; observed underperformance is preserved.
-    status: CONTROLLED_CLAIM_GUARDRAIL_VERIFIED_JOB_962
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    risk: Paper accounting is described as realized mainnet performance.
+    mitigation: Grid and Rebalancing explicitly forbid realized-PnL claims; no mainnet value moved.
+    status: CONTROLLED
   - id: R-18
     severity: HIGH
-    risk: A forward observation times out before enough future rounds arrive, leaving a partial marketplace job.
-    mitigation: Job 962 successfully collected all eight rounds inside the bounded window. Future forward-style pairs must preserve the same fail-closed recovery rule.
-    status: RESOLVED_FOR_GRID_JOB_962__REUSABLE_PATTERN_REQUIRED_FOR_FUTURE_FORWARD_PAIRS
+    risk: Forward observation times out before enough future rounds arrive.
+    mitigation: Grid collected 8 rounds; Health and Rebalancing each collected 6 future rounds and verified exact source records.
+    status: RESOLVED_FOR_THREE_FINAL_PAIRS
   - id: R-19
     severity: HIGH
-    risk: Future market rounds are accidentally backfilled from before marketplace funding, invalidating the observed pair.
-    mitigation: Seller filters on observation start; buyer independently enforces the temporal boundary and re-reads exact source records.
-    status: RESOLVED_FOR_GRID_JOB_962_BY_TEMPORAL_AND_SOURCE_VERIFICATION
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-  - id: R-20
-    severity: MEDIUM
-    risk: Seller dependency drift breaks the forward runtime.
-    mitigation: Frozen workspace, tests and TypeScript build passed; compact wire remediation passed authoritative CI run 33859221865 before job 962.
-    status: RESOLVED_FOR_GRID_RUNTIME
-    evidence: evidence/g5-grid-forward-prewrite-size-failclosed-remediation/README.md
+    risk: Future market rounds are backfilled from before marketplace activation.
+    mitigation: Forward runners enforce temporal boundary and independent exact-source reread.
+    status: RESOLVED_FOR_THREE_FINAL_PAIRS
   - id: R-21
     severity: CRITICAL
-    risk: Health Factor event tape is generated from simulation or post-hoc thresholds and presented as observed warning advantage.
-    mitigation: Next Health Factor pair must freeze position, warning threshold, intervention rule and without-agent baseline before the observation window; preserve raw observed inputs and warning/intervention/adverse-event timestamps; dry-run remains non-countable until a dedicated marketplace activation exists.
-    status: OPEN_NEXT_EVIDENCE_GATE_BLOCKER
+    risk: Health Factor event tape is simulated or post-hoc but presented as observed warning advantage.
+    mitigation: Job 971 used the frozen hypothetical position/rules and future Chainlink rounds after marketplace activation.
+    status: RESOLVED_JOB_971
+    evidence: evidence/g5-health-forward-job-971-countable-pass/README.md
   - id: R-22
     severity: HIGH
-    risk: Health Factor baseline cadence is chosen after seeing the event, biasing warning lead-time or response-latency comparison.
-    mitigation: Baseline cadence/rule must be precommitted in the frozen input snapshot and run against the exact same observed window and initial state.
-    status: OPEN_NEXT_EVIDENCE_GATE_DESIGN_RISK
+    risk: Health baseline cadence is chosen after seeing the event.
+    mitigation: Without-agent periodic-check cadence was precommitted before the job 971 observation window.
+    status: RESOLVED_JOB_971
   - id: R-23
     severity: CRITICAL
-    risk: Public deployment exposes consequential live-action or evidence-ingestion mutation endpoints without product-level authorization.
-    mitigation: Separate server-only Bearer scopes protect live action and evidence ingestion; tokens are compared in constant time and readiness fails closed when production protection is unconfigured.
-    status: RESOLVED_BACKEND
-    evidence: backend/src/security.ts
+    risk: Public deployment exposes live-action/evidence-ingestion mutation endpoints without product-level authorization.
+    mitigation: Separate server-only Bearer scopes protect live action and evidence ingestion; Benita must keep tokens server-only.
+    status: RESOLVED_BACKEND__DEPLOYMENT_CONFIGURATION_PENDING
   - id: R-24
     severity: CRITICAL
-    risk: Browser retry, double click or concurrent requests create duplicate live blockchain jobs.
-    mitigation: Live action accepts only PREPARED/BLOCKED_LIVE_GATE states, refuses non-retryable states, and claims a durable PostgreSQL operation lock before any live execution. Memory lock covers local/CI.
+    risk: Browser retry/double click creates duplicate blockchain jobs.
+    mitigation: State guards + durable PostgreSQL operation locks are implemented; public frontend should route protected actions through trusted server/BFF.
     status: RESOLVED_BACKEND
-    evidence: backend/src/store.ts
   - id: R-25
     severity: HIGH
-    risk: A later request silently overwrites canonical evidence under the same run_id.
-    mitigation: Evidence ingestion is protected, immutable by run_id, returns idempotent success for identical payloads and conflict for changed payloads.
+    risk: Canonical evidence is silently overwritten under the same run_id.
+    mitigation: Evidence ingestion is immutable/idempotent and protected.
     status: RESOLVED_BACKEND
-    evidence: backend/src/app.ts
   - id: R-26
     severity: HIGH
-    risk: 8004scan API credentials are exposed in the browser or external discovery metadata is treated as performance proof.
-    mitigation: Dynamic 8004scan discovery runs server-side, optionally uses X-API-Key server-side, caches read results and emits activatable=false with explicit claim guardrails.
-    status: RESOLVED_BACKEND
-    evidence: backend/src/discovery.ts
+    risk: 8004scan API credentials are exposed in browser code or metadata is treated as performance proof.
+    mitigation: Discovery runs server-side; external agents remain discovery-only.
+    status: RESOLVED_BACKEND__FRONTEND_DISCIPLINE_REQUIRED
   - id: R-27
     severity: MEDIUM
-    risk: Judges or developers cannot reconstruct why an activation produced an outcome without re-running it.
-    mitigation: Read-only Decision Replay reconstructs preserved task, Promise, authority, transaction references and Outcome Receipt without re-execution.
+    risk: Judges cannot reconstruct an activation without re-running it.
+    mitigation: Decision Replay is read-only and reconstructs preserved inputs/Promise/authority/tx/receipt.
     status: RESOLVED_BACKEND
-    evidence: backend/src/replay.ts
+  - id: R-28
+    severity: HIGH
+    risk: Raw Health/Rebalancing observed bundles in Windows TEMP are deleted before final submission packaging.
+    mitigation: Run scripts/archive-g5-pre-frontend-evidence.ps1 before TEMP cleanup; commit sanitized raw bundles/manifests afterward.
+    status: OPEN_LOCAL_ARCHIVE_REQUIRED_NOT_FRONTEND_BLOCKER
+  - id: R-29
+    severity: HIGH
+    risk: Benita public deployment silently reuses unrelated database/secrets or leaks protected tokens into browser bundle.
+    mitigation: Use dedicated/approved database and keep SPONDEE_ACTION_TOKEN + SPONDEE_EVIDENCE_INGEST_TOKEN server-only; verify public backend-readiness and smoke before review.
+    status: OPEN_FRONTEND_DEPLOYMENT_RISK
   - id: A-01
     severity: CRITICAL
-    risk: No credible live BSC agent/path exists for one or more required categories.
+    risk: No credible live BSC path exists for one or more categories.
     status: RESOLVED_FOUR_OF_FOUR_LIVE
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    status: RESOLVED_BY_LIVE_E2E_AND_G5_COUNTABLE_GRID_PAIR
+    status: RESOLVED
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    status: RESOLVED_G4_LIVE_BINDING__G5_COUNTABLE_GRID_BINDING_PASS
+    status: RESOLVED
   - id: A-06
     severity: CRITICAL
-    risk: TermiX-style observed baselines cannot be collected reproducibly before deadline.
-    mitigation: Grid job 962 proved one full marketplace-hired forward pair with preserved same-window baseline and raw evidence; repeat the pattern for two additional tasks.
-    status: PARTIALLY_RESOLVED_ONE_OF_THREE_COUNTABLE_PAIRS_COMPLETE
+    risk: Required observed baselines cannot be collected reproducibly before deadline.
+    mitigation: Jobs 962, 971 and 973 provide three countable forward pairs with precommitted baselines.
+    status: RESOLVED_3_OF_3
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md

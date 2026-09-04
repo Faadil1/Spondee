@@ -9,174 +9,114 @@ handover:
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the authority,
-    requirements, evidence, runtime and activity ledgers. Canonical GitHub state outranks chat memory.
-    Job 949 is already SUBMITTED. Never create another G3 job, re-submit job 949, unlock the seller wallet,
-    acquire tBNB, or retry job 948 from this gate.
+    requirements, evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
+    G3 Health Factor is complete. Never create another G3 job, re-submit job 949, retry job 948,
+    unlock the seller wallet, acquire tBNB, merge to main or submit from the current gate.
 
-  current_milestone: G3_JOB_949_SUBMITTED_ONCHAIN__WINDOWS_CLI_FALSE_ZERO_EXIT_FIXED_AND_CI_VERIFIED
-  lifecycle_status: READ_ONLY_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED
+  current_milestone: G3_HEALTH_FACTOR_LIVE_E2E_PASS__SPEC_KIT_RECONCILIATION_IN_PROGRESS
+  lifecycle_status: G4_FOUR_CATEGORY_LIVE_PATH_QUALIFICATION_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate_write_authority: NONE_READ_ONLY_ONLY
+    current_gate_action_class: READ_ONLY_RECONNAISSANCE_AND_QUALIFICATION
     production_owner: PBPD
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: HUMAN_ONLY
+    merge_to_main: NOT_AUTHORIZED
 
-  canonical_seller:
+  g3_final_result:
+    status: PASS
+    evidence: evidence/g3-job-949-final-pass/README.md
+    job_id: '949'
     network: bsc-testnet
     chain_id: 97
-    address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    seller_wallet_unlock_required: false
-    seller_password_chat_exposure: FORBIDDEN
-    recreate_wallet: false
-    tBNB_required: false
-
-  historical_job_948:
-    state: FUNDED_BUT_TERMINAL_FOR_PROVIDER_SUBMIT
-    reason: provider submission deadline expired before recovery
-    retry: FORBIDDEN
-
-  job_949:
-    started_at: '2026-09-04T00:05:40.534Z'
-    original_runner_failed_at: '2026-09-04T00:07:18.579Z'
-    classification: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT__POST_SUBMIT_RPC_LOG_SCAN_LIMIT
-    ephemeral_buyer_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
-    job_id: '949'
-    chain_progress:
+    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    job_status: SUBMITTED
+    transactions:
       create_job: '0x7d4c6b2528841068de045a7e037a4f1c88f6adf6f34ee9c353c30b49c110da4c'
       register_job: '0x64e290a8c119cb3be5dfe27b3126adc7e3932ad86053bb4667acb92615628766'
       set_budget: '0xc28452786f9be893663f5f0a7c2fef72330341b76e811cf4a76cd2ab3eca9b6d'
       fund: '0x3e6d9bb9d504d1c80a8dbd32cc65a234cf91c6e503afccff48222f03873a95ef'
       provider_submit: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    provider_submit_runtime:
-      confirmed: true
-      gas_used: '248654'
-      effective_gas_price_wei: '0'
-      wallet_paid_wei: '0'
-      deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
-    original_runner_failure: >-
-      After submit confirmation, the buyer called the SDK deliverable URL resolver. Its JobInitialised
-      eth_getLogs scan hit the RPC range/rate limit. This is a post-submit read-path failure and does not
-      negate the already-mined provider submit transaction.
-
-  independent_chain_proof:
-    workflow_run: '33820803719'
-    workflow: G3 Submitted Job 949 Verification
-    result: PASS
-    method: KNOWN_SUBMIT_TRANSACTION_RECEIPT_PLUS_GETJOB_NO_ETH_GETLOGS
-    job_status: SUBMITTED
     submit_block: '128964136'
+    submitted_at: '1788480369'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
     deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
     promise_id: 'sp_87c1d19f5bc0cda01d586131'
     promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
     scenario_id: spondee-hf-demo-001
-    receipt_log_scan_used: false
-    secrets_printed: false
-    proof_artifact: evidence/g3-job-949-submitted/README.md
+    final_verification:
+      manifest_hash_verified: true
+      spondee_receipt_verified: true
+      evidence_class: SIMULATION
+      observed_agent_advantage_claimed: false
+      secrets_printed: false
+      conclusion: SPONDEE_G3_SUBMITTED_JOB_949_RECEIPT_VERIFICATION_PASS
 
-  local_cli_incident:
-    observed_human_runs: 2
-    platform: windows_node24
-    symptom: >-
-      The read-only wrapper reached the verification step and then returned to PowerShell with no PASS JSON,
-      no failure JSON and exit code 0.
-    classification: FALSE_ZERO_EXIT_NO_VERIFICATION_EXECUTED
-    chain_impact: NONE
-    root_cause: >-
-      backend/src/verify-g3-submitted.ts used a hand-built import.meta.url direct-execution guard whose
-      file URL shape did not match Windows file:///C:/... semantics. verifySubmittedJob949() was never invoked.
-    secondary_gap: The PowerShell wrapper trusted exit code 0 without requiring the explicit PASS terminal.
-    remediation:
-      dedicated_cli: backend/src/verify-g3-submitted-cli.ts
-      wrapper: scripts/g3-verify-submitted-job-949.ps1
-      wrapper_rule: Zero exit without exact PASS terminal fails closed.
-      evidence: evidence/g3-job-949-cli-fix/README.md
-    validation:
-      workflow_run: '33823556651'
+  g3_truth_boundary:
+    proven:
+      - Promise commitment predates activation and survives signed/live transport
+      - BSC testnet create/register/budget/fund/provider-submit path works
+      - MegaFuel supports the complete bounded path with zero wallet-paid gas in this run
+      - LocalStorage HTTP deliverable URL/hash is written and recoverable from the submit receipt
+      - local manifest hash matches the on-chain deliverable hash
+      - manifest response verifies as the Spondee Outcome Receipt
+    not_proven:
+      - observed Agent Advantage
+      - three observed paired tasks
+      - observed trading comparison
+      - observed Health Factor warning lead/response-latency tape
+      - public judge-accessible deployment
+      - live Grid/Rebalancing/Yield paths
+    invariant: A SIMULATION receipt must never be promoted into observed evidence.
+
+  historical_incidents_preserved:
+    job_948:
+      status: FUNDED_TERMINAL_FOR_PROVIDER_SUBMIT
+      reason: submission deadline expired before recovery
+      retry: FORBIDDEN
+    job_949_original_runner:
+      issue: post-submit SDK eth_getLogs range/rate limit
+      classification: POST_SUBMIT_READ_PATH_ONLY
+      resolution: known submit transaction receipt plus getJob(949)
+    windows_cli_false_zero_exit:
+      issue: import.meta.url direct-execution guard did not execute verifier on Windows
+      chain_impact: NONE
+      resolution: dedicated CLI plus mandatory explicit PASS terminal
+      validation_run: '33823556651'
       result: PASS
-      ubuntu_cli_entrypoint: PASS
-      backend_regression_suite: PASS
-      typescript_build: PASS
-      receipt_based_job_949_chain_probe: PASS
-      windows_node24_cli_entrypoint: PASS
 
-  now_verified_live:
-    - compact signed Promise commitment
-    - sanitizer-safe Base64URL task carrier
-    - MegaFuel createJob
-    - registerJob
-    - setBudget(0)
-    - fund(0)
-    - 30-day non-expired submission horizon
-    - LocalStorage HTTP deliverable publication
-    - provider submit transaction
-    - JobSubmitted and JobInitialised receipt consistency
-    - on-chain getJob status SUBMITTED and matching deliverable hash
-    - signed Promise commitment identity/scenario/hash recovered from job description
+  spec_kit_reconciliation:
+    repository: Faadil1/spec-kit-orchestration
+    project_path: projects/bnb_agent_studio_build_the_era_2026
+    living_prd_material_change_required: false
+    reason: G3 discoveries changed runtime/implementation details but did not materially change product intent.
+    target_result: CONVERGED_G3_SLICE__NOT_BUILD_CANDIDATE
 
-  still_pending:
-    - local erc8183-job-949.json manifest hash verification against the on-chain deliverable hash
-    - Spondee Outcome Receipt verification from manifest response.content
-    - observed Agent Advantage evidence
-    - live Grid/Rebalancing/Yield reference agents
-    - public judging deployment
-    - final submission
+  next_gate:
+    id: SPONDEE_G4_FOUR_CATEGORY_LIVE_PATH_QUALIFICATION_REQUIRED
+    owner: PBPD_ORCHESTRATION
+    objective: Resolve killing assumption A-01 by qualifying credible BSC-live paths for Grid Trading, Rebalancing and Yield Optimisation before consequential four-category deployment.
+    required_output:
+      - one candidate live path per remaining category
+      - BSC/Agent Studio/ERC-8004 provenance
+      - activation feasibility and required permissions
+      - blockers and fallback path
+      - truthful activatable/not-activatable classification
+      - recommendation on which paths should advance to build
+    constraints:
+      - reconnaissance first; no new live job merely to discover candidates
+      - no seller-wallet unlock
+      - no tBNB acquisition
+      - no mainnet or meaningful user capital
+      - no Altana or PancakeSwap bonus work yet
+      - no public submission
+      - no merge to main
+      - no Project Finisher yet
 
-  read_only_verification:
-    target_job_id: '949'
-    known_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
-    local_manifest: reference-agents/health-factor/app/agent/.agent-data/erc8183-job-949.json
-    verifier_library: backend/src/verify-g3-submitted.ts
-    verifier_cli: backend/src/verify-g3-submitted-cli.ts
-    chain_probe: backend/src/probe-g3-submit-949.ts
-    local_runner: scripts/g3-verify-submitted-job-949.ps1
-    ci_workflow: .github/workflows/g3-submitted-949-verification.yml
-    cross_platform_validation_run: '33823556651'
-    validation_result: PASS
-    required_success_terminal: 'SPONDEE G3 SUBMITTED JOB 949 VERIFICATION: PASS'
-    execution_contract:
-      seller_process: NOT_REQUIRED
-      seller_wallet_password: NOT_REQUIRED
-      create_job: FORBIDDEN
-      register_job: FORBIDDEN
-      set_budget: FORBIDDEN
-      fund: FORBIDDEN
-      provider_submit: FORBIDDEN_ALREADY_DONE
-      tBNB: NOT_REQUIRED
-      mainnet: FORBIDDEN
-      action_class: READ_ONLY
-
-  local_instructions:
-    working_directory: 'C:\Users\fboussari\Spondee'
-    commands:
-      - 'git pull --ff-only'
-      - 'git log -1 --oneline'
-      - 'powershell -ExecutionPolicy Bypass -File .\scripts\g3-verify-submitted-job-949.ps1'
-    password_rule: The script must not ask for any wallet password.
-    success_terminal: 'SPONDEE G3 SUBMITTED JOB 949 VERIFICATION: PASS'
-    fail_closed_rule: A zero exit without the exact success terminal is an error and must not be accepted.
-    on_success: Return the public PASS JSON/block only.
-    on_failure: Return the public read-only verification failure block only and stop; do not create or submit another job.
-
-  safety_invariants:
-    - current gate is read-only
-    - job 949 is already submitted and must not be submitted again
-    - job 948 is terminal and must not be retried
-    - no wallet unlock
-    - no new buyer activation
-    - no tBNB acquisition
-    - no secret in chat
-    - no mainnet activity
-    - no meaningful user capital
-    - no merge to main
-    - no public deployment or final submission from this gate
-    - simulation receipt remains SIMULATION and cannot count as observed Agent Advantage
-
-  exact_next_gate: SPONDEE_G3_JOB_949_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED
-  exact_next_owner: HUMAN_LOCAL_RUNTIME
+  exact_next_gate: SPONDEE_G4_FOUR_CATEGORY_LIVE_PATH_QUALIFICATION_REQUIRED
+  exact_next_owner: PBPD_ORCHESTRATION
   exact_next_action: >-
-    Pull build/backend-complete and run scripts/g3-verify-submitted-job-949.ps1 exactly once.
-    The wrapper now calls a dedicated cross-platform CLI and requires an explicit PASS terminal.
-    It remains read-only and must not request the seller wallet password or create any transaction.
-    Return the public PASS or failure block and stop.
+    Qualify credible BSC-live agent/path candidates for Grid Trading, Rebalancing and Yield Optimisation
+    using read-only 8004scan/Agent Studio/ERC-8004 and protocol reconnaissance. Stop before consequential
+    deployment or live activation and return the qualification matrix plus recommended next build slice.

@@ -9,14 +9,20 @@ export const AGENTS: readonly AgentRecord[] = [
     version: "0.1.0",
     category: "Health Factor Monitoring",
     description: "Deterministic Health Factor warning and Intervention Advantage reference agent.",
-    readiness: "TESTNET_WALLET_VERIFIED_GAS_PENDING",
-    activatable: false,
+    readiness: "LIVE_TESTNET_VERIFIED",
+    activatable: true,
     identity: {
       source: "SPONDEE",
       registry_agent_id: null,
       network: "bsc-testnet",
       provider_address: SPONDEE_TESTNET_PROVIDER,
       identity_url: null,
+    },
+    activation_proof: {
+      status: "VERIFIED_LIVE_TESTNET",
+      network: "bsc-testnet",
+      job_id: "949",
+      evidence_ref: "evidence/g3-job-949-final-pass/README.md",
     },
     capabilities: ["promise-card", "health-factor-monitoring", "erc8183-zero-price", "outcome-receipt"],
     promise_schema: "spondee.promise-card.v1",
@@ -27,17 +33,23 @@ export const AGENTS: readonly AgentRecord[] = [
     name: "Spondee Grid",
     version: "0.1.0",
     category: "Grid Trading",
-    description: "Deterministic grid-level and range-break simulation reference agent.",
-    readiness: "SIMULATION_READY_REFERENCE_AGENT_NOT_DEPLOYED",
-    activatable: false,
+    description: "Bounded Grid reference agent with verified BSC-testnet activation and observed forward-market evidence support.",
+    readiness: "LIVE_TESTNET_VERIFIED",
+    activatable: true,
     identity: {
       source: "SPONDEE",
       registry_agent_id: null,
       network: "bsc-testnet",
-      provider_address: null,
+      provider_address: SPONDEE_TESTNET_PROVIDER,
       identity_url: null,
     },
-    capabilities: ["promise-card", "grid-analysis", "range-break", "outcome-receipt"],
+    activation_proof: {
+      status: "VERIFIED_LIVE_TESTNET",
+      network: "bsc-testnet",
+      job_id: "954",
+      evidence_ref: "evidence/g4-grid-job-954-final-pass/README.md",
+    },
+    capabilities: ["promise-card", "grid-analysis", "range-break", "outcome-receipt", "observed-forward-pair"],
     promise_schema: "spondee.promise-card.v1",
     receipt_schema: "spondee.outcome-receipt.v1",
   },
@@ -47,14 +59,20 @@ export const AGENTS: readonly AgentRecord[] = [
     version: "0.1.0",
     category: "Rebalancing",
     description: "Deterministic LP range-exit and bounded reset-plan reference agent.",
-    readiness: "SIMULATION_READY_REFERENCE_AGENT_NOT_DEPLOYED",
-    activatable: false,
+    readiness: "LIVE_TESTNET_VERIFIED",
+    activatable: true,
     identity: {
       source: "SPONDEE",
       registry_agent_id: null,
       network: "bsc-testnet",
-      provider_address: null,
+      provider_address: SPONDEE_TESTNET_PROVIDER,
       identity_url: null,
+    },
+    activation_proof: {
+      status: "VERIFIED_LIVE_TESTNET",
+      network: "bsc-testnet",
+      job_id: "955",
+      evidence_ref: "evidence/g4-rebalancing-job-955-final-pass/README.md",
     },
     capabilities: ["promise-card", "lp-range-monitoring", "reset-plan", "outcome-receipt"],
     promise_schema: "spondee.promise-card.v1",
@@ -66,14 +84,20 @@ export const AGENTS: readonly AgentRecord[] = [
     version: "0.1.0",
     category: "Yield Optimisation",
     description: "Deterministic risk-bounded yield-option comparison reference agent.",
-    readiness: "SIMULATION_READY_REFERENCE_AGENT_NOT_DEPLOYED",
-    activatable: false,
+    readiness: "LIVE_TESTNET_VERIFIED",
+    activatable: true,
     identity: {
       source: "SPONDEE",
       registry_agent_id: null,
       network: "bsc-testnet",
-      provider_address: null,
+      provider_address: SPONDEE_TESTNET_PROVIDER,
       identity_url: null,
+    },
+    activation_proof: {
+      status: "VERIFIED_LIVE_TESTNET",
+      network: "bsc-testnet",
+      job_id: "957",
+      evidence_ref: "evidence/g4-yield-job-957-final-pass/README.md",
     },
     capabilities: ["promise-card", "yield-comparison", "risk-filter", "outcome-receipt"],
     promise_schema: "spondee.promise-card.v1",
@@ -94,6 +118,12 @@ export const AGENTS: readonly AgentRecord[] = [
       provider_address: null,
       identity_url: null,
     },
+    activation_proof: {
+      status: "UNVERIFIED_EXTERNAL",
+      network: "bsc",
+      job_id: null,
+      evidence_ref: null,
+    },
     capabilities: ["external-discovery", "yield", "rebalancing"],
     promise_schema: "spondee.promise-card.v1",
     receipt_schema: "spondee.outcome-receipt.v1",
@@ -113,6 +143,12 @@ export const AGENTS: readonly AgentRecord[] = [
       provider_address: null,
       identity_url: null,
     },
+    activation_proof: {
+      status: "UNVERIFIED_EXTERNAL",
+      network: "bsc",
+      job_id: null,
+      evidence_ref: null,
+    },
     capabilities: ["external-discovery", "yield", "swaps"],
     promise_schema: "spondee.promise-card.v1",
     receipt_schema: "spondee.outcome-receipt.v1",
@@ -120,12 +156,12 @@ export const AGENTS: readonly AgentRecord[] = [
 ];
 
 export function listAgents(category?: Category): AgentRecord[] {
-  return AGENTS.filter((agent) => category === undefined || agent.category === category).map((a) => ({ ...a }));
+  return AGENTS.filter((agent) => category === undefined || agent.category === category).map((a) => structuredClone(a));
 }
 
 export function getAgent(agentId: string): AgentRecord | null {
   const found = AGENTS.find((agent) => agent.agent_id === agentId);
-  return found ? { ...found } : null;
+  return found ? structuredClone(found) : null;
 }
 
 export function referenceAgentForCategory(category: Category): AgentRecord {
@@ -133,5 +169,5 @@ export function referenceAgentForCategory(category: Category): AgentRecord {
     (agent) => agent.category === category && agent.identity.source === "SPONDEE",
   );
   if (!found) throw new Error(`No Spondee reference agent for ${category}`);
-  return { ...found };
+  return structuredClone(found);
 }

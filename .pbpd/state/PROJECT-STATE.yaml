@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R034-G5-GRID-FIRST-COUNTABLE-PAIR-PASS__HEALTH-FACTOR-OBSERVED-PAIR-NEXT
+revision: STATE-R035-BACKEND-PRODUCT-FREEZE-PASS__FRONTEND-HANDOFF-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -10,43 +10,72 @@ authority:
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
   completed_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
   completed_human_gate_status: PASS_JOB_962_2026_09_04
+  completed_backend_gate: SPONDEE_BACKEND_PRODUCT_FREEZE_AND_FRONTEND_HANDOFF
+  completed_backend_gate_status: PASS_RUN_33864316044
   current_implementation_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
   current_implementation_gate_status: NOT_YET_OPENED
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
-  phase: CONSEQUENTIAL_BUILD
-  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_FIRST_COUNTABLE_GRID_PAIR_PASS__ONE_OF_THREE_OBSERVED_PAIRS
+  phase: PARALLEL_FRONTEND_AND_EVIDENCE_BUILD
+  status: BACKEND_FRONTEND_CONTRACT_FROZEN__BENITA_V1_READY__ONE_OF_THREE_OBSERVED_PAIRS
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
   status: LOCKED
-  path: LAND -> CATEGORY -> AGENT -> PROMISE_CARD -> BOUNDED_ACTIVATE -> OUTCOME_RECEIPT
+  path: LAND -> CATEGORY -> AGENT -> PROMISE_CARD -> BOUNDED_ACTIVATE -> OUTCOME_RECEIPT -> PROMISE_VS_ACTUAL -> AGENT_ADVANTAGE_WHEN_AVAILABLE
 product:
   tagline: Agents, measured by what they deliver.
   concept: Calibrated Outcome Marketplace + Intervention Advantage
+  hero_category: Health Factor Monitoring
 prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
   material_product_change_from_r034: false
 build:
-  active_branch: build/g5-grid-forward-observed
-  parent_branch: build/g4-sequential-live-e2e
+  active_branch: build/backend-product-freeze
+  parent_branch: build/g5-grid-forward-observed
+  parent_head: dcc10efee8a36ce17e7b303fb51fcdb4c5b5481d
   base_branch: build/backend-complete
   merge_to_main: NOT_AUTHORIZED
+  backend_frontend_contract_status: PASS_FROZEN_FOR_V1
+  backend_frontend_contract_ci_run: 33864316044
+  backend_frontend_contract_validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
+  frontend_bootstrap_schema: spondee.frontend-bootstrap.v1
+  frontend_bootstrap_endpoint: /v1/product/bootstrap
+  frontend_handoff_document: work/PBPD-BACKEND-FREEZE-FRONTEND-HANDOFF-BENITA.md
+  frontend_technical_contract: backend/FRONTEND-CONTRACT.md
+  frontend_machine_handoff: .pbpd/state/FRONTEND-HANDOFF.yaml
   four_category_live_transport_status: PASS_CLOSED
   health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED_SIMULATION_RECEIPT
   grid_status: G4_JOB_954_CLOSED__G5_COUNTABLE_PAIR_JOB_962_CLOSED_PASS
   rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED_SIMULATION_RECEIPT
   yield_status: LIVE_E2E_PASS_JOB_957_CLOSED_SIMULATION_RECEIPT
-  g5_observed_evidence_contract_status: PASS_HARDENED_COUNTABILITY
-  g5_observed_evidence_ci_run: 33843642146
-  g5_grid_observed_dry_run_status: PASS_NON_COUNTABLE
-  g5_grid_observed_dry_run_ci_run: 33843581388
-  g5_grid_forward_runner_status: EXECUTION_PASS_JOB_962_CLOSED
-  g5_grid_forward_remediation_ci_run: 33859221865
+backend_freeze:
+  status: PASS_FRONTEND_CONTRACT_FROZEN
+  authoritative_ci_run: 33864316044
+  validated_head: cab49658bfd77f07c8342bd0bb9be5d157a4e536
+  evidence: evidence/backend-product-freeze-frontend-handoff/README.md
+  tests: PASS
+  strict_typescript: PASS
+  four_category_smoke: PASS
+  simulation_truth_boundary: PASS
+  frontend_bootstrap_smoke: PASS
+  cors_allowlist_smoke: PASS
+  bsc_readiness_probe: PASS_READ_ONLY
+  chain_write_attempted: false
+  new_frontend_surfaces:
+    - GET /v1/product/bootstrap
+    - GET /v1/promises
+    - GET /v1/activations
+    - GET /v1/receipts
+    - GET /v1/evidence/runs
+  cors_configuration: SPONDEE_CORS_ORIGINS
+  catalog_activation_proof_model: VERIFIED_PATH_SEPARATE_FROM_CURRENT_WRITE_GATE
+  controlled_reference_agents_live_verified: 4
+  backend_architecture_change_required_for_benita_v1: false
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
@@ -87,22 +116,8 @@ historical_runtime:
     pair_id: g5-grid-forward-job-962
     promise_id: spg5_6be8ca0d0f37354475b0f656
     scenario_id: g5-grid-forward-55340232221132059004-1788516525376
-    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-    buyer_address: '0x9423f5B1Ae49A93Ee8757D5793b3019d17a12023'
-    transactions:
-      create_job: '0x8d502976faa5c47bd2d73e842a7ed083576ad07a301c4232fa4b6d9e940a81f1'
-      register_job: '0x8e1f998d56e8c7cafc25b5c5e7b72b6129b98f0247288dfdd0295478a6415c2e'
-      set_budget: '0xc0582528b34183387e9183d0a3bfee50fe925849fd8b7387ab0076346f11aea2'
-      fund: '0x434223db54f30510616e74ae6e2c554ecc9a26a6017ea172df4eff29a4e8b266'
-      submit: '0xd1273c9d11c88fbd92d73ff595ac507db718c88ac0c3896a8105854550d488d5'
     observed_round_count: 8
-    observation_window:
-      start_at: '2026-09-04T10:09:09.000Z'
-      end_at: '2026-09-04T10:13:00.000Z'
     external_round_verification: PASS
-    manifest_hash_verified: true
-    buyer_balance_before_wei: '0'
-    buyer_balance_after_wei: '0'
     service_price_raw: '0'
     mainnet_value_moved: false
     realized_mainnet_pnl_claimed: false
@@ -128,51 +143,33 @@ g5_observed_evidence_protocol:
   remaining_pairs: 2
   grid_pair_required: true
   grid_pair_requirement_satisfied: true
+  final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
   simulation_promotion_allowed: false
   historical_replay_countable: false
   dry_run_reference_agent_countable: false
-  final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
-  countable_marketplace_requirements:
-    - LIVE_BSC_TESTNET_MARKETPLACE
-    - ERC8183_BSC_TESTNET
-    - activation_reference
-    - Promise/freeze before observation window
-    - TRANSACTION_TAPE
-    - non-historical observation mode
-  required_raw_artifacts:
-    - INPUT_SNAPSHOT
-    - AGENT_OUTPUT
-    - BASELINE_OUTPUT
-    - TIMING_LOG
-    - COST_LOG
-    - TRANSACTION_TAPE
-g5_grid_dry_run:
-  status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
-  authoritative_ci_run: 33843581388
-  pair_id: g5-grid-dry-55340232221132058579
-  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-  countable_for_final_report: false
-g5_grid_forward_pair:
-  status: PASS_COUNTABLE_CLOSED
-  evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-  job_id: '962'
-  pair_id: g5-grid-forward-job-962
-  promise_id: spg5_6be8ca0d0f37354475b0f656
-  observed_round_count: 8
-  external_round_verification: PASS
-  countable_for_final_report: true
-  paired_run_count_after_pair: 1
-  trading_pair_requirement_satisfied: true
-  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-  mainnet_value_moved: false
-  realized_mainnet_pnl_claimed: false
-  rerun_allowed: false
+winner_intelligence_overlay:
+  status: DOCUMENTED_NON_BLOCKING_FOR_BENITA_V1
+  source_system: Faadil1/hackathon-opportunity-intelligence
+  winning_laws_promoted: 0
+  win_probability_score_allowed: false
+  checks:
+    - SPONSOR_NATIVE_NECESSITY_CHECK
+    - WHOLE_RUBRIC_COVERAGE_CHECK
+    - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
+    - JUDGE_PATH_LEGIBILITY_CHECK
+  apply_after_frontend_v1_exists: true
+  high_priority_blind_spots:
+    - FIRST_5S_CORE_CLARITY
+    - FIRST_15S_PROGRESS_CLARITY
+    - SIGNATURE_ACTION_TO_VISIBLE_CONSEQUENCE
+    - RUBRIC_EVIDENCE_SURFACING
+    - TRUTHFUL_WAIT_AND_FAILURE_STATES
+    - MOBILE_KEYBOARD_REDUCED_MOTION_LEGIBILITY
 critical_remaining_gaps:
   observed_agent_advantage:
     required_pairs: 3
     countable_pairs: 1
     remaining_pairs: 2
-    trading_pair_required: true
     trading_pair_countable: true
     status: BLOCKING_TWO_MORE_PAIRS_REQUIRED
   health_factor_event_tape:
@@ -181,26 +178,26 @@ critical_remaining_gaps:
   public_judge_deployment:
     status: PENDING_BLOCKING
   visible_authority_controls:
-    status: PARTIAL
+    status: BACKEND_GATES_IMPLEMENTED_FRONTEND_SURFACING_PENDING
+  dynamic_8004scan_refresh:
+    status: PARTIAL_NON_BLOCKING_FOR_CONTROLLED_REFERENCE_PATH
   project_finisher:
     status: NOT_STARTED
-killing_assumptions:
-  A-01:
-    status: RESOLVED_FOUR_OF_FOUR_LIVE
-  A-02:
-    status: RESOLVED_BY_LIVE_E2E
-  A-03:
-    status: RESOLVED_BY_LIVE_E2E_AND_G5_COUNTABLE_FORWARD_PAIR
-  A-06:
-    status: PARTIALLY_RESOLVED_FIRST_OF_THREE_COUNTABLE_PAIRS_COMPLETE
+parallel_workstreams:
+  frontend_benita:
+    status: READY_TO_START_V1
+    branch: build/backend-product-freeze
+    primary_contract: /v1/product/bootstrap
+    winner_intelligence_required_before_start: false
+  backend_evidence:
+    status: NEXT_GATE_NOT_OPENED
+    next: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
 current_gate:
   id: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
   status: NOT_YET_OPENED
   action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
   chain_write_allowed: false
   wallet_unlock_allowed: false
-  bsc_mainnet_read_allowed: true_if_required
-  bsc_mainnet_write_allowed: false
   meaningful_user_capital_allowed: false
   material_paid_spend_allowed: false
   merge_main_allowed: false
@@ -209,17 +206,12 @@ next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQ
 next_action:
   owner: PBPD_AFTER_GATE_OPEN
   action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
-  primary: Build and dry-run a Health Factor observed-pair protocol that can satisfy both the second countable Agent Advantage comparison and MUST-13 warning lead-time/response-latency event-tape evidence without promoting simulation to observed evidence.
-  design_constraints:
-    - use a frozen lending-position model and externally observed market inputs with explicit provenance
-    - freeze warning/intervention rules before the observation window
-    - preserve warning timestamp, intervention/recommendation timestamp, adverse-event timestamp and raw observed inputs
-    - baseline must share the exact same initial state and observation window
-    - baseline detection cadence/rule must be precommitted and reproducible, not invented after the event
-    - dry-run remains non-countable until a dedicated marketplace activation exists
+  primary: Build and dry-run a Health Factor observed-pair protocol that also closes MUST-13 warning lead-time/response-latency event-tape evidence, while Benita proceeds independently on frontend V1 from the frozen backend contract.
+  constraints:
+    - do not touch closed jobs 949, 954, 955, 957, or 962
     - no mainnet value movement
     - no wallet unlock or BSC-testnet write during implementation/dry-run
-    - do not touch closed jobs 949, 954, 955, 957, or 962
     - no guaranteed liquidation-prevention or safety claim
+    - frontend V1 contract changes must be versioned rather than silently breaking spondee.frontend-bootstrap.v1
     - no merge to main
     - no final submission

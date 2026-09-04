@@ -1,0 +1,112 @@
+name: G4 Yield Isolated Runner Preflight
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'scripts/g4-yield-live-e2e-localstorage.ps1'
+      - 'reference-agents/yield/**'
+      - 'backend/src/category-erc8183.ts'
+      - 'backend/src/category-erc8183.test.ts'
+      - 'backend/src/live-g4-category.ts'
+      - '.github/workflows/g4-yield-isolated-runner-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression tests
+        working-directory: backend
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Assert Yield schema and bounded exact-receipt path
+        shell: bash
+        run: |
+          grep -F 'spondee.yield.task.v1' backend/src/live-g4-category.ts
+          grep -F 'wait_for_result: true' backend/src/category-erc8183.ts
+          if grep -Fq 'getJobSubmittedEvents' backend/src/category-erc8183.ts; then
+            echo 'historical JobSubmitted log scanning is forbidden in the G4 live driver' >&2
+            exit 1
+          fi
+
+  yield-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enable pnpm 10.24.0
+        run: corepack enable && corepack prepare pnpm@10.24.0 --activate
+      - name: Install frozen Yield workspace
+        working-directory: reference-agents/yield
+        run: pnpm install --frozen-lockfile
+      - name: Yield contract tests
+        working-directory: reference-agents/yield/app/agent
+        run: pnpm test && pnpm test:sync-notify
+      - name: Strict TypeScript build
+        working-directory: reference-agents/yield/app/agent
+        run: pnpm build
+      - name: Scenario truth-boundary check
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = 'reference-agents/yield/demo/g4-live-scenario.json';
+          const x = JSON.parse(fs.readFileSync(p, 'utf8'));
+          if (x.schema !== 'spondee.yield.task.v1') throw new Error('wrong Yield schema');
+          if (x.scenario_id !== 'spondee-yield-live-001') throw new Error('wrong Yield scenario');
+          if (x.evidence_class !== 'SIMULATION') throw new Error('Yield truth boundary changed');
+          NODE
+
+  windows-runner-safety:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Parse and inspect Yield-only runner
+        shell: powershell
+        run: |
+          $path = 'scripts/g4-yield-live-e2e-localstorage.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+            exit 1
+          }
+          $text = Get-Content $path -Raw
+          if ($text -notmatch "SPONDEE_G4_CATEGORY = 'yield'") { throw 'Yield category pin missing' }
+          if ($text -notmatch 'reference-agents\\yield\\demo\\g4-live-scenario.json') { throw 'Yield scenario path missing' }
+          if ($text -match 'reference-agents\\grid\\demo') { throw 'Grid scenario path must not appear' }
+          if ($text -match 'reference-agents\\rebalancing\\demo') { throw 'Rebalancing scenario path must not appear' }
+          if ($text -match "SPONDEE_G4_CATEGORY = 'grid'") { throw 'Grid execution path forbidden' }
+          if ($text -match "SPONDEE_G4_CATEGORY = 'rebalancing'") { throw 'Rebalancing execution path forbidden' }
+          if ($text -notmatch 'Health Factor job 949, Grid job 954, and Rebalancing job 955 are CLOSED') { throw 'prior-job closure guard missing' }
+          if ($text -match 'wallet:create') { throw 'seller wallet creation forbidden' }
+          if ($text -match 'bsc-mainnet|chain_id\s*[:=]\s*56') { throw 'mainnet target forbidden' }
+          if ($text -notmatch "expectedSchema = 'spondee.yield.task.v1'") { throw 'Yield schema guard missing' }
+          if ($text -notmatch "expectedConclusion = 'SPONDEE_G4_YIELD_MEGAFUEL_LIVE_E2E_PASS'") { throw 'Yield PASS guard missing' }
+          Write-Host 'Yield isolated Windows runner parse/safety: PASS'

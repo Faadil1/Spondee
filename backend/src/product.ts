@@ -65,7 +65,7 @@ export const CATEGORY_PRESENTATION: Record<Category, {
 
 export const BACKEND_CAPABILITY_MATRIX = {
   schema: "spondee.backend-capability-matrix.v1",
-  backend_code_completion: "COMPLETE_PENDING_FINAL_CI",
+  backend_code_completion: "COMPLETE_PASS_RUN_33866229883",
   marketplace_catalog: "IMPLEMENTED",
   dynamic_8004scan_discovery: "IMPLEMENTED_SERVER_SIDE_READ_ONLY",
   promise_preview: "IMPLEMENTED",

@@ -62,6 +62,28 @@ export function encodeSpondeeCategoryTask(task: SpondeeTask): string {
   return `${TASK_PREFIX}${Buffer.from(JSON.stringify(task), "utf8").toString("base64url")}`;
 }
 
+export function parseNotifyFundedSubmit(
+  raw: Record<string, unknown>,
+  jobId: bigint,
+): { transactionHash: Hex; deliverableUrl: string | null } {
+  if (raw.ok !== true) throw new Error("seller notify_funded did not return ok=true");
+  if (String(raw.job_id ?? "") !== String(jobId)) {
+    throw new Error(`seller notify_funded returned wrong job id: ${String(raw.job_id ?? "missing")}`);
+  }
+  const txHash = raw.tx_hash;
+  if (typeof txHash !== "string" || !/^0x[0-9a-fA-F]{64}$/.test(txHash)) {
+    throw new Error("seller notify_funded did not return a valid submit transaction hash");
+  }
+  const deliverableUrl = raw.deliverable_url;
+  if (deliverableUrl !== undefined && (typeof deliverableUrl !== "string" || deliverableUrl.length === 0)) {
+    throw new Error("seller notify_funded returned an invalid deliverable_url");
+  }
+  return {
+    transactionHash: txHash as Hex,
+    deliverableUrl: typeof deliverableUrl === "string" ? deliverableUrl : null,
+  };
+}
+
 async function sendSkill(
   messageUrl: string,
   data: Record<string, unknown>,
@@ -174,8 +196,8 @@ type ProgressSink = (progress: LiveActivationProgress) => Promise<void> | void;
  * This function remains hard-gated by the same environment contract as G3 and is
  * never called by CI. It accepts all four Spondee task schemas, keeps the service
  * price at zero, verifies the signed Promise commitment before createJob, and
- * obtains the deliverable URL directly from the known provider submit receipt
- * rather than relying on a historical JobInitialised eth_getLogs scan.
+ * obtains the deliverable URL directly from the exact provider submit transaction
+ * returned by notify_funded. It performs no JobSubmitted eth_getLogs scan.
  */
 export async function runSignedZeroPriceCategoryTestnetActivation(
   task: SpondeeTask,
@@ -275,42 +297,37 @@ export async function runSignedZeroPriceCategoryTestnetActivation(
 
     const funded = await client.fund(jobId, 0n);
     await onProgress({ stage: "FUND", job_id: String(jobId), transaction_hash: funded.transactionHash });
-    const fundReceipt = await client.publicClient.getTransactionReceipt({ hash: funded.transactionHash as Hex });
 
-    await sendSkill(messageUrl, { skill: "notify_funded", job_id: Number(jobId) });
+    const notifyFundedRaw = await sendSkill(messageUrl, { skill: "notify_funded", job_id: Number(jobId) });
+    const submit = parseNotifyFundedSubmit(notifyFundedRaw, jobId);
+    const submitReceipt = await client.publicClient.getTransactionReceipt({ hash: submit.transactionHash });
+    if (submitReceipt.status !== "success") {
+      throw new Error("known provider submit transaction did not succeed");
+    }
 
     const deadline = Date.now() + 120_000;
     let finalStatus: "SUBMITTED" | "COMPLETED" | null = null;
     while (Date.now() < deadline) {
-      const job = await client.getJob(jobId);
-      if (job.status === JobStatus.SUBMITTED) { finalStatus = "SUBMITTED"; break; }
-      if (job.status === JobStatus.COMPLETED) { finalStatus = "COMPLETED"; break; }
+      const polledJob = await client.getJob(jobId);
+      if (polledJob.status === JobStatus.SUBMITTED) { finalStatus = "SUBMITTED"; break; }
+      if (polledJob.status === JobStatus.COMPLETED) { finalStatus = "COMPLETED"; break; }
       await new Promise((resolve) => setTimeout(resolve, 2_000));
     }
     if (finalStatus === null) throw new Error("timed out waiting for provider SUBMITTED status");
 
     const job = await client.getJob(jobId);
-    const latestBlock = await client.publicClient.getBlockNumber();
-    const submitEvents = await client.commerce.getJobSubmittedEvents(
-      fundReceipt.blockNumber,
-      latestBlock,
-      jobId,
-    );
-    const submitEvent = submitEvents.at(-1);
-    if (!submitEvent?.transactionHash) {
-      throw new Error("provider submitted the job but no bounded JobSubmitted event was found after funding");
-    }
-
-    const submitReceipt = await client.publicClient.getTransactionReceipt({ hash: submitEvent.transactionHash });
     const deliverableUrl = decodeDeliverableUrlFromKnownSubmitReceipt(
       submitReceipt.logs,
       jobId,
       job.deliverable,
     );
+    if (submit.deliverableUrl !== null && submit.deliverableUrl !== deliverableUrl) {
+      throw new Error("seller notify_funded deliverable_url differs from known submit receipt");
+    }
     await onProgress({
       stage: "SUBMIT_OBSERVED",
       job_id: String(jobId),
-      transaction_hash: submitEvent.transactionHash,
+      transaction_hash: submit.transactionHash,
       deliverable_url: deliverableUrl,
     });
 
@@ -347,7 +364,7 @@ export async function runSignedZeroPriceCategoryTestnetActivation(
         register_job: registered.transactionHash,
         set_budget: budgeted.transactionHash,
         fund: funded.transactionHash,
-        submit: submitEvent.transactionHash,
+        submit: submit.transactionHash,
       },
       deliverable: {
         url: deliverableUrl,

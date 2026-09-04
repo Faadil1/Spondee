@@ -3,7 +3,9 @@ import { z } from "zod";
 
 export const G5_GRID_FEED = "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE" as const;
 export const G5_GRID_TASK_PREFIX = "SPONDEE_G5_GRID_FORWARD_TASK_B64_V1:";
+export const G5_GRID_TASK_PREFIX_V2 = "SG5F2:";
 export const G5_GRID_COMMITMENT_PREFIX = "SPONDEE_G5_GRID_FORWARD_COMMITMENT_V1:";
+const CLAIM_GUARDRAIL = "Forward observed-market-data task only. No mainnet trade is executed; paper returns are not realized PnL and do not guarantee future performance." as const;
 
 export const G5GridForwardTaskSchema = z.object({
   schema: z.literal("spondee.grid-forward-observed.task.v1"),
@@ -36,9 +38,7 @@ export const G5GridForwardTaskSchema = z.object({
     slippage_bps: z.number().nonnegative().max(1000),
     baseline: z.literal("STATIC_50_50_BUY_AND_HOLD"),
   }),
-  claim_guardrail: z.literal(
-    "Forward observed-market-data task only. No mainnet trade is executed; paper returns are not realized PnL and do not guarantee future performance.",
-  ),
+  claim_guardrail: z.literal(CLAIM_GUARDRAIL),
 });
 
 export type G5GridForwardTask = z.infer<typeof G5GridForwardTaskSchema>;
@@ -77,7 +77,6 @@ export const G5GridForwardAgentOutputSchema = z.object({
   realized_mainnet_pnl_claimed: z.literal(false),
 });
 export type G5GridForwardAgentOutput = z.infer<typeof G5GridForwardAgentOutputSchema>;
-
 export type StrategyResult = G5GridForwardAgentOutput["strategy_result"];
 
 function stable(value: unknown): string {
@@ -93,17 +92,62 @@ export function sha256Hex(value: unknown): string {
   return createHash("sha256").update(stable(value)).digest("hex");
 }
 
+function compactTuple(task: G5GridForwardTask): unknown[] {
+  return [
+    task.scenario_id,
+    task.freeze.round_id,
+    task.freeze.price_usd,
+    task.freeze.updated_at,
+    task.freeze.frozen_at,
+    task.observation_rule.target_future_rounds,
+    task.observation_rule.max_wait_seconds,
+    task.observation_rule.poll_seconds,
+    task.strategy.capital_usd,
+    task.strategy.levels,
+    task.strategy.half_width_pct,
+    task.strategy.fee_bps,
+    task.strategy.slippage_bps,
+  ];
+}
+
+function taskFromCompactTuple(tuple: unknown): G5GridForwardTask {
+  if (!Array.isArray(tuple) || tuple.length !== 13) throw new Error("invalid compact G5 Grid task tuple");
+  const [scenarioId, roundId, priceUsd, updatedAt, frozenAt, targetRounds, maxWait, pollSeconds, capitalUsd, levels, halfWidthPct, feeBps, slippageBps] = tuple;
+  return G5GridForwardTaskSchema.parse({
+    schema: "spondee.grid-forward-observed.task.v1",
+    scenario_id: scenarioId,
+    evidence_class: "OBSERVED",
+    source: { chain_id: 56, network: "bsc-mainnet", feed_address: G5_GRID_FEED, feed_description: "BNB / USD" },
+    freeze: { round_id: roundId, price_usd: priceUsd, updated_at: updatedAt, frozen_at: frozenAt },
+    observation_rule: { only_rounds_after_activation: true, target_future_rounds: targetRounds, max_wait_seconds: maxWait, poll_seconds: pollSeconds },
+    strategy: {
+      capital_usd: capitalUsd,
+      starting_allocation: "50% USD / 50% BNB",
+      levels,
+      half_width_pct: halfWidthPct,
+      fee_bps: feeBps,
+      slippage_bps: slippageBps,
+      baseline: "STATIC_50_50_BUY_AND_HOLD",
+    },
+    claim_guardrail: CLAIM_GUARDRAIL,
+  });
+}
+
 export function encodeG5GridForwardTask(task: G5GridForwardTask): string {
   const parsed = G5GridForwardTaskSchema.parse(task);
-  return `${G5_GRID_TASK_PREFIX}${Buffer.from(JSON.stringify(parsed), "utf8").toString("base64url")}`;
+  return `${G5_GRID_TASK_PREFIX_V2}${Buffer.from(JSON.stringify(compactTuple(parsed)), "utf8").toString("base64url")}`;
 }
 
 export function decodeG5GridForwardTask(value: unknown): G5GridForwardTask | null {
-  if (typeof value !== "string" || !value.startsWith(G5_GRID_TASK_PREFIX)) return null;
+  if (typeof value !== "string") return null;
   try {
-    return G5GridForwardTaskSchema.parse(
-      JSON.parse(Buffer.from(value.slice(G5_GRID_TASK_PREFIX.length), "base64url").toString("utf8")),
-    );
+    if (value.startsWith(G5_GRID_TASK_PREFIX_V2)) {
+      return taskFromCompactTuple(JSON.parse(Buffer.from(value.slice(G5_GRID_TASK_PREFIX_V2.length), "base64url").toString("utf8")));
+    }
+    if (value.startsWith(G5_GRID_TASK_PREFIX)) {
+      return G5GridForwardTaskSchema.parse(JSON.parse(Buffer.from(value.slice(G5_GRID_TASK_PREFIX.length), "base64url").toString("utf8")));
+    }
+    return null;
   } catch {
     return null;
   }
@@ -134,13 +178,7 @@ export type G5GridForwardCommitment = {
 };
 
 export function buildG5GridForwardPromise(task: G5GridForwardTask, priceRaw: string): G5GridForwardPromise {
-  const seed = {
-    scenario_id: task.scenario_id,
-    freeze: task.freeze,
-    observation_rule: task.observation_rule,
-    strategy: task.strategy,
-    price_raw: priceRaw,
-  };
+  const seed = { scenario_id: task.scenario_id, freeze: task.freeze, observation_rule: task.observation_rule, strategy: task.strategy, price_raw: priceRaw };
   return {
     schema: "spondee.grid-forward-observed-promise.v1",
     promise_id: `spg5_${sha256Hex(seed).slice(0, 24)}`,
@@ -159,13 +197,7 @@ export function buildG5GridForwardPromise(task: G5GridForwardTask, priceRaw: str
 }
 
 export function buildG5GridForwardCommitment(promise: G5GridForwardPromise): G5GridForwardCommitment {
-  return {
-    schema: "spondee.grid-forward-observed-commitment.v1",
-    promise_id: promise.promise_id,
-    scenario_id: promise.scenario_id,
-    promise_sha256: sha256Hex(promise),
-    price_raw: promise.price_raw,
-  };
+  return { schema: "spondee.grid-forward-observed-commitment.v1", promise_id: promise.promise_id, scenario_id: promise.scenario_id, promise_sha256: sha256Hex(promise), price_raw: promise.price_raw };
 }
 
 export function encodeG5GridForwardCommitment(commitment: G5GridForwardCommitment): string {
@@ -185,24 +217,11 @@ export function decodeG5GridForwardCommitment(value: unknown): G5GridForwardComm
   }
 }
 
-function roundNumber(value: number, digits = 8): number {
-  const p = 10 ** digits;
-  return Math.round(value * p) / p;
-}
-
-function crossedLevel(a: number, b: number, level: number): "UP" | "DOWN" | null {
-  if (a < level && b >= level) return "UP";
-  if (a > level && b <= level) return "DOWN";
-  return null;
-}
-
+function roundNumber(value: number, digits = 8): number { const p = 10 ** digits; return Math.round(value * p) / p; }
+function crossedLevel(a: number, b: number, level: number): "UP" | "DOWN" | null { if (a < level && b >= level) return "UP"; if (a > level && b <= level) return "DOWN"; return null; }
 function maxDrawdown(equity: number[]): number {
-  let peak = equity[0] ?? 0;
-  let max = 0;
-  for (const value of equity) {
-    peak = Math.max(peak, value);
-    if (peak > 0) max = Math.max(max, ((peak - value) / peak) * 100);
-  }
+  let peak = equity[0] ?? 0; let max = 0;
+  for (const value of equity) { peak = Math.max(peak, value); if (peak > 0) max = Math.max(max, ((peak - value) / peak) * 100); }
   return roundNumber(max, 6);
 }
 
@@ -215,7 +234,6 @@ export function evaluateForwardGrid(task: G5GridForwardTask, roundsInput: G5Obse
     if (BigInt(rounds[i]!.round_id) <= BigInt(rounds[i - 1]!.round_id)) throw new Error("round ids are not increasing");
     if (Date.parse(rounds[i]!.updated_at) <= Date.parse(rounds[i - 1]!.updated_at)) throw new Error("round timestamps are not increasing");
   }
-
   const capital = task.strategy.capital_usd;
   const first = task.freeze.price_usd;
   const lower = first * (1 - task.strategy.half_width_pct / 100);
@@ -224,48 +242,24 @@ export function evaluateForwardGrid(task: G5GridForwardTask, roundsInput: G5Obse
   const levels = Array.from({ length: task.strategy.levels }, (_, i) => lower + i * step);
   const perFillQuote = capital / (task.strategy.levels * 4);
   const frictionRate = (task.strategy.fee_bps + task.strategy.slippage_bps) / 10_000;
-
-  let cash = capital / 2;
-  let bnb = (capital / 2) / first;
-  let friction = 0;
-  let fills = 0;
-  const equity: number[] = [cash + bnb * first];
-  const intervalPnl: number[] = [];
-  let prev = first;
-
+  let cash = capital / 2; let bnb = (capital / 2) / first; let friction = 0; let fills = 0;
+  const equity: number[] = [cash + bnb * first]; const intervalPnl: number[] = []; let prev = first;
   for (const r of rounds) {
     const next = r.price_usd;
-    const crossed = levels
-      .map((level) => ({ level, direction: crossedLevel(prev, next, level) }))
+    const crossed = levels.map((level) => ({ level, direction: crossedLevel(prev, next, level) }))
       .filter((x): x is { level: number; direction: "UP" | "DOWN" } => x.direction !== null)
       .sort((a, b) => next >= prev ? a.level - b.level : b.level - a.level);
     for (const event of crossed) {
       if (event.direction === "DOWN") {
-        const quote = Math.min(perFillQuote, cash / (1 + frictionRate));
-        if (quote <= 0) continue;
-        const cost = quote * frictionRate;
-        cash -= quote + cost;
-        bnb += quote / event.level;
-        friction += cost;
-        fills += 1;
+        const quote = Math.min(perFillQuote, cash / (1 + frictionRate)); if (quote <= 0) continue;
+        const cost = quote * frictionRate; cash -= quote + cost; bnb += quote / event.level; friction += cost; fills += 1;
       } else {
-        const units = Math.min(perFillQuote / event.level, bnb);
-        if (units <= 0) continue;
-        const gross = units * event.level;
-        const cost = gross * frictionRate;
-        cash += gross - cost;
-        bnb -= units;
-        friction += cost;
-        fills += 1;
+        const units = Math.min(perFillQuote / event.level, bnb); if (units <= 0) continue;
+        const gross = units * event.level; const cost = gross * frictionRate; cash += gross - cost; bnb -= units; friction += cost; fills += 1;
       }
     }
-    const current = cash + bnb * next;
-    const prior = equity[equity.length - 1]!;
-    intervalPnl.push(current - prior);
-    equity.push(current);
-    prev = next;
+    const current = cash + bnb * next; const prior = equity[equity.length - 1]!; intervalPnl.push(current - prior); equity.push(current); prev = next;
   }
-
   const terminal = equity[equity.length - 1]!;
   const netReturn = ((terminal / capital) - 1) * 100;
   const grossReturn = netReturn + (friction / capital) * 100;
@@ -281,24 +275,15 @@ export function evaluateForwardGrid(task: G5GridForwardTask, roundsInput: G5Obse
     net_return_pct: roundNumber(netReturn, 6),
     max_drawdown_pct: maxDrawdown(equity),
     estimated_execution_friction_usd: roundNumber(friction, 6),
-    fill_count: fills,
-    wins,
-    losses,
-    flat,
-    final_cash_usd: roundNumber(cash, 6),
-    final_bnb: roundNumber(bnb, 10),
+    fill_count: fills, wins, losses, flat,
+    final_cash_usd: roundNumber(cash, 6), final_bnb: roundNumber(bnb, 10),
     parameters: {
       capital_usd: capital,
       starting_allocation: task.strategy.starting_allocation,
       levels: task.strategy.levels,
-      lower_price: roundNumber(lower, 8),
-      upper_price: roundNumber(upper, 8),
-      half_width_pct: task.strategy.half_width_pct,
-      fee_bps: task.strategy.fee_bps,
-      slippage_bps: task.strategy.slippage_bps,
-      per_fill_quote_usd: roundNumber(perFillQuote, 6),
-      configuration_basis: "pre-window freeze round only",
-      no_lookahead_configuration: true,
+      lower_price: roundNumber(lower, 8), upper_price: roundNumber(upper, 8),
+      half_width_pct: task.strategy.half_width_pct, fee_bps: task.strategy.fee_bps, slippage_bps: task.strategy.slippage_bps,
+      per_fill_quote_usd: roundNumber(perFillQuote, 6), configuration_basis: "pre-window freeze round only", no_lookahead_configuration: true,
     },
   };
 }
@@ -306,10 +291,8 @@ export function evaluateForwardGrid(task: G5GridForwardTask, roundsInput: G5Obse
 export function evaluateForwardBaseline(task: G5GridForwardTask, roundsInput: G5ObservedRound[]): StrategyResult {
   const rounds = roundsInput.map((r) => G5ObservedRoundSchema.parse(r));
   if (rounds.length < task.observation_rule.target_future_rounds) throw new Error("insufficient future rounds");
-  const capital = task.strategy.capital_usd;
-  const first = task.freeze.price_usd;
-  const cash = capital / 2;
-  const bnb = (capital / 2) / first;
+  const capital = task.strategy.capital_usd; const first = task.freeze.price_usd;
+  const cash = capital / 2; const bnb = (capital / 2) / first;
   const equity = [capital, ...rounds.map((r) => cash + bnb * r.price_usd)];
   const terminal = equity.at(-1)!;
   const intervalPnl = equity.slice(1).map((value, i) => value - equity[i]!);
@@ -321,31 +304,14 @@ export function evaluateForwardBaseline(task: G5GridForwardTask, roundsInput: G5
   return {
     strategy: "bounded_symmetric_paper_grid_on_forward_chainlink_path",
     initial_equity_usd: capital,
-    terminal_equity_usd: roundNumber(terminal, 6),
-    gross_return_pct: roundNumber(ret, 6),
-    net_return_pct: roundNumber(ret, 6),
-    max_drawdown_pct: maxDrawdown(equity),
-    estimated_execution_friction_usd: 0,
-    fill_count: 0,
-    wins,
-    losses,
-    flat,
-    final_cash_usd: cash,
-    final_bnb: roundNumber(bnb, 10),
-    parameters: {
-      capital_usd: capital,
-      starting_allocation: task.strategy.starting_allocation,
-      baseline: task.strategy.baseline,
-      rebalance_or_grid_actions: 0,
-    },
+    terminal_equity_usd: roundNumber(terminal, 6), gross_return_pct: roundNumber(ret, 6), net_return_pct: roundNumber(ret, 6),
+    max_drawdown_pct: maxDrawdown(equity), estimated_execution_friction_usd: 0, fill_count: 0, wins, losses, flat,
+    final_cash_usd: cash, final_bnb: roundNumber(bnb, 10),
+    parameters: { capital_usd: capital, starting_allocation: task.strategy.starting_allocation, baseline: task.strategy.baseline, rebalance_or_grid_actions: 0 },
   };
 }
 
-export function assertForwardObservationAfterActivation(
-  task: G5GridForwardTask,
-  rounds: G5ObservedRound[],
-  activationFundedAt: string,
-): void {
+export function assertForwardObservationAfterActivation(task: G5GridForwardTask, rounds: G5ObservedRound[], activationFundedAt: string): void {
   if (rounds.length < task.observation_rule.target_future_rounds) throw new Error("insufficient forward rounds");
   const first = rounds[0]!;
   if (BigInt(first.round_id) <= BigInt(task.freeze.round_id)) throw new Error("first observed round does not follow the freeze round");

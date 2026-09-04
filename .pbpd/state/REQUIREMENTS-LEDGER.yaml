@@ -15,12 +15,11 @@ requirements:
     requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
     status: VERIFIED_DYNAMIC_SERVER_SIDE_8004SCAN_DISCOVERY_AND_STATIC_CONTROLLED_CATALOG_BOUNDARY
     evidence: backend/src/discovery.ts
-    note: Official 8004scan API integration is read-only, server-side, cached and explicitly discovery-only. External agents remain activatable=false until an adapter is independently verified.
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
-    status: VERIFIED_FOUR_LIVE_CATEGORIES_AND_G5_COUNTABLE_GRID_PAIR
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: VERIFIED_G3_G4_AND_THREE_COUNTABLE_G5_PAIRS
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST-05
     class: MUST
     requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
@@ -34,48 +33,46 @@ requirements:
   - id: MUST-07
     class: MUST
     requirement: Delegated execution authority is visibly bounded.
-    status: BACKEND_BOUNDARY_VERIFIED__LIVE_ACTION_PROTECTED_AND_RUNTIME_GATED__FRONTEND_VISIBLE_AUTHORITY_UI_PENDING
+    status: BACKEND_BOUNDARY_VERIFIED__FRONTEND_VISIBLE_AUTHORITY_UI_PENDING
     evidence: backend/src/security.ts
-    note: Backend live mutation now requires a dedicated server-side action token, runtime live gate, retry-state guard and durable operation lock. Judge-facing visual treatment remains frontend work.
+    note: Backend mutation is protected and runtime-gated. Benita must surface bounded authority clearly in the frontend.
   - id: MUST-08
     class: MUST
     requirement: Every measured completed run creates an Outcome Receipt.
-    status: PARTIAL_FOUR_G3_G4_SIMULATION_RECEIPTS_VERIFIED__FIRST_COUNTABLE_G5_OBSERVED_PAIR_ARTIFACT_BUNDLE_VERIFIED
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: VERIFIED_G3_G4_RECEIPTS_AND_THREE_G5_OBSERVED_PAIR_BUNDLES
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST-09
     class: MUST
     requirement: Outcome Receipt binds original promise to actual result.
-    status: VERIFIED_G3_G4_SIMULATION_BINDINGS_AND_G5_GRID_COUNTABLE_PROMISE_TO_OBSERVED_RESULT_BINDING
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-    note: G3/G4 receipts remain SIMULATION. G5 Grid job 962 is the first countable OBSERVED pair and must not be conflated with those simulation receipts.
+    status: VERIFIED_G3_G4_AND_THREE_G5_COUNTABLE_PAIRS
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
-    status: BLOCKING_1_OF_3_COUNTABLE_PAIRS__TWO_MORE_REQUIRED
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-    evidence_plan: Build Health Factor as pair 2 while satisfying warning/intervention event-tape evidence, then complete one additional countable pair.
+    status: VERIFIED_READY_3_OF_3_COUNTABLE_PAIRS
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
+    note: The three preserved outcomes include one negative Grid result, one Health timing-advantage result, and one neutral Rebalancing result.
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
     status: VERIFIED_BY_COUNTABLE_GRID_FORWARD_JOB_962
     evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
-    note: Grid agent underperformed the baseline on the observed window; requirement is satisfied by a real measured trading record, not by claiming superiority.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
-    status: VERIFIED_FOR_FIRST_COUNTABLE_PAIR__EXACT_SAME_FORWARD_WINDOW_AND_EXACT_ROUND_REREAD
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: VERIFIED_ACROSS_THREE_COUNTABLE_FORWARD_PAIRS
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
-    status: BLOCKING_OBSERVED_EVENT_TAPE_PENDING__EVIDENCE_WORKSTREAM_NOT_BACKEND_CODE
-    evidence: evidence/g3-job-949-final-pass/README.md
-    evidence_plan: Freeze Health Factor position/rules and a reproducible without-agent baseline, then preserve warning, intervention/recommendation and adverse-event timestamps on observed external inputs.
+    status: VERIFIED_CLOSED_JOB_971_WARNING_LEAD_95_829S_RESPONSE_LATENCY_0MS
+    evidence: evidence/g5-health-forward-job-971-countable-pass/README.md
+    note: No adverse event was observed during the bounded window and no liquidation-prevention or safety guarantee is claimed.
   - id: MUST-14
     class: MUST
     requirement: Public product remains accessible during judging.
-    status: BLOCKING_PUBLIC_DEPLOYMENT_PENDING__RUNTIME_DEPLOYMENT_NOT_BACKEND_CODE
-    evidence_plan: Deploy backend/frontend, configure durable storage/CORS/protected tokens, then run public URL and judge-path verification.
+    status: FRONTEND_DEPLOYMENT_SCOPE_DELEGATED_TO_BENITA__PUBLIC_SMOKE_PENDING
+    evidence_plan: Benita owns Vercel/public server configuration with frontend V1, including database, CORS, server-only protected tokens, and public smoke tests.
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
@@ -84,14 +81,13 @@ requirements:
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
-    status: IMPLEMENTED_CONDITIONALLY__ONE_COUNTABLE_OBSERVED_PAIR_NOW_AVAILABLE_HISTORY_STILL_INSUFFICIENT
-    evidence: backend/src/evidence.ts
+    status: THREE_COUNTABLE_PAIRS_NOW_AVAILABLE__FRONTEND_PRESENTATION_PENDING
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: SHOULD-02
     class: SHOULD
     requirement: Provide Decision Replay for measured runs.
     status: VERIFIED_READ_ONLY_DECISION_REPLAY_IMPLEMENTED
     evidence: backend/src/replay.ts
-    note: Replay reconstructs preserved inputs, Promise, authority, transactions and Outcome Receipt without re-execution or evidence promotion.
   - id: SHOULD-03
     class: SHOULD
     requirement: Use Altana scoped session authority if core integration supports it.
@@ -108,8 +104,8 @@ requirements:
   - id: MUST_NOT-01
     class: MUST_NOT
     requirement: Do not present estimated or synthetic performance as observed real evidence.
-    status: ACTIVE_AND_BACKEND_TRUTH_BOUNDARY_REGRESSION_VERIFIED
-    evidence: backend/src/backend-completion.test.ts
+    status: ACTIVE_AND_VERIFIED_THROUGH_THREE_COUNTABLE_FORWARD_PAIRS
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST_NOT-02
     class: MUST_NOT
     requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.
@@ -118,17 +114,17 @@ requirements:
   - id: MUST_NOT-03
     class: MUST_NOT
     requirement: Do not claim guaranteed profit, safety or liquidation prevention.
-    status: ACTIVE_AND_GRID_NEGATIVE_RESULT_PRESERVED_WITHOUT_PROFIT_CLAIM
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: ACTIVE_NEGATIVE_GRID_NEUTRAL_REBALANCING_AND_NO_HEALTH_LIQUIDATION_PREVENTION_CLAIM_PRESERVED
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST_NOT-04
     class: MUST_NOT
     requirement: Do not show an agent as activatable when activation does not work.
-    status: ACTIVE_FOUR_LIVE_PATHS_VERIFIED__EXTERNAL_DISCOVERY_REMAINS_NON_ACTIVATABLE__CURRENT_WRITE_READINESS_SEPARATE
+    status: ACTIVE_FOUR_LIVE_PATHS_VERIFIED__EXTERNAL_DISCOVERY_REMAINS_NON_ACTIVATABLE
     evidence: backend/src/catalog.ts
   - id: MUST_NOT-05
     class: MUST_NOT
     requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.
-    status: VERIFIED_LIVE_TRANSPORT_DEPTH_4_OF_4
+    status: VERIFIED_LIVE_TRANSPORT_DEPTH_4_OF_4__FRONTEND_EQUAL_DEPTH_STILL_REQUIRED
   - id: MUST_NOT-06
     class: MUST_NOT
     requirement: Do not add bonds, auctions, leagues, generic red-team systems or orchestration platforms before core gates pass.
@@ -136,8 +132,8 @@ requirements:
   - id: MUST_NOT-07
     class: MUST_NOT
     requirement: Do not move meaningful real mainnet user capital without explicit human authorization.
-    status: ACTIVE_G5_GRID_MAINNET_READ_ONLY_PROVEN_NO_VALUE_MOVED
-    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    status: ACTIVE_THREE_COUNTABLE_PAIRS_USED_MAINNET_READ_ONLY_MARKET_DATA_NO_VALUE_MOVED
+    evidence: evidence/g5-agent-advantage-3-of-3-final/README.md
   - id: MUST_NOT-08
     class: MUST_NOT
     requirement: Do not treat LLM-generated quality scores as ground truth.

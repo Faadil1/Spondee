@@ -1,5 +1,5 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: G4_THREE_REFERENCE_AGENTS_AND_MULTI_CATEGORY_DRIVER_CI_PASS__SEQUENTIAL_LIVE_AUTHORIZED
+preflight_status: G4_SEQUENTIAL_LIVE_PREFLIGHT_PASS__GRID_EXECUTION_READY
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
@@ -13,7 +13,9 @@ capabilities:
   four_category_backend_smoke: PASS_SIMULATION
   g4_three_reference_agents: PASS_BUILD_TEST_BAG_SCAN
   g4_multi_category_live_driver: PASS_CI_FAIL_CLOSED_DEFAULT
-  g4_local_sequential_runner: PREFLIGHT_PENDING
+  g4_local_sequential_runner: PASS_WINDOWS_PARSE_AND_SAFETY
+  g4_bounded_scenarios: PASS_GRID_REBALANCING_YIELD
+  g4_credential_free_fail_closed: PASS
   erc8183_live_driver_health_factor: PASS_JOB_949
   megafuel_erc8183_paymaster: PASS_COMPLETE_SPONDEE_WRITES_THROUGH_PROVIDER_SUBMIT
   localstorage_http_bridge: PASS_LIVE_JOB_949_ONCHAIN_URL_AND_MANIFEST_VERIFY
@@ -24,7 +26,7 @@ connectors:
     repository: Faadil1/Spondee
     active_branch: build/g4-sequential-live-e2e
   bnb_external_runtime:
-    status: HEALTH_FACTOR_G3_COMPLETE__G4_GRID_FIRST_AUTHORIZED
+    status: HEALTH_FACTOR_G3_COMPLETE__G4_GRID_LOCAL_EXECUTION_READY
     sdk_package: '@bnbagent/sdk'
     sdk_version: 0.5.5
     network: bsc-testnet
@@ -61,9 +63,11 @@ validation:
   final_human_local_verification: PASS
   g4_reference_agents_ci: 33826331454
   g4_multi_category_backend_ci: 33826671823
+  g4_sequential_live_preflight: 33827625957
+  g4_sequential_live_preflight_validated_head: 01050a567bbd4a670a0663702c5a581e8c9dbe96
 current_gate:
   id: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  status: AUTHORIZED
+  status: AUTHORIZED_AND_PREFLIGHT_PASS
   action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
   first_category: grid
   sequence_enforced: true
@@ -84,7 +88,6 @@ limitations:
   - Health Factor observed warning/event/intervention tape remains pending.
   - Public judging deployment and final submission remain later protected gates.
 next_required_checks:
-  - G4 Sequential Live Preflight workflow PASS on build/g4-sequential-live-e2e
   - local canonical seller wallet verification without exposing secrets
   - Grid live E2E with zero-balance ephemeral buyer and MegaFuel
   - only after Grid PASS: Rebalancing live E2E

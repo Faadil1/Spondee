@@ -1,0 +1,17 @@
+{
+  "schema": "spondee.rebalancing.task.v1",
+  "scenario_id": "spondee-rebalancing-live-001",
+  "evidence_class": "SIMULATION",
+  "position": {
+    "capital_usd": 10000,
+    "lower_price": 580,
+    "upper_price": 620
+  },
+  "target_width_bps": 600,
+  "reset_latency_seconds": 60,
+  "estimated_reset_cost_usd": 4,
+  "declared_price_path": [
+    { "at_seconds": 0, "price": 600 },
+    { "at_seconds": 120, "price": 625 }
+  ]
+}

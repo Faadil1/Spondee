@@ -27,6 +27,23 @@ current_action_grants:
     opened_by_gate: PRD_READY
   - action: BSC_TESTNET_REFERENCE_AGENT_BUILD
     status: ALLOWED
+  - action: G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E
+    status: ALLOWED
+    opened_by_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+    opened_at: '2026-09-04'
+    sequence:
+      - grid
+      - rebalancing_after_grid_pass
+      - yield_after_rebalancing_pass
+    constraints:
+      - BSC testnet only
+      - canonical existing encrypted seller wallet only
+      - zero service price
+      - MegaFuel primary
+      - ephemeral zero-balance buyer
+      - stop on first failure
+      - no blind retry after partial chain write
+      - receipts remain SIMULATION evidence
   - action: PUBLIC_JUDGING_BUILD_DEPLOYMENT
     status: ALLOWED_WITHIN_EXISTING_AUTHORIZATION
   - action: MEANINGFUL_MAINNET_OR_USER_CAPITAL

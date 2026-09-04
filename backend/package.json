@@ -12,6 +12,7 @@
     "test": "node --import tsx --test src/*.test.ts",
     "smoke": "tsx src/smoke.ts",
     "live:g3": "tsx src/live-g3.ts",
+    "live:g4-category": "tsx src/live-g4-category.ts",
     "resume:g3": "tsx src/resume-g3-funded.ts"
   },
   "dependencies": {

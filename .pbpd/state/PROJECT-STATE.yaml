@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R021-G4-EXTERNAL-SURFACES-UNPROVEN-CONTROLLED-BUILD-READY
+revision: STATE-R022-G4-SEQUENTIAL-LIVE-E2E-AUTHORIZED-PREFLIGHT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,12 +8,14 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
   production_owner: PBPD
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
+  current_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+  current_human_gate_status: AUTHORIZED_2026_09_04
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_CONTROLLED_REFERENCE_AGENT_EXPANSION_BUILD_AND_CI_REQUIRED
+  status: G4_SEQUENTIAL_LIVE_TESTNET_E2E_AUTHORIZED__PREFLIGHT_AND_LOCAL_EXECUTION_REQUIRED
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -32,16 +34,21 @@ prd:
   ready_status: PRD_READY
   material_product_change_from_g4: false
 build:
-  active_branch: build/backend-complete
-  parent_branch: build/g3-health-factor
-  backend_status: CI_VERIFIED
-  evidence_class: HEALTH_FACTOR_LIVE_CHAIN_VERIFIED_PLUS_THREE_CATEGORY_CONTROLLED_BUILD_PATH_SELECTED
+  active_branch: build/g4-sequential-live-e2e
+  base_branch: build/backend-complete
+  merge_to_main: NOT_AUTHORIZED
+  backend_status: CI_VERIFIED_MULTI_CATEGORY_LIVE_DRIVER
+  three_reference_agents_status: CI_VERIFIED
+  g4_reference_agent_ci_run: 33826331454
+  g4_backend_driver_ci_run: 33826671823
+  evidence_class: HEALTH_FACTOR_LIVE_CHAIN_VERIFIED_PLUS_GRID_REBALANCING_YIELD_BUILD_CI_VERIFIED
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   password_or_key_chat_exposure: FORBIDDEN
-  wallet_unlock_required_for_current_gate: false
+  create_new_wallet: FORBIDDEN
+  wallet_unlock_required_for_current_gate: true_at_local_execution_only
 historical_runtime:
   job_948:
     result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
@@ -67,7 +74,20 @@ g4_qualification:
     evidence: evidence/g4-external-task-surface-probe/README.md
   architecture: HYBRID_DISCOVERY_EXTERNAL_PLUS_SPONDEE_CONTROLLED_ACTIVATION
   discovery_rule: External ERC-8004 candidates remain useful for identity/comparison even when not activatable.
-  activation_rule: External candidates remain activatable=false until independently proven; current judge path will build Spondee-owned Agent Studio activation for Grid, Rebalancing and Yield.
+  activation_rule: Spondee-owned Agent Studio paths are the current controlled activation path for Grid, Rebalancing and Yield.
+g4_build_ci:
+  status: PASS
+  evidence: evidence/g4-three-reference-agents-ci/README.md
+  authoritative_run: 33826331454
+  grid: BUILD_TEST_BAG_SCAN_PASS
+  rebalancing: BUILD_TEST_BAG_SCAN_PASS
+  yield: BUILD_TEST_BAG_SCAN_PASS
+  multi_category_buyer_driver:
+    status: PASS
+    implementation: backend/src/category-erc8183.ts
+    cli: backend/src/live-g4-category.ts
+    backend_ci_run: 33826671823
+    post_submit_resolution: BOUNDED_JOB_SUBMITTED_SCAN_THEN_KNOWN_SUBMIT_RECEIPT_DECODE
 external_candidates:
   grid:
     primary: DeFiBot.agent_172801
@@ -78,64 +98,89 @@ external_candidates:
   yield:
     primary: DeFi_Trading_Agent_SperaxOS_6441
     status: DISCOVERY_ONLY_EXTERNAL_ACTIVATION_NOT_PROVEN
-controlled_activation_build_paths:
+controlled_activation_paths:
   grid:
     agent: Spondee Grid
-    backend_engine: EXISTING_SIMULATION_CI_VERIFIED
-    runtime_template: HEALTH_FACTOR_AGENT_STUDIO_PROVEN_SHAPE
-    status: BUILD_REQUIRED_NOT_DEPLOYED
+    workspace: reference-agents/grid
+    task_schema: spondee.grid.task.v1
+    build_status: PASS
+    live_status: PENDING_FIRST
   rebalancing:
     agent: Spondee Rebalancing
-    backend_engine: EXISTING_SIMULATION_CI_VERIFIED
-    runtime_template: HEALTH_FACTOR_AGENT_STUDIO_PROVEN_SHAPE
-    status: BUILD_REQUIRED_NOT_DEPLOYED
+    workspace: reference-agents/rebalancing
+    task_schema: spondee.rebalancing.task.v1
+    build_status: PASS
+    live_status: BLOCKED_UNTIL_GRID_PASS
   yield:
     agent: Spondee Yield
-    backend_engine: EXISTING_SIMULATION_CI_VERIFIED
-    runtime_template: HEALTH_FACTOR_AGENT_STUDIO_PROVEN_SHAPE
-    status: BUILD_REQUIRED_NOT_DEPLOYED
+    workspace: reference-agents/yield
+    task_schema: spondee.yield.task.v1
+    build_status: PASS
+    live_status: BLOCKED_UNTIL_REBALANCING_PASS
 category_depth:
   health_factor:
     live_testnet: G3_LIVE_E2E_PASS
     activation_status: VERIFIED
   grid:
     discovery: EXTERNAL_CANDIDATE_QUALIFIED
-    controlled_activation: BUILD_REQUIRED
-    activatable: false
+    controlled_activation: BUILD_CI_PASS
+    live_testnet: PENDING
+    activatable: LOCAL_TESTNET_PROOF_PENDING
   rebalancing:
     discovery: EXTERNAL_CANDIDATE_QUALIFIED
-    controlled_activation: BUILD_REQUIRED
-    activatable: false
+    controlled_activation: BUILD_CI_PASS
+    live_testnet: BLOCKED_UNTIL_GRID_PASS
+    activatable: LOCAL_TESTNET_PROOF_PENDING
   yield:
     discovery: EXTERNAL_CANDIDATE_QUALIFIED
-    controlled_activation: BUILD_REQUIRED
-    activatable: false
+    controlled_activation: BUILD_CI_PASS
+    live_testnet: BLOCKED_UNTIL_REBALANCING_PASS
+    activatable: LOCAL_TESTNET_PROOF_PENDING
 killing_assumptions:
   A-01:
     candidate_availability: RESOLVED
     external_activation: NOT_PROVEN
-    controlled_spondee_path: QUALIFIED_FOR_BUILD
-    judge_ready_activation: NOT_YET_RESOLVED
+    controlled_spondee_build: RESOLVED_CI_PASS
+    judge_ready_activation: LIVE_PROOF_PENDING
   A-02:
     status: RESOLVED_BY_G3_LIVE_E2E
   A-03:
     status: RESOLVED_BY_G3_LIVE_E2E
+current_gate:
+  id: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+  status: AUTHORIZED
+  evidence: evidence/g4-sequential-live-gate/README.md
+  sequence:
+    - grid
+    - rebalancing
+    - yield
+  stop_on_first_failure: true
+  service_price_raw: '0'
+  network: bsc-testnet
+  chain_id: 97
+  gas_path: MEGAFUEL_PRIMARY
+  ephemeral_buyer_zero_balance_required: true
+  receipt_truth_class: SIMULATION
+  observed_agent_advantage_claim_allowed: false
+  create_job_allowed: SEQUENTIAL_ONE_CATEGORY_AT_A_TIME
+  provider_submit_allowed: SEQUENTIAL_ONE_CATEGORY_AT_A_TIME
+  tBNB_acquisition_allowed: false
+  mainnet_allowed: false
+  user_capital_allowed: false
+  x402_payment_allowed: false
+  merge_main_allowed: false
+  final_submission_allowed: false
 next_action:
-  owner: PBPD_IMPLEMENTATION
-  action_class: CONSEQUENTIAL_BUILD_CI_ONLY_NO_LIVE_DEPLOYMENT
-  primary: Build Grid, Rebalancing and Yield Agent Studio reference-agent paths by reusing the proven Health Factor seller/runtime pattern and existing deterministic category engines; add strict category task validation, Promise commitment/Outcome Receipt roundtrips and fail-closed tests; validate all three in CI without deployment or live ERC-8183 writes.
+  owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
+  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
+  primary: Pull and check out build/g4-sequential-live-e2e, wait for G4 Sequential Live Preflight PASS, then run scripts/g4-sequential-live-e2e-localstorage.ps1. The runner must execute Grid first and stop immediately on any failure.
   constraints:
-    - reuse shared Promise/Receipt contracts rather than fork semantics
-    - service price remains zero for build/CI
-    - BSC testnet only for runtime configuration
-    - no seller-wallet unlock
-    - no tBNB acquisition
-    - no live ERC-8183 job
-    - no x402 payment
-    - no Altana grant
-    - no DeFi transaction
-    - no deployment yet
-    - no merge to main
-    - no Project Finisher
-    - no submission
-next_gate: SPONDEE_G4_THREE_REFERENCE_AGENTS_BUILD_AND_CI_REQUIRED
+    - existing canonical seller wallet only
+    - masked local password prompt only
+    - no secret in chat/log/Git
+    - zero service price
+    - MegaFuel primary and buyer balance must remain zero
+    - local HTTP deliverable bridge must stay healthy through manifest verification
+    - no blind retry after any partial chain write
+    - simulation receipts remain excluded from observed Agent Advantage
+next_gate: SPONDEE_G4_GRID_LIVE_TESTNET_E2E_EXECUTION_REQUIRED

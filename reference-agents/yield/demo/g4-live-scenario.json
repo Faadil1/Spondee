@@ -1,0 +1,22 @@
+{
+  "schema": "spondee.yield.task.v1",
+  "scenario_id": "spondee-yield-live-001",
+  "evidence_class": "SIMULATION",
+  "capital_usd": 10000,
+  "horizon_days": 30,
+  "max_risk_score": 45,
+  "current": {
+    "id": "current",
+    "gross_apr_pct": 5,
+    "risk_score": 20,
+    "switch_cost_usd": 0
+  },
+  "candidates": [
+    {
+      "id": "candidate",
+      "gross_apr_pct": 8,
+      "risk_score": 35,
+      "switch_cost_usd": 2
+    }
+  ]
+}

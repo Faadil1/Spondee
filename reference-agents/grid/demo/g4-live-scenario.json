@@ -1,0 +1,16 @@
+{
+  "schema": "spondee.grid.task.v1",
+  "scenario_id": "spondee-grid-live-001",
+  "evidence_class": "SIMULATION",
+  "capital_usd": 10000,
+  "lower_price": 580,
+  "upper_price": 620,
+  "levels": 5,
+  "fee_bps": 10,
+  "slippage_bps": 5,
+  "declared_price_path": [
+    { "at_seconds": 0, "price": 600 },
+    { "at_seconds": 120, "price": 610 },
+    { "at_seconds": 240, "price": 624 }
+  ]
+}

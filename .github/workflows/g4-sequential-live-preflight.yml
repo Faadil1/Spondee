@@ -1,0 +1,134 @@
+name: G4 Sequential Live Preflight
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'backend/src/category-erc8183.ts'
+      - 'backend/src/category-erc8183.test.ts'
+      - 'backend/src/live-g4-category.ts'
+      - 'backend/package.json'
+      - 'reference-agents/grid/**'
+      - 'reference-agents/rebalancing/**'
+      - 'reference-agents/yield/**'
+      - 'scripts/g4-sequential-live-e2e-localstorage.ps1'
+      - '.github/workflows/g4-sequential-live-preflight.yml'
+      - '.pbpd/state/**'
+      - 'evidence/g4-sequential-live-gate/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Unit and integration tests
+        working-directory: backend
+        run: npm test
+      - name: Strict TypeScript build including G4 live CLI
+        working-directory: backend
+        run: npm run build
+      - name: Validate the three bounded live scenarios
+        working-directory: backend
+        run: |
+          npx tsx -e '
+            import { readFileSync } from "node:fs";
+            import { resolve } from "node:path";
+            import { TaskSchema } from "./src/contracts.ts";
+            const cases = [
+              ["grid", "spondee.grid.task.v1", "../reference-agents/grid/demo/g4-live-scenario.json"],
+              ["rebalancing", "spondee.rebalancing.task.v1", "../reference-agents/rebalancing/demo/g4-live-scenario.json"],
+              ["yield", "spondee.yield.task.v1", "../reference-agents/yield/demo/g4-live-scenario.json"],
+            ];
+            for (const [slug, schema, path] of cases) {
+              const task = TaskSchema.parse(JSON.parse(readFileSync(resolve(path), "utf8")));
+              if (task.schema !== schema) throw new Error(`${slug}: ${task.schema} != ${schema}`);
+              if (task.evidence_class !== "SIMULATION") throw new Error(`${slug}: evidence boundary changed`);
+              console.log(`${slug} scenario: PASS`);
+            }
+          '
+      - name: Prove live driver remains closed without local credentials
+        working-directory: backend
+        run: |
+          npx tsx -e '
+            import { readFileSync } from "node:fs";
+            import { TaskSchema } from "./src/contracts.ts";
+            import { runSignedZeroPriceCategoryTestnetActivation } from "./src/category-erc8183.ts";
+            const task = TaskSchema.parse(JSON.parse(readFileSync("../reference-agents/grid/demo/g4-live-scenario.json", "utf8")));
+            try {
+              await runSignedZeroPriceCategoryTestnetActivation(task, {});
+              throw new Error("live gate unexpectedly opened in CI");
+            } catch (e) {
+              if (!String(e).includes("Live testnet gate is closed")) throw e;
+              console.log("credential-free live fail-closed: PASS");
+            }
+          '
+
+  category-agents:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        agent: [grid, rebalancing, yield]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enable pnpm 10.24.0
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.24.0 --activate
+      - name: Install frozen workspace
+        working-directory: reference-agents/${{ matrix.agent }}
+        run: pnpm install --frozen-lockfile
+      - name: Contract tests
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        run: pnpm test
+      - name: TypeScript build
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        run: pnpm build
+      - name: Deterministic evidence export
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        run: pnpm demo:evidence
+
+  windows-runner-parse:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Parse sequential PowerShell runner
+        shell: powershell
+        run: |
+          $path = 'scripts/g4-sequential-live-e2e-localstorage.ps1'
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path $path),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error "$path :: $($_.Message)" }
+            exit 1
+          }
+          $text = Get-Content $path -Raw
+          if ($text -match 'wallet:create') { throw 'sequential live runner must never create a seller wallet' }
+          if ($text -match 'bsc-mainnet') { throw 'sequential live runner must never target mainnet' }
+          if ($text -notmatch 'Stop-on-first-failure') { throw 'sequential fail-closed banner missing' }
+          if ($text -notmatch 'build/g4-sequential-live-e2e') { throw 'gate branch guard missing' }
+          Write-Host 'G4 sequential Windows runner parse/safety: PASS'

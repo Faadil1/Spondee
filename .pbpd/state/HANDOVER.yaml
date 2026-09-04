@@ -5,25 +5,28 @@ handover:
   date: 2026-09-04
   source_of_truth: GITHUB
   repository: Faadil1/Spondee
-  branch: build/backend-complete
+  branch: build/g4-sequential-live-e2e
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    Health Factor G3 is complete. Remaining-category discovery candidates are qualified, but external
-    activation surfaces failed closed as unproven. The next gate is build/CI only for three Spondee-owned
-    Agent Studio reference-agent paths. No deployment, live job, wallet unlock, tBNB, DeFi transaction,
-    merge to main, Project Finisher or submission is authorized by this handover.
+    Health Factor G3 is complete. Grid, Rebalancing and Yield controlled Agent Studio paths have passed
+    build/test/bag-scan CI. The human explicitly opened the sequential G4 live-testnet gate. Execute Grid
+    first, then Rebalancing only after Grid PASS, then Yield only after Rebalancing PASS. Stop on the first
+    failure and never retry blindly after a partial chain write.
 
-  current_milestone: G4_EXTERNAL_TASK_SURFACES_UNPROVEN__SPONDEE_CONTROLLED_FALLBACKS_PROMOTED
-  lifecycle_status: THREE_REFERENCE_AGENTS_BUILD_AND_CI_REQUIRED
+  current_milestone: G4_THREE_REFERENCE_AGENTS_AND_MULTI_CATEGORY_DRIVER_CI_PASS__SEQUENTIAL_LIVE_AUTHORIZED
+  lifecycle_status: G4_SEQUENTIAL_LIVE_TESTNET_E2E_AUTHORIZED__GRID_FIRST
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate_action_class: CONSEQUENTIAL_BUILD_CI_ONLY_NO_LIVE_DEPLOYMENT
+    current_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+    gate_status: HUMAN_AUTHORIZED_2026_09_04
+    current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
     production_owner: PBPD
+    local_runtime_owner: HUMAN
     final_submission: HUMAN
-    mainnet_or_meaningful_user_capital: HUMAN_ONLY
+    mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY
     merge_to_main: NOT_AUTHORIZED
 
   g3:
@@ -35,77 +38,86 @@ handover:
     observed_agent_advantage_claimed: false
     no_further_g3_live_run: true
 
+  g4_build_ci:
+    status: PASS
+    evidence: evidence/g4-three-reference-agents-ci/README.md
+    authoritative_run: 33826331454
+    head: c537f2a7c70012c8712e91257a17390549885cda
+    grid: PASS
+    rebalancing: PASS
+    yield: PASS
+    artifacts:
+      grid: 9920092070
+      rebalancing: 9920091773
+      yield: 9920093946
+
+  g4_multi_category_buyer:
+    status: CI_PASS
+    implementation: backend/src/category-erc8183.ts
+    cli: backend/src/live-g4-category.ts
+    backend_ci_run: 33826671823
+    guarantees:
+      - all G4 task schemas supported
+      - live gate closed by default
+      - zero-price enforced
+      - provider signature verified before createJob
+      - Promise commitment verified before createJob
+      - 1600-byte MegaFuel description ceiling preserved
+      - 30-day submission horizon preserved
+      - post-submit URL decoded from known submit receipt
+      - simulation receipt excluded from observed Agent Advantage
+
   g4_candidate_qualification:
     status: PASS
     evidence: evidence/g4-four-category-live-path-qualification/README.md
-    candidate_availability_resolved: true
-    selected_external_discovery:
-      grid: DeFiBot.agent #172801
-      rebalancing: BNB LP Range Rebalancer #265375
-      yield: DeFi Trading Agent SperaxOS #6441
+    external_candidates_remain_discovery_only: true
 
-  g4_external_task_surface_probe:
-    status: FAIL_CLOSED_EXTERNAL_ACTIVATION_NOT_PROVEN__CONTROLLED_SPONDEE_FALLBACKS_PROMOTED
-    evidence: evidence/g4-external-task-surface-probe/README.md
-    findings:
-      grid: advertised A2A surface not sufficiently verified for Spondee activation
-      rebalancing: concrete A2A card advertised but registry verification not positive and no Spondee task-path proof
-      yield: live ERC-8004 identity and executable description, but no independently proven Spondee task surface
-    truth_rule: >-
-      ERC-8004 registration, wallet activity, advertised A2A/x402 metadata and third-party activation UI are
-      not sufficient to set activatable=true.
+  g4_sequential_live_gate:
+    evidence: evidence/g4-sequential-live-gate/README.md
+    status: AUTHORIZED
+    network: bsc-testnet
+    chain_id: 97
+    provider: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    seller_wallet: EXISTING_ENCRYPTED_LOCAL_ONLY
+    service_price_raw: '0'
+    gas_path: MEGAFUEL_PRIMARY
+    buyer: EPHEMERAL_ZERO_BALANCE_REQUIRED
+    deliverable_transport: LOCAL_HTTP_BRIDGE
+    sequence:
+      - category: grid
+        task: reference-agents/grid/demo/g4-live-scenario.json
+        status: READY_AFTER_PREFLIGHT
+      - category: rebalancing
+        task: reference-agents/rebalancing/demo/g4-live-scenario.json
+        status: BLOCKED_UNTIL_GRID_PASS
+      - category: yield
+        task: reference-agents/yield/demo/g4-live-scenario.json
+        status: BLOCKED_UNTIL_REBALANCING_PASS
+    runner: scripts/g4-sequential-live-e2e-localstorage.ps1
+    stop_on_first_failure: true
+    no_blind_retry: true
 
-  architecture_decision:
-    discovery: Keep external ERC-8004 candidates for real marketplace identity/data/comparison.
-    activation: Build controlled Spondee Agent Studio reference agents for Grid, Rebalancing and Yield.
-    reason: Deadline reliability and truthfulness outweigh dependence on opaque external task surfaces.
-    reuse: Health Factor's proven Agent Studio / compact Promise commitment / ERC-8183 / Outcome Receipt shape.
-
-  controlled_build_targets:
-    grid:
-      name: Spondee Grid
-      existing_backend_engine: true
-      required_specialization:
-        - canonical Grid task carrier/validation
-        - Promise reconstruction and compact commitment
-        - deterministic grid outcome receipt
-        - fail-closed malformed/range cases
-      deploy_now: false
-    rebalancing:
-      name: Spondee Rebalancing
-      existing_backend_engine: true
-      required_specialization:
-        - canonical LP-range task validation
-        - bounded reset-plan Promise
-        - deterministic rebalancing receipt
-        - fail-closed unsafe/malformed cases
-      deploy_now: false
-    yield:
-      name: Spondee Yield
-      existing_backend_engine: true
-      required_specialization:
-        - canonical yield-comparison task validation
-        - risk-filtered allocation/HOLD Promise
-        - deterministic yield receipt
-        - fail-closed missing/invalid venue data cases
-      deploy_now: false
-
-  exact_next_gate: SPONDEE_G4_THREE_REFERENCE_AGENTS_BUILD_AND_CI_REQUIRED
-  exact_next_owner: PBPD_IMPLEMENTATION
+  exact_next_gate: SPONDEE_G4_GRID_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
+  exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   exact_next_action: >-
-    Implement the three Spondee Agent Studio reference-agent paths on build/backend-complete by reusing
-    the proven Health Factor seller/runtime pattern and shared backend contracts. Add category-specific
-    deterministic validation, Promise commitment/Outcome Receipt roundtrip tests and negative paths.
-    Run CI for all three. Stop before deployment or any live ERC-8183 transaction.
+    After the G4 Sequential Live Preflight workflow is PASS, locally fetch/check out
+    build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
+    .\scripts\g4-sequential-live-e2e-localstorage.ps1. Enter the existing seller wallet password only
+    into the masked local prompt. Return only the public PASS/FAIL evidence. Grid is the only category
+    permitted to begin; the runner unlocks Rebalancing and Yield only after the prior category passes.
 
   stop_conditions:
-    - no seller-wallet unlock
-    - no tBNB acquisition
-    - no live ERC-8183 job for new categories
-    - no x402 payment
+    - stop immediately on any category failure
+    - no retry after partial chain write until deterministic diagnosis
+    - no new seller wallet
+    - no seller password/private key/seed/keystore in chat or Git
+    - no tBNB acquisition if MegaFuel fails
+    - no non-zero service price
+    - no x402/B402 payment
     - no Altana grantSession
-    - no PancakeSwap/Venus/Lista transaction
-    - no remaining-category deployment
+    - no PancakeSwap/Venus/Lista value-moving transaction
+    - no mainnet or meaningful user capital
+    - no observed Agent Advantage claim from simulation receipts
     - no merge to main
     - no Project Finisher
     - no final submission

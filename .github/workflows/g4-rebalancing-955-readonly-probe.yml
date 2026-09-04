@@ -1,0 +1,31 @@
+name: G4 Rebalancing 955 Read-Only Probe
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'backend/src/probe-g4-rebalancing-955.ts'
+      - '.github/workflows/g4-rebalancing-955-readonly-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Read-only getJob(955) probe
+        working-directory: backend
+        run: npx tsx src/probe-g4-rebalancing-955.ts

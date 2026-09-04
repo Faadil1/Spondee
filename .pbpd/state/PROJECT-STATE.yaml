@@ -14,6 +14,8 @@ authority:
   completed_backend_gate_status: PASS_RUN_33867168666
   completed_observed_closure_preflight: SPONDEE_G5_PRE_FRONTEND_OBSERVED_CLOSURE_PREFLIGHT_PASS
   completed_observed_closure_preflight_run: 33868671297
+  completed_public_deployment_preflight: SPONDEE_PUBLIC_BACKEND_DEPLOYMENT_PREFLIGHT_PASS
+  completed_public_deployment_preflight_run: 33869418246
   current_project_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
   current_project_gate_status: READY_FOR_HUMAN_LOCAL_EXECUTION
   merge_to_main: NOT_AUTHORIZED
@@ -21,7 +23,7 @@ authority:
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: PRE_FRONTEND_EVIDENCE_AND_DEPLOYMENT_CLOSURE
-  status: BACKEND_CODE_COMPLETE__PAIR_2_3_PREFLIGHT_PASS__PUBLIC_DEPLOYMENT_PREPARED_NOT_DEPLOYED
+  status: BACKEND_CODE_COMPLETE__PAIR_2_3_PREFLIGHT_PASS__PUBLIC_DEPLOYMENT_CONTRACT_PASS_EXTERNAL_QUOTA_BLOCKED
 objective:
   statement: Close all remaining evidence and public-backend prerequisites before Benita starts frontend V1.
 primary_path:
@@ -79,13 +81,7 @@ observed_evidence:
     model: FUTURE_CHAINLINK_BNB_USD_READ_ONLY_PLUS_FROZEN_HYPOTHETICAL_POSITION
     marketplace_transport: LIVE_BSC_TESTNET_ERC8183_ZERO_PRICE_MEGAFUEL
     baseline: PERIODIC_WITHOUT_AGENT_CHECK_EVERY_4_FUTURE_ROUNDS
-    required_measurements:
-      - warning_emitted_at
-      - intervention_recommended_at
-      - baseline_first_check_at
-      - warning_lead_time_seconds
-      - response_latency_ms
-      - optional_adverse_event_at
+    required_measurements: [warning_emitted_at, intervention_recommended_at, baseline_first_check_at, warning_lead_time_seconds, response_latency_ms, optional_adverse_event_at]
     liquidation_prevention_claim_allowed: false
   pair_3_rebalancing:
     status: IMPLEMENTED_PREFLIGHT_PASS_EXECUTION_PENDING
@@ -114,9 +110,7 @@ combined_local_runner:
   path: scripts/g5-pre-frontend-observed-closure.ps1
   execution_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
   seller_password_prompt: MASKED_LOCAL_ONLY_ONCE
-  execution_order:
-    - HEALTH_FACTOR_PAIR_2
-    - REBALANCING_PAIR_3
+  execution_order: [HEALTH_FACTOR_PAIR_2, REBALANCING_PAIR_3]
   stop_on_first_failure: true
   automatic_retry: false
   closed_jobs_touched: false
@@ -131,23 +125,16 @@ canonical_seller:
   password_or_key_chat_exposure: FORBIDDEN
   create_new_wallet: FORBIDDEN
   wallet_unlock_required_for_current_gate: true_local_masked_only
-closed_jobs:
-  - '949'
-  - '954'
-  - '955'
-  - '957'
-  - '962'
+closed_jobs: ['949', '954', '955', '957', '962']
 public_deployment:
-  status: PREPARED_NOT_DEPLOYED
+  status: CONTRACT_PREFLIGHT_PASS_NOT_DEPLOYED
   adapter: api/index.mjs
   config: vercel.json
-  deployment_preflight_workflow: .github/workflows/public-backend-deployment-preflight.yml
+  deployment_preflight_run: 33869418246
+  deployment_preflight_status: PASS
+  deployment_preflight_evidence: evidence/public-backend-deployment-preflight/README.md
   durable_database_required_for_full_stateful_frontend: true
-  required_production_env:
-    - DATABASE_URL
-    - SPONDEE_CORS_ORIGINS
-    - SPONDEE_ACTION_TOKEN
-    - SPONDEE_EVIDENCE_INGEST_TOKEN
+  required_production_env: [DATABASE_URL, SPONDEE_CORS_ORIGINS, SPONDEE_ACTION_TOKEN, SPONDEE_EVIDENCE_INGEST_TOKEN]
   vercel_connected_api_attempt:
     date: '2026-09-04'
     result: FAIL_CLOSED_EXTERNAL_QUOTA
@@ -158,7 +145,6 @@ public_deployment:
   existing_unrelated_projects_may_be_repurposed: false
 frontend_benita:
   status: INTENTIONALLY_HELD_UNTIL_PRE_FRONTEND_CLOSURE
-  old_handoff_ready_but_not_yet_sent_as_execution_source: true
   final_source_branch_after_closure: TO_BE_PROMOTED_AFTER_3_OF_3_AND_PUBLIC_DEPLOYMENT
 winner_intelligence_overlay:
   status: POST_FRONTEND_V1_REVIEW
@@ -168,7 +154,7 @@ winner_intelligence_overlay:
 remaining_project_work:
   observed_agent_advantage: EXECUTE_PAIR_2_AND_PAIR_3
   health_factor_event_tape: EXECUTE_PAIR_2
-  public_backend_deployment: BLOCKED_BY_VERCEL_API_QUOTA_OR_ALTERNATIVE_HOST_CONFIRMATION
+  public_backend_deployment: EXTERNAL_VERCEL_API_QUOTA_BLOCKED_AFTER_CONTRACT_PREFLIGHT_PASS
   frontend_v1: HELD_BY_USER_UNTIL_ABOVE_CLOSED
   winner_intelligence_trace_review: AFTER_FRONTEND_V1
   project_finisher: NOT_STARTED

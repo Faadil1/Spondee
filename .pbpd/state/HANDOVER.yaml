@@ -11,20 +11,21 @@ handover:
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime and risk ledgers. Canonical GitHub state outranks chat memory.
     G4 is closed 4/4 PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
-    The first authorized G5 Grid forward execution attempt failed before any BSC-testnet write because
-    the signed on-chain description exceeded the MegaFuel 1600-byte limit. Progress was empty, no job
-    was created, and the one-new-job authorization was not consumed. Compact V2 wire remediation is CI PASS.
+    G5 Grid job 962 is also CLOSED after producing the first countable observed Agent Advantage pair.
+    The pair underperformed the baseline and that negative result is part of the preserved evidence.
 
-  current_milestone: G5_GRID_FORWARD_PREWRITE_SIZE_REMEDIATED
-  lifecycle_status: G5_GRID_FORWARD_EXECUTION_AUTHORIZED_RETRY_READY_ZERO_WRITES_SO_FAR
+  current_milestone: G5_GRID_FIRST_COUNTABLE_PAIR_PASS
+  lifecycle_status: ONE_OF_THREE_COUNTABLE_PAIRS_COMPLETE__TRADING_REQUIREMENT_SATISFIED__HEALTH_FACTOR_OBSERVED_PAIR_NEXT
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-    current_gate_status: AUTHORIZED_RETRY_AFTER_PREWRITE_FAIL_NO_JOB_CREATED
-    current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
+    completed_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+    completed_gate_status: PASS_JOB_962_2026_09_04
+    current_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+    current_gate_status: NOT_YET_OPENED
+    current_action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
     production_owner: PBPD
-    protected_external_action_owner: HUMAN_LOCAL_RUNTIME
+    protected_external_action_owner: HUMAN
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY_NOT_OPENED
     merge_to_main: NOT_AUTHORIZED
@@ -36,6 +37,7 @@ handover:
       grid: '954'
       rebalancing: '955'
       yield: '957'
+    receipts: SIMULATION_ONLY
     observed_pairs_contributed: 0
 
   g5_observed_evidence_contract:
@@ -43,10 +45,13 @@ handover:
     schema: spondee.agent-advantage-pair.v1
     authoritative_ci_run: 33843642146
     required_pairs: 3
-    countable_pairs: 0
+    countable_pairs: 1
+    remaining_pairs: 2
     grid_pair_required: true
+    grid_pair_requirement_satisfied: true
     historical_replay_countable: false
     countable_pair_requires_marketplace_activation: true
+    final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
 
   g5_grid_dry_run:
     status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
@@ -55,55 +60,59 @@ handover:
     result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
     countable_for_final_report: false
 
-  g5_grid_forward_runner:
-    status: PREWRITE_SIZE_REMEDIATED_EXECUTION_AUTHORIZED_NOT_RUN
-    original_preflight_ci_run: 33845758154
-    remediation_ci_run: 33859221865
-    remediation_validated_head: e608c81f34ef2e8442d53efbe946ab84f1515829
-    runner: scripts/g5-grid-forward-observed-pair.ps1
-    execution_switch: '-Execute'
-    exact_human_gate_env: SPONDEE_G5_GRID_FORWARD_HUMAN_GATE=SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-    future_job_scope: ONE_NEW_GRID_G5_BSC_TESTNET_JOB_ONLY
+  g5_grid_forward_pair:
+    status: PASS_COUNTABLE_CLOSED
+    evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    job_id: '962'
+    pair_id: g5-grid-forward-job-962
+    promise_id: spg5_6be8ca0d0f37354475b0f656
+    scenario_id: g5-grid-forward-55340232221132059004-1788516525376
+    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    buyer_address: '0x9423f5B1Ae49A93Ee8757D5793b3019d17a12023'
+    observed_round_count: 8
+    observation_window:
+      start_at: '2026-09-04T10:09:09.000Z'
+      end_at: '2026-09-04T10:13:00.000Z'
+    transactions:
+      create_job: '0x8d502976faa5c47bd2d73e842a7ed083576ad07a301c4232fa4b6d9e940a81f1'
+      register_job: '0x8e1f998d56e8c7cafc25b5c5e7b72b6129b98f0247288dfdd0295478a6415c2e'
+      set_budget: '0xc0582528b34183387e9183d0a3bfee50fe925849fd8b7387ab0076346f11aea2'
+      fund: '0x434223db54f30510616e74ae6e2c554ecc9a26a6017ea172df4eff29a4e8b266'
+      submit: '0xd1273c9d11c88fbd92d73ff595ac507db718c88ac0c3896a8105854550d488d5'
+    external_round_verification: PASS
+    manifest_hash_verified: true
+    buyer_balance_before_wei: '0'
+    buyer_balance_after_wei: '0'
     service_price_raw: '0'
-    megafuel_required: true
-    mainnet_mode: READ_ONLY_CHAINLINK_ONLY
-    target_future_rounds: 8
-    max_wait_seconds: 480
-    wire_format: SG5F2_COMPACT
-    compact_task_budget: LESS_THAN_500_BYTES_CI_ENFORCED
-    legacy_v1_decode_supported: true
-    first_attempt:
-      conclusion: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_FAIL_CLOSED
-      error: ONCHAIN_DESCRIPTION_2288_GT_1600
-      progress_count: 0
-      transaction_attempted: false
-      job_created: false
-      mainnet_value_moved: false
-    execution_gate_open: true
-    authorization_consumed: false
-    countable_pairs_before_execution: 0
-    evidence:
-      - evidence/g5-grid-forward-runner-preflight/README.md
-      - evidence/g5-grid-forward-execution-human-go/README.md
-      - evidence/g5-grid-forward-prewrite-size-failclosed-remediation/README.md
+    mainnet_value_moved: false
+    countable_for_final_report: true
+    paired_run_count_after_pair: 1
+    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+    agent_terminal_equity_usd: 9996.660009
+    baseline_terminal_equity_usd: 9999.160009
+    terminal_equity_delta_usd: -2.5
+    realized_mainnet_pnl_claimed: false
+    rerun_allowed: false
 
-  exact_next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
+  exact_next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  exact_next_owner: PBPD_AFTER_GATE_OPEN
   exact_next_action: >-
-    Pull the remediated CI-validated head and execute the canonical Grid forward runner once more under
-    the already-recorded human GO. This retry is permitted only because the prior attempt produced zero
-    BSC-testnet writes and zero jobs. If the next attempt performs any write, no blind retry is allowed.
+    Implement and dry-run a Health Factor observed-pair protocol that targets both the second countable
+    Agent Advantage pair and the required warning/intervention event tape. Use frozen position/rules,
+    externally observed market inputs, a same-window precommitted without-agent baseline, and raw warning,
+    intervention/recommendation and adverse-event timestamps. The dry-run remains non-countable and no
+    wallet or chain write is permitted in this implementation gate.
 
   stop_conditions:
-    - do not rerun jobs 949, 954, 955, or 957
+    - do not rerun jobs 949, 954, 955, 957, or 962
     - do not count the historical Grid dry-run
-    - exactly one new G5 Grid job under this authorization
-    - prior pre-write failure did not consume that one-job authorization
-    - after any BSC-testnet write, stop on failure and recover deterministically; no blind retry
-    - BSC mainnet remains read-only only
+    - do not rewrite job 962 underperformance as an Agent Advantage win
+    - countable pair total is exactly 1/3 until another dedicated live observed marketplace pair passes
+    - no BSC-testnet write during the next implementation/dry-run gate
+    - BSC mainnet remains read-only unless a later human gate explicitly changes authority
     - no meaningful user/mainnet capital
     - no material paid spend
-    - no realized-mainnet-PnL claim
+    - no guaranteed profit, safety or liquidation-prevention claim
     - no merge to main
     - no Project Finisher yet
     - no final submission

@@ -3,14 +3,14 @@ requirements:
   - id: MUST-01
     class: MUST
     requirement: Surface all four official categories at equal product depth.
-    status: PARTIAL_THREE_OF_FOUR_LIVE_VERIFIED_YIELD_EXECUTION_READY
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-    evidence_plan: Complete Yield live activation with the isolated runner.
+    status: VERIFIED_FOUR_OF_FOUR_LIVE_TRANSPORT
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
+    note: Health Factor 949, Grid 954, Rebalancing 955 and Yield 957 all have bounded live BSC-testnet activation proof.
   - id: MUST-02
     class: MUST
     requirement: Anything represented as activatable must use a real BSC-live agent/path.
-    status: VERIFIED_HEALTH_FACTOR_GRID_REBALANCING__YIELD_PENDING_LIVE
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    status: VERIFIED_FOUR_CONTROLLED_LIVE_PATHS
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: MUST-03
     class: MUST
     requirement: Reuse 8004scan identity/capability data rather than rebuilding a custom registry.
@@ -19,8 +19,8 @@ requirements:
   - id: MUST-04
     class: MUST
     requirement: Produce a task-specific Promise Card before activation.
-    status: VERIFIED_BACKEND_SIMULATION_AND_THREE_LIVE_CATEGORIES
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    status: VERIFIED_FOUR_LIVE_CATEGORIES
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: MUST-05
     class: MUST
     requirement: Promise Card includes expected outcome, confidence, downside/risk, price and relevant timing.
@@ -29,55 +29,56 @@ requirements:
   - id: MUST-06
     class: MUST
     requirement: Category to successful activation has no dead end.
-    status: PARTIAL_THREE_LIVE_E2E_PASS_YIELD_READY
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    status: VERIFIED_FOUR_LIVE_E2E_PATHS
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: MUST-07
     class: MUST
     requirement: Delegated execution authority is visibly bounded.
     status: PARTIAL_TESTNET_ZERO_PRICE_BOUNDARY_VERIFIED_PRODUCT_VISIBLE_AUTHORITY_UI_PENDING
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: MUST-08
     class: MUST
-    requirement: Every completed measured run creates an Outcome Receipt.
-    status: PARTIAL_THREE_LIVE_TRANSPORT_RECEIPTS_VERIFIED_SIMULATION_OBSERVED_RUNS_PENDING
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    requirement: Every measured completed run creates an Outcome Receipt.
+    status: PARTIAL_FOUR_LIVE_TRANSPORT_RECEIPTS_VERIFIED_SIMULATION_OBSERVED_RUNS_PENDING
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: MUST-09
     class: MUST
     requirement: Outcome Receipt binds original promise to actual result.
-    status: VERIFIED_HEALTH_FACTOR_GRID_REBALANCING_LIVE_PROMISE_RECEIPT_BINDING_SIMULATION_EVIDENCE
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-    note: Binding is proven for three live categories; receipts remain SIMULATION and are not observed Agent Advantage.
+    status: VERIFIED_FOUR_LIVE_PROMISE_RECEIPT_BINDINGS_SIMULATION_EVIDENCE
+    evidence: evidence/g4-yield-job-957-final-pass/README.md
+    note: Binding is proven across all four categories; all current receipts remain SIMULATION and are excluded from observed Agent Advantage.
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
-    status: PENDING_OBSERVED_RUNS
-    evidence_plan: Final report and raw observed outputs.
+    status: BLOCKING_PENDING_0_OF_3_OBSERVED_PAIRS
+    evidence_plan: Three raw observed paired experiment bundles plus final Agent Advantage Report.
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
-    status: PARTIAL_GRID_LIVE_TRANSPORT_VERIFIED_SIMULATION_OUTCOME_OBSERVED_TRADING_RUN_PENDING
+    status: BLOCKING_GRID_LIVE_TRANSPORT_VERIFIED_OBSERVED_TRADING_PAIR_PENDING
     evidence: evidence/g4-grid-job-954-final-pass/README.md
+    evidence_plan: Execute one observed Grid Trading agent-vs-baseline pair under a frozen reproducible protocol.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
-    status: ACTIVE_VERIFIED_EVIDENCE_GUARDRAIL_OBSERVED_BASELINES_PENDING
+    status: BLOCKING_OBSERVED_BASELINE_PROTOCOL_AND_RAW_ARTIFACTS_PENDING
     evidence: backend/src/evidence.ts
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
-    status: PARTIAL_WARNING_LEAD_SIMULATION_VERIFIED_OBSERVED_EVENT_TAPE_PENDING
+    status: BLOCKING_OBSERVED_EVENT_TAPE_PENDING
     evidence: evidence/g3-job-949-final-pass/README.md
   - id: MUST-14
     class: MUST
     requirement: Public product remains accessible during judging.
-    status: PENDING_PUBLIC_DEPLOYMENT
-    evidence_plan: Public URL smoke check. Current loopback deliverable URLs are not judge-accessible.
+    status: BLOCKING_PUBLIC_DEPLOYMENT_PENDING
+    evidence_plan: Public URL smoke check and judge-path verification. Current loopback deliverables are not judge-accessible.
   - id: MUST-15
     class: MUST
     requirement: Failure states fail visibly rather than fabricating success.
     status: VERIFIED_CI_AND_LIVE_RUNTIME_FAIL_CLOSED_PATHS
     evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-    note: Rebalancing preserved the FUNDED partial state, diagnosed deterministically, and recovered the same job without recreating chain state.
+    note: Grid and Rebalancing partial failures were preserved truthfully and recovered without blind chain-state recreation.
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
@@ -90,11 +91,11 @@ requirements:
   - id: SHOULD-03
     class: SHOULD
     requirement: Use Altana scoped session authority if core integration supports it.
-    status: PENDING_AFTER_FOUR_CATEGORY_CORE
+    status: PENDING_AFTER_OBSERVED_EVIDENCE_CORE
   - id: SHOULD-04
     class: SHOULD
     requirement: Add genuine PancakeSwap trader/LP benefit only after core product is complete.
-    status: PENDING_AFTER_FOUR_CATEGORY_CORE
+    status: PENDING_AFTER_OBSERVED_EVIDENCE_CORE
   - id: SHOULD-05
     class: SHOULD
     requirement: Keep generic reputation secondary to task-specific evidence.
@@ -115,11 +116,11 @@ requirements:
   - id: MUST_NOT-04
     class: MUST_NOT
     requirement: Do not show an agent as activatable when activation does not work.
-    status: ACTIVE_AND_THREE_LIVE_CATEGORIES_VERIFIED_GUARDRAIL
+    status: ACTIVE_AND_FOUR_LIVE_CATEGORIES_VERIFIED_GUARDRAIL
   - id: MUST_NOT-05
     class: MUST_NOT
     requirement: Do not make Health Factor substantially deeper than the other three marketplace categories.
-    status: ACTIVE_LIVE_DEPTH_GAP_REDUCED_THREE_OF_FOUR_PASS_YIELD_READY
+    status: VERIFIED_LIVE_TRANSPORT_DEPTH_4_OF_4
   - id: MUST_NOT-06
     class: MUST_NOT
     requirement: Do not add bonds, auctions, leagues, generic red-team systems or orchestration platforms before core gates pass.

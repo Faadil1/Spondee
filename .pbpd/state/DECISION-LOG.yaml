@@ -1,125 +1,91 @@
 schema: PBPD-DECISION-LOG-v0.1
+revision: DECISIONS-R036-BACKEND-CODE-COMPLETE
+history:
+  previous_log_blob_sha: f3beb34f7e56af18499476469c0c5eb473b69be7
+  previous_detail_preserved_in_git_history: true
+  note: Earlier detailed G3 protocol/runtime decisions remain durable in Git history; this roll-forward records the current binding decisions after G4/G5 and backend final completion.
 decisions:
-  - id: DEC-001
-    date: '2026-09-03'
-    decision: Product name locked as Spondee.
+  - id: DEC-R036-001
+    date: '2026-09-04'
+    decision: Close the four controlled category live-transport workstream after jobs 949, 954, 955 and 957 passed; never rerun those closed jobs.
     status: ACCEPTED
-    authority: human
-    evidence: [HOI PR #55]
-  - id: DEC-002
-    date: '2026-09-03'
-    decision: Product concept locked as Calibrated Outcome Marketplace + Intervention Advantage.
+    authority: PBPD_RUNTIME_EVIDENCE
+    evidence:
+      - evidence/g3-job-949-final-pass/README.md
+      - evidence/g4-grid-job-954-final-pass/README.md
+      - evidence/g4-rebalancing-job-955-final-pass/README.md
+      - evidence/g4-yield-job-957-final-pass/README.md
+  - id: DEC-R036-002
+    date: '2026-09-04'
+    decision: Accept Grid job 962 as the first countable observed Agent Advantage pair and preserve its $2.50 underperformance versus baseline as valid negative evidence.
     status: ACCEPTED
-    authority: human_project_go_plus_judge_first_council
-    evidence: [HOI PR #55]
-  - id: DEC-003
-    date: '2026-09-03'
-    decision: Health Factor Monitoring is the preferred first vertical; all four categories remain first-class.
-    status: ACCEPTED
-    authority: PRD
-  - id: DEC-004
-    date: '2026-09-03'
-    decision: 8004scan is reused as identity/discovery substrate; generic directory/reputation is not the product.
-    status: ACCEPTED
-    authority: PRD
-  - id: DEC-005
-    date: '2026-09-03'
-    decision: No consequential implementation before PRD_READY.
+    authority: PBPD_OBSERVED_EVIDENCE_CONTRACT
+    evidence: [evidence/g5-grid-forward-job-962-countable-pass/README.md]
+  - id: DEC-R036-003
+    date: '2026-09-04'
+    decision: The remaining approximately 15-20 percent identified after the frontend-contract freeze is backend hardening, not more category agents; close security, idempotency, Decision Replay, dynamic 8004scan discovery and deployment-readiness gaps before final Benita handoff.
     status: SATISFIED
-    authority: PBPD_PREBUILD_STANDARD
-  - id: DEC-006
-    date: '2026-09-03'
-    decision: Promote Spondee PRD v0.1 to PRD_READY after successful credential-free Agent Studio runtime preflight.
-    status: ACCEPTED
-    authority: PBPD
-    evidence: [work/PRD-VALIDATION-001.md, work/PRD-READY-DECLARATION.md, GitHub Actions run 33752070626]
-  - id: DEC-007
-    date: '2026-09-03'
-    decision: Treat wallet creation, LLM activation, pricing clamp, local bag dev smoke and deployment tooling as G3 implementation onboarding rather than PRD-definition blockers.
-    status: ACCEPTED
-    authority: PBPD
-  - id: DEC-008
-    date: '2026-09-03'
-    decision: Use the existing encrypted BSC-testnet seller keystore at 0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8 for bounded G3 retries; do not recreate it and do not expose its password or key material to chat.
-    status: ACCEPTED
-    authority: HUMAN_TESTNET_GO_PLUS_PBPD_SAFETY_BOUNDARY
-  - id: DEC-009
-    date: '2026-09-03'
-    decision: MegaFuel is the primary gas path for bounded BSC-testnet ERC-8183 G3 writes; tBNB is fallback-only and is not required before a paymaster-first retry.
-    status: ACCEPTED
-    authority: PBPD_RUNTIME_EVIDENCE
-    evidence: [evidence/megafuel-smoke-001/README.md, GitHub Actions run 33802027942]
-  - id: DEC-010
-    date: '2026-09-03'
-    decision: Use official TermSpecification success_criteria rather than arbitrary custom terms for Spondee signed provenance.
-    status: SUPERSEDED_IN_WIRE_FORMAT_BY_DEC_012
-    authority: PBPD_PROTOCOL_RECONCILIATION
-  - id: DEC-011
-    date: '2026-09-03'
-    decision: After Backend CI 33816310524 and G3 CI 33816544907 passed, authorize exactly one local MegaFuel-backed Health Factor E2E retry using the existing seller keystore.
-    status: CONSUMED_BY_THIRD_ATTEMPT_FAIL_CLOSED
-    authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
-  - id: DEC-012
-    date: '2026-09-03'
-    decision: Keep the full Spondee Promise Card off-chain as a read-only preview and carry only a compact signed SHA-256 commitment in ERC-8183 success_criteria using SPONDEE_PROMISE_COMMITMENT_V1.
-    status: ACCEPTED
-    authority: PBPD_PROTOCOL_RECONCILIATION
-    evidence: [backend/src/erc8183.ts, backend/src/erc8183.test.ts, GitHub Actions run 33817822355, GitHub Actions run 33817846752]
-  - id: DEC-013
-    date: '2026-09-03'
-    decision: Encode the signed Health Factor task as versioned Base64URL JSON using SPONDEE_TASK_B64_V1 so stress_path arrays survive the official SDK claim sanitizer byte-for-byte.
-    status: ACCEPTED
-    authority: PBPD_PROTOCOL_RECONCILIATION
-    evidence: [reference-agents/health-factor/app/agent/src/healthFactor.ts, backend/src/erc8183.ts, GitHub Actions run 33817822355]
-  - id: DEC-014
-    date: '2026-09-03'
-    decision: After compact commitment, sanitizer-safe task and 1600-byte budget CI passed, authorize exactly one new human-local MegaFuel Health Factor E2E retry under the existing testnet authority.
-    status: CONSUMED_BY_FOURTH_ATTEMPT_PARTIAL_SUCCESS
-    authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
-  - id: DEC-015
-    date: '2026-09-03'
-    decision: For local/testnet LocalStorageProvider delivery, expose the generated ERC-8183 manifest through a bounded HTTP bridge and set ERC8183_AGENT_URL before the seller starts.
-    status: ACCEPTED
-    authority: PBPD_RUNTIME_PROTOCOL_RECONCILIATION
-    evidence: [scripts/local-erc8183-deliverable-server.mjs, scripts/g3-megafuel-live-e2e-localstorage.ps1, GitHub Actions run 33819854509]
-  - id: DEC-016
-    date: '2026-09-03'
-    decision: Job 948 is terminal for provider submit and must never be retried because its ERC-8183 submission deadline expired before recovery; preserve it as live-chain partial evidence only.
-    status: ACCEPTED
-    authority: PBPD_RUNTIME_EVIDENCE
-    evidence: [.pbpd/state/EVIDENCE-LEDGER.yaml EV-017]
-  - id: DEC-017
-    date: '2026-09-03'
-    decision: Newly created G3 jobs use a 30-day provider submission horizon instead of the 600-second quickstart demonstration slack.
-    status: ACCEPTED
-    authority: PBPD_PROTOCOL_RUNTIME_HARDENING
-    evidence: [backend/src/erc8183.ts, backend/src/g3-expiry.test.ts, GitHub Actions run 33819854509]
-  - id: DEC-018
-    date: '2026-09-03'
-    decision: After LocalStorage HTTP integration and 30-day submission-horizon preflight passed, authorize exactly one new complete local Health Factor E2E attempt using the existing seller keystore and MegaFuel.
-    status: CONSUMED_BY_FIFTH_ATTEMPT_JOB_949_SUBMITTED
-    authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
-  - id: DEC-019
+    authority: HUMAN_DIRECTION_PLUS_PBPD_SCOPE_CLASSIFICATION
+  - id: DEC-R036-004
     date: '2026-09-04'
-    decision: Classify the fifth runner failure as a post-submit RPC read-path failure, not an ERC-8183 activation failure, because provider submit transaction 0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74 was already confirmed and job 949 is SUBMITTED.
-    status: ACCEPTED
-    authority: PBPD_RUNTIME_EVIDENCE
-    evidence: [GitHub Actions run 33820803719, evidence/g3-job-949-submitted/README.md]
-  - id: DEC-020
+    decision: Consequential live-action and evidence-ingestion endpoints require independent server-only bearer scopes and must fail closed when those protections are not configured.
+    status: ACCEPTED_IMPLEMENTED
+    authority: PBPD_BACKEND_SECURITY
+    evidence: [backend/src/security.ts, backend/src/backend-completion.test.ts]
+  - id: DEC-R036-005
     date: '2026-09-04'
-    decision: Final G3 verification for job 949 is read-only and uses the known provider submit transaction receipt plus getJob(949), then verifies the existing local manifest and Outcome Receipt; eth_getLogs scanning is not required for this recovery proof.
-    status: SATISFIED_BY_FINAL_PASS
-    authority: PBPD_PROTOCOL_RUNTIME_HARDENING
-    evidence: [backend/src/verify-g3-submitted.ts, scripts/g3-verify-submitted-job-949.ps1, evidence/g3-job-949-final-pass/README.md]
-  - id: DEC-021
+    decision: A live activation that has advanced beyond PREPARED/BLOCKED_LIVE_GATE is not automatically retryable; durable operation locks protect against concurrent/double-submit blockchain writes.
+    status: ACCEPTED_IMPLEMENTED
+    authority: PBPD_CHAIN_WRITE_SAFETY
+    evidence: [backend/src/app.ts, backend/src/store.ts, backend/sql/001_init.sql]
+  - id: DEC-R036-006
     date: '2026-09-04'
-    decision: Close Spondee G3 Health Factor as PASS after job 949 manifest hash and Outcome Receipt verification; preserve the receipt as SIMULATION and explicitly prohibit promotion to observed Agent Advantage.
-    status: ACCEPTED
-    authority: PBPD_RUNTIME_EVIDENCE
-    evidence: [evidence/g3-job-949-final-pass/README.md]
-  - id: DEC-022
+    decision: Canonical evidence is immutable by run_id; identical retries are idempotent and changed payloads under an existing run_id are rejected.
+    status: ACCEPTED_IMPLEMENTED
+    authority: PBPD_EVIDENCE_INTEGRITY
+    evidence: [backend/src/app.ts, backend/src/backend-completion.test.ts]
+  - id: DEC-R036-007
     date: '2026-09-04'
-    decision: The next exact gate is read-only qualification of credible BSC-live paths for Grid Trading, Rebalancing and Yield Optimisation before any consequential four-category deployment; Altana, PancakeSwap bonus work, merge, Project Finisher and submission remain blocked.
+    decision: Implement Decision Replay as read-only reconstruction only; replay never re-executes a financial action and never promotes SIMULATION evidence to OBSERVED.
+    status: ACCEPTED_IMPLEMENTED
+    authority: PBPD_PRODUCT_EVIDENCE
+    evidence: [backend/src/replay.ts, backend/src/replay.test.ts]
+  - id: DEC-R036-008
+    date: '2026-09-04'
+    decision: Use official 8004scan API dynamically from the server as identity/discovery substrate; external results stay activatable=false until an adapter is independently verified and API credentials never belong in browser code.
+    status: ACCEPTED_IMPLEMENTED
+    authority: PRD_PLUS_PBPD_BACKEND_HARDENING
+    evidence: [backend/src/discovery.ts, backend/src/discovery.test.ts, GitHub Actions run 33866229883]
+  - id: DEC-R036-009
+    date: '2026-09-04'
+    decision: Separate backend code completeness from public deployment configuration using an explicit backend-readiness contract.
+    status: ACCEPTED_IMPLEMENTED
+    authority: PBPD_DEPLOYMENT_BOUNDARY
+    evidence: [backend/src/security.ts, backend/README.md]
+  - id: DEC-R036-010
+    date: '2026-09-04'
+    decision: Promote backend code to complete for frontend V1 after authoritative Backend Final Completion CI run 33866229883 passed all regression, security, replay, official 8004scan read-only, BSC-readiness and static guard checks.
     status: ACCEPTED
-    authority: PBPD_PRD_GATE_SEQUENCE
-    evidence: [.pbpd/state/PROJECT-STATE.yaml, .pbpd/state/RISK-REGISTER.yaml, Faadil1/spec-kit-orchestration G3 convergence]
+    authority: PBPD_VERIFICATION_GATE
+    evidence: [evidence/backend-final-completion/README.md, GitHub Actions run 33866229883]
+  - id: DEC-R036-011
+    date: '2026-09-04'
+    decision: Benita's final backend source is build/backend-completion-final and the stable primary contract is GET /v1/product/bootstrap with schema spondee.frontend-bootstrap.v1.
+    status: ACCEPTED
+    authority: PBPD_FRONTEND_HANDOFF
+    evidence: [work/PBPD-FINAL-BACKEND-COMPLETE-FRONTEND-HANDOFF-BENITA.md, backend/FRONTEND-CONTRACT.md]
+  - id: DEC-R036-012
+    date: '2026-09-04'
+    decision: Health Factor observed pair/event tape, the third countable pair and public deployment are remaining project evidence/runtime work, not missing backend-code percentage.
+    status: ACCEPTED
+    authority: PBPD_SCOPE_RECONCILIATION
+  - id: DEC-R036-013
+    date: '2026-09-04'
+    decision: Winner Intelligence remains a post-V1 blind-spot/pre-submission overlay and does not block Benita or create a win-probability score/Winning Law.
+    status: ACCEPTED
+    authority: WINNER_INTELLIGENCE_BOUNDARY
+  - id: DEC-R036-014
+    date: '2026-09-04'
+    decision: No merge to main, Project Finisher promotion, meaningful mainnet/user-capital action or final submission is authorized by backend completion.
+    status: ACTIVE_GUARDRAIL
+    authority: HUMAN_PROTECTED_ACTION_BOUNDARY

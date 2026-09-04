@@ -3,7 +3,7 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze live-transport scope at 4/4 PASS; prioritize observed Agent Advantage evidence and public judging availability over optional integrations.
+    mitigation: Freeze live-transport at 4/4 PASS; prioritize observed Agent Advantage evidence and public judging availability over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
@@ -24,8 +24,9 @@ risks:
   - id: R-05
     severity: CRITICAL
     risk: Baseline comparisons are biased, synthetic or invented but presented as observed Agent Advantage.
-    mitigation: Freeze a paired-experiment protocol with same initial state/window or reproducible baseline, immutable run IDs, preserved raw timing/cost/output artifacts, and explicit OBSERVED evidence validation.
-    status: OPEN_G5_PRIMARY_EVIDENCE_RISK
+    mitigation: `spondee.agent-advantage-pair.v1` now requires OBSERVED runs, same category/scenario, exact baseline binding, external provenance, raw input/agent/baseline artifacts and measured metrics.
+    status: CONTROLLED_SCHEMA_PREFLIGHT_PASS_FIRST_REAL_PAIR_PENDING
+    evidence: evidence/g5-observed-evidence-preflight/README.md
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
@@ -61,50 +62,48 @@ risks:
     risk: BSC Testnet RPC eth_getLogs limits can falsely fail a live path after provider submit.
     mitigation: G4 buyer consumes exact provider submit transaction and decodes that receipt directly; CI forbids getJobSubmittedEvents in the live driver.
     status: RESOLVED_BY_DIRECT_SUBMIT_RECEIPT_AND_CI_INVARIANT
-    evidence: evidence/g4-grid-job-954-final-pass/README.md
   - id: R-13
     severity: HIGH
     risk: Buyer and seller disagree on notify_funded response semantics, causing a false failure after FUND.
     mitigation: Preserve Agent Studio default async ACK, with explicit wait_for_result=true only for bounded Spondee proof; tests cover both modes.
     status: RESOLVED_BY_EXPLICIT_BOUNDED_WAIT_FOR_RESULT
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
   - id: R-14
     severity: HIGH
     risk: Closed G4 jobs are accidentally recreated or mutated.
-    mitigation: Jobs 949/954/955/957 are canonically closed; G5 forbids rerunning them and opens no live-chain write path during evidence design.
+    mitigation: Jobs 949/954/955/957 are canonically closed; G5 opens no chain write path during implementation/dry-run.
     status: CONTROLLED_CLOSED_JOB_GUARD
-    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: R-15
     severity: CRITICAL
     risk: Existing SIMULATION receipts are accidentally counted toward the required three observed Agent Advantage pairs.
-    mitigation: backend report engine already excludes non-OBSERVED runs; add schema-level and negative CI tests before any observed experiment execution.
-    status: OPEN_G5_CLAIM_BOUNDARY_PREFLIGHT
-    evidence: backend/src/evidence.ts
+    mitigation: Backend report engine excludes non-OBSERVED runs; G5 schema and negative CI tests reject SIMULATION promotion and require a trading pair for READY.
+    status: RESOLVED_AT_SCHEMA_LEVEL_EXECUTION_EVIDENCE_STILL_PENDING
+    evidence: evidence/g5-observed-evidence-preflight/README.md
   - id: R-16
     severity: HIGH
     risk: Observed trading evidence requires meaningful real capital or introduces unacceptable financial risk.
-    mitigation: Design a bounded reproducible trading experiment first; prefer testnet or replayable observed market-data execution where acceptance criteria allow; do not move meaningful mainnet/user capital without explicit human authority.
-    status: OPEN_FIRST_GRID_OBSERVED_PROTOCOL_REQUIRED
+    mitigation: Chainlink BNB/USD on BNB Chain mainnet is now qualified as read-only observed provenance; implement the Grid pair using no-capital observed-data/testnet semantics before any write is considered.
+    status: CONTROLLED_SOURCE_QUALIFIED_EXECUTION_MODE_PENDING
+    evidence: evidence/g5-grid-market-source-readonly/README.md
+  - id: R-17
+    severity: HIGH
+    risk: A paper or observed-data Grid record is described as realized mainnet trading performance.
+    mitigation: Pair schema requires explicit observation/execution mode and limitations; protocol forbids realized-mainnet-PnL wording for paper/observed-data execution.
+    status: OPEN_CLAIM_GUARDRAIL_ACTIVE
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
-    mitigation: Health Factor, Grid, Rebalancing and Yield now have verified controlled live BSC-testnet paths.
     status: RESOLVED_FOUR_OF_FOUR_LIVE
     evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    mitigation: Resolved by signed Promise commitments and verified receipts across all four live categories.
     status: RESOLVED_BY_LIVE_E2E
-    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt across all four live categories.
     status: RESOLVED_BY_LIVE_E2E
-    evidence: evidence/g4-yield-job-957-final-pass/README.md
   - id: A-06
     severity: CRITICAL
     risk: TermiX-style observed baselines cannot be collected reproducibly before deadline.
-    mitigation: Start G5 with a no-write evidence protocol/preflight and prove the first bounded observed pair before expanding to three.
+    mitigation: Strict pair schema and external Grid market provenance are qualified; next proof is the first full Grid agent-vs-baseline dry-run and observed execution.
     status: OPEN_KILLING_ASSUMPTION_FIRST_OBSERVED_PAIR_REQUIRED

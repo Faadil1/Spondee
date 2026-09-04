@@ -1,0 +1,29 @@
+{
+  "schema": "spondee.health-factor.task.v1",
+  "scenario_id": "spondee-hf-demo-001",
+  "evidence_class": "SIMULATION",
+  "position": {
+    "collateral_usd": 2000,
+    "debt_usd": 1000,
+    "liquidation_threshold": 0.8
+  },
+  "hf_floor": 1.2,
+  "desired_warning_lead_seconds": 120,
+  "stress_path": [
+    {
+      "at_seconds": 0,
+      "collateral_multiplier": 1,
+      "debt_multiplier": 1
+    },
+    {
+      "at_seconds": 300,
+      "collateral_multiplier": 0.9,
+      "debt_multiplier": 1
+    },
+    {
+      "at_seconds": 600,
+      "collateral_multiplier": 0.7,
+      "debt_multiplier": 1
+    }
+  ]
+}

@@ -209,7 +209,7 @@ entries:
     at: '2026-09-03T23:31:00Z'
     actor: github_actions
     action: validate_compact_g3_protocol_windows_and_ubuntu
-    result: PASS; G3 Ubuntu verify and Windows PowerShell/Node24 encrypted wallet roundtrip succeeded on head 2c86096949c27b354bef68154e93c54abb016ab9.
+    result: PASS; G3 Ubuntu verify and Windows PowerShell/Node24 encrypted wallet roundtrip succeeded.
     external_run: 33817846752
   - id: ACT-041
     at: '2026-09-03T23:33:00Z'
@@ -236,33 +236,33 @@ entries:
     at: '2026-09-03T23:54:00Z'
     actor: PBPD_orchestrator
     action: classify_job_948_terminal_and_audit_expiry_semantics
-    result: Job 948 marked non-retryable for provider submit; official ERC-8183 rule confirmed submit must occur before or at expiredAt - disputeWindow and long-lived jobs around 30 days are recommended.
+    result: Job 948 marked non-retryable for provider submit; long-lived submission horizon required.
   - id: ACT-046
     at: '2026-09-03T23:58:32Z'
     actor: PBPD_orchestrator
     action: integrate_localstorage_bridge_and_30_day_submission_horizon
-    result: Canonical live path now starts the LocalStorage HTTP bridge before seller activation and computes expiredAt as now + disputeWindow + 30 days; regression test added.
+    result: Canonical live path starts the LocalStorage HTTP bridge before seller activation and computes a 30-day submission window; regression test added.
   - id: ACT-047
     at: '2026-09-03T23:59:02Z'
     actor: github_actions
     action: validate_final_localstorage_30d_live_preflight
-    result: PASS; Ubuntu wrapper/server/backend tests/build and Windows wrapper/server syntax all passed on the corrected live path.
+    result: PASS; Ubuntu wrapper/server/backend tests/build and Windows wrapper/server syntax all passed.
     external_run: 33819854509
   - id: ACT-048
     at: '2026-09-04T00:00:00Z'
     actor: PBPD_orchestrator
     action: reopen_one_corrected_complete_g3_live_attempt
-    result: Exactly one new live BSC-testnet attempt authorized using the existing seller keystore, MegaFuel, LocalStorage HTTP bridge and 30-day submission horizon. Job 948 must not be retried; no tBNB required first.
+    result: Exactly one new live BSC-testnet attempt authorized using the existing seller keystore, MegaFuel, LocalStorage HTTP bridge and 30-day submission horizon.
   - id: ACT-049
     at: '2026-09-04T00:07:18.579Z'
     actor: human_local_runtime
     action: execute_fifth_health_factor_live_e2e_job_949
-    result: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT; job 949 mined createJob/registerJob/setBudget(0)/fund(0), provider submit tx 0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74 was confirmed with effective gas price 0 and wallet paid 0, then buyer post-submit JobInitialised scan hit an RPC range/rate limit.
+    result: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT; job 949 mined createJob/registerJob/setBudget(0)/fund(0), provider submit confirmed with effective gas price 0, then buyer post-submit JobInitialised scan hit an RPC range/rate limit.
   - id: ACT-050
     at: '2026-09-04T00:08:00Z'
     actor: PBPD_orchestrator
     action: classify_job_949_post_submit_rpc_read_failure
-    result: Official SDK semantics confirm RpcRangeLimitError is retryable and is not evidence that JobInitialised is absent; no replacement job or new on-chain write authorized.
+    result: Post-submit read-path failure only; no replacement job or new on-chain write authorized.
   - id: ACT-051
     at: '2026-09-04T00:11:57Z'
     actor: PBPD_orchestrator
@@ -272,12 +272,38 @@ entries:
     at: '2026-09-04T00:12:31Z'
     actor: github_actions
     action: prove_job_949_submitted_from_known_transaction_receipt
-    result: PASS; run 33820803719 verified job 949 SUBMITTED at block 128964136, canonical provider, JobSubmitted/JobInitialised receipt consistency, LocalStorage URL, deliverable hash, signed Promise commitment and getJob state without eth_getLogs; backend 29/29, TypeScript and Windows checks passed.
+    result: PASS; run 33820803719 verified job 949 SUBMITTED, canonical provider, receipt consistency, LocalStorage URL, deliverable hash, signed Promise commitment and getJob state without eth_getLogs.
     external_run: 33820803719
   - id: ACT-053
     at: '2026-09-04T00:14:19Z'
     actor: PBPD_orchestrator
     action: promote_job_949_read_only_local_outcome_receipt_gate
-    result: PROJECT-STATE promoted to R017. Live-write gate closed; only existing local manifest hash and Outcome Receipt verification remains, with no seller process, wallet unlock or transaction.
-next_action: Human pulls build/backend-complete and runs scripts/g3-verify-submitted-job-949.ps1 exactly once. This gate is read-only and must not request a wallet password or create any transaction. Return the public PASS or failure block only; no new live E2E retry.
-next_gate: SPONDEE_G3_JOB_949_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED
+    result: PROJECT-STATE promoted to R017. Live-write gate closed; only existing local manifest hash and Outcome Receipt verification remained.
+  - id: ACT-054
+    at: '2026-09-04T00:51:00Z'
+    actor: human_local_runtime
+    action: expose_windows_false_zero_verifier_behavior
+    result: Two read-only runs returned exit 0 without PASS/FAIL because verifier CLI entrypoint did not execute; no chain impact.
+  - id: ACT-055
+    at: '2026-09-04T00:52:46Z'
+    actor: github_actions
+    action: validate_cross_platform_job_949_cli_fix
+    result: PASS; dedicated CLI entrypoint, mandatory PASS terminal, Ubuntu tests/build/chain probe and Windows Node24 CLI execution all passed.
+    external_run: 33823556651
+  - id: ACT-056
+    at: '2026-09-04T00:51:00Z'
+    actor: human_local_runtime
+    action: execute_final_read_only_job_949_manifest_and_receipt_verification
+    result: PASS; manifest hash verified against on-chain deliverable, Outcome Receipt verified against Promise/scenario, evidence class remained SIMULATION, observed Agent Advantage remained false.
+  - id: ACT-057
+    at: '2026-09-04T00:56:00Z'
+    actor: PBPD_orchestrator
+    action: close_g3_health_factor_live_e2e
+    result: G3 promoted to PASS; no additional G3 live run authorized; killing assumptions A-02 and A-03 resolved.
+  - id: ACT-058
+    at: '2026-09-04T00:57:00Z'
+    actor: spec_kit_orchestration
+    action: converge_g3_slice_and_open_g4_qualification
+    result: Spec Kit result CONVERGED_G3_SLICE__NOT_BUILD_CANDIDATE; exact next gate set to read-only four-category live-path qualification.
+next_action: PBPD performs read-only 8004scan/Agent Studio/ERC-8004 qualification for Grid Trading, Rebalancing and Yield Optimisation, then returns a candidate matrix and recommended build slice without deploying or activating new live jobs.
+next_gate: SPONDEE_G4_FOUR_CATEGORY_LIVE_PATH_QUALIFICATION_REQUIRED

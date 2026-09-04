@@ -4,11 +4,11 @@ import {
   buildForwardPromise,
   commitmentForPromise,
   commitmentFromTerms,
-  decodeForwardTask,
   encodeCommitment,
   executeForwardObservedTask,
   type ForwardTask,
 } from "./g5ForwardObserved.js";
+import { decodeForwardWireTask } from "./g5ForwardWire.js";
 import {
   clampPrice,
   jobSpec,
@@ -54,11 +54,11 @@ function rpcReply(id: unknown, data: Record<string, unknown>) {
 }
 
 function taskFromData(data: Record<string, unknown>): ForwardTask | null {
-  const direct = decodeForwardTask(data.task_description);
+  const direct = decodeForwardWireTask(data.task_description);
   if (direct) return direct;
   const request = data.request;
   if (request !== null && typeof request === "object" && !Array.isArray(request)) {
-    return decodeForwardTask((request as Record<string, unknown>).task_description);
+    return decodeForwardWireTask((request as Record<string, unknown>).task_description);
   }
   return null;
 }
@@ -110,7 +110,7 @@ async function notifyFunded(data: Record<string, unknown>) {
   if (!verdict.ok) return { status: "rejected", job_id: jobId, error: verdict.reason, permanent: verdict.permanent };
   const spec = await jobSpec(jobId);
   if (!spec) return { status: "rejected", job_id: jobId, error: "missing structured job spec" };
-  const task = decodeForwardTask(spec.task);
+  const task = decodeForwardWireTask(spec.task);
   if (!task) return { status: "rejected", job_id: jobId, error: "job is not a G5 Grid forward observed task" };
   const commitment = commitmentFromTerms(spec.terms);
   if (!commitment) return { status: "rejected", job_id: jobId, error: "missing unique G5 Grid commitment" };

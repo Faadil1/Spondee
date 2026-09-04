@@ -5,7 +5,6 @@ requirements:
     requirement: Surface all four official categories at equal product depth.
     status: VERIFIED_FOUR_OF_FOUR_LIVE_TRANSPORT
     evidence: evidence/g4-yield-job-957-final-pass/README.md
-    note: Health Factor 949, Grid 954, Rebalancing 955 and Yield 957 all have bounded live BSC-testnet activation proof.
   - id: MUST-02
     class: MUST
     requirement: Anything represented as activatable must use a real BSC-live agent/path.
@@ -46,23 +45,24 @@ requirements:
     requirement: Outcome Receipt binds original promise to actual result.
     status: VERIFIED_FOUR_LIVE_PROMISE_RECEIPT_BINDINGS_SIMULATION_EVIDENCE
     evidence: evidence/g4-yield-job-957-final-pass/README.md
-    note: Binding is proven across all four categories; all current receipts remain SIMULATION and are excluded from observed Agent Advantage.
+    note: All current receipts remain SIMULATION and are excluded from observed Agent Advantage.
   - id: MUST-10
     class: MUST
     requirement: Agent Advantage Report contains at least three observed paired tasks.
-    status: BLOCKING_PENDING_0_OF_3_OBSERVED_PAIRS
-    evidence_plan: Three raw observed paired experiment bundles plus final Agent Advantage Report.
+    status: BLOCKING_0_OF_3_OBSERVED_PAIRS__STRICT_PAIR_SCHEMA_PREFLIGHT_PASS
+    evidence: evidence/g5-observed-evidence-preflight/README.md
+    evidence_plan: Build and execute three validated `spondee.agent-advantage-pair.v1` bundles with actual outputs attached.
   - id: MUST-11
     class: MUST
     requirement: At least one measured task is trading-related.
-    status: BLOCKING_GRID_LIVE_TRANSPORT_VERIFIED_OBSERVED_TRADING_PAIR_PENDING
-    evidence: evidence/g4-grid-job-954-final-pass/README.md
-    evidence_plan: Execute one observed Grid Trading agent-vs-baseline pair under a frozen reproducible protocol.
+    status: BLOCKING_GRID_OBSERVED_PAIR_IMPLEMENTATION_PENDING__MARKET_SOURCE_QUALIFIED
+    evidence: evidence/g5-grid-market-source-readonly/README.md
+    evidence_plan: Implement and execute the first Grid agent-vs-without-agent observed pair using qualified BNB/USD provenance and a real record with window and risk.
   - id: MUST-12
     class: MUST
     requirement: Baseline timings, costs and results are observed or reproducible, never invented.
-    status: BLOCKING_OBSERVED_BASELINE_PROTOCOL_AND_RAW_ARTIFACTS_PENDING
-    evidence: backend/src/evidence.ts
+    status: STRICT_OBSERVED_PAIR_PROTOCOL_PASS__FIRST_REAL_PAIR_PENDING
+    evidence: evidence/g5-observed-evidence-preflight/README.md
   - id: MUST-13
     class: MUST
     requirement: Health Factor hero measures useful warning lead time and response latency.
@@ -78,7 +78,6 @@ requirements:
     requirement: Failure states fail visibly rather than fabricating success.
     status: VERIFIED_CI_AND_LIVE_RUNTIME_FAIL_CLOSED_PATHS
     evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-    note: Grid and Rebalancing partial failures were preserved truthfully and recovered without blind chain-state recreation.
   - id: SHOULD-01
     class: SHOULD
     requirement: Show calibration history when enough completed runs exist.
@@ -104,7 +103,8 @@ requirements:
   - id: MUST_NOT-01
     class: MUST_NOT
     requirement: Do not present estimated or synthetic performance as observed real evidence.
-    status: ACTIVE_AND_RUNTIME_VERIFIED_GUARDRAIL
+    status: ACTIVE_AND_G5_SCHEMA_CI_VERIFIED_GUARDRAIL
+    evidence: evidence/g5-observed-evidence-preflight/README.md
   - id: MUST_NOT-02
     class: MUST_NOT
     requirement: Do not build custom identity/reputation infrastructure duplicating 8004scan.

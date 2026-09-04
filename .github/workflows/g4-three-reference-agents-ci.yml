@@ -1,0 +1,113 @@
+name: G4 Three Reference Agents CI
+
+on:
+  push:
+    branches: ['build/backend-complete']
+    paths:
+      - 'reference-agents/grid/**'
+      - 'reference-agents/rebalancing/**'
+      - 'reference-agents/yield/**'
+      - '.github/workflows/g4-three-reference-agents-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  category-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - agent: grid
+            expected_project: spondee-grid-agent
+            expected_schema: spondee.grid.task.v1
+          - agent: rebalancing
+            expected_project: spondee-rebalancing-agent
+            expected_schema: spondee.rebalancing.task.v1
+          - agent: yield
+            expected_project: spondee-yield-agent
+            expected_schema: spondee.yield.task.v1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable pnpm 10.24.0
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.24.0 --activate
+
+      - name: Install frozen Agent Studio workspace
+        working-directory: reference-agents/${{ matrix.agent }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Run category contract tests
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        run: pnpm test
+
+      - name: Strict TypeScript build
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        run: pnpm build
+
+      - name: Export deterministic Promise and Outcome Receipt
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        run: pnpm demo:evidence
+
+      - name: Verify category identity and safety config
+        working-directory: reference-agents/${{ matrix.agent }}/app/agent
+        env:
+          EXPECTED_PROJECT: ${{ matrix.expected_project }}
+          EXPECTED_SCHEMA: ${{ matrix.expected_schema }}
+        run: |
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const toml = readFileSync('studio.toml', 'utf8');
+          const task = JSON.parse(readFileSync('../../demo-output/Scenario.json', 'utf8'));
+          const promise = JSON.parse(readFileSync('../../demo-output/PromiseCard.json', 'utf8'));
+          const receipt = JSON.parse(readFileSync('../../demo-output/OutcomeReceipt.json', 'utf8'));
+          if (!toml.includes(`name = "${process.env.EXPECTED_PROJECT}"`)) throw new Error('wrong Agent Studio project identity');
+          if (!toml.includes('default = "bsc-testnet"')) throw new Error('BSC testnet must remain configured');
+          if (!toml.includes('price = "0"') || !toml.includes('min_price = "0"') || !toml.includes('max_price = "0"')) throw new Error('ERC-8183 price clamp must remain zero');
+          if (!toml.includes('enabled = false')) throw new Error('automatic paid surfaces must remain disabled in G4 build gate');
+          if (task.schema !== process.env.EXPECTED_SCHEMA) throw new Error(`wrong task schema: ${task.schema}`);
+          if (promise.evidence_class !== 'SIMULATION') throw new Error('Promise must remain SIMULATION');
+          if (receipt.evidence_class !== 'SIMULATION') throw new Error('Receipt must remain SIMULATION');
+          if (receipt.calibration?.eligible_for_observed_agent_advantage !== false) throw new Error('simulation receipt must be excluded from observed Agent Advantage');
+          if (promise.promise_id !== receipt.promise_id || promise.scenario_id !== receipt.scenario_id) throw new Error('Promise/Receipt binding failed');
+          console.log(`G4 ${process.env.EXPECTED_PROJECT}: contract + safety checks PASS`);
+          NODE
+
+      - name: Upload deterministic category evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-g4-${{ matrix.agent }}-evidence
+          path: reference-agents/${{ matrix.agent }}/demo-output/
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-static:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify all category projects are parseable on Windows
+        shell: powershell
+        run: |
+          $agents = @('grid','rebalancing','yield')
+          foreach ($agent in $agents) {
+            $studio = Get-Content "reference-agents/$agent/app/agent/studio.toml" -Raw
+            if ($studio -notmatch 'default = "bsc-testnet"') { throw "$agent missing bsc-testnet" }
+            if ($studio -notmatch 'price = "0"') { throw "$agent price is not zero" }
+            $pkg = Get-Content "reference-agents/$agent/app/agent/package.json" -Raw | ConvertFrom-Json
+            if ($pkg.engines.node -ne '>=22') { throw "$agent Node engine mismatch" }
+            Write-Host "$agent Windows static config: PASS"
+          }

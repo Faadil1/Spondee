@@ -180,7 +180,7 @@ export interface ActivationRecord {
 }
 
 export type AgentReadiness =
-  | "TESTNET_WALLET_VERIFIED_GAS_PENDING"
+  | "LIVE_TESTNET_VERIFIED"
   | "SIMULATION_READY_REFERENCE_AGENT_NOT_DEPLOYED"
   | "DISCOVERY_ONLY_EXTERNAL";
 
@@ -192,6 +192,13 @@ export interface AgentIdentity {
   identity_url: string | null;
 }
 
+export interface ActivationProof {
+  status: "VERIFIED_LIVE_TESTNET" | "UNVERIFIED_EXTERNAL";
+  network: "bsc-testnet" | "bsc";
+  job_id: string | null;
+  evidence_ref: string | null;
+}
+
 export interface AgentRecord {
   agent_id: string;
   name: string;
@@ -201,6 +208,7 @@ export interface AgentRecord {
   readiness: AgentReadiness;
   activatable: boolean;
   identity: AgentIdentity;
+  activation_proof: ActivationProof;
   capabilities: string[];
   promise_schema: "spondee.promise-card.v1";
   receipt_schema: "spondee.outcome-receipt.v1";

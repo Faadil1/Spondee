@@ -40,13 +40,17 @@ jobs:
           grep -F 'baseline run must be OBSERVED' backend/src/observed-evidence.ts
           grep -F 'Grid Trading observed pair requires a real record' backend/src/observed-evidence.ts
           grep -F 'requires external observed provenance' backend/src/observed-evidence.ts
+          grep -F 'dry-run reference-agent evidence is never countable' backend/src/observed-evidence.ts
+          grep -F 'countable marketplace pair requires a TRANSACTION_TAPE artifact' backend/src/observed-evidence.ts
           grep -F 'SIMULATION cannot be relabeled into an observed pair' backend/src/observed-evidence.test.ts
-          grep -F 'three non-trading pairs do not satisfy the final report gate' backend/src/observed-evidence.test.ts
+          grep -F 'three non-trading countable pairs do not satisfy the final report gate' backend/src/observed-evidence.test.ts
           grep -F 'simulationCount' backend/src/evidence.ts
           grep -F 'pairs.length >= 3' backend/src/evidence.ts
       - name: Protocol authority guard
         shell: bash
         run: |
-          grep -F 'does not authorize meaningful mainnet or user capital' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
-          grep -F 'new observed experiment chain writes' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
-          grep -F 'Grid Trading — REQUIRED trading task' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'Pair 1 — Grid Trading' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'Historical observed-data replays and local reference-agent dry runs are always `countable_for_final_report=false`.' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'any new chain write' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'mainnet value movement' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
+          grep -F 'This proves harness integrity only.' work/G5-OBSERVED-EVIDENCE-PROTOCOL.md

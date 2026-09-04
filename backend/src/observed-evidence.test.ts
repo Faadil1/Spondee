@@ -114,7 +114,7 @@ function pair(
     },
     artifacts: [
       artifact("INPUT_SNAPSHOT", `${id}-input`, "BSC_TESTNET_RPC"),
-      artifact("AGENT_OUTPUT", `${id}-agent-output"`.replace('"', "")),
+      artifact("AGENT_OUTPUT", `${id}-agent-output`),
       artifact("BASELINE_OUTPUT", `${id}-baseline-output`),
     ],
     trading_record:

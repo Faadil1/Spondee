@@ -3,6 +3,7 @@ import test from "node:test";
 import type { SpondeeTask } from "./contracts.js";
 import {
   encodeSpondeeCategoryTask,
+  parseNotifyFundedSubmit,
   runSignedZeroPriceCategoryTestnetActivation,
   supportsSpondeeLiveTask,
 } from "./category-erc8183.js";
@@ -69,4 +70,32 @@ test("all G4 categories fail closed before wallet/network when live gate is abse
       /Live testnet gate is closed/i,
     );
   }
+});
+
+test("notify_funded submit response yields the exact known provider transaction", () => {
+  const parsed = parseNotifyFundedSubmit(
+    {
+      ok: true,
+      job_id: 954,
+      tx_hash: "0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3",
+      deliverable_url: "http://127.0.0.1:9100/erc8183/job/954/response",
+    },
+    954n,
+  );
+  assert.equal(
+    parsed.transactionHash,
+    "0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3",
+  );
+  assert.equal(parsed.deliverableUrl, "http://127.0.0.1:9100/erc8183/job/954/response");
+});
+
+test("notify_funded submit response fails closed on wrong job or malformed tx", () => {
+  assert.throws(
+    () => parseNotifyFundedSubmit({ ok: true, job_id: 955, tx_hash: `0x${"1".repeat(64)}` }, 954n),
+    /wrong job id/i,
+  );
+  assert.throws(
+    () => parseNotifyFundedSubmit({ ok: true, job_id: 954, tx_hash: "0x1234" }, 954n),
+    /valid submit transaction hash/i,
+  );
 });

@@ -1,0 +1,74 @@
+name: G3 Submitted Job 949 Verification
+
+on:
+  push:
+    branches:
+      - build/backend-complete
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse read-only verification PowerShell
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path './scripts/g3-verify-submitted-job-949.ps1'),
+            [ref]$null,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) { $errors | Format-List | Out-String | Write-Error }
+      - name: Check LocalStorage bridge syntax
+        run: node --check scripts/local-erc8183-deliverable-server.mjs
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund --ignore-scripts
+      - name: Backend regression suite
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Prove job 949 directly from known submit transaction receipt
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if npx tsx src/probe-g3-submit-949.ts; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep 3; fi
+          done
+          exit 1
+
+  windows-parse:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Parse read-only verification PowerShell on Windows
+        shell: powershell
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path '.\scripts\g3-verify-submitted-job-949.ps1'),
+            [ref]$null,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) { throw ($errors | Out-String) }
+      - name: Check LocalStorage bridge syntax on Windows Node 24
+        run: node --check scripts/local-erc8183-deliverable-server.mjs

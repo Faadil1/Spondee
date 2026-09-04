@@ -10,15 +10,15 @@ handover:
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the existing authority,
     requirements, evidence, runtime and activity ledgers. Canonical GitHub state outranks chat memory.
-    Never ask the human to recreate the seller wallet, expose wallet secrets, obtain tBNB, or create
-    another G3 job unless a later explicit gate authorizes it.
+    Never ask the human to recreate the seller wallet, expose wallet secrets, or obtain tBNB unless
+    a later independently verified blocker requires it.
 
-  current_milestone: G3_JOB_948_FUNDED_CHAIN_PATH_VERIFIED__DELIVERABLE_RECOVERY_CI_READY
-  lifecycle_status: FUNDED_JOB_RECOVERY_READY__LOCAL_EXECUTION_REQUIRED
+  current_milestone: G3_FOUR_CHAIN_WRITES_PROVEN__JOB_948_EXPIRED__LOCALSTORAGE_30D_FIX_CI_VERIFIED
+  lifecycle_status: ONE_NEW_COMPLETE_LIVE_E2E_READY__LOCAL_EXECUTION_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
-    bounded_bsc_testnet_provider_submit: AUTHORIZED
+    bounded_bsc_testnet_live_retry: AUTHORIZED_ONCE
     production_owner: PBPD
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: HUMAN_ONLY
@@ -30,7 +30,7 @@ handover:
     existing_encrypted_keystore_reuse_required: true
     password_chat_exposure: FORBIDDEN
     recreate_wallet: false
-    tBNB_required: false
+    tBNB_required_before_next_attempt: false
 
   fourth_live_attempt:
     started_at: '2026-09-03T23:38:40.406Z'
@@ -47,11 +47,20 @@ handover:
     seller_work_generated: true
     local_deliverable_file: '.agent-data/erc8183-job-948.json'
     provider_submit_tx: null
-    root_cause: >-
-      LocalStorageProvider returned a file:// URL. The pinned BNB runtime requires ERC8183_AGENT_URL
-      so it can publish an HTTP deliverable URL of the form {ERC8183_AGENT_URL}/job/{id}/response.
-      The local seller did not expose such a base URL during the fourth attempt, so submitWorkflow
-      failed before broadcasting provider submit and job 948 remained FUNDED.
+    root_cause: LocalStorageProvider returned file:// while ERC8183_AGENT_URL was unset.
+
+  funded_job_948_recovery_attempt:
+    started_at: '2026-09-03T23:50:58.062Z'
+    failed_at: '2026-09-03T23:53:03.692Z'
+    result: FAIL_CLOSED_SUBMISSION_DEADLINE_PASSED
+    provider_submit_tx: null
+    first_observed_deadline_error: 'Submission deadline has passed (expiredAt - disputeWindow = 1788479322, now = 1788479462)'
+    classification: TERMINAL_FOR_JOB_948
+    job_948_retry: FORBIDDEN
+    conclusion: >-
+      The deliverable HTTP bridge was no longer the blocker. The provider submit deadline had already
+      expired because the job used only 600 seconds of quickstart submission slack. Job 948 cannot
+      legally transition to SUBMITTED and must remain historical live-chain evidence only.
 
   important_proof_now_locked:
     - compact Promise commitment works in the real signed/chain path
@@ -63,62 +72,64 @@ handover:
     - seller reconstructed the job and generated a deterministic deliverable locally
     - no tBNB or user capital was used
 
-  recovery_design:
-    target_job_id: '948'
-    mode: RESUME_EXISTING_FUNDED_JOB_ONLY
-    new_activation: FORBIDDEN
-    local_deliverable_server:
-      artifact: scripts/local-erc8183-deliverable-server.mjs
-      storage_root: reference-agents/health-factor/app/agent/.agent-data
-      base_url: 'http://127.0.0.1:9100/erc8183'
-      expected_job_url: 'http://127.0.0.1:9100/erc8183/job/948/response'
-    seller_env:
-      ERC8183_AGENT_URL: 'http://127.0.0.1:9100/erc8183'
-    verifier:
-      artifact: backend/src/resume-g3-funded.ts
-      checks:
-        - job 948 provider equals canonical Spondee seller
-        - status is FUNDED/SUBMITTED/COMPLETED
-        - structured task is canonical SPONDEE_TASK_B64_V1 Health Factor task
-        - signed Promise commitment is unique, zero-price and canonical scenario
-        - notify_funded only when still FUNDED
-        - wait for SUBMITTED or COMPLETED
-        - fetch the on-chain deliverable URL
-        - verify DeliverableManifest hash against on-chain deliverable hash
-        - verify Spondee Outcome Receipt and SIMULATION claim boundary
-    local_runner: scripts/g3-resume-funded-job.ps1
-    recovery_decision: work/G3-FUNDED-948-RECOVERY-READY.md
+  applied_final_pre_submit_fixes:
+    localstorage_http:
+      server: scripts/local-erc8183-deliverable-server.mjs
+      integrated_wrapper: scripts/g3-megafuel-live-e2e-localstorage.ps1
+      agent_url: 'http://127.0.0.1:9100/erc8183'
+      behavior: HTTP bridge starts before the canonical seller/live runner and is inherited through ERC8183_AGENT_URL.
+    expiry_horizon:
+      source: backend/src/erc8183.ts
+      constant: SPONDEE_G3_SUBMISSION_WINDOW_SECONDS
+      seconds: 2592000
+      days: 30
+      formula: expiredAt = now + disputeWindow + 30_days
+      reason: ERC-8183 submit is invalid after expiredAt - disputeWindow; official BNB protocol docs recommend a long-lived job around 30 days.
+    regression_test: backend/src/g3-expiry.test.ts
 
   validation:
-    recovery_ci:
+    prior_recovery_ci:
       run: '33819012423'
-      head: 6bc4045cc5efdea946e2226930633bcf3817f4c4
       result: PASS
-      ubuntu_powershell_parse: PASS
-      local_erc8183_response_route: PASS
-      backend_tests: PASS
+      purpose: prove LocalStorage HTTP response route and recovery tooling
+    final_localstorage_preflight:
+      run: '33819854509'
+      head: '1c4b83b92524808731271e132981e4c48c3b62e3'
+      result: PASS
+      ubuntu_wrapper_parse: PASS
+      local_http_bridge_health: PASS
+      backend_regression_suite: PASS
       backend_typescript_build: PASS
-      windows_powershell_parse: PASS
+      windows_wrapper_parse: PASS
       windows_node24_server_syntax: PASS
-    local_recovery_authorized: EXACTLY_ONCE
+    one_new_live_attempt_authorized: true
 
-  recovery_instructions:
+  next_live_instructions:
     working_directory: 'C:\Users\fboussari\Spondee'
     commands:
       - 'git pull --ff-only'
       - 'git log -1 --oneline'
-      - 'powershell -ExecutionPolicy Bypass -File .\scripts\g3-resume-funded-job.ps1'
+      - 'powershell -ExecutionPolicy Bypass -File .\scripts\g3-megafuel-live-e2e-localstorage.ps1'
     credential_rule: Enter the existing seller wallet password only into the masked local prompt.
-    job_rule: The script is bound to job 948 and must not target another job.
-    write_rule: No new createJob/registerJob/setBudget/fund. Only the provider submit for existing funded job 948 may occur.
-    success_terminal: 'SPONDEE G3 FUNDED JOB RECOVERY: PASS'
-    on_success: Return the public PASS block or evidence JSON only.
-    on_failure: Return the recovery failure block only and stop; do not run either recovery or live activation again blindly.
+    wallet_rule: Reuse the existing encrypted seller keystore; do not recreate it.
+    gas_rule: Do not obtain tBNB first; MegaFuel remains primary.
+    job_rule: Do not retry job 948. This authorized run may create exactly one new G3 job using the corrected 30-day submission horizon.
+    expected_progress:
+      - CREATE_JOB
+      - REGISTER_JOB
+      - SET_BUDGET
+      - FUND
+      - SUBMIT_OBSERVED
+      - DELIVERABLE_VERIFIED
+    success_terminal: 'SPONDEE G3 MEGAFUEL LIVE E2E: PASS'
+    on_success: Return the complete public PASS block/evidence only.
+    on_failure: Return the new public failure block only and stop; no blind retry.
 
   safety_invariants:
+    - job 948 is terminal and must not be retried
+    - exactly one new corrected live attempt is authorized
     - no new seller wallet
-    - no new G3 buyer activation
-    - no tBNB acquisition
+    - no tBNB acquisition before the attempt
     - no secret in chat
     - no mainnet activity
     - no meaningful user capital
@@ -126,9 +137,10 @@ handover:
     - no public deployment or final submission from this gate
     - simulation receipt remains SIMULATION and cannot count as observed Agent Advantage
 
-  exact_next_gate: SPONDEE_G3_FUNDED_JOB_948_DELIVERABLE_RECOVERY_LOCAL_EXECUTION_REQUIRED
+  exact_next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED
   exact_next_owner: HUMAN_LOCAL_RUNTIME
   exact_next_action: >-
-    Pull build/backend-complete and execute scripts/g3-resume-funded-job.ps1 exactly once. Reuse the
-    existing encrypted seller keystore and enter its password only at the masked local prompt. Do not
-    run g3-megafuel-live-e2e.ps1 again. Return only the public recovery PASS block or recovery failure block.
+    Pull build/backend-complete and execute scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once.
+    Reuse the existing encrypted seller keystore and enter its password only in the masked prompt.
+    Do not retry job 948 and do not obtain tBNB first. Return only the public PASS block or a new
+    failure block, then stop without another blind retry.

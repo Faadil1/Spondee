@@ -15,6 +15,7 @@ on:
       - '.github/workflows/g4-sequential-live-preflight.yml'
       - '.pbpd/state/**'
       - 'evidence/g4-sequential-live-gate/**'
+      - 'evidence/g4-sequential-live-preflight/**'
   workflow_dispatch:
 
 permissions:
@@ -65,13 +66,18 @@ jobs:
             import { TaskSchema } from "./src/contracts.ts";
             import { runSignedZeroPriceCategoryTestnetActivation } from "./src/category-erc8183.ts";
             const task = TaskSchema.parse(JSON.parse(readFileSync("../reference-agents/grid/demo/g4-live-scenario.json", "utf8")));
-            try {
-              await runSignedZeroPriceCategoryTestnetActivation(task, {});
-              throw new Error("live gate unexpectedly opened in CI");
-            } catch (e) {
-              if (!String(e).includes("Live testnet gate is closed")) throw e;
-              console.log("credential-free live fail-closed: PASS");
-            }
+            (async () => {
+              try {
+                await runSignedZeroPriceCategoryTestnetActivation(task, {});
+                throw new Error("live gate unexpectedly opened in CI");
+              } catch (e) {
+                if (!String(e).includes("Live testnet gate is closed")) throw e;
+                console.log("credential-free live fail-closed: PASS");
+              }
+            })().catch((e) => {
+              console.error(e);
+              process.exitCode = 1;
+            });
           '
 
   category-agents:

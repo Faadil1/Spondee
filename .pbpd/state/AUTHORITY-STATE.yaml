@@ -28,22 +28,30 @@ current_action_grants:
   - action: BSC_TESTNET_REFERENCE_AGENT_BUILD
     status: ALLOWED
   - action: G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E
-    status: ALLOWED
+    status: COMPLETE_CLOSED
     opened_by_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-    opened_at: '2026-09-04'
-    sequence:
-      - grid
-      - rebalancing_after_grid_pass
-      - yield_after_rebalancing_pass
-    constraints:
-      - BSC testnet only
-      - canonical existing encrypted seller wallet only
-      - zero service price
-      - MegaFuel primary
-      - ephemeral zero-balance buyer
-      - stop on first failure
-      - no blind retry after partial chain write
-      - receipts remain SIMULATION evidence
+    completed_jobs:
+      - grid_954
+      - rebalancing_955
+      - yield_957
+    constraints_preserved:
+      - G3/G4 receipts remain SIMULATION evidence
+      - no closed-job reruns
+  - action: G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION
+    status: COMPLETE_CONSUMED_CLOSED
+    opened_by_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+    completed_job: '962'
+    completed_pair: g5-grid-forward-job-962
+    countable_for_final_report: true
+    further_jobs_under_this_grant: FORBIDDEN
+    mainnet_value_moved: false
+    meaningful_user_capital_used: false
+  - action: G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN
+    status: NOT_YET_OPENED
+    required_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+    action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
+    wallet_unlock_allowed: false
+    chain_write_allowed: false
   - action: PUBLIC_JUDGING_BUILD_DEPLOYMENT
     status: ALLOWED_WITHIN_EXISTING_AUTHORIZATION
   - action: MEANINGFUL_MAINNET_OR_USER_CAPITAL
@@ -52,4 +60,7 @@ current_action_grants:
     status: PROTECTED_HUMAN_ONLY
   - action: FINAL_HACKATHON_SUBMISSION
     status: PROTECTED_HUMAN_ONLY
-revocations: []
+revocations:
+  - action: G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION
+    reason: SUCCESSFUL_SINGLE_JOB_BUDGET_CONSUMED_BY_JOB_962
+    effective: true

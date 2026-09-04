@@ -13,8 +13,8 @@ handover:
     Job 949 is already SUBMITTED. Never create another G3 job, re-submit job 949, unlock the seller wallet,
     acquire tBNB, or retry job 948 from this gate.
 
-  current_milestone: G3_JOB_949_SUBMITTED_ONCHAIN_RECEIPT_PROVEN__LOCAL_OUTCOME_RECEIPT_VERIFY_READY
-  lifecycle_status: READ_ONLY_LOCAL_VERIFICATION_REQUIRED
+  current_milestone: G3_JOB_949_SUBMITTED_ONCHAIN__WINDOWS_CLI_FALSE_ZERO_EXIT_FIXED_AND_CI_VERIFIED
+  lifecycle_status: READ_ONLY_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED
 
   authority:
     project: PROJECT_AUTHORIZED
@@ -37,9 +37,9 @@ handover:
     reason: provider submission deadline expired before recovery
     retry: FORBIDDEN
 
-  fifth_live_attempt_job_949:
+  job_949:
     started_at: '2026-09-04T00:05:40.534Z'
-    runner_failed_at: '2026-09-04T00:07:18.579Z'
+    original_runner_failed_at: '2026-09-04T00:07:18.579Z'
     classification: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT__POST_SUBMIT_RPC_LOG_SCAN_LIMIT
     ephemeral_buyer_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
     job_id: '949'
@@ -63,7 +63,6 @@ handover:
   independent_chain_proof:
     workflow_run: '33820803719'
     workflow: G3 Submitted Job 949 Verification
-    validated_head: '1a613ba4de74a5a0181247dc4c5a86f3d61c49af'
     result: PASS
     method: KNOWN_SUBMIT_TRANSACTION_RECEIPT_PLUS_GETJOB_NO_ETH_GETLOGS
     job_status: SUBMITTED
@@ -75,6 +74,32 @@ handover:
     receipt_log_scan_used: false
     secrets_printed: false
     proof_artifact: evidence/g3-job-949-submitted/README.md
+
+  local_cli_incident:
+    observed_human_runs: 2
+    platform: windows_node24
+    symptom: >-
+      The read-only wrapper reached the verification step and then returned to PowerShell with no PASS JSON,
+      no failure JSON and exit code 0.
+    classification: FALSE_ZERO_EXIT_NO_VERIFICATION_EXECUTED
+    chain_impact: NONE
+    root_cause: >-
+      backend/src/verify-g3-submitted.ts used a hand-built import.meta.url direct-execution guard whose
+      file URL shape did not match Windows file:///C:/... semantics. verifySubmittedJob949() was never invoked.
+    secondary_gap: The PowerShell wrapper trusted exit code 0 without requiring the explicit PASS terminal.
+    remediation:
+      dedicated_cli: backend/src/verify-g3-submitted-cli.ts
+      wrapper: scripts/g3-verify-submitted-job-949.ps1
+      wrapper_rule: Zero exit without exact PASS terminal fails closed.
+      evidence: evidence/g3-job-949-cli-fix/README.md
+    validation:
+      workflow_run: '33823556651'
+      result: PASS
+      ubuntu_cli_entrypoint: PASS
+      backend_regression_suite: PASS
+      typescript_build: PASS
+      receipt_based_job_949_chain_probe: PASS
+      windows_node24_cli_entrypoint: PASS
 
   now_verified_live:
     - compact signed Promise commitment
@@ -102,12 +127,14 @@ handover:
     target_job_id: '949'
     known_submit_tx: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
     local_manifest: reference-agents/health-factor/app/agent/.agent-data/erc8183-job-949.json
-    verifier: backend/src/verify-g3-submitted.ts
+    verifier_library: backend/src/verify-g3-submitted.ts
+    verifier_cli: backend/src/verify-g3-submitted-cli.ts
     chain_probe: backend/src/probe-g3-submit-949.ts
     local_runner: scripts/g3-verify-submitted-job-949.ps1
     ci_workflow: .github/workflows/g3-submitted-949-verification.yml
-    validation_run: '33820803719'
+    cross_platform_validation_run: '33823556651'
     validation_result: PASS
+    required_success_terminal: 'SPONDEE G3 SUBMITTED JOB 949 VERIFICATION: PASS'
     execution_contract:
       seller_process: NOT_REQUIRED
       seller_wallet_password: NOT_REQUIRED
@@ -128,6 +155,7 @@ handover:
       - 'powershell -ExecutionPolicy Bypass -File .\scripts\g3-verify-submitted-job-949.ps1'
     password_rule: The script must not ask for any wallet password.
     success_terminal: 'SPONDEE G3 SUBMITTED JOB 949 VERIFICATION: PASS'
+    fail_closed_rule: A zero exit without the exact success terminal is an error and must not be accepted.
     on_success: Return the public PASS JSON/block only.
     on_failure: Return the public read-only verification failure block only and stop; do not create or submit another job.
 
@@ -149,5 +177,6 @@ handover:
   exact_next_owner: HUMAN_LOCAL_RUNTIME
   exact_next_action: >-
     Pull build/backend-complete and run scripts/g3-verify-submitted-job-949.ps1 exactly once.
-    The script is read-only and must not request the seller wallet password or create any transaction.
+    The wrapper now calls a dedicated cross-platform CLI and requires an explicit PASS terminal.
+    It remains read-only and must not request the seller wallet password or create any transaction.
     Return the public PASS or failure block and stop.

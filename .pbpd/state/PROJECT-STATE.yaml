@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R033-G5-GRID-FORWARD-PREWRITE-SIZE-REMEDIATED-EXECUTION-STILL-AUTHORIZED
+revision: STATE-R034-G5-GRID-FIRST-COUNTABLE-PAIR-PASS__HEALTH-FACTOR-OBSERVED-PAIR-NEXT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,18 +8,16 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
   production_owner: PBPD
   consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
-  completed_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  completed_human_gate_status: PASS_2026_09_04
-  completed_implementation_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-  completed_implementation_gate_status: PASS_REMEDIATED_RUN_33859221865
-  current_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  current_human_gate_status: AUTHORIZED_RETRY_AFTER_PREWRITE_FAIL_NO_JOB_CREATED
+  completed_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  completed_human_gate_status: PASS_JOB_962_2026_09_04
+  current_implementation_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  current_implementation_gate_status: NOT_YET_OPENED
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_GRID_FORWARD_PREWRITE_FAIL_REMEDIATED__ZERO_COUNTABLE_PAIRS
+  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_FIRST_COUNTABLE_GRID_PAIR_PASS__ONE_OF_THREE_OBSERVED_PAIRS
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -32,33 +30,30 @@ prd:
   path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
   version: '0.1'
   ready_status: PRD_READY
-  material_product_change_from_r033: false
+  material_product_change_from_r034: false
 build:
   active_branch: build/g5-grid-forward-observed
   parent_branch: build/g4-sequential-live-e2e
   base_branch: build/backend-complete
   merge_to_main: NOT_AUTHORIZED
   four_category_live_transport_status: PASS_CLOSED
-  health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED
-  grid_status: LIVE_E2E_PASS_JOB_954_CLOSED
-  rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED
-  yield_status: LIVE_E2E_PASS_JOB_957_CLOSED
+  health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED_SIMULATION_RECEIPT
+  grid_status: G4_JOB_954_CLOSED__G5_COUNTABLE_PAIR_JOB_962_CLOSED_PASS
+  rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED_SIMULATION_RECEIPT
+  yield_status: LIVE_E2E_PASS_JOB_957_CLOSED_SIMULATION_RECEIPT
   g5_observed_evidence_contract_status: PASS_HARDENED_COUNTABILITY
   g5_observed_evidence_ci_run: 33843642146
-  g5_grid_market_source_status: PASS_READ_ONLY
-  g5_grid_market_source_ci_run: 33842784851
   g5_grid_observed_dry_run_status: PASS_NON_COUNTABLE
   g5_grid_observed_dry_run_ci_run: 33843581388
-  g5_grid_forward_runner_status: PREWRITE_SIZE_REMEDIATED_EXECUTION_AUTHORIZED_NOT_RUN
-  g5_grid_forward_runner_ci_run: 33859221865
-  g5_grid_forward_validated_head: e608c81f34ef2e8442d53efbe946ab84f1515829
+  g5_grid_forward_runner_status: EXECUTION_PASS_JOB_962_CLOSED
+  g5_grid_forward_remediation_ci_run: 33859221865
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
   password_or_key_chat_exposure: FORBIDDEN
   create_new_wallet: FORBIDDEN
-  wallet_unlock_required_for_current_gate: true_local_execution_only
+  wallet_unlock_required_for_current_gate: false
 historical_runtime:
   job_948:
     result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
@@ -83,12 +78,43 @@ historical_runtime:
     result: G4_FINAL_PASS
     no_further_live_run: true
     receipt_evidence_class: SIMULATION
+  job_962:
+    category: grid
+    result: G5_FIRST_COUNTABLE_FORWARD_OBSERVED_PAIR_PASS
+    no_further_live_run: true
+    evidence_class: OBSERVED
+    countable_for_final_report: true
+    pair_id: g5-grid-forward-job-962
+    promise_id: spg5_6be8ca0d0f37354475b0f656
+    scenario_id: g5-grid-forward-55340232221132059004-1788516525376
+    provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+    buyer_address: '0x9423f5B1Ae49A93Ee8757D5793b3019d17a12023'
+    transactions:
+      create_job: '0x8d502976faa5c47bd2d73e842a7ed083576ad07a301c4232fa4b6d9e940a81f1'
+      register_job: '0x8e1f998d56e8c7cafc25b5c5e7b72b6129b98f0247288dfdd0295478a6415c2e'
+      set_budget: '0xc0582528b34183387e9183d0a3bfee50fe925849fd8b7387ab0076346f11aea2'
+      fund: '0x434223db54f30510616e74ae6e2c554ecc9a26a6017ea172df4eff29a4e8b266'
+      submit: '0xd1273c9d11c88fbd92d73ff595ac507db718c88ac0c3896a8105854550d488d5'
+    observed_round_count: 8
+    observation_window:
+      start_at: '2026-09-04T10:09:09.000Z'
+      end_at: '2026-09-04T10:13:00.000Z'
+    external_round_verification: PASS
+    manifest_hash_verified: true
+    buyer_balance_before_wei: '0'
+    buyer_balance_after_wei: '0'
+    service_price_raw: '0'
+    mainnet_value_moved: false
+    realized_mainnet_pnl_claimed: false
+    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+    agent_terminal_equity_usd: 9996.660009
+    baseline_terminal_equity_usd: 9999.160009
+    terminal_equity_delta_usd: -2.5
 four_category_closure:
   status: PASS
   live_transport_count: 4
   required_category_count: 4
-  all_receipt_truth_class: SIMULATION
-  observed_agent_advantage_count: 0
+  g3_g4_receipt_truth_class: SIMULATION
   no_further_g4_category_live_runs_authorized: true
 g5_observed_evidence_protocol:
   status: PASS_HARDENED
@@ -98,11 +124,14 @@ g5_observed_evidence_protocol:
   protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
   authoritative_ci_run: 33843642146
   required_pairs: 3
-  countable_pairs: 0
+  countable_pairs: 1
+  remaining_pairs: 2
   grid_pair_required: true
+  grid_pair_requirement_satisfied: true
   simulation_promotion_allowed: false
   historical_replay_countable: false
   dry_run_reference_agent_countable: false
+  final_report_status: INSUFFICIENT_OBSERVED_EVIDENCE
   countable_marketplace_requirements:
     - LIVE_BSC_TESTNET_MARKETPLACE
     - ERC8183_BSC_TESTNET
@@ -117,91 +146,40 @@ g5_observed_evidence_protocol:
     - TIMING_LOG
     - COST_LOG
     - TRANSACTION_TAPE
-g5_grid_market_source:
-  status: PASS_READ_ONLY
-  source_type: BSC_MAINNET_CHAINLINK_READ_ONLY
-  network: bsc-mainnet
-  chain_id: 56
-  feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
-  wallet_used: false
-  chain_write_attempted: false
-  user_capital_used: false
 g5_grid_dry_run:
   status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
   authoritative_ci_run: 33843581388
-  hardened_contract_ci_run: 33843642146
   pair_id: g5-grid-dry-55340232221132058579
   measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
   countable_for_final_report: false
-  paired_run_count_after_dry_run: 0
-  final_report_status_after_dry_run: INSUFFICIENT_OBSERVED_EVIDENCE
-  wallet_used: false
-  chain_write_attempted: false
-  user_capital_used: false
+g5_grid_forward_pair:
+  status: PASS_COUNTABLE_CLOSED
+  evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+  job_id: '962'
+  pair_id: g5-grid-forward-job-962
+  promise_id: spg5_6be8ca0d0f37354475b0f656
+  observed_round_count: 8
+  external_round_verification: PASS
+  countable_for_final_report: true
+  paired_run_count_after_pair: 1
+  trading_pair_requirement_satisfied: true
+  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
+  mainnet_value_moved: false
   realized_mainnet_pnl_claimed: false
-g5_grid_forward_runner:
-  status: PREWRITE_SIZE_REMEDIATED_EXECUTION_AUTHORIZED_NOT_RUN
-  original_preflight_ci_run: 33845758154
-  remediation_ci_run: 33859221865
-  validated_head: e608c81f34ef2e8442d53efbe946ab84f1515829
-  branch: build/g5-grid-forward-observed
-  runner: scripts/g5-grid-forward-observed-pair.ps1
-  backend_task_contract: backend/src/g5-grid-forward.ts
-  backend_activation_verifier: backend/src/g5-grid-forward-erc8183.ts
-  backend_execution_cli: backend/src/live-g5-grid-forward.ts
-  seller_engine: reference-agents/grid/app/agent/src/g5ForwardObserved.ts
-  seller_wire_decoder: reference-agents/grid/app/agent/src/g5ForwardWire.ts
-  seller_server: reference-agents/grid/app/agent/src/g5ForwardServer.ts
-  default_runner_mode: READ_ONLY_PREFLIGHT
-  execute_switch_protected: true
-  required_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  human_gate_authorized: true
-  human_gate_evidence: evidence/g5-grid-forward-execution-human-go/README.md
-  failed_attempt:
-    result: FAIL_CLOSED_PREWRITE
-    started_at: '2026-09-04T09:31:02.251Z'
-    failed_at: '2026-09-04T09:31:05.199Z'
-    ephemeral_buyer: '0x85aDE49c28dDCE4140485153EC7d835a620278de'
-    progress_count: 0
-    transaction_attempted: false
-    job_created: false
-    mainnet_value_moved: false
-    root_cause: ERC8183_ONCHAIN_DESCRIPTION_2288_BYTES_EXCEEDED_1600_BYTE_MEGAFUEL_LIMIT
-    evidence: evidence/g5-grid-forward-prewrite-size-failclosed-remediation/README.md
-  wire_format:
-    version: V2_COMPACT
-    prefix: 'SG5F2:'
-    legacy_v1_decode_supported: true
-    canonical_task_reconstructed_before_promise: true
-    compact_task_byte_budget: LESS_THAN_500_CI_ENFORCED
-  future_job_scope: ONE_NEW_GRID_G5_BSC_TESTNET_JOB_ONLY
-  authorization_consumed: false
-  authorization_consumption_rule: CONSUMED_ONLY_AFTER_FIRST_BSC_TESTNET_WRITE_OR_JOB_CREATE
-  service_price_raw: '0'
-  gas_path: MEGAFUEL
-  source_mainnet_mode: READ_ONLY_CHAINLINK_ONLY
-  mainnet_value_movement_implemented: false
-  observation_rule: FIRST_COUNTED_ROUND_STRICTLY_AFTER_PROMISE_FREEZE_AND_MARKETPLACE_FUNDING
-  buyer_round_verification: EXACT_CHAINLINK_ROUND_ID_REREAD
-  baseline: SAME_VERIFIED_FORWARD_ROUNDS_STATIC_50_50
-  remediation_preflight_wallet_used: false
-  remediation_preflight_chain_write_attempted: false
-  remediation_preflight_user_capital_used: false
-  remediation_preflight_mainnet_value_moved: false
-  execution_gate_open: true
-  execution_completed: false
-  countable_pair_created: false
+  rerun_allowed: false
 critical_remaining_gaps:
   observed_agent_advantage:
     required_pairs: 3
-    countable_pairs: 0
+    countable_pairs: 1
+    remaining_pairs: 2
     trading_pair_required: true
-    trading_pair_countable: false
-    status: BLOCKING
+    trading_pair_countable: true
+    status: BLOCKING_TWO_MORE_PAIRS_REQUIRED
   health_factor_event_tape:
-    status: PENDING
+    status: PENDING_BLOCKING
+    next_pair_target: true
   public_judge_deployment:
-    status: PENDING
+    status: PENDING_BLOCKING
   visible_authority_controls:
     status: PARTIAL
   project_finisher:
@@ -212,38 +190,36 @@ killing_assumptions:
   A-02:
     status: RESOLVED_BY_LIVE_E2E
   A-03:
-    status: RESOLVED_BY_LIVE_E2E
+    status: RESOLVED_BY_LIVE_E2E_AND_G5_COUNTABLE_FORWARD_PAIR
   A-06:
-    status: PARTIAL_FORWARD_RUNNER_REMEDIATION_PASS__FIRST_COUNTABLE_FORWARD_PAIR_EXECUTION_STILL_REQUIRED
+    status: PARTIALLY_RESOLVED_FIRST_OF_THREE_COUNTABLE_PAIRS_COMPLETE
 current_gate:
-  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  status: AUTHORIZED_RETRY_AFTER_PREWRITE_FAIL_NO_JOB_CREATED
-  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
-  exact_human_gate_env: SPONDEE_G5_GRID_FORWARD_HUMAN_GATE=SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  chain_write_allowed: true_bounded_one_new_grid_g5_job_only
-  wallet_unlock_allowed: true_local_canonical_seller_only
-  bsc_mainnet_read_allowed: true
+  id: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  status: NOT_YET_OPENED
+  action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
+  chain_write_allowed: false
+  wallet_unlock_allowed: false
+  bsc_mainnet_read_allowed: true_if_required
   bsc_mainnet_write_allowed: false
-  mainnet_value_movement_allowed: false
   meaningful_user_capital_allowed: false
   material_paid_spend_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
-next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+next_gate: SPONDEE_G5_HEALTH_FACTOR_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
 next_action:
-  owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
-  action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
-  authorization_status: HUMAN_GO_RECORDED_RETRY_ALLOWED_BECAUSE_ZERO_WRITES_OCCURRED
-  primary: Pull the remediated validated head and execute exactly one new zero-price G5 Grid BSC-testnet marketplace job; freeze Promise/config before the future window, collect eight future Chainlink BNB/USD rounds after funding, independently verify them, compute the same-window baseline, and validate the first countable Agent Advantage pair.
-  constraints:
-    - do not rerun jobs 949, 954, 955, or 957
-    - exactly one new G5 Grid job under this authorization
-    - the prior failed attempt consumed no job/transaction authority because progress was empty
-    - after any BSC-testnet write in the next attempt, no retry is permitted without deterministic recovery or a new human gate
-    - mainnet access remains read-only only
-    - no meaningful user/mainnet capital
-    - no realized-mainnet-PnL claim
-    - zero service price and MegaFuel only
-    - fail closed on timeout or first execution error
+  owner: PBPD_AFTER_GATE_OPEN
+  action_class: CODE_PLUS_READ_ONLY_OBSERVED_DATA_ONLY
+  primary: Build and dry-run a Health Factor observed-pair protocol that can satisfy both the second countable Agent Advantage comparison and MUST-13 warning lead-time/response-latency event-tape evidence without promoting simulation to observed evidence.
+  design_constraints:
+    - use a frozen lending-position model and externally observed market inputs with explicit provenance
+    - freeze warning/intervention rules before the observation window
+    - preserve warning timestamp, intervention/recommendation timestamp, adverse-event timestamp and raw observed inputs
+    - baseline must share the exact same initial state and observation window
+    - baseline detection cadence/rule must be precommitted and reproducible, not invented after the event
+    - dry-run remains non-countable until a dedicated marketplace activation exists
+    - no mainnet value movement
+    - no wallet unlock or BSC-testnet write during implementation/dry-run
+    - do not touch closed jobs 949, 954, 955, 957, or 962
+    - no guaranteed liquidation-prevention or safety claim
     - no merge to main
     - no final submission

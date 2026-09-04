@@ -54,7 +54,6 @@ decisions:
     decision: Use official TermSpecification success_criteria rather than arbitrary custom terms for Spondee signed provenance.
     status: SUPERSEDED_IN_WIRE_FORMAT_BY_DEC_012
     authority: PBPD_PROTOCOL_RECONCILIATION
-    note: The field choice remains valid, but embedding the full Promise Card caused an oversized MegaFuel createJob transaction.
   - id: DEC-011
     date: '2026-09-03'
     decision: After Backend CI 33816310524 and G3 CI 33816544907 passed, authorize exactly one local MegaFuel-backed Health Factor E2E retry using the existing seller keystore.
@@ -65,108 +64,62 @@ decisions:
     decision: Keep the full Spondee Promise Card off-chain as a read-only preview and carry only a compact signed SHA-256 commitment in ERC-8183 success_criteria using SPONDEE_PROMISE_COMMITMENT_V1.
     status: ACCEPTED
     authority: PBPD_PROTOCOL_RECONCILIATION
-    constraints:
-      - commitment carries promise_id, scenario_id, raw price and canonical Promise SHA-256
-      - compact wire keys are p, s, r and h
-      - signed request and response each contain exactly one identical commitment
-      - provider signature, chain and Commerce contract are verified before commitment trust
-      - preview Promise id/scenario/price/hash must match commitment before createJob
-      - seller reconstructs the deterministic Promise and rechecks id/hash before Outcome Receipt
-      - buildJobDescription must fit a 1600-byte Spondee MegaFuel application cap before createJob
-    evidence:
-      - backend/src/erc8183.ts
-      - backend/src/erc8183.test.ts
-      - reference-agents/health-factor/app/agent/src/healthFactor.ts
-      - GitHub Actions run 33817822355
-      - GitHub Actions run 33817846752
+    evidence: [backend/src/erc8183.ts, backend/src/erc8183.test.ts, GitHub Actions run 33817822355, GitHub Actions run 33817846752]
   - id: DEC-013
     date: '2026-09-03'
     decision: Encode the signed Health Factor task as versioned Base64URL JSON using SPONDEE_TASK_B64_V1 so stress_path arrays survive the official SDK claim sanitizer byte-for-byte.
     status: ACCEPTED
     authority: PBPD_PROTOCOL_RECONCILIATION
-    evidence:
-      - reference-agents/health-factor/app/agent/src/healthFactor.ts
-      - backend/src/erc8183.ts
-      - GitHub Actions run 33817822355
-      - GitHub Actions run 33817846752
+    evidence: [reference-agents/health-factor/app/agent/src/healthFactor.ts, backend/src/erc8183.ts, GitHub Actions run 33817822355]
   - id: DEC-014
     date: '2026-09-03'
-    decision: After compact commitment, sanitizer-safe task and 1600-byte budget CI passed, authorize exactly one new human-local MegaFuel Health Factor E2E retry under the existing testnet authority; any new failure closes the gate again.
+    decision: After compact commitment, sanitizer-safe task and 1600-byte budget CI passed, authorize exactly one new human-local MegaFuel Health Factor E2E retry under the existing testnet authority.
     status: CONSUMED_BY_FOURTH_ATTEMPT_PARTIAL_SUCCESS
     authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
-    evidence:
-      - GitHub Actions run 33817822355
-      - GitHub Actions run 33817846752
   - id: DEC-015
     date: '2026-09-03'
-    decision: For local/testnet LocalStorageProvider delivery, expose the generated ERC-8183 manifest through a bounded HTTP bridge and set ERC8183_AGENT_URL before the seller starts; a raw file:// deliverable URL is not acceptable for on-chain publication.
+    decision: For local/testnet LocalStorageProvider delivery, expose the generated ERC-8183 manifest through a bounded HTTP bridge and set ERC8183_AGENT_URL before the seller starts.
     status: ACCEPTED
     authority: PBPD_RUNTIME_PROTOCOL_RECONCILIATION
-    evidence:
-      - scripts/local-erc8183-deliverable-server.mjs
-      - scripts/g3-megafuel-live-e2e-localstorage.ps1
-      - GitHub Actions run 33819012423
-      - GitHub Actions run 33819854509
+    evidence: [scripts/local-erc8183-deliverable-server.mjs, scripts/g3-megafuel-live-e2e-localstorage.ps1, GitHub Actions run 33819854509]
   - id: DEC-016
     date: '2026-09-03'
     decision: Job 948 is terminal for provider submit and must never be retried because its ERC-8183 submission deadline expired before recovery; preserve it as live-chain partial evidence only.
     status: ACCEPTED
     authority: PBPD_RUNTIME_EVIDENCE
-    evidence:
-      - human local recovery failure at 2026-09-03T23:53:03.692Z
-      - error submit_deadline_passed
-      - .pbpd/state/EVIDENCE-LEDGER.yaml EV-017
+    evidence: [.pbpd/state/EVIDENCE-LEDGER.yaml EV-017]
   - id: DEC-017
     date: '2026-09-03'
-    decision: Newly created G3 jobs use a 30-day provider submission horizon, computed as expiredAt = now + disputeWindow + 30 days, instead of the 600-second quickstart demonstration slack.
+    decision: Newly created G3 jobs use a 30-day provider submission horizon instead of the 600-second quickstart demonstration slack.
     status: ACCEPTED
     authority: PBPD_PROTOCOL_RUNTIME_HARDENING
-    constraints:
-      - submit remains valid only until expiredAt - disputeWindow
-      - 30-day horizon is testnet/runtime robustness, not a product promise
-      - job 948 is not retroactively modified or retried
-      - exactly one new corrected live E2E attempt may be run after CI passes
-    evidence:
-      - backend/src/erc8183.ts
-      - backend/src/g3-expiry.test.ts
-      - GitHub Actions run 33819854509
-      - official BNB ERC-8183 protocol guidance
+    evidence: [backend/src/erc8183.ts, backend/src/g3-expiry.test.ts, GitHub Actions run 33819854509]
   - id: DEC-018
     date: '2026-09-03'
-    decision: After LocalStorage HTTP integration and 30-day submission-horizon preflight 33819854509 passed, authorize exactly one new complete local Health Factor E2E attempt using the existing seller keystore and MegaFuel; no tBNB is required before the attempt and any new failure closes the gate again.
+    decision: After LocalStorage HTTP integration and 30-day submission-horizon preflight passed, authorize exactly one new complete local Health Factor E2E attempt using the existing seller keystore and MegaFuel.
     status: CONSUMED_BY_FIFTH_ATTEMPT_JOB_949_SUBMITTED
     authority: PBPD_WITHIN_EXISTING_HUMAN_TESTNET_GO
-    evidence:
-      - GitHub Actions run 33819854509
-      - job 949 live runtime output
   - id: DEC-019
     date: '2026-09-04'
     decision: Classify the fifth runner failure as a post-submit RPC read-path failure, not an ERC-8183 activation failure, because provider submit transaction 0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74 was already confirmed and job 949 is SUBMITTED.
     status: ACCEPTED
     authority: PBPD_RUNTIME_EVIDENCE
-    constraints:
-      - do not create a replacement job
-      - do not re-submit job 949
-      - preserve the original runner failure as evidence of SDK eth_getLogs rate/range sensitivity
-      - use the known transaction receipt for deterministic verification
-    evidence:
-      - human local runtime output 2026-09-04T00:05:40.534Z to 2026-09-04T00:07:18.579Z
-      - GitHub Actions run 33820803719
-      - evidence/g3-job-949-submitted/README.md
+    evidence: [GitHub Actions run 33820803719, evidence/g3-job-949-submitted/README.md]
   - id: DEC-020
     date: '2026-09-04'
     decision: Final G3 verification for job 949 is read-only and uses the known provider submit transaction receipt plus getJob(949), then verifies the existing local manifest and Outcome Receipt; eth_getLogs scanning is not required for this recovery proof.
-    status: ACCEPTED
+    status: SATISFIED_BY_FINAL_PASS
     authority: PBPD_PROTOCOL_RUNTIME_HARDENING
-    constraints:
-      - no seller process or wallet unlock
-      - no createJob/registerJob/setBudget/fund/submit transaction
-      - no tBNB or mainnet activity
-      - JobSubmitted and JobInitialised must be decoded from the known receipt
-      - manifest hash must equal the already-proven on-chain deliverable hash
-      - Outcome Receipt must match the signed Promise commitment and remain SIMULATION
-    evidence:
-      - backend/src/verify-g3-submitted.ts
-      - backend/src/probe-g3-submit-949.ts
-      - scripts/g3-verify-submitted-job-949.ps1
-      - GitHub Actions run 33820803719
+    evidence: [backend/src/verify-g3-submitted.ts, scripts/g3-verify-submitted-job-949.ps1, evidence/g3-job-949-final-pass/README.md]
+  - id: DEC-021
+    date: '2026-09-04'
+    decision: Close Spondee G3 Health Factor as PASS after job 949 manifest hash and Outcome Receipt verification; preserve the receipt as SIMULATION and explicitly prohibit promotion to observed Agent Advantage.
+    status: ACCEPTED
+    authority: PBPD_RUNTIME_EVIDENCE
+    evidence: [evidence/g3-job-949-final-pass/README.md]
+  - id: DEC-022
+    date: '2026-09-04'
+    decision: The next exact gate is read-only qualification of credible BSC-live paths for Grid Trading, Rebalancing and Yield Optimisation before any consequential four-category deployment; Altana, PancakeSwap bonus work, merge, Project Finisher and submission remain blocked.
+    status: ACCEPTED
+    authority: PBPD_PRD_GATE_SEQUENCE
+    evidence: [.pbpd/state/PROJECT-STATE.yaml, .pbpd/state/RISK-REGISTER.yaml, Faadil1/spec-kit-orchestration G3 convergence]

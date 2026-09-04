@@ -3,60 +3,67 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze MVP and block non-core market mechanisms until the primary vertical and evidence harness pass.
-    status: OPEN
+    mitigation: Freeze MVP; prioritize remaining three live category paths, observed evidence, and public judging availability before optional integrations.
+    status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
     risk: Four-category depth becomes cosmetic or uneven.
-    mitigation: Shared Promise/Receipt schemas plus category-level acceptance tests.
-    status: OPEN
+    mitigation: Shared Promise/Receipt schemas plus live-path qualification before deployment; Health Factor cannot remain the only credible activation path.
+    status: OPEN_NEXT_GATE
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Keep Health Factor as hero only; require equal find-understand-activate depth across the other three categories.
-    status: OPEN
+    mitigation: Keep Health Factor as hero only; qualify and then implement equal find-understand-activate depth across Grid, Rebalancing and Yield.
+    status: OPEN_NEXT_GATE
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
     mitigation: Preserve forecast provenance, track calibration against actual outcomes and label insufficient history.
-    status: OPEN
+    status: OPEN_OBSERVED_EVIDENCE_PENDING
   - id: R-05
     severity: HIGH
     risk: Baseline comparisons are biased or invented.
     mitigation: Same initial state/window where applicable; raw baseline evidence required; invented timings prohibited.
-    status: OPEN
+    status: OPEN_OBSERVED_EVIDENCE_PENDING
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Early reference-agent reconnaissance, explicit failure states and bounded fallback strategy.
-    status: OPEN
+    mitigation: Health Factor reference-agent path is proven; qualify remaining category paths early and retain explicit non-activatable fallback states.
+    status: OPEN_REMAINING_CATEGORIES
   - id: R-07
     severity: MEDIUM
     risk: Altana integration consumes time before core Main/TermiX paths work.
-    mitigation: Treat Altana as qualification target after the core activation path is real.
-    status: OPEN
+    mitigation: Keep Altana blocked until four-category core and observed evidence are credible.
+    status: CONTROLLED_BLOCKED
   - id: R-08
     severity: HIGH
     risk: Financial wording implies guarantees.
     mitigation: Use forecast/probability/outcome language and visible limitations; prohibit guarantee claims.
-    status: OPEN
+    status: OPEN_GUARDRAIL_ACTIVE
   - id: R-09
     severity: HIGH
     risk: JigJoy/Syndicate collision consumes the available build window.
-    mitigation: Evidence-first narrow vertical, strict gate sequencing and no platform expansion.
-    status: OPEN
+    mitigation: Strict gate sequencing and no optional platform expansion until Spondee core is submission-ready.
+    status: OPEN_CAPACITY_RISK
+  - id: R-10
+    severity: HIGH
+    risk: Current verified deliverable URL is loopback-only and cannot serve judges publicly.
+    mitigation: Preserve local/testnet proof as evidence, then deploy a public judging build and verify public URL health before submission.
+    status: OPEN_PUBLIC_DEPLOYMENT_PENDING
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
-    mitigation: Resolve through bounded 8004scan/Agent Studio reconnaissance before consequential architecture.
-    status: KILLING_ASSUMPTION_UNRESOLVED
+    mitigation: Next gate performs read-only 8004scan/Agent Studio/ERC-8004 qualification for Grid, Rebalancing and Yield before consequential implementation.
+    status: KILLING_ASSUMPTION_PARTIALLY_RESOLVED_HEALTH_FACTOR_ONLY
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    mitigation: Resolve with one G3 Promise Card probe before full build.
-    status: KILLING_ASSUMPTION_UNRESOLVED
+    mitigation: Resolved by G3 job 949 signed Promise commitment and final receipt verification.
+    status: RESOLVED_BY_G3_LIVE_E2E
+    evidence: evidence/g3-job-949-final-pass/README.md
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    mitigation: Define immutable promise/run IDs and test one complete vertical.
-    status: KILLING_ASSUMPTION_UNRESOLVED
+    mitigation: Resolved by signed Promise commitment, on-chain deliverable hash, manifest verification and verified Outcome Receipt for job 949.
+    status: RESOLVED_BY_G3_LIVE_E2E
+    evidence: evidence/g3-job-949-final-pass/README.md

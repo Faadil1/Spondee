@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R016-G3-LOCALSTORAGE-30D-RETRY-READY
+revision: STATE-R017-G3-JOB-949-SUBMITTED-VERIFY-READY
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -8,7 +8,7 @@ authority:
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G3_NEW_LIVE_E2E_READY_AFTER_LOCALSTORAGE_AND_30D_EXPIRY_FIX
+  status: G3_JOB_949_SUBMITTED_RECEIPT_PROVEN_LOCAL_MANIFEST_VERIFY_READY
 objective:
   statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
 primary_path:
@@ -30,107 +30,114 @@ build:
   parent_branch: build/g3-health-factor
   merge_to_main: NOT_AUTHORIZED
   backend_status: CI_VERIFIED
-  evidence_class: LIVE_CHAIN_PARTIAL_PLUS_SIMULATION_UNTIL_COMPLETE_SUBMIT_AND_RECEIPT_VERIFY
+  evidence_class: LIVE_CHAIN_SUBMITTED_PLUS_SIMULATION_RECEIPT_LOCAL_VERIFY_PENDING
 canonical_seller:
   address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   network_scope: bsc-testnet-only
   keystore: encrypted_v3_local_only
-  local_signing_check: PASS
-  recreate_for_retry: false
+  recreate_for_current_gate: false
+  wallet_unlock_required_for_current_gate: false
   password_or_key_chat_exposure: FORBIDDEN
 megafuel:
-  status: RUNTIME_PROVEN_IN_COMPLETE_SPONDEE_FLOW_THROUGH_FUND
+  status: RUNTIME_PROVEN_COMPLETE_SPONDEE_WRITES_THROUGH_PROVIDER_SUBMIT
   network: bsc-testnet
   chain_id: 97
-  tBNB_required_before_next_attempt: false
-  compact_description_fix: VERIFIED_LIVE_CREATE_JOB_ACCEPTED
-live_attempt_history:
+  tBNB_required_for_current_gate: false
+  user_funds_used: false
+historical_live_attempts:
   first_attempt:
     result: FAIL_CLOSED_PRE_WRITE
-    root_cause: buyer required non-standard provider_address
-    resolution: verify provider identity cryptographically
+    root_cause: non-standard provider_address assumption
   second_attempt:
     result: FAIL_CLOSED_PRE_WRITE
-    root_cause: custom terms.spondee_promise removed by SDK serialization
-    resolution: SDK-preserved success_criteria carrier
+    root_cause: custom terms.spondee_promise dropped by SDK serialization
   third_attempt:
     result: FAIL_CLOSED_PRE_WRITE_MEGAFUEL_TX_SIZE
     root_cause: full Promise Card made createJob transaction too large
-    resolution: compact signed Promise commitment plus Base64URL task carrier and 1600-byte description guard
-  fourth_attempt:
-    started_at: '2026-09-03T23:38:40.406Z'
-    failed_at: '2026-09-03T23:41:03.555Z'
-    classification: LIVE_CHAIN_PARTIAL_SUCCESS__DELIVERABLE_URL_CONFIGURATION_BLOCKER
-    buyer_address: '0xA7ceB00B63F911fB76BD6d5616093586de757139'
-    job_id: '948'
-    user_funds_used: false
-    progress:
-      create_job: '0x6630ebe43233fa2cf19e843d24933c656bd885c7f7a756593b0f23e9c765c2f3'
-      register_job: '0x5205db611ce4f8008f1af78b51f9bbd166b701f8dbe076f70354fce814002a58'
-      set_budget: '0x1ad306e022385ee3b25777f81042e98469867ee586abf6d445ea5febeb8b618b'
-      fund: '0x279bf5c9017393450ff1aa7628c3da8f673754c8931c1de5f76942961a7c618e'
-    provider_submit_tx: null
-    blocker: LocalStorage returned file:// and ERC8183_AGENT_URL was unset.
-  funded_job_948_recovery:
-    started_at: '2026-09-03T23:50:58.062Z'
-    failed_at: '2026-09-03T23:53:03.692Z'
-    result: FAIL_CLOSED_SUBMISSION_DEADLINE_PASSED
-    job_id: '948'
-    provider_submit_tx: null
-    error: 'Submission deadline has passed (expiredAt - disputeWindow = 1788479322).'
-    classification: JOB_TERMINALLY_UNRECOVERABLE_FOR_PROVIDER_SUBMIT
-    retry_job_948: FORBIDDEN
-    finding: The prior quickstart-style 600-second submission slack expired before deterministic recovery could execute.
+  fourth_attempt_job_948:
+    result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
+    terminal_reason: provider submission deadline expired before recovery
+    retry: FORBIDDEN
+fifth_live_attempt_job_949:
+  started_at: '2026-09-04T00:05:40.534Z'
+  runner_failed_at: '2026-09-04T00:07:18.579Z'
+  classification: LIVE_CHAIN_SUCCESS_THROUGH_PROVIDER_SUBMIT__BUYER_POST_SUBMIT_RPC_LOG_SCAN_LIMIT
+  buyer_address: '0x39EB3491a82E7CC7f6C99055bC08e9E5231BA297'
+  job_id: '949'
+  transactions:
+    create_job: '0x7d4c6b2528841068de045a7e037a4f1c88f6adf6f34ee9c353c30b49c110da4c'
+    register_job: '0x64e290a8c119cb3be5dfe27b3126adc7e3932ad86053bb4667acb92615628766'
+    set_budget: '0xc28452786f9be893663f5f0a7c2fef72330341b76e811cf4a76cd2ab3eca9b6d'
+    fund: '0x3e6d9bb9d504d1c80a8dbd32cc65a234cf91c6e503afccff48222f03873a95ef'
+    provider_submit: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
+  provider_submit_runtime:
+    confirmed: true
+    gas_used: '248654'
+    effective_gas_price_wei: '0'
+    wallet_paid_wei: '0'
+    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
+  runner_failure:
+    error: JobInitialised scan for job 949 hit the RPC range/rate limit; retry later
+    classification: POST_SUBMIT_READ_PATH_ONLY
+    new_transaction_required: false
+receipt_based_chain_proof:
+  status: VERIFIED_PASS
+  workflow_run: '33820803719'
+  workflow: G3 Submitted Job 949 Verification
+  validated_head: '1a613ba4de74a5a0181247dc4c5a86f3d61c49af'
+  method: KNOWN_SUBMIT_TRANSACTION_RECEIPT_PLUS_GETJOB_NO_ETH_GETLOGS
+  job_id: '949'
+  job_status: SUBMITTED
+  provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
+  submit_transaction_hash: '0x39243a3e3b145e31cd6318ace98ca764028a91e1a68d5f89f7fdc556d4b4fc74'
+  submit_block: '128964136'
+  deliverable_url: 'http://127.0.0.1:9100/erc8183/job/949/response'
+  deliverable_hash: '0x13630e4a1d5de2a8d3ea84f45da8b3826b2c79d05dc365b1df773c2eec06bdbc'
+  promise_id: 'sp_87c1d19f5bc0cda01d586131'
+  promise_sha256: 'f0bdc9e00af63942d8c97ceb6495e0824ab5418b38ca667f9928906074f2607e'
+  scenario_id: spondee-hf-demo-001
+  receipt_log_scan_used: false
+  secrets_printed: false
 verified_live_properties:
-  - compact Promise commitment survived signed negotiation and createJob
-  - sanitizer-safe Base64URL Health Factor task survived the chain description path
-  - MegaFuel sponsored createJob in the complete Spondee flow
-  - MegaFuel sponsored registerJob in the complete Spondee flow
-  - MegaFuel sponsored setBudget(0) in the complete Spondee flow
-  - MegaFuel sponsored fund(0) in the complete Spondee flow
-  - seller reconstructed work and generated the deliverable manifest locally
+  - compact Promise commitment survived signed negotiation and on-chain createJob
+  - sanitizer-safe Base64URL Health Factor task survived signed/on-chain transport
+  - 30-day submission horizon produced a non-expired job
+  - LocalStorage HTTP bridge produced the on-chain deliverable URL
+  - MegaFuel sponsored createJob, registerJob, setBudget(0), fund(0), and provider submit
+  - provider submit transaction is mined and job 949 is SUBMITTED
+  - JobSubmitted and JobInitialised receipt logs bind the same deliverable hash
+  - on-chain getJob deliverable hash matches the submit receipt
+  - signed Promise commitment on job 949 resolves to the canonical Promise/scenario
 not_yet_verified:
-  - provider submit transaction from a non-expired complete Spondee job
-  - on-chain deliverable URL from the complete path
-  - manifest hash verification against the on-chain deliverable hash
-  - verified Spondee Outcome Receipt from the live job
+  - local manifest file hash matches the already-proven on-chain deliverable hash
+  - manifest response.content verifies as the Spondee Outcome Receipt
   - observed Agent Advantage
+  - four deployed live reference agents
   - public judging deployment
-localstorage_and_expiry_fix:
-  status: CI_VERIFIED_ONE_NEW_LIVE_ATTEMPT_READY
-  delivery:
-    server: scripts/local-erc8183-deliverable-server.mjs
-    wrapper: scripts/g3-megafuel-live-e2e-localstorage.ps1
-    agent_url: 'http://127.0.0.1:9100/erc8183'
-    behavior: Start the HTTP bridge before the seller so submitWorkflow can publish a fetchable deliverable URL immediately.
-  expiry:
-    submission_window_seconds: 2592000
-    submission_window_days: 30
-    formula: expiredAt = now + disputeWindow + 30_days
-    protocol_rule: submit must occur before or at expiredAt - disputeWindow
-    source_guidance: official BNB SDK protocol documentation recommends a long-lived job around 30 days
-  validation:
-    workflow: G3 Live LocalStorage Preflight
-    github_actions_run: '33819854509'
-    head: '1c4b83b92524808731271e132981e4c48c3b62e3'
-    result: PASS
-    ubuntu_wrapper_parse: PASS
-    local_http_bridge_health: PASS
-    backend_regression_suite: PASS
-    backend_typescript_build: PASS
-    windows_wrapper_parse: PASS
-    windows_node24_server_syntax: PASS
+job_949_read_only_verification:
+  status: CI_VERIFIED_LOCAL_EXECUTION_READY
+  evidence_record: evidence/g3-job-949-submitted/README.md
+  verifier: backend/src/verify-g3-submitted.ts
+  chain_probe: backend/src/probe-g3-submit-949.ts
+  local_runner: scripts/g3-verify-submitted-job-949.ps1
+  ci_workflow: .github/workflows/g3-submitted-949-verification.yml
+  local_manifest: reference-agents/health-factor/app/agent/.agent-data/erc8183-job-949.json
   execution_contract:
-    one_new_live_attempt_authorized: true
-    reuse_existing_seller_wallet: REQUIRED
-    acquire_tbnb_first: false
+    create_job: FORBIDDEN
+    register_job: FORBIDDEN
+    set_budget: FORBIDDEN
+    fund: FORBIDDEN
+    provider_submit: FORBIDDEN_ALREADY_DONE
+    seller_process: NOT_REQUIRED
+    wallet_unlock: NOT_REQUIRED
+    tBNB: NOT_REQUIRED
     mainnet: FORBIDDEN
-    blind_retry_after_new_failure: FORBIDDEN
+    action_class: READ_ONLY
 category_depth:
   health_factor:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: AGENT_STUDIO_SPECIALIZED
-    live_testnet: FOUR_CHAIN_WRITES_VERIFIED_NEW_COMPLETE_E2E_RETRY_READY
+    live_testnet: JOB_949_SUBMITTED_ONCHAIN_LOCAL_OUTCOME_RECEIPT_VERIFY_PENDING
   grid:
     backend: SIMULATION_CI_VERIFIED
     reference_agent: NOT_YET_DEPLOYED_LIVE
@@ -142,5 +149,5 @@ category_depth:
     reference_agent: NOT_YET_DEPLOYED_LIVE
 next_action:
   owner: HUMAN_LOCAL_RUNTIME
-  primary: Pull build/backend-complete and execute scripts/g3-megafuel-live-e2e-localstorage.ps1 exactly once. Reuse the existing encrypted seller wallet and enter its password only in the masked prompt. Do not retry job 948 and do not acquire tBNB first. Return only the public PASS block or a new failure block, then stop.
-next_gate: SPONDEE_G3_LOCALSTORAGE_30D_LIVE_E2E_LOCAL_EXECUTION_REQUIRED
+  primary: Pull build/backend-complete and execute scripts/g3-verify-submitted-job-949.ps1 exactly once. This is read-only and must not request the seller wallet password or create any transaction. Return the public PASS or failure block, then stop.
+next_gate: SPONDEE_G3_JOB_949_LOCAL_MANIFEST_AND_OUTCOME_RECEIPT_VERIFICATION_REQUIRED

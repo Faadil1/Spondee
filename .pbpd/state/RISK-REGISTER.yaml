@@ -3,18 +3,18 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze MVP; prioritize remaining three live category paths, observed evidence, and public judging availability before optional integrations.
+    mitigation: Freeze MVP; verify external task surfaces quickly, then build only the controlled fallbacks actually required; prioritize observed evidence and public judging availability over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
     risk: Four-category depth becomes cosmetic or uneven.
-    mitigation: Shared Promise/Receipt schemas plus live-path qualification before deployment; Health Factor cannot remain the only credible activation path.
-    status: OPEN_NEXT_GATE
+    mitigation: External candidates now exist for all remaining categories; require direct task-surface verification or Spondee Agent Studio fallback before activatable=true.
+    status: OPEN_ACTIVATION_PROOF_NEXT
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Keep Health Factor as hero only; qualify and then implement equal find-understand-activate depth across Grid, Rebalancing and Yield.
-    status: OPEN_NEXT_GATE
+    mitigation: Keep Health Factor as hero only; advance Grid, Rebalancing and Yield through the same truthful find-understand-activate structure.
+    status: OPEN_ACTIVATION_PROOF_NEXT
   - id: R-04
     severity: HIGH
     risk: Agent confidence values are arbitrary or misleading.
@@ -28,12 +28,12 @@ risks:
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Health Factor reference-agent path is proven; qualify remaining category paths early and retain explicit non-activatable fallback states.
-    status: OPEN_REMAINING_CATEGORIES
+    mitigation: Primary and fallback candidates are recorded per category; probe public task surfaces read-only, then switch quickly to the Spondee Agent Studio controlled fallback if an external path is opaque or unstable.
+    status: OPEN_EXTERNAL_TASK_SURFACE_PROBE
   - id: R-07
     severity: MEDIUM
     risk: Altana integration consumes time before core Main/TermiX paths work.
-    mitigation: Keep Altana blocked until four-category core and observed evidence are credible.
+    mitigation: Altana writes remain blocked; only record permission requirements during read-only task-surface probes.
     status: CONTROLLED_BLOCKED
   - id: R-08
     severity: HIGH
@@ -50,11 +50,17 @@ risks:
     risk: Current verified deliverable URL is loopback-only and cannot serve judges publicly.
     mitigation: Preserve local/testnet proof as evidence, then deploy a public judging build and verify public URL health before submission.
     status: OPEN_PUBLIC_DEPLOYMENT_PENDING
+  - id: R-11
+    severity: CRITICAL
+    risk: A live ERC-8004 registration is mistaken for a proven Spondee activation path.
+    mitigation: Keep every external candidate activatable=false until its advertised Agent Card/service/task interface is independently verified; wallet activity and third-party Activate buttons are insufficient evidence.
+    status: OPEN_NEXT_GATE
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
-    mitigation: Next gate performs read-only 8004scan/Agent Studio/ERC-8004 qualification for Grid, Rebalancing and Yield before consequential implementation.
-    status: KILLING_ASSUMPTION_PARTIALLY_RESOLVED_HEALTH_FACTOR_ONLY
+    mitigation: G4 read-only qualification found primary and fallback BSC/ERC-8004 candidates for Grid, Rebalancing and Yield plus a controlled Spondee Agent Studio fallback for each.
+    status: CANDIDATE_AVAILABILITY_RESOLVED__JUDGE_READY_ACTIVATION_UNRESOLVED
+    evidence: evidence/g4-four-category-live-path-qualification/README.md
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.

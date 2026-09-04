@@ -10,127 +10,99 @@ handover:
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
-    Health Factor job 949, Grid job 954, and Rebalancing job 955 are closed PASS and MUST NOT be rerun.
-    Yield is the only live category currently authorized.
+    G4 four-category live transport is closed PASS. Health Factor 949, Grid 954,
+    Rebalancing 955 and Yield 957 MUST NOT be rerun. All four current Outcome Receipts
+    are SIMULATION and MUST NOT be counted as observed Agent Advantage.
 
-  current_milestone: G4_REBALANCING_JOB_955_PASS__YIELD_ISOLATED_RUNNER_PREFLIGHT_PASS
-  lifecycle_status: G4_YIELD_LOCAL_LIVE_TESTNET_E2E_READY
+  current_milestone: G4_FOUR_CATEGORY_LIVE_TRANSPORT_PASS__G5_OBSERVED_EVIDENCE_PREFLIGHT
+  lifecycle_status: G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN
 
   authority:
     project: PROJECT_AUTHORIZED
-    current_gate: SPONDEE_G4_YIELD_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
-    parent_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-    gate_status: HUMAN_AUTHORIZED_AND_PREFLIGHT_PASS
-    current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
+    completed_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
+    completed_gate_status: PASS
+    current_gate: SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED
+    current_action_class: CODE_AND_READ_ONLY_EVIDENCE_DESIGN
     production_owner: PBPD
-    local_runtime_owner: HUMAN
+    local_runtime_owner: HUMAN_WHEN_LATER_REQUIRED
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY
     merge_to_main: NOT_AUTHORIZED
 
-  g3_health_factor:
+  four_category_live_transport:
     status: PASS_CLOSED
-    evidence: evidence/g3-job-949-final-pass/README.md
-    job_id: '949'
-    no_further_live_run: true
+    count: 4
+    required: 4
+    health_factor:
+      job_id: '949'
+      status: PASS_CLOSED
+      evidence: evidence/g3-job-949-final-pass/README.md
+    grid:
+      job_id: '954'
+      status: PASS_CLOSED
+      evidence: evidence/g4-grid-job-954-final-pass/README.md
+    rebalancing:
+      job_id: '955'
+      status: PASS_CLOSED
+      evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
+    yield:
+      job_id: '957'
+      status: PASS_CLOSED
+      buyer_address: '0xa9C2A1397F7E5901Af2BB8C40CC9acEdC5aeD770'
+      provider_submit_tx: '0x35de5f07749c3d0cc6471b20272100b8eeb8b3424a62ecee357904ddfb8800f7'
+      promise_id: sp_54d1d6a04418f5a2f4e5c79c
+      promise_sha256: 3aae9cea505146218d1c3518e625b885983a043ff20635ae08f64beab3a204d6
+      buyer_balance_before_wei: '0'
+      buyer_balance_after_wei: '0'
+      manifest_hash_verified: true
+      spondee_receipt_verified: true
+      evidence: evidence/g4-yield-job-957-final-pass/README.md
 
-  g4_grid:
-    status: PASS_CLOSED
-    evidence: evidence/g4-grid-job-954-final-pass/README.md
-    job_id: '954'
-    final_chain_status: COMPLETED
-    provider_submit_tx: '0xf279d0f3b215ed6b92449fcaf93517a42f7c309190ab923aabd010d034a0e6f3'
-    outcome_receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
-    no_further_live_run: true
+  truth_boundary:
+    current_live_receipts: SIMULATION_ONLY
+    observed_agent_advantage_pairs: 0
+    required_observed_pairs: 3
+    trading_pair_required: true
+    simulation_can_count_as_observed: false
 
-  g4_rebalancing:
-    status: PASS_CLOSED
-    evidence: evidence/g4-rebalancing-job-955-final-pass/README.md
-    job_id: '955'
-    final_chain_status: SUBMITTED
-    buyer_address: '0xbe9775807767c36A2ae4c2b88c1Fc08722273D37'
-    buyer_balance_before_wei: '0'
-    buyer_balance_after_wei: '0'
-    provider_submit_tx: '0xb69e799bb8668eb93c9d724e42fd3351e13b10a75c22b7236eb58ed680cf3149'
-    submit_block: '129008551'
-    submitted_at: '1788500356'
-    deliverable_url: 'http://127.0.0.1:9100/erc8183/job/955/response'
-    deliverable_hash: '0x2c0341870da9ba1a03cb80130ba3de7852873ae6274396aa4141d591cef80a3c'
-    promise_id: sp_034fd69c69975ffa9a5b916f
-    promise_sha256: 8fe7607d75b86a924d14e0a63dccfaf40b16119d535c450caa99781194f225b3
-    manifest_hash_verified: true
-    spondee_receipt_verified: true
-    outcome_receipt_evidence_class: SIMULATION
-    observed_agent_advantage_claimed: false
-    historical_log_scan_used: false
-    new_job_created_during_recovery: false
-    recovery_used_write_retry: false
-    no_further_live_run: true
+  g5_observed_evidence:
+    status: DESIGN_AND_PREFLIGHT_REQUIRED
+    prd_requirements:
+      - MUST-10 three observed paired tasks
+      - MUST-11 at least one trading-related measured task
+      - MUST-12 observed or reproducible baseline timings/costs/results
+      - MUST-13 Health Factor useful warning lead time and response latency
+    existing_report_engine: backend/src/evidence.ts
+    current_report_behavior: SIMULATION_EXCLUDED_AND_READY_ONLY_AT_THREE_OBSERVED_PAIRS
+    first_priority: FREEZE_OBSERVED_EVIDENCE_PROTOCOL
+    candidate_pair_sequence:
+      - GRID_TRADING_OBSERVED_PAIR_REQUIRED
+      - HEALTH_FACTOR_OBSERVED_EVENT_TAPE_PAIR
+      - YIELD_OR_REBALANCING_OBSERVED_PAIR
+    constraints:
+      - same initial state/window or reproducible baseline protocol
+      - immutable scenario/run IDs
+      - preserve raw timings costs and outputs
+      - no synthetic estimate promoted to OBSERVED
+      - no meaningful mainnet/user capital without explicit human authority
 
-  rebalancing_failure_and_recovery_truth:
-    initial_writer_result: FAIL_CLOSED_AFTER_FUND
-    cause: BUYER_EXPECTED_SYNC_NOTIFY_RESULT_WHILE_SELLER_DEFAULT_WAS_ASYNC_ACK
-    readonly_probe_run: 33840042425
-    readonly_probe_result: JOB_955_FUNDED_BUYER_ZERO_BALANCE
-    recovery_preflight_run: 33840652210
-    recovery_result: PASS_EXISTING_JOB_955_ONLY
-    chain_write_recreated: false
-    new_job_created: false
+  public_deployment:
+    status: PENDING_AFTER_OR_IN_PARALLEL_WITH_OBSERVED_EVIDENCE_BUILD
+    current_loopback_deliverables_judge_accessible: false
 
-  g4_multi_category_buyer:
-    status: REMEDIATED_CI_PASS
-    implementation: backend/src/category-erc8183.ts
-    behavior: EXPLICIT_WAIT_FOR_RESULT_TRUE_THEN_EXACT_SUBMIT_TX_RECEIPT
-    seller_default_behavior: ASYNC_ACK_UNCHANGED
-    forbidden_behavior: getJobSubmittedEvents
-    truth_boundary: SIMULATION_RECEIPTS_DO_NOT_COUNT_AS_OBSERVED_AGENT_ADVANTAGE
-
-  g4_yield:
-    workspace: reference-agents/yield
-    task_schema: spondee.yield.task.v1
-    scenario: reference-agents/yield/demo/g4-live-scenario.json
-    scenario_id: spondee-yield-live-001
-    scenario_evidence_class: SIMULATION
-    build_test_status: PASS
-    live_status: READY_NOW
-    runner: scripts/g4-yield-live-e2e-localstorage.ps1
-    isolated_runner_ci_run: 33841526082
-    isolated_runner_ci_status: PASS
-    validated_head: b57bd35ba4fd6d77993c035c7ca3e33e83cef4a7
-    preflight_evidence: evidence/g4-yield-isolated-runner-preflight/README.md
-    runner_guards:
-      - Yield-only category pin
-      - no Grid scenario path
-      - no Rebalancing scenario path
-      - jobs 949/954/955 closure banner
-      - existing canonical seller only
-      - no wallet creation
-      - no mainnet
-      - zero service price
-      - MegaFuel primary
-      - stop on failure
-
-  exact_next_gate: SPONDEE_G4_YIELD_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
-  exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
+  exact_next_gate: SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED
+  exact_next_owner: PBPD_IMPLEMENTATION
   exact_next_action: >-
-    Pull build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
-    .\scripts\g4-yield-live-e2e-localstorage.ps1 exactly once. Enter the existing seller wallet
-    password only into the masked local prompt. Return only public PASS/FAIL evidence.
+    Freeze the observed paired-experiment protocol, add raw evidence schemas and validators,
+    add negative tests preventing SIMULATION-to-OBSERVED promotion, and identify a first bounded
+    observed experiment that does not require meaningful real mainnet/user capital.
 
   stop_conditions:
-    - stop immediately on any Yield failure
-    - no retry after partial chain write until deterministic diagnosis
-    - no new seller wallet
-    - no seller password/private key/seed/keystore in chat or Git
-    - no Health Factor/Grid/Rebalancing job recreation or mutation
-    - no tBNB acquisition if MegaFuel fails
-    - no non-zero service price
-    - no x402/B402 payment
-    - no Altana grantSession
-    - no PancakeSwap/Venus/Lista value-moving transaction
-    - no mainnet or meaningful user capital
-    - no observed Agent Advantage claim from simulation receipts
+    - do not rerun jobs 949, 954, 955, or 957
+    - do not claim observed Agent Advantage from any existing simulation receipt
+    - no meaningful mainnet/user capital without explicit human authority
+    - no material paid spend
+    - no unsupported return/safety claim
     - no merge to main
-    - no Project Finisher
+    - no Project Finisher yet
     - no final submission

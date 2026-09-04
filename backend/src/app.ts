@@ -16,6 +16,8 @@ import {
   runSignedZeroPriceTestnetActivation,
   type LiveActivationProgress,
 } from "./erc8183.js";
+import { DEMO_TASKS } from "./examples.js";
+import { BACKEND_CAPABILITY_MATRIX, CATEGORY_PRESENTATION, SPONDEE_PRODUCT } from "./product.js";
 import type { SpondeeStore } from "./store.js";
 
 function errorMessage(error: unknown): string {
@@ -34,19 +36,96 @@ function appendTx(activation: ActivationRecord, tx?: string): void {
   }
 }
 
-export function createApp(store: SpondeeStore) {
+function allowedCorsOrigins(env: NodeJS.ProcessEnv): Set<string> {
+  const configured = env.SPONDEE_CORS_ORIGINS?.split(",")
+    .map((value) => value.trim())
+    .filter(Boolean) ?? [];
+  const localDefaults = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+  ];
+  return new Set(configured.length > 0 ? configured : localDefaults);
+}
+
+export function createApp(store: SpondeeStore, env: NodeJS.ProcessEnv = process.env) {
   const app = express();
+  const corsOrigins = allowedCorsOrigins(env);
   app.disable("x-powered-by");
+  app.use((req, res, next) => {
+    const origin = req.header("origin");
+    if (!origin) return next();
+    if (!corsOrigins.has(origin)) {
+      if (req.method === "OPTIONS") return res.status(403).json({ error: "origin not allowed" });
+      return next();
+    }
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") return res.status(204).end();
+    return next();
+  });
   app.use(express.json({ limit: "256kb" }));
 
   app.get("/healthz", (_req, res) => {
-    res.json({ ok: true, service: "spondee-backend", version: "0.1.0" });
+    res.json({ ok: true, service: "spondee-backend", version: "0.2.0-backend-freeze" });
+  });
+
+  app.get("/v1/product/bootstrap", async (_req, res, next) => {
+    try {
+      const evidence = await store.listEvidence();
+      const report = buildAgentAdvantageReport(evidence);
+      const agents = listAgents();
+      const calibrations = Object.fromEntries(
+        agents
+          .filter((agent) => agent.identity.source === "SPONDEE")
+          .map((agent) => [agent.agent_id, calibrationSummary(evidence, agent.agent_id)]),
+      );
+      return res.json({
+        schema: SPONDEE_PRODUCT.frontend_contract_version,
+        product: SPONDEE_PRODUCT,
+        backend_capabilities: BACKEND_CAPABILITY_MATRIX,
+        categories: SPONDEE_PRODUCT.category_order.map((category) => ({
+          category,
+          presentation: CATEGORY_PRESENTATION[category],
+          reference_agent: referenceAgentForCategory(category),
+        })),
+        agents,
+        demo_tasks: DEMO_TASKS,
+        runtime: {
+          live_testnet_write_ready: liveGateStatus().ready_for_live_write,
+          public_readiness_endpoint: "/v1/runtime/readiness",
+        },
+        evidence: {
+          agent_advantage_report: report,
+          calibration_by_agent: calibrations,
+          countability_rule:
+            "SIMULATION evidence is excluded. Observed pairs must use preserved same-window raw evidence and a verified marketplace activation reference.",
+        },
+        endpoints: {
+          categories: "/v1/categories",
+          agents: "/v1/agents",
+          promises: "/v1/promises",
+          promise_preview: "/v1/promises/preview",
+          activations: "/v1/activations",
+          receipts: "/v1/receipts",
+          evidence_runs: "/v1/evidence/runs",
+          agent_advantage: "/v1/evidence/agent-advantage",
+          runtime_readiness: "/v1/runtime/readiness",
+        },
+      });
+    } catch (error) {
+      return next(error);
+    }
   });
 
   app.get("/v1/categories", (_req, res) => {
     res.json({
       categories: CategorySchema.options.map((category) => ({
         category,
+        presentation: CATEGORY_PRESENTATION[category],
         reference_agent: referenceAgentForCategory(category),
       })),
     });
@@ -75,6 +154,14 @@ export function createApp(store: SpondeeStore) {
       substrate_policy:
         "8004scan/ERC-8004 metadata is identity/capability substrate only; Spondee does not convert it into an unsupported performance claim.",
     });
+  });
+
+  app.get("/v1/promises", async (_req, res, next) => {
+    try {
+      return res.json({ promises: await store.listPromises() });
+    } catch (error) {
+      return next(error);
+    }
   });
 
   app.post("/v1/promises/preview", async (req, res, next) => {
@@ -108,6 +195,14 @@ export function createApp(store: SpondeeStore) {
       const promise = await store.getPromise(req.params.id);
       if (!promise) return res.status(404).json({ error: "promise not found" });
       return res.json({ promise });
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  app.get("/v1/activations", async (_req, res, next) => {
+    try {
+      return res.json({ activations: await store.listActivations() });
     } catch (error) {
       return next(error);
     }
@@ -201,7 +296,7 @@ export function createApp(store: SpondeeStore) {
 
       const result = await runSignedZeroPriceTestnetActivation(
         activation.task,
-        process.env,
+        env,
         onProgress,
       );
       if (result.promise_id !== activation.promise_id) {
@@ -231,7 +326,7 @@ export function createApp(store: SpondeeStore) {
         claim_guardrail:
           typeof rawReceipt.claim_guardrail === "string"
             ? rawReceipt.claim_guardrail
-            : "Live ERC-8183 transport was observed on BSC Testnet, but the declared Health Factor scenario remains simulation evidence and is excluded from observed Agent Advantage.",
+            : "Live ERC-8183 transport was observed on BSC Testnet, but the declared scenario remains simulation evidence and is excluded from observed Agent Advantage.",
       };
       if (rawCalibration.eligible_for_observed_agent_advantage !== false) {
         throw new Error("verified live deliverable violated the simulation Agent Advantage guardrail");
@@ -259,11 +354,27 @@ export function createApp(store: SpondeeStore) {
     }
   });
 
+  app.get("/v1/receipts", async (_req, res, next) => {
+    try {
+      return res.json({ receipts: await store.listReceipts() });
+    } catch (error) {
+      return next(error);
+    }
+  });
+
   app.get("/v1/receipts/:id", async (req, res, next) => {
     try {
       const receipt = await store.getReceipt(req.params.id);
       if (!receipt) return res.status(404).json({ error: "receipt not found" });
       return res.json({ receipt });
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  app.get("/v1/evidence/runs", async (_req, res, next) => {
+    try {
+      return res.json({ evidence: await store.listEvidence() });
     } catch (error) {
       return next(error);
     }

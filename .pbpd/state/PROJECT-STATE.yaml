@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R031-G5-GRID-FORWARD-RUNNER-PREFLIGHT-PASS-EXECUTION-HUMAN-GATE
+revision: STATE-R031-SUPERSEDED-BY-G5-GRID-FORWARD-OBSERVED
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -7,235 +7,45 @@ authority:
   project_authority: PROJECT_AUTHORIZED
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
   production_owner: PBPD
-  consequential_build: ALLOWED_WITHIN_PRD_READY_SCOPE
-  completed_human_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-  completed_human_gate_status: PASS_2026_09_04
-  current_human_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  canonical_active_branch: build/g5-grid-forward-observed
+  this_branch_status: SUPERSEDED_DO_NOT_EXECUTE_G5_FORWARD_FROM_HERE
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
-  meaningful_mainnet_or_user_capital: HUMAN_ONLY
 lifecycle:
   phase: CONSEQUENTIAL_BUILD
-  status: G4_FOUR_OF_FOUR_LIVE_PASS__G5_GRID_DRY_RUN_PASS__FORWARD_RUNNER_PREFLIGHT_PASS__ZERO_COUNTABLE_PAIRS
-objective:
-  statement: Build Spondee as a calibrated outcome marketplace for live BSC agents across the four required BNB categories.
-primary_path:
-  status: LOCKED
-  path: LAND -> CATEGORY -> AGENT -> PROMISE_CARD -> BOUNDED_ACTIVATE -> OUTCOME_RECEIPT
-product:
-  tagline: Agents, measured by what they deliver.
-  concept: Calibrated Outcome Marketplace + Intervention Advantage
-prd:
-  path: incoming/PRODUCT-REQUIREMENTS-DOCUMENT.md
-  version: '0.1'
-  ready_status: PRD_READY
-  material_product_change_from_r031: false
-build:
-  active_branch: build/g4-sequential-live-e2e
-  base_branch: build/backend-complete
-  merge_to_main: NOT_AUTHORIZED
-  four_category_live_transport_status: PASS_CLOSED
-  health_factor_status: LIVE_E2E_PASS_JOB_949_CLOSED
-  grid_status: LIVE_E2E_PASS_JOB_954_CLOSED
-  rebalancing_status: LIVE_E2E_PASS_JOB_955_CLOSED
-  yield_status: LIVE_E2E_PASS_JOB_957_CLOSED
-  g5_observed_evidence_contract_status: PASS_HARDENED_COUNTABILITY
-  g5_observed_evidence_ci_run: 33843642146
-  g5_grid_market_source_status: PASS_READ_ONLY
-  g5_grid_market_source_ci_run: 33842784851
-  g5_grid_observed_dry_run_status: PASS_NON_COUNTABLE
-  g5_grid_observed_dry_run_ci_run: 33843581388
-  g5_grid_forward_runner_status: PASS_PREFLIGHT_EXECUTION_SEALED
-  g5_grid_forward_runner_ci_run: 33857461378
-canonical_seller:
-  address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
-  network_scope: bsc-testnet-only
-  keystore: encrypted_v3_local_only
-  password_or_key_chat_exposure: FORBIDDEN
-  create_new_wallet: FORBIDDEN
-  wallet_unlock_required_for_current_gate: true_local_masked_prompt_only_if_human_execution_gate_is_opened
-historical_runtime:
-  job_948:
-    result: LIVE_CHAIN_PARTIAL_SUCCESS_THROUGH_FUND
-    retry: FORBIDDEN
-  job_949:
-    category: health_factor
-    result: G3_FINAL_PASS
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_954:
-    category: grid
-    result: G4_FINAL_PASS_AFTER_READ_ONLY_RECOVERY
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_955:
-    category: rebalancing
-    result: G4_FINAL_PASS_AFTER_EXISTING_FUNDED_JOB_RECOVERY
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-  job_957:
-    category: yield
-    result: G4_FINAL_PASS
-    no_further_live_run: true
-    receipt_evidence_class: SIMULATION
-four_category_closure:
-  status: PASS
-  live_transport_count: 4
-  required_category_count: 4
-  all_receipt_truth_class: SIMULATION
-  observed_agent_advantage_count: 0
-  no_further_g4_category_live_runs_authorized: true
-g5_observed_evidence_protocol:
-  status: PASS_HARDENED
-  schema: spondee.agent-advantage-pair.v1
-  implementation: backend/src/observed-evidence.ts
-  tests: backend/src/observed-evidence.test.ts
-  protocol: work/G5-OBSERVED-EVIDENCE-PROTOCOL.md
-  authoritative_ci_run: 33843642146
-  required_pairs: 3
-  countable_pairs: 0
-  grid_pair_required: true
-  simulation_promotion_allowed: false
-  historical_replay_countable: false
-  dry_run_reference_agent_countable: false
-  countable_marketplace_requirements:
-    - LIVE_BSC_TESTNET_MARKETPLACE
-    - ERC8183_BSC_TESTNET
-    - activation_reference
-    - Promise/freeze before observation window
-    - TRANSACTION_TAPE
-    - non-historical observation mode
-  required_raw_artifacts:
-    - INPUT_SNAPSHOT
-    - AGENT_OUTPUT
-    - BASELINE_OUTPUT
-    - TIMING_LOG
-    - COST_LOG
-g5_grid_market_source:
-  status: PASS_READ_ONLY
-  source_type: BSC_MAINNET_CHAINLINK_READ_ONLY
-  network: bsc-mainnet
-  chain_id: 56
-  feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
-  wallet_used: false
-  chain_write_attempted: false
-  user_capital_used: false
-g5_grid_dry_run:
-  status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
-  authoritative_ci_run: 33843581388
-  hardened_contract_ci_run: 33843642146
-  pair_id: g5-grid-dry-55340232221132058579
-  scenario_id: g5-grid-dry-run-55340232221132058555-55340232221132058579
-  source_block: '119868943'
-  observed_round_count: 25
-  observation_window:
-    start_at: '2026-09-04T06:01:57.000Z'
-    end_at: '2026-09-04T06:15:10.000Z'
-  no_lookahead_configuration: true
-  agent_terminal_equity_usd: 9993.479936
-  agent_net_return_pct: -0.065201
-  agent_max_drawdown_pct: 0.074543
-  agent_estimated_execution_friction_usd: 4.583333
-  agent_fill_count: 11
-  baseline_terminal_equity_usd: 9998.06652
-  baseline_net_return_pct: -0.019335
-  baseline_max_drawdown_pct: 0.056784
-  measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-  approximate_terminal_equity_delta_usd: -4.586584
-  approximate_net_return_delta_percentage_points: -0.045866
-  structural_pair_validation: PASS
-  external_observed_provenance: true
-  marketplace_hire_mode: DRY_RUN_REFERENCE_AGENT
-  activation_reference: null
-  countable_for_final_report: false
-  paired_run_count_after_dry_run: 0
-  final_report_status_after_dry_run: INSUFFICIENT_OBSERVED_EVIDENCE
-  wallet_used: false
-  chain_write_attempted: false
-  user_capital_used: false
-  realized_mainnet_pnl_claimed: false
-  artifact:
-    id: '9925716870'
-    name: spondee-g5-grid-observed-dry-run
-    zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
-  evidence: evidence/g5-grid-observed-pair-dry-run/README.md
-g5_grid_forward_runner:
-  status: PASS_PREFLIGHT_EXECUTION_SEALED
-  implementation: backend/src/g5-grid-forward-observed.ts
-  tests: backend/src/g5-grid-forward-observed.test.ts
-  runner: scripts/g5-grid-forward-observed-pair.ps1
-  workflow: .github/workflows/g5-grid-forward-observed-runner-preflight.yml
-  authoritative_ci_run: 33857461378
-  validated_head: 19cdf217e9b579dc8c114bedfe742ef500273bff
-  backend_forward_contract: PASS
-  windows_runner_safety: PASS
-  plan_generation:
-    source: Chainlink BNB/USD read-only
-    freezes_from_anchor_only: true
-    generated_marketplace_task_future_prices: NONE
-    task_declared_price_path: TWO_IDENTICAL_ANCHOR_POINTS_ONLY
-  execution_seal:
-    switch_required: Execute
-    exact_authorization_token: I_AUTHORIZE_ONE_ZERO_PRICE_BSC_TESTNET_GRID_FORWARD_OBSERVED_ACTIVATION
-    guard_before_wallet_prompt: true
-    execution_used_during_preflight: false
-  forward_countability:
-    minimum_future_rounds: 12
-    rounds_must_be_strictly_after_activation_completion: true
-    marketplace_activation_required: true
-    transaction_tape_required: true
-    same_forward_window_for_agent_and_baseline: true
-    realized_mainnet_pnl_claimed: false
-  preflight_wallet_used: false
-  preflight_chain_write_attempted: false
-  preflight_user_capital_used: false
-  countable_pairs_created: 0
-  evidence: evidence/g5-grid-forward-runner-preflight/README.md
-critical_remaining_gaps:
-  observed_agent_advantage:
-    required_pairs: 3
-    countable_pairs: 0
-    trading_pair_required: true
-    trading_pair_countable: false
-    status: BLOCKING_FIRST_FORWARD_GRID_EXECUTION
-  health_factor_event_tape:
-    status: PENDING
-  public_judge_deployment:
-    status: PENDING
-  visible_authority_controls:
-    status: PARTIAL
-  project_finisher:
-    status: NOT_STARTED
-killing_assumptions:
-  A-01:
-    status: RESOLVED_FOUR_OF_FOUR_LIVE
-  A-02:
-    status: RESOLVED_BY_LIVE_E2E
-  A-03:
-    status: RESOLVED_BY_LIVE_E2E
-  A-06:
-    status: PARTIAL_FORWARD_RUNNER_PREFLIGHT_PASS__COUNTABLE_FORWARD_PAIR_EXECUTION_REQUIRED
+  status: SUPERSEDED_BRANCH_REDIRECT_ONLY
+redirect:
+  reason: A more complete G5 Grid forward workstream already existed and is referenced by Spec Kit as canonical.
+  canonical_branch: build/g5-grid-forward-observed
+  canonical_project_state: .pbpd/state/PROJECT-STATE.yaml
+  canonical_revision: STATE-R031-G5-GRID-FORWARD-RUNNER-PREFLIGHT-PASS-EXECUTION-HUMAN-GATE-NEXT
+  canonical_validated_head: c59725553793e6927479077205d4e4a91a7e78bb
+  canonical_current_head_at_reconciliation: b6d552a73e5d1dbfad6ad1befbe7f620d9014341
+  canonical_ci_run: 33845758154
+  canonical_ci_status: PASS
+  spec_kit_source_branch: build/g5-grid-forward-observed
+  duplicate_forward_runner_on_this_branch: DO_NOT_USE
+historical_guards:
+  closed_jobs:
+    - '949'
+    - '954'
+    - '955'
+    - '957'
+  closed_jobs_must_not_be_rerun: true
+  g4_live_transport: PASS_4_OF_4_CLOSED
+  countable_agent_advantage_pairs: 0
 current_gate:
-  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-  status: PASS
-  action_class: CODE_AND_READ_ONLY_PREFLIGHT
-  chain_write_used: false
-  wallet_unlock_used: false
-  user_capital_used: false
-next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-next_action:
-  owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
-  action_class: ONE_BOUNDED_BSC_TESTNET_MARKETPLACE_WRITE_PLUS_FORWARD_READONLY_OBSERVATION
-  primary: Execute exactly one newly frozen zero-price Grid marketplace activation, then collect only future Chainlink BNB/USD rounds and finalize the first countable Grid observed pair.
-  constraints:
-    - do not rerun jobs 949, 954, 955, or 957
-    - create at most one new Grid job for this gate
-    - exact one-run authorization token required before wallet prompt
-    - seller password only through masked local prompt
-    - BSC testnet write only; BSC mainnet read-only only
-    - zero service price and MegaFuel primary
-    - no meaningful user/mainnet capital
-    - no realized-mainnet-PnL claim
-    - stop on first failure; no blind retry
-    - no merge to main
-    - no final submission
+  id: SWITCH_TO_CANONICAL_G5_FORWARD_BRANCH_REQUIRED
+  status: REQUIRED_BEFORE_ANY_G5_EXECUTION
+  chain_write_allowed: false
+  wallet_unlock_allowed: false
+next_gate:
+  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+  canonical_branch: build/g5-grid-forward-observed
+  authorization_status: HUMAN_GO_REQUIRED
+constraints:
+  - do not execute scripts/g5-grid-forward-observed-pair.ps1 from this superseded branch
+  - do not rerun jobs 949, 954, 955, or 957
+  - switch to build/g5-grid-forward-observed before continuing
+  - no merge to main
+  - no final submission

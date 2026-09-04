@@ -1,0 +1,80 @@
+name: G5 Grid Observed Pair Dry Run
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'backend/src/observed-evidence.ts'
+      - 'backend/src/observed-evidence.test.ts'
+      - 'backend/src/g5-grid-observed-dry-run.ts'
+      - 'work/G5-OBSERVED-EVIDENCE-PROTOCOL.md'
+      - '.github/workflows/g5-grid-observed-pair-dry-run.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  grid-observed-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression and G5 evidence tests
+        working-directory: backend
+        run: npm test
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Static no-write and no-secret guard
+        shell: bash
+        run: |
+          test -z "$(grep -E 'privateKey|WALLET_PASSWORD|BUYER_WALLET_PASSWORD|sendTransaction|writeContract|walletClient|broadcastTransaction' backend/src/g5-grid-observed-dry-run.ts || true)"
+          grep -F 'countable_for_final_report: false' backend/src/g5-grid-observed-dry-run.ts
+          grep -F 'chain_write_attempted: false' backend/src/g5-grid-observed-dry-run.ts
+          grep -F 'user_capital_used: false' backend/src/g5-grid-observed-dry-run.ts
+          grep -F 'realized_mainnet_pnl_claimed: false' backend/src/g5-grid-observed-dry-run.ts
+          grep -F 'HISTORICAL_OBSERVED_DATA_REPLAY' backend/src/g5-grid-observed-dry-run.ts
+      - name: Run Grid observed-data dry run
+        working-directory: backend
+        env:
+          SPONDEE_G5_OUTPUT_DIR: /tmp/spondee-g5-grid-dry-run
+        run: npx tsx src/g5-grid-observed-dry-run.ts | tee /tmp/spondee-g5-grid-dry-run-console.json
+      - name: Validate dry-run result and artifacts
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = '/tmp/spondee-g5-grid-dry-run/dry-run-result.json';
+          const x = JSON.parse(fs.readFileSync(p,'utf8'));
+          if (x.conclusion !== 'SPONDEE_G5_GRID_OBSERVED_PAIR_DRY_RUN_PASS') throw new Error('wrong dry-run conclusion');
+          if (x.observed_round_count < 10) throw new Error('insufficient observed rounds');
+          if (x.structural_pair_validation !== 'PASS') throw new Error('pair schema did not validate');
+          if (x.external_observed_provenance !== true) throw new Error('external provenance missing');
+          if (x.countable_for_final_report !== false) throw new Error('dry run must remain non-countable');
+          if (x.final_report_paired_run_count_after_dry_run !== 0) throw new Error('dry run contaminated final pair count');
+          if (x.final_report_status_after_dry_run !== 'INSUFFICIENT_OBSERVED_EVIDENCE') throw new Error('dry run made report ready');
+          if (x.wallet_used !== false || x.chain_write_attempted !== false || x.user_capital_used !== false) throw new Error('no-write boundary failed');
+          if (x.realized_mainnet_pnl_claimed !== false) throw new Error('realized PnL boundary failed');
+          for (const name of ['input-snapshot.json','market-data.json','agent-output.json','baseline-output.json','timing-log.json','cost-log.json','pair-bundle.json']) {
+            if (!fs.existsSync(`/tmp/spondee-g5-grid-dry-run/${name}`)) throw new Error(`missing ${name}`);
+          }
+          const pair = JSON.parse(fs.readFileSync('/tmp/spondee-g5-grid-dry-run/pair-bundle.json','utf8'));
+          if (pair.marketplace_hire.mode !== 'DRY_RUN_REFERENCE_AGENT') throw new Error('wrong hire mode');
+          if (pair.marketplace_hire.countable_for_final_report !== false) throw new Error('pair unexpectedly countable');
+          if (pair.trading_record.execution_environment !== 'OBSERVED_MARKET_DATA_REPLAY') throw new Error('wrong trading environment');
+          console.log(JSON.stringify({pair_id:x.pair_id, rounds:x.observed_round_count, agent:x.agent_output, baseline:x.baseline_output}, null, 2));
+          NODE
+      - name: Upload immutable dry-run evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-g5-grid-observed-dry-run
+          path: /tmp/spondee-g5-grid-dry-run
+          if-no-files-found: error
+          retention-days: 30

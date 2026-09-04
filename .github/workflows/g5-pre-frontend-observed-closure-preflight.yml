@@ -1,0 +1,106 @@
+name: G5 Pre-Frontend Observed Closure Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/pre-frontend-closure']
+    paths:
+      - 'backend/**'
+      - 'reference-agents/health-factor/**'
+      - 'reference-agents/rebalancing/**'
+      - 'scripts/g5-pre-frontend-observed-closure.ps1'
+      - '.github/workflows/g5-pre-frontend-observed-closure-preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  linux-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Backend regression
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+      - name: Strict backend build
+        working-directory: backend
+        run: npm run build
+      - name: Install Health workspace
+        working-directory: reference-agents/health-factor
+        run: npx --yes pnpm@10.24.0 install --frozen-lockfile
+      - name: Build Health seller including G5 forward server
+        working-directory: reference-agents/health-factor/app/agent
+        run: npx --yes pnpm@10.24.0 run build
+      - name: Install Rebalancing workspace
+        working-directory: reference-agents/rebalancing
+        run: npx --yes pnpm@10.24.0 install --frozen-lockfile
+      - name: Build Rebalancing seller including G5 forward server
+        working-directory: reference-agents/rebalancing/app/agent
+        run: npx --yes pnpm@10.24.0 run build
+      - name: Read-only BNB/USD source qualification
+        working-directory: backend
+        run: |
+          node --import tsx --input-type=module - <<'NODE'
+          import { freezeBnbUsdRound, verifyBnbUsdRounds } from './src/g5-forward-marketplace.ts';
+          const freeze = await freezeBnbUsdRound();
+          if (!/^\d+$/.test(freeze.round_id) || freeze.price_usd <= 0) throw new Error('invalid Chainlink freeze');
+          await verifyBnbUsdRounds([{ round_id: freeze.round_id, price_usd: freeze.price_usd, updated_at: freeze.updated_at }]);
+          console.log(JSON.stringify({
+            schema: 'spondee.g5-pre-frontend-market-source-preflight.v1',
+            chain_id: 56,
+            round_id: freeze.round_id,
+            price_usd: freeze.price_usd,
+            wallet_used: false,
+            mainnet_write_attempted: false,
+            conclusion: 'SPONDEE_G5_PRE_FRONTEND_MARKET_SOURCE_PASS'
+          }, null, 2));
+          NODE
+      - name: Static safety guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED' scripts/g5-pre-frontend-observed-closure.ps1
+          grep -F 'Read-Host' scripts/g5-pre-frontend-observed-closure.ps1
+          grep -F 'liquidation_prevention_claimed:false' backend/src/live-g5-health-forward.ts
+          grep -F 'realized_mainnet_pnl_claimed:false' backend/src/live-g5-rebalancing-forward.ts
+          grep -F 'mainnet_value_moved:false' reference-agents/health-factor/app/agent/src/g5HealthForwardServer.ts
+          grep -F 'mainnet_value_moved:false' reference-agents/rebalancing/app/agent/src/g5RebalancingForwardServer.ts
+          test -z "$(grep -E 'MAINNET_PRIVATE_KEY|mainnet.*writeContract|mainnet.*sendTransaction' backend/src/g5-forward-marketplace.ts backend/src/g5-health-forward.ts backend/src/g5-rebalancing-forward.ts reference-agents/health-factor/app/agent/src/g5HealthForwardObserved.ts reference-agents/rebalancing/app/agent/src/g5RebalancingForwardObserved.ts || true)"
+          test -z "$(grep -E 'job.?949|job.?954|job.?955|job.?957|job.?962' backend/src/live-g5-health-forward.ts backend/src/live-g5-rebalancing-forward.ts reference-agents/health-factor/app/agent/src/g5HealthForwardServer.ts reference-agents/rebalancing/app/agent/src/g5RebalancingForwardServer.ts || true)"
+      - name: No-write runner preflight
+        shell: pwsh
+        run: ./scripts/g5-pre-frontend-observed-closure.ps1 -SkipInstall
+      - name: Upload preflight evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-g5-pre-frontend-observed-closure-preflight
+          path: |
+            scripts/g5-pre-frontend-observed-closure.ps1
+            backend/src/g5-health-forward.ts
+            backend/src/g5-rebalancing-forward.ts
+            backend/src/g5-forward-marketplace.ts
+          retention-days: 14
+
+  windows-parse:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: PowerShell parse and safety markers
+        shell: powershell
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path '.\scripts\g5-pre-frontend-observed-closure.ps1'), [ref]$null, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) { $errors | Format-List | Out-String | Write-Error; exit 1 }
+          $content = Get-Content '.\scripts\g5-pre-frontend-observed-closure.ps1' -Raw
+          @('Read-Host','-AsSecureString','SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED','build/pre-frontend-closure','ClearSensitive') | ForEach-Object { if (-not $content.Contains($_)) { throw "missing safety marker $_" } }
+          Write-Host 'Windows runner parse/safety: PASS'

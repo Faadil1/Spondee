@@ -1,0 +1,180 @@
+name: Backend Final Completion
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/backend-completion-final']
+    paths:
+      - 'backend/**'
+      - '.pbpd/state/**'
+      - 'work/**'
+      - '.github/workflows/backend-final-completion.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  backend-final:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+
+      - name: Full backend regression
+        working-directory: backend
+        env:
+          SPONDEE_LIVE_TESTNET_ENABLED: 'false'
+        run: npm test
+
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+
+      - name: Four-category claim-boundary smoke
+        working-directory: backend
+        run: npm run --silent smoke > backend-final-smoke.json
+
+      - name: Verify no simulation promotion
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const report = JSON.parse(readFileSync('backend-final-smoke.json', 'utf8'));
+          if (report.live_write_attempted !== false) throw new Error('smoke attempted live write');
+          if (report.category_count !== 4) throw new Error('four categories required');
+          for (const row of report.rows) {
+            if (row.evidence_class !== 'SIMULATION') throw new Error('simulation truth class changed');
+            if (row.observed_advantage_eligible !== false) throw new Error('simulation promoted to observed');
+          }
+          console.log('Final simulation truth boundary: PASS');
+          NODE
+
+      - name: Protected-surface and replay smoke
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --input-type=module - <<'NODE'
+          import { once } from 'node:events';
+          import { createApp } from './src/app.ts';
+          import { MemoryStore } from './src/store.ts';
+          import { DEMO_TASKS } from './src/examples.ts';
+          const env = {
+            SPONDEE_ACTION_TOKEN: 'ci-action-token-123456789012345',
+            SPONDEE_EVIDENCE_INGEST_TOKEN: 'ci-evidence-token-1234567890123',
+            SPONDEE_CORS_ORIGINS: 'https://frontend.example',
+            SPONDEE_LIVE_TESTNET_ENABLED: 'false',
+          };
+          const store = new MemoryStore();
+          await store.init();
+          const server = createApp(store, env).listen(0);
+          await once(server, 'listening');
+          const address = server.address();
+          if (!address || typeof address === 'string') throw new Error('server address unavailable');
+          const base = `http://127.0.0.1:${address.port}`;
+          const task = DEMO_TASKS[0];
+          const preview = await fetch(`${base}/v1/promises/preview`, {
+            method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({task})
+          });
+          if (preview.status !== 201) throw new Error(`preview ${preview.status}`);
+          const promise = (await preview.json()).promise;
+          const activationResponse = await fetch(`${base}/v1/activations`, {
+            method: 'POST', headers: {'content-type':'application/json'},
+            body: JSON.stringify({promise_id: promise.promise_id, task, mode:'SIMULATION'})
+          });
+          const activation = (await activationResponse.json()).activation;
+          const replayResponse = await fetch(`${base}/v1/activations/${activation.activation_id}/replay`);
+          const replay = (await replayResponse.json()).replay;
+          if (replay.replay_mode !== 'READ_ONLY_RECONSTRUCTION') throw new Error('replay mode');
+          if (replay.truth.reexecution_performed !== false) throw new Error('replay reexecuted');
+          const protectedResponse = await fetch(`${base}/v1/evidence/baselines`, {method:'POST'});
+          if (protectedResponse.status !== 401) throw new Error(`evidence endpoint protection ${protectedResponse.status}`);
+          const cors = await fetch(`${base}/v1/product/bootstrap`, {
+            method: 'OPTIONS', headers: {origin:'https://frontend.example'}
+          });
+          if (cors.status !== 204) throw new Error(`cors ${cors.status}`);
+          await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+          await store.close();
+          console.log(JSON.stringify({
+            replay: 'PASS', evidence_protection: 'PASS', cors: 'PASS', live_write_attempted: false
+          }));
+          NODE
+
+      - name: Official 8004scan read-only integration smoke
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --input-type=module - <<'NODE'
+          import { discover8004scanAgents } from './src/discovery.ts';
+          let lastError;
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              const result = await discover8004scanAgents({chainId:56, limit:1}, {
+                SPONDEE_8004SCAN_API_BASE_URL:'https://api.8004scan.io/api/v1',
+                SPONDEE_8004SCAN_CACHE_SECONDS:'0'
+              });
+              if (result.schema !== 'spondee.8004scan-discovery.v1') throw new Error('wrong discovery schema');
+              if (result.performance_claims_inferred !== false) throw new Error('performance claim inference');
+              if (result.activation_claims_inferred !== false) throw new Error('activation claim inference');
+              console.log(JSON.stringify({
+                source: result.source, agent_count: result.agents.length,
+                performance_claims_inferred: false, activation_claims_inferred: false,
+                conclusion: 'SPONDEE_8004SCAN_READONLY_DISCOVERY_PASS'
+              }, null, 2));
+              process.exit(0);
+            } catch (error) {
+              lastError = error;
+              if (attempt < 3) await new Promise(r => setTimeout(r, 2000 * attempt));
+            }
+          }
+          throw lastError;
+          NODE
+
+      - name: Read-only BSC testnet readiness
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --import tsx --input-type=module - <<'NODE' | tee backend-bsc-readiness.json
+          import { publicTestnetReadiness } from './src/erc8183.ts';
+          const readiness = await publicTestnetReadiness();
+          if (readiness.chain_id !== 97) throw new Error(`expected chain 97 got ${readiness.chain_id}`);
+          if (readiness.live_write_attempted !== false) throw new Error('readiness attempted write');
+          console.log(JSON.stringify(readiness, null, 2));
+          NODE
+
+      - name: Static backend-completion guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'SPONDEE_ACTION_TOKEN' backend/src/security.ts backend/.env.example
+          grep -F 'SPONDEE_EVIDENCE_INGEST_TOKEN' backend/src/security.ts backend/.env.example
+          grep -F 'spondee.decision-replay.v1' backend/src/replay.ts
+          grep -F 'spondee.8004scan-discovery.v1' backend/src/discovery.ts
+          grep -F 'spondee_operation_locks' backend/src/store.ts backend/sql/001_init.sql
+          grep -F 'canonical evidence is immutable' backend/src/app.ts
+          grep -F 'not retryable; inspect replay/state before any new write' backend/src/app.ts
+          test -z "$(grep -E 'mainnet.*writeContract|MAINNET_PRIVATE_KEY|mainnet.*sendTransaction' backend/src/app.ts backend/src/security.ts backend/src/discovery.ts backend/src/replay.ts || true)"
+
+      - name: Upload final backend completion evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-backend-final-completion
+          path: |
+            backend/backend-final-smoke.json
+            backend/backend-bsc-readiness.json
+            backend/README.md
+            backend/FRONTEND-CONTRACT.md
+            backend/.env.example
+          if-no-files-found: error
+          retention-days: 14

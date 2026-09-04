@@ -6,94 +6,44 @@ handover:
   source_of_truth: GITHUB
   repository: Faadil1/Spondee
   branch: build/g4-sequential-live-e2e
+  status: SUPERSEDED_REDIRECT_ONLY
 
   resume_rule: >-
-    Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
-    evidence, runtime and risk ledgers. Canonical GitHub state outranks chat memory.
-    G4 is closed 4/4 PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
-    Existing G3/G4 receipts are SIMULATION. The historical Grid dry-run is structurally OBSERVED
-    but non-countable. The forward Grid runner/preflight is PASS but execution is still human-owned.
+    Do not continue G5 forward work from this branch. The canonical workstream is
+    build/g5-grid-forward-observed, already referenced by Spec Kit and validated by CI.
+    Read that branch's .pbpd/state/PROJECT-STATE.yaml and HANDOVER.yaml before any action.
 
-  current_milestone: G5_GRID_FORWARD_RUNNER_PREFLIGHT_PASS_EXECUTION_SEALED
-  lifecycle_status: G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_HUMAN_GATE
+  canonical_redirect:
+    branch: build/g5-grid-forward-observed
+    canonical_revision: STATE-R031-G5-GRID-FORWARD-RUNNER-PREFLIGHT-PASS-EXECUTION-HUMAN-GATE-NEXT
+    validated_head: c59725553793e6927479077205d4e4a91a7e78bb
+    current_head_at_reconciliation: b6d552a73e5d1dbfad6ad1befbe7f620d9014341
+    ci_run: 33845758154
+    ci_status: PASS
+    spec_kit_source_branch: build/g5-grid-forward-observed
 
-  authority:
-    project: PROJECT_AUTHORIZED
-    completed_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-    completed_gate_status: PASS
-    current_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-    current_action_class: ONE_BOUNDED_BSC_TESTNET_MARKETPLACE_WRITE_PLUS_FORWARD_READONLY_OBSERVATION
-    production_owner: PBPD
-    protected_external_action_owner: HUMAN
-    final_submission: HUMAN
-    mainnet_or_meaningful_user_capital: PROTECTED_HUMAN_ONLY
-    merge_to_main: NOT_AUTHORIZED
+  closed_jobs:
+    - '949'
+    - '954'
+    - '955'
+    - '957'
+  closed_jobs_must_not_be_rerun: true
 
-  four_category_live_transport:
-    status: PASS_CLOSED
-    jobs:
-      health_factor: '949'
-      grid: '954'
-      rebalancing: '955'
-      yield: '957'
-    receipts: SIMULATION_ONLY
-    observed_pairs_contributed: 0
+  current_gate:
+    id: SWITCH_TO_CANONICAL_G5_FORWARD_BRANCH_REQUIRED
+    chain_write_allowed: false
+    wallet_unlock_allowed: false
 
-  g5_observed_evidence_contract:
-    status: PASS_HARDENED
-    schema: spondee.agent-advantage-pair.v1
-    authoritative_ci_run: 33843642146
-    required_pairs: 3
-    countable_pairs: 0
-    grid_pair_required: true
-    simulation_to_observed_promotion: FORBIDDEN
-    historical_replay_countable: false
-    countable_pair_requires_marketplace_activation: true
-
-  g5_grid_historical_dry_run:
-    status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
-    ci_run: 33843581388
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
-    measured_result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
-    countable_for_final_report: false
-
-  g5_grid_forward_runner:
-    status: PASS_PREFLIGHT_EXECUTION_SEALED
-    implementation: backend/src/g5-grid-forward-observed.ts
-    tests: backend/src/g5-grid-forward-observed.test.ts
-    runner: scripts/g5-grid-forward-observed-pair.ps1
-    workflow: .github/workflows/g5-grid-forward-observed-runner-preflight.yml
-    authoritative_ci_run: 33857461378
-    validated_head: 19cdf217e9b579dc8c114bedfe742ef500273bff
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
-    preflight_wallet_used: false
-    preflight_chain_write_attempted: false
-    preflight_user_capital_used: false
-    execution_token: I_AUTHORIZE_ONE_ZERO_PRICE_BSC_TESTNET_GRID_FORWARD_OBSERVED_ACTIVATION
-    execution_guard_precedes_wallet_prompt: true
-    task_configuration: ANCHOR_ONLY_NO_FUTURE_PRICES
-    future_rounds_required: 12
-    future_rounds_boundary: STRICTLY_AFTER_ACTIVATION_COMPLETION
-    countable_pairs_created_so_far: 0
-
-  exact_next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-  exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
-  exact_next_action: >-
-    Pull the current branch and execute exactly one G5 Grid forward runner with the explicit one-run
-    authorization token. The runner freezes a fresh Chainlink anchor, creates one zero-price BSC-testnet
-    marketplace Grid activation, then waits for strictly future Chainlink rounds and finalizes the first
-    countable Grid observed pair.
+  exact_next_gate:
+    id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
+    branch: build/g5-grid-forward-observed
+    authorization_status: HUMAN_GO_REQUIRED
 
   stop_conditions:
+    - do not use the duplicate G5 forward runner on this branch
     - do not rerun jobs 949, 954, 955, or 957
-    - create at most one new Grid job at the next gate
-    - do not count the historical Grid dry-run
-    - stop on first failure and do not retry blindly
-    - seller password only through masked local prompt
+    - no chain write until explicit human execution GO on the canonical branch
     - BSC mainnet remains read-only only
     - no meaningful user/mainnet capital
-    - no material paid spend
-    - no realized-mainnet-PnL claim
     - no merge to main
-    - no Project Finisher yet
     - no final submission

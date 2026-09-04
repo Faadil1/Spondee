@@ -8,22 +8,24 @@ handover:
   branch: build/pre-frontend-closure
 
   resume_rule: >-
-    Read PROJECT-STATE first, then this HANDOVER, RUNTIME-STATUS, REQUIREMENTS-LEDGER,
-    RISK-REGISTER and EVIDENCE-LEDGER. Backend code is complete. The user asked to close observed
-    Agent Advantage 3/3, Health Factor event tape and public backend deployment before releasing the
-    frontend to Benita. The combined Health + Rebalancing runner passed authoritative no-write
-    preflight run 33868671297. Jobs 949, 954, 955, 957 and 962 are CLOSED and MUST NOT be rerun or mutated.
+    Read PROJECT-STATE first, then this HANDOVER, FRONTEND-HANDOFF, RUNTIME-STATUS,
+    REQUIREMENTS-LEDGER, RISK-REGISTER and EVIDENCE-LEDGER. Backend code is complete. Observed Agent
+    Advantage is now 3/3 countable: Grid job 962, Health job 971, Rebalancing job 973. Health Factor
+    event tape is closed with 95.829s warning lead and 0ms response latency under the frozen observed
+    protocol. Public deployment/server configuration is delegated to Benita together with frontend V1.
+    Jobs 949, 954, 955, 957, 962, 971 and 973 are CLOSED and MUST NOT be rerun or mutated.
 
-  current_milestone: PRE_FRONTEND_OBSERVED_CLOSURE_PREFLIGHT_PASS
-  lifecycle_status: PAIR_2_AND_PAIR_3_LOCAL_EXECUTION_READY__PUBLIC_DEPLOYMENT_PREPARED
+  current_milestone: PRE_FRONTEND_OBSERVED_CLOSURE_PASS_3_OF_3
+  lifecycle_status: BENITA_FRONTEND_AND_PUBLIC_DEPLOYMENT_RELEASED
 
   authority:
     project: PROJECT_AUTHORIZED
     completed_backend_gate: SPONDEE_BACKEND_FINAL_COMPLETION
     completed_backend_gate_status: PASS_RUN_33867168666
     completed_observed_closure_preflight: PASS_RUN_33868671297
-    current_project_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
-    current_project_gate_status: READY_FOR_HUMAN_LOCAL_EXECUTION
+    completed_observed_closure_execution: PASS_JOBS_971_AND_973
+    current_project_gate: SPONDEE_FRONTEND_HANDOFF_RELEASED
+    current_project_gate_status: OPEN_FOR_BENITA_V1_AND_PUBLIC_DEPLOYMENT
     merge_to_main: NOT_AUTHORIZED
     final_submission: HUMAN
     mainnet_or_meaningful_user_capital: FORBIDDEN_WITHOUT_NEW_HUMAN_AUTHORITY
@@ -39,87 +41,93 @@ handover:
 
   observed_evidence:
     required_pairs: 3
-    countable_pairs_before_current_gate: 1
-    pair_1:
-      category: Grid Trading
+    countable_pairs: 3
+    final_report_status: READY
+    trading_requirement_satisfied: true
+    pair_1_grid:
       job_id: '962'
-      status: PASS_COUNTABLE_CLOSED
-      measured_result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD
-    pair_2:
-      category: Health Factor Monitoring
-      status: PREFLIGHT_PASS_EXECUTION_PENDING
-      goal: countable observed pair plus warning/intervention event tape
-      market_data: BSC_MAINNET_CHAINLINK_BNB_USD_READ_ONLY
-      position: FROZEN_HYPOTHETICAL
-      baseline: WITHOUT_AGENT_PERIODIC_CHECK_EVERY_4_FUTURE_ROUNDS
-      mainnet_value_movement: false
-      liquidation_prevention_claim: false
-    pair_3:
-      category: Rebalancing
-      status: PREFLIGHT_PASS_EXECUTION_PENDING
-      market_data: BSC_MAINNET_CHAINLINK_BNB_USD_READ_ONLY
-      portfolio: FROZEN_HYPOTHETICAL_PAPER_50_50
-      baseline: NO_REBALANCE_STATIC_HOLD_SAME_WINDOW
-      mainnet_value_movement: false
-      realized_mainnet_pnl_claim: false
+      pair_id: g5-grid-forward-job-962
+      result: AGENT_UNDERPERFORMED_BASELINE_BY_2_50_USD
+      evidence: evidence/g5-grid-forward-job-962-countable-pass/README.md
+    pair_2_health:
+      job_id: '971'
+      pair_id: g5-health-forward-job-971
+      warning_lead_time_seconds: 95.829
+      response_latency_ms: 0
+      adverse_event_observed: false
+      liquidation_prevention_claimed: false
+      evidence: evidence/g5-health-forward-job-971-countable-pass/README.md
+    pair_3_rebalancing:
+      job_id: '973'
+      pair_id: g5-rebalancing-forward-job-973
+      result: NEUTRAL_AGENT_EQUALS_BASELINE_ON_THIS_WINDOW
+      agent_terminal_equity_usd: 10002.727008
+      baseline_terminal_equity_usd: 10002.727008
+      evidence: evidence/g5-rebalancing-forward-job-973-countable-pass/README.md
+    aggregate: evidence/g5-agent-advantage-3-of-3-final/README.md
 
-  combined_runner:
-    path: scripts/g5-pre-frontend-observed-closure.ps1
-    preflight_run: 33868671297
-    preflight_status: PASS
-    human_gate_env: SPONDEE_PRE_FRONTEND_HUMAN_GATE
-    human_gate_value: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
-    order: HEALTH_THEN_REBALANCING
-    seller_password: MASKED_LOCAL_PROMPT_ONCE
-    stop_on_first_failure: true
-    retry_automatically: false
-    service_price_raw: '0'
-    paymaster: MEGAFUEL
+  health_factor_event_tape:
+    status: CLOSED_PASS
+    job_id: '971'
+    warning_lead_time_seconds: 95.829
+    response_latency_ms: 0
+    adverse_event_observed: false
+    truth_boundary: NO_LIQUIDATION_PREVENTION_OR_SAFETY_GUARANTEE
+
+  raw_evidence_preservation:
+    status: ARCHIVE_LOCAL_BUNDLES_BEFORE_TEMP_CLEANUP
+    script: scripts/archive-g5-pre-frontend-evidence.ps1
+    automatic_git_commit: false
 
   public_deployment:
-    status: PREPARED_EXTERNAL_DEPLOY_BLOCKED
+    owner: Benita
+    status: DELEGATED_WITH_FRONTEND
     adapter: api/index.mjs
     vercel_config: vercel.json
-    deployment_preflight: .github/workflows/public-backend-deployment-preflight.yml
+    deployment_contract_preflight: PASS_RUN_33869418246
     required_env:
       - DATABASE_URL
       - SPONDEE_CORS_ORIGINS
       - SPONDEE_ACTION_TOKEN
       - SPONDEE_EVIDENCE_INGEST_TOKEN
-    vercel_api_attempt:
-      status: FAIL_CLOSED_QUOTA
-      limit: 100
-      remaining: 0
-      reset_at_america_toronto: '2026-09-05T07:40:52.876-04:00'
-      spondee_deployment_created: false
-    do_not_repurpose_unrelated_existing_projects: true
+    protected_tokens_browser_safe: false
+    scope:
+      - frontend V1
+      - Vercel project/deployment
+      - server environment configuration
+      - database connection
+      - CORS
+      - public smoke tests
 
   frontend_benita:
-    status: HELD_BY_USER_UNTIL_PRE_FRONTEND_CLOSURE_COMPLETE
-    release_condition:
-      - OBSERVED_AGENT_ADVANTAGE_3_OF_3
-      - HEALTH_EVENT_TAPE_CLOSED
-      - PUBLIC_BACKEND_JUDGE_SMOKE_PASS
+    status: RELEASED_READY_TO_START
+    source_branch: build/frontend-handoff-ready
+    primary_contract: /v1/product/bootstrap
+    wait_for_winner_intelligence: false
+    deployment_owned_by_benita: true
 
-  exact_next_gate: SPONDEE_PRE_FRONTEND_OBSERVED_CLOSURE_EXECUTION_REQUIRED
-  exact_next_owner: HUMAN_LOCAL_RUNNER
+  winner_intelligence_overlay:
+    status: WAITING_FOR_FRONTEND_V1_AND_PUBLIC_SMOKE
+    checks:
+      - SPONSOR_NATIVE_NECESSITY_CHECK
+      - WHOLE_RUBRIC_COVERAGE_CHECK
+      - NARRATIVE_AND_DEMO_LEGIBILITY_CHECK
+      - JUDGE_PATH_LEGIBILITY_CHECK
+    winning_laws_promoted: 0
+
+  exact_next_backend_gate: NONE_BACKEND_CODE_COMPLETE
+  exact_next_project_gate: SPONDEE_WINNER_INTELLIGENCE_TRACE_FRONTEND_REVIEW_REQUIRED
+  exact_next_project_gate_status: WAITING_ON_BENITA
+  exact_next_owner: BENITA_THEN_PBPD_TRACE
   exact_next_action: >-
-    Run scripts/g5-pre-frontend-observed-closure.ps1 -Execute exactly once with the gate environment
-    variable set. Send only public PASS/failure JSON back. Never send wallet password or keystore material.
-
-  after_pass:
-    - independently reconcile Health and Rebalancing public evidence
-    - promote observed Agent Advantage to 3/3 only if both pair bundles validate
-    - close Health Factor event-tape requirement
-    - finish public backend deployment and public smoke
-    - then issue the final Benita frontend handoff
+    Benita builds frontend V1 and public deployment from build/frontend-handoff-ready. After public smoke,
+    return the deployment for Winner Intelligence + TRACE judge-path review. No backend rearchitecture is expected.
 
   stop_conditions:
-    - do not rerun or mutate jobs 949, 954, 955, 957, or 962
-    - stop on first new-pair failure; diagnose before retry
+    - do not rerun or mutate jobs 949, 954, 955, 957, 962, 971, or 973
+    - preserve Grid negative and Rebalancing neutral outcomes
     - do not expose wallet secrets or protected server tokens
     - no mainnet write or value movement
-    - preserve negative/neutral outcomes
-    - no guaranteed profit, safety or liquidation-prevention claim
+    - do not claim guaranteed profit, safety or liquidation prevention
     - no merge to main
     - no final submission

@@ -1,18 +1,18 @@
 schema: PBPD-COWORK-RUNTIME-STATUS-v0.1
-preflight_status: G4_FOUR_CATEGORY_LIVE_PASS__G5_OBSERVED_CONTRACT_PASS__GRID_SOURCE_PASS
+preflight_status: G4_4_OF_4_PASS__G5_GRID_DRY_RUN_PASS_NON_COUNTABLE
 capabilities:
   github_repository_access: AVAILABLE
   consequential_product_build: ALLOWED_AFTER_PRD_READY
   node_22: PASS
   pnpm_10: PASS
-  bsc_testnet_live_transport: PASS_4_OF_4
+  bsc_testnet_live_transport: PASS_4_OF_4_CLOSED
   bsc_mainnet_readonly_rpc: PASS
   chainlink_bnb_usd_readonly_source: PASS
-  observed_agent_advantage_contract: PASS
-  observed_agent_advantage_pairs: 0
+  observed_agent_advantage_contract: PASS_HARDENED
+  observed_agent_advantage_countable_pairs: 0
   observed_agent_advantage_required_pairs: 3
   observed_grid_pair_required: true
-  g4_historical_submit_log_scan: FORBIDDEN_BY_CI
+  grid_historical_observed_dry_run: PASS_NON_COUNTABLE
   g4_closed_jobs_guard: ACTIVE_949_954_955_957
 connectors:
   github:
@@ -23,66 +23,46 @@ connectors:
     status: FOUR_OF_FOUR_LIVE_TRANSPORT_COMPLETE_CLOSED
     testnet_chain_id: 97
     mainnet_readonly_chain_id: 56
-    seller_provider_address: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
   chainlink_bnb_usd:
-    status: READ_ONLY_SOURCE_QUALIFIED
+    status: READ_ONLY_SOURCE_QUALIFIED_AND_DRY_RUN_USED
     network: bsc-mainnet
     feed_address: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
-    probe_run: 33842784851
-    probe_block: '119867346'
-    rounds_read: 5
-    latest_probe_price_usd: 724.12684
-    latest_probe_updated_at: '2026-09-04T06:03:03Z'
-live_chain_evidence:
-  job_949:
-    category: health_factor
-    status: PASS_CLOSED
-    receipt_evidence_class: SIMULATION
-  job_954:
-    category: grid
-    status: PASS_CLOSED
-    receipt_evidence_class: SIMULATION
-  job_955:
-    category: rebalancing
-    status: PASS_CLOSED
-    receipt_evidence_class: SIMULATION
-  job_957:
-    category: yield
-    status: PASS_CLOSED
-    provider_submit_tx: '0x35de5f07749c3d0cc6471b20272100b8eeb8b3424a62ecee357904ddfb8800f7'
-    receipt_evidence_class: SIMULATION
 validation:
-  g5_observed_evidence_ci_run: 33842602119
-  g5_observed_evidence_ci_status: PASS
-  g5_grid_market_source_ci_run: 33842784851
+  g5_observed_evidence_contract_ci: 33843642146
+  g5_observed_evidence_contract_ci_status: PASS
+  g5_grid_market_source_ci: 33842784851
   g5_grid_market_source_ci_status: PASS
-  g5_grid_market_source_wallet_used: false
-  g5_grid_market_source_chain_write_attempted: false
+  g5_grid_observed_dry_run_ci: 33843581388
+  g5_grid_observed_dry_run_ci_status: PASS
+  g5_grid_observed_dry_run_artifact_id: '9925716870'
+  g5_grid_observed_dry_run_artifact_zip_sha256: 69677a8cb7869bce2b9489b7f68f608f1913e1257ed926a645c60a1d1b0b7326
+  g5_grid_observed_rounds: 25
+  g5_grid_structural_pair_validation: PASS
+  g5_grid_countable_for_final_report: false
+  g5_final_paired_run_count: 0
 current_gate:
-  id: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
-  status: OPEN
-  action_class: CODE_AND_READ_ONLY_EXTERNAL_DATA
+  id: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
+  status: READY_TO_BUILD
+  action_class: CODE_AND_READ_ONLY_PREFLIGHT
   wallet_unlock_required: false
   chain_write_allowed: false
   bsc_mainnet_read_allowed: true
   bsc_mainnet_write_allowed: false
-  bsc_testnet_write_allowed: false_at_current_subgate
+  bsc_testnet_write_allowed: false_at_preflight
   user_capital_allowed: false
   deployment_allowed: false_at_current_subgate
   merge_main_allowed: false
 limitations:
-  - Zero observed Agent Advantage pairs exist so far.
-  - Existing G3/G4 receipts are SIMULATION and excluded.
-  - Grid observed pair still lacks an implemented with-agent vs baseline harness.
-  - Marketplace-hire semantics must be preserved for the with-agent side before the pair can count.
-  - Current public judge deployment is pending.
+  - The successful Grid dry run is historical observed-data replay and contributes zero countable pairs.
+  - A countable Grid pair still requires a forward observation window and concrete BSC-testnet marketplace activation reference.
+  - Health Factor observed event tape is pending.
+  - Public judge deployment is pending.
 next_required_checks:
-  - implement Grid observed task/harness without changing closed G4 semantics
-  - freeze same initial state and observation window hashes
-  - capture external BNB/USD source artifact
-  - measure actual agent and baseline outputs/time/cost/quality
-  - produce Grid trading record with window, outcomes and risk
-  - validate pair through spondee.agent-advantage-pair.v1
-  - dry-run with no chain writes
-  - only then decide/open a bounded observed experiment execution gate
-next_gate: SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED
+  - implement forward-window Grid runner
+  - freeze Promise/config before observation start
+  - preserve a future zero-price BSC-testnet marketplace activation plan without opening writes in CI
+  - collect future Chainlink rounds after activation during later execution
+  - preserve TRANSACTION_TAPE, MARKET_DATA, input, agent, baseline, timing and cost artifacts
+  - run same-state agent-vs-baseline evaluation
+  - keep execution fail-closed until explicit human authorization
+next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED

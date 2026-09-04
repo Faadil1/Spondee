@@ -1,0 +1,54 @@
+name: G5 Grid Market Source Read-only Qualification
+
+on:
+  push:
+    branches: ['build/g4-sequential-live-e2e']
+    paths:
+      - 'backend/src/probe-g5-grid-market-source.ts'
+      - '.github/workflows/g5-grid-market-source-readonly.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chainlink-bnb-usd-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Strict TypeScript build
+        working-directory: backend
+        run: npm run build
+      - name: Static no-write guard
+        shell: bash
+        run: |
+          test -z "$(grep -E 'privateKey|WALLET_PASSWORD|sendTransaction|writeContract|walletClient|broadcast' backend/src/probe-g5-grid-market-source.ts || true)"
+          grep -F 'chain_write_attempted: false' backend/src/probe-g5-grid-market-source.ts
+          grep -F 'user_capital_used: false' backend/src/probe-g5-grid-market-source.ts
+          grep -F '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE' backend/src/probe-g5-grid-market-source.ts
+      - name: Run read-only BSC mainnet Chainlink probe
+        working-directory: backend
+        run: npx tsx src/probe-g5-grid-market-source.ts | tee /tmp/g5-grid-source.json
+      - name: Validate public result
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const raw = fs.readFileSync('/tmp/g5-grid-source.json','utf8');
+          const start = raw.indexOf('{');
+          if (start < 0) throw new Error('probe produced no JSON');
+          const x = JSON.parse(raw.slice(start));
+          if (x.conclusion !== 'SPONDEE_G5_GRID_MARKET_SOURCE_READ_ONLY_PASS') throw new Error('wrong conclusion');
+          if (x.chain_id !== 56) throw new Error('wrong chain');
+          if (x.wallet_used !== false || x.chain_write_attempted !== false || x.user_capital_used !== false) throw new Error('read-only boundary failed');
+          if (x.eligible_as_external_observed_provenance !== true) throw new Error('source not qualified');
+          if (!Array.isArray(x.rounds) || x.rounds.length < 1) throw new Error('no observed rounds');
+          console.log(JSON.stringify({feed:x.feed_address, rounds:x.round_count, latest:x.rounds.at(-1)}, null, 2));
+          NODE

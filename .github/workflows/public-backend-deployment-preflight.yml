@@ -1,0 +1,67 @@
+name: Public Backend Deployment Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/pre-frontend-closure']
+    paths:
+      - 'api/**'
+      - 'vercel.json'
+      - '.github/workflows/public-backend-deployment-preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deployment-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build production backend artifact
+        run: |
+          npm --prefix backend install --no-audit --no-fund
+          npm --prefix backend run build
+      - name: Verify Vercel adapter imports compiled backend
+        run: |
+          node --input-type=module - <<'NODE'
+          const mod = await import('./api/index.mjs');
+          if (typeof mod.default !== 'function') throw new Error('Vercel adapter has no default handler');
+          console.log(JSON.stringify({
+            schema: 'spondee.public-backend-deployment-preflight.v1',
+            adapter: 'api/index.mjs',
+            backend_build: 'PASS',
+            chain_write_attempted: false,
+            conclusion: 'SPONDEE_PUBLIC_BACKEND_DEPLOYMENT_PREFLIGHT_PASS'
+          }, null, 2));
+          NODE
+      - name: Verify deployment configuration guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'npm --prefix backend run build' vercel.json
+          grep -F 'api/index.mjs' vercel.json
+          grep -F 'X-Content-Type-Options' vercel.json
+          grep -F 'createStore(process.env)' api/index.mjs
+          grep -F 'createApp(store, process.env)' api/index.mjs
+          test -z "$(grep -E 'SPONDEE_ACTION_TOKEN[^A-Z_]|SPONDEE_EVIDENCE_INGEST_TOKEN[^A-Z_]|PRIVATE_KEY|SEED' api/index.mjs vercel.json || true)"
+      - name: Production configuration contract
+        working-directory: backend
+        run: |
+          node --import tsx --input-type=module - <<'NODE'
+          import { backendDeploymentReadiness } from './src/security.ts';
+          const incomplete = backendDeploymentReadiness({});
+          if (incomplete.production_ready !== false) throw new Error('empty deployment env must fail closed');
+          const complete = backendDeploymentReadiness({
+            DATABASE_URL: 'postgresql://example.invalid/spondee',
+            SPONDEE_CORS_ORIGINS: 'https://frontend.example',
+            SPONDEE_ACTION_TOKEN: 'a'.repeat(32),
+            SPONDEE_EVIDENCE_INGEST_TOKEN: 'b'.repeat(32),
+          });
+          if (complete.production_ready !== true) throw new Error('complete deployment env not recognized');
+          if (JSON.stringify(complete).includes('a'.repeat(32)) || JSON.stringify(complete).includes('b'.repeat(32))) throw new Error('readiness leaks protected token');
+          console.log('production configuration contract: PASS');
+          NODE

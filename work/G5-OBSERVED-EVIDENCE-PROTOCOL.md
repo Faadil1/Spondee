@@ -1,29 +1,44 @@
 # Spondee G5 — Observed Agent Advantage Evidence Protocol
 
 Date: 2026-09-04 UTC
-Status: PREFLIGHT DESIGN
+Status: IMPLEMENTATION PREFLIGHT
 Scope: MUST-10, MUST-11, MUST-12, MUST-13
 
 ## Why this gate exists
 
 The four-category G4 live-transport sequence is complete, but every current Outcome Receipt is explicitly `SIMULATION`. Those receipts prove Promise -> activation -> deliverable -> receipt plumbing. They do **not** satisfy the TermiX Agent Advantage requirement.
 
-The official TermiX requirement is stricter: at least three real tasks must be run both ways (with an agent hired through the marketplace vs without), reporting time, cost and output quality with actual outputs attached; at least one task must be trading, stock or security. Trading evidence must include a real record with window and risk.
+The TermiX requirement is stricter: at least three real tasks must be run both ways (with an agent hired through the marketplace vs without), reporting time, cost and output quality with actual outputs attached; at least one task must be trading, stock or security. Trading evidence must include a record with window and risk.
 
-## Evidence class rule
+## Two separate thresholds
 
-`OBSERVED` is allowed only when the pair bundle contains:
+A bundle can be structurally valid `OBSERVED` evidence without being countable for the final report.
 
-1. one actual agent execution and one actual without-agent baseline execution;
-2. the same frozen scenario ID;
-3. the same observation window and initial/input state hashes;
-4. external observed provenance from BSC testnet, public market data, or a public protocol API;
-5. preserved raw input snapshot, agent output and baseline output;
-6. measured time, cost and objective output-quality metrics;
-7. explicit limitations;
-8. for Grid Trading, a record containing window, wins/losses, drawdown, return and risk basis.
+### Structural OBSERVED
 
-A declared simulation path, synthetic-only fixture, generated score, or existing G3/G4 SIMULATION receipt cannot be relabeled `OBSERVED`.
+Allowed only when the bundle contains preserved measurements from an actual live task or immutable observed-data replay, including:
+
+1. identical frozen scenario/input state for agent and baseline;
+2. external provenance from BSC/public market/protocol data;
+3. raw input, agent output, baseline output, timing and cost artifacts with SHA-256;
+4. objective time/cost/output-quality metrics;
+5. explicit limitations;
+6. for Grid, MARKET_DATA plus a trading record containing window, outcomes, drawdown, gross/net return and risk basis.
+
+A simulation fixture or G3/G4 `SIMULATION` receipt cannot be relabeled `OBSERVED`.
+
+### Countable Agent Advantage pair
+
+To count toward the required `3/3`, structural validity is not enough. The bundle must additionally prove:
+
+- `marketplace_hire.mode = LIVE_BSC_TESTNET_MARKETPLACE`;
+- `agent_transport = ERC8183_BSC_TESTNET`;
+- a concrete activation reference;
+- Promise/freeze before the forward observation window;
+- a preserved `TRANSACTION_TAPE`;
+- non-historical observation mode.
+
+Historical observed-data replays and local reference-agent dry runs are always `countable_for_final_report=false`.
 
 ## Frozen pair schema
 
@@ -31,117 +46,70 @@ Implementation: `backend/src/observed-evidence.ts`
 
 Canonical pair schema: `spondee.agent-advantage-pair.v1`
 
-Each pair binds:
+Each pair binds pair ID, category, scenario, window, state hashes, marketplace-hire evidence, OBSERVED agent/baseline runs, measured metrics, raw artifact provenance, trading/event evidence, limitations and claim guardrail.
 
-- `pair_id`
-- category
-- scenario ID
-- observation mode
-- observation window
-- initial-state hash
-- input-snapshot hash
-- OBSERVED agent EvidenceRun
-- OBSERVED baseline EvidenceRun
-- measured time/cost/output-quality metrics
-- raw artifact provenance + SHA-256
-- optional/required trading record
-- limitations and claim guardrail
+The final report uses **only countable pairs** and remains `INSUFFICIENT_OBSERVED_EVIDENCE` below three countable pairs or when no countable Grid Trading pair is present.
 
-The agent run must reference the exact baseline run by ID. The baseline cannot chain to another baseline. The final report remains `INSUFFICIENT_OBSERVED_EVIDENCE` below three validated pairs or when no Grid Trading pair is present.
+## Pair 1 — Grid Trading
 
-## Proposed experiment order
+### Dry-run gate
 
-### Pair 1 — Grid Trading — REQUIRED trading task
+`backend/src/g5-grid-observed-dry-run.ts` uses immutable read-only Chainlink BNB/USD rounds from BNB Chain mainnet. It:
 
-Target: an actual bounded task using a frozen live/testnet observation window, where the Spondee Grid agent is hired through the marketplace and compared with a no-agent baseline under the same inputs.
+- reads no wallet and sends no transaction;
+- freezes a historical observed window;
+- configures the paper-grid from the first observed round only, preventing look-ahead configuration;
+- executes a bounded paper-grid and a without-agent static 50/50 baseline on the exact same rounds;
+- records local computation time, paper execution friction, terminal equity, drawdown, interval outcomes and raw outputs;
+- validates the pair schema;
+- MUST remain `countable_for_final_report=false` because no marketplace hire occurred before that historical window.
 
-Preferred safe execution classes, in order:
+This proves harness integrity only. It is not the final trading pair and must not be described as realized PnL.
 
-1. BSC-testnet execution using test assets / bounded testnet notional;
-2. if a live testnet execution surface is not viable, an observed-market-data replay with immutable raw market data and explicit `OBSERVED_MARKET_DATA_REPLAY` limitations.
+### Later countable Grid execution
 
-Required record:
+After dry-run PASS, a separate explicit gate may freeze a **forward** live-public-data window, create a new bounded zero-price BSC-testnet marketplace activation for the Grid agent before the window starts, preserve the exact activation transaction/job tape, and evaluate agent vs baseline over the same future Chainlink rounds. No meaningful mainnet/user capital is required.
 
-- observation window
-- actual agent output
-- actual baseline output
-- completion time
-- cost
-- objective quality
-- wins/losses/flat
-- gross and net return for the declared window
-- max drawdown
-- risk basis
-- execution environment
+## Pair 2 — Health Factor Monitoring
 
-Do not describe a market-data replay as realized trading PnL.
+Target: actual warning/event/intervention timing evidence under the same frozen task for agent and without-agent baseline. Required raw tape includes promise, warning, action/intervention, adverse event, useful lead time, response latency, cost and baseline timing.
 
-### Pair 2 — Health Factor Monitoring — hero evidence
+## Pair 3 — Yield Optimisation
 
-Target: actual warning/event/intervention timing evidence under the same frozen task for agent and without-agent baseline.
-
-Required raw tape:
-
-- promise timestamp
-- warning timestamp
-- action/intervention timestamp where applicable
-- adverse-event timestamp
-- useful warning lead time
-- response latency
-- actual cost
-- actual output
-- baseline detection/action timing
-
-This pair is the preferred route for MUST-13.
-
-### Pair 3 — Yield Optimisation — low-capital comparison
-
-Target: agent vs direct/manual baseline for selecting the best eligible opportunity under the same live public protocol snapshot and risk cap.
-
-Preferred first version is read-only/live-data task execution; capital movement is not required for the comparison itself.
-
-Required raw evidence:
-
-- protocol/API snapshot
-- eligible opportunity set
-- agent recommendation
-- baseline/manual recommendation
-- time
-- cost
-- objective quality metric such as correctness against frozen eligibility/risk constraints
-- limitations
-
-Rebalancing is the fallback third pair if Yield live-data provenance is weaker.
+Target: agent vs direct/manual baseline on the same live public protocol snapshot and risk cap. Capital movement is not required for the comparison itself. Rebalancing remains fallback.
 
 ## Safety / authority
 
-This protocol does not authorize meaningful mainnet or user capital.
+Allowed in the current Grid dry-run gate:
 
-Allowed at this preflight:
+- code and tests;
+- read-only BSC mainnet Chainlink data;
+- local paper execution;
+- artifact generation and CI;
+- no wallet unlock.
 
-- code
-- schemas/tests
-- read-only public/onchain data discovery
-- BSC testnet design/probes without new writes
-- local benchmark harnesses
+Not authorized in this dry-run:
 
-Not opened yet:
+- any new chain write;
+- new marketplace job;
+- mainnet value movement;
+- user capital;
+- material paid spend;
+- final observed-performance claims;
+- merge to main;
+- final submission.
 
-- new observed experiment chain writes
-- mainnet value movement
-- user capital
-- material paid spend
-- final public claims
-- merge to main
-- final submission
+## Dry-run PASS criteria
 
-## Gate criteria
+`SPONDEE_G5_GRID_OBSERVED_PAIR_IMPLEMENTATION_AND_DRY_RUN_REQUIRED = PASS` only when:
 
-`SPONDEE_G5_OBSERVED_AGENT_ADVANTAGE_EVIDENCE_DESIGN_AND_PREFLIGHT_REQUIRED = PASS` when:
-
-- strict pair schema/tests pass;
-- SIMULATION->OBSERVED promotion fails closed;
-- three-pair report requires a Grid pair;
-- first Grid observed experiment path is qualified and bounded;
-- no meaningful-capital authority is needed for the selected first experiment;
-- execution runner can be prepared as a separate explicit gate.
+- backend tests and TypeScript pass;
+- countability guard tests pass;
+- external BNB/USD source is read successfully;
+- at least 10 immutable observed rounds are preserved;
+- agent and baseline outputs use the same snapshot/window/state;
+- raw input/output/timing/cost/market artifacts are hashed and preserved;
+- Grid trading record validates;
+- pair validates structurally as OBSERVED;
+- final report remains at zero countable pairs;
+- static and runtime evidence prove no wallet, write, capital or realized-mainnet-PnL claim.

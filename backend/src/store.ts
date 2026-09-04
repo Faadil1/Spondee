@@ -24,6 +24,7 @@ export interface SpondeeStore {
   getReceipt(id: string): Promise<OutcomeReceipt | null>;
   listReceipts(): Promise<OutcomeReceipt[]>;
   putEvidence(value: EvidenceRun): Promise<void>;
+  getEvidence(id: string): Promise<EvidenceRun | null>;
   listEvidence(): Promise<EvidenceRun[]>;
   claimOperation(key: string, ttlSeconds: number): Promise<boolean>;
   releaseOperation(key: string): Promise<void>;
@@ -72,6 +73,10 @@ export class MemoryStore implements SpondeeStore {
   }
   async putEvidence(value: EvidenceRun): Promise<void> {
     this.evidence.set(value.run_id, structuredClone(value));
+  }
+  async getEvidence(id: string): Promise<EvidenceRun | null> {
+    const value = this.evidence.get(id);
+    return value ? structuredClone(value) : null;
   }
   async listEvidence(): Promise<EvidenceRun[]> {
     return [...this.evidence.values()].map((value) => structuredClone(value));
@@ -256,6 +261,14 @@ export class PostgresStore implements SpondeeStore {
         JSON.stringify(value),
       ],
     );
+  }
+
+  async getEvidence(id: string): Promise<EvidenceRun | null> {
+    const result = await this.pool.query<{ payload: EvidenceRun }>(
+      "SELECT payload FROM spondee_evidence_runs WHERE run_id=$1",
+      [id],
+    );
+    return result.rows[0]?.payload ?? null;
   }
 
   async listEvidence(): Promise<EvidenceRun[]> {

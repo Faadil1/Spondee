@@ -3,7 +3,7 @@ risks:
   - id: R-01
     severity: CRITICAL
     risk: Scope exceeds the Sep 9 capacity window.
-    mitigation: Freeze G4 at 4/4 PASS; prioritize countable Agent Advantage evidence and public judging availability over optional integrations.
+    mitigation: Freeze G4 at 4/4 PASS; prioritize first countable Grid pair, two additional observed pairs and public judging availability over optional integrations.
     status: OPEN_PRIMARY_SCHEDULE_RISK
   - id: R-02
     severity: CRITICAL
@@ -14,7 +14,7 @@ risks:
   - id: R-03
     severity: HIGH
     risk: Health Factor hero demo dominates the product and weakens Agent Diversity.
-    mitigation: Grid, Rebalancing and Yield have equivalent live transport proof; preserve comparable UI depth in the public judge build.
+    mitigation: Grid, Rebalancing and Yield have equivalent live transport proof; preserve comparable UI depth in public judge build.
     status: CONTROLLED_LIVE_DEPTH_CLOSED_UI_REVIEW_PENDING
   - id: R-04
     severity: HIGH
@@ -24,13 +24,13 @@ risks:
   - id: R-05
     severity: CRITICAL
     risk: Baseline comparisons are biased, synthetic or invented but presented as observed Agent Advantage.
-    mitigation: G5 now enforces same scenario/window, raw input/agent/baseline/timing/cost artifacts, external provenance and explicit marketplace countability. The Grid dry run used one immutable 25-round Chainlink path for both sides and preserved an unfavorable agent result instead of rewriting it.
-    status: CONTROLLED_DRY_RUN_REPRODUCIBILITY_PASS_COUNTABLE_EXECUTION_PENDING
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    mitigation: G5 countable schema requires marketplace activation, future/non-historical window, transaction tape, same scenario/input, raw outputs and measured metrics. Grid forward buyer independently rereads every Chainlink round and computes the baseline from exactly those rounds.
+    status: CONTROLLED_FORWARD_PREFLIGHT_PASS_FIRST_COUNTABLE_PAIR_PENDING
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: R-06
     severity: HIGH
     risk: External agent/API instability blocks the judge path.
-    mitigation: Keep external ERC-8004 candidates discovery-only when activation is opaque; controlled Spondee Agent Studio paths have 4/4 live proof.
+    mitigation: Controlled Spondee Agent Studio paths own activation proof; external discovery candidates remain secondary when activation is opaque.
     status: CONTROLLED_BY_SPONDEE_FALLBACK_PATHS
   - id: R-07
     severity: MEDIUM
@@ -40,7 +40,7 @@ risks:
   - id: R-08
     severity: HIGH
     risk: Financial wording implies guarantees.
-    mitigation: Use forecast/probability/outcome language and visible limitations; prohibit guarantee claims.
+    mitigation: Use forecast/probability/outcome language and visible limitations; forward Grid explicitly labels strategy returns as paper-only and never realized mainnet PnL.
     status: OPEN_GUARDRAIL_ACTIVE
   - id: R-09
     severity: HIGH
@@ -60,42 +60,53 @@ risks:
   - id: R-12
     severity: HIGH
     risk: BSC Testnet RPC eth_getLogs limits can falsely fail a live path after provider submit.
-    mitigation: G4 buyer consumes exact provider submit transaction and decodes that receipt directly; CI forbids getJobSubmittedEvents in the live driver.
+    mitigation: Live buyers consume exact provider submit transactions and decode exact receipts; historical submit log scans remain forbidden.
     status: RESOLVED_BY_DIRECT_SUBMIT_RECEIPT_AND_CI_INVARIANT
   - id: R-13
     severity: HIGH
     risk: Buyer and seller disagree on notify_funded response semantics, causing a false failure after FUND.
-    mitigation: Preserve Agent Studio default async ACK, with explicit wait_for_result=true only for bounded Spondee proof; tests cover both modes.
-    status: RESOLVED_BY_EXPLICIT_BOUNDED_WAIT_FOR_RESULT
+    mitigation: G5 forward seller requires bounded wait_for_result=true and returns the exact submit tx after the future observation completes.
+    status: CONTROLLED_BY_EXPLICIT_BOUNDED_WAIT_FOR_RESULT
   - id: R-14
     severity: HIGH
     risk: Closed G4 jobs are accidentally recreated or mutated.
-    mitigation: Jobs 949/954/955/957 are canonically closed; current G5 preflight opens no chain write path.
+    mitigation: Jobs 949/954/955/957 are canonically closed; G5 uses a separate branch, task schema, runner and future job scope.
     status: CONTROLLED_CLOSED_JOB_GUARD
   - id: R-15
     severity: CRITICAL
-    risk: SIMULATION or historical replay evidence is accidentally counted toward the required three observed Agent Advantage pairs.
-    mitigation: Countability is now separate from structural OBSERVED validity. Dry-run reference agents and historical replays are forced non-countable; final report consumes only marketplace-hired forward pairs with transaction tape.
-    status: RESOLVED_AT_SCHEMA_AND_DRY_RUN_LEVEL_COUNTABLE_EXECUTION_PENDING
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    risk: Existing SIMULATION receipts or the historical observed dry-run are accidentally counted toward the required three pairs.
+    mitigation: Countability requires LIVE_BSC_TESTNET_MARKETPLACE, activation reference, transaction tape and non-historical mode. Dry-run remains explicitly non-countable.
+    status: RESOLVED_AT_SCHEMA_LEVEL_EXECUTION_EVIDENCE_STILL_PENDING
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: R-16
     severity: HIGH
     risk: Observed trading evidence requires meaningful real capital or introduces unacceptable financial risk.
-    mitigation: Grid dry run proves BNB/USD provenance and strategy-vs-baseline measurement can be performed with read-only mainnet data and paper/testnet notional. Countable execution can use zero-price BSC-testnet activation plus future public data without meaningful capital.
-    status: CONTROLLED_NO_CAPITAL_DRY_RUN_PASS_FORWARD_EXECUTION_PENDING
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    mitigation: G5 forward design uses zero-price BSC-testnet marketplace transport plus read-only BNB-mainnet Chainlink data and paper accounting. No mainnet value movement is implemented.
+    status: CONTROLLED_FORWARD_RUNNER_PREFLIGHT_PASS
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: R-17
     severity: HIGH
-    risk: A paper or observed-data Grid record is described as realized mainnet trading performance.
-    mitigation: Protocol and runtime evidence mark historical replay non-countable and explicitly record realized_mainnet_pnl_claimed=false.
-    status: CONTROLLED_CLAIM_BOUNDARY_DRY_RUN_VERIFIED
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    risk: A paper Grid record is described as realized mainnet trading performance.
+    mitigation: Task, seller output, pair limitations and final result explicitly state paper accounting and no realized mainnet PnL.
+    status: CONTROLLED_CLAIM_GUARDRAIL_ACTIVE
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: R-18
     severity: HIGH
-    risk: A favorable-only experiment selection biases the Agent Advantage report.
-    mitigation: Preserve every predeclared forward pair regardless of whether the agent beats the baseline. The first Grid dry run already demonstrates truthful preservation of an underperforming result.
-    status: OPEN_FORWARD_EXPERIMENT_PREDECLARATION_REQUIRED
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    risk: The forward Chainlink window times out before enough future rounds arrive, leaving a partial marketplace job.
+    mitigation: Target is bounded to eight future rounds with a 480-second ceiling. Runner must fail closed, preserve any partial job state and forbid blind retry until read-only diagnosis determines the exact state.
+    status: OPEN_EXECUTION_RUNTIME_RISK
+  - id: R-19
+    severity: HIGH
+    risk: Future market rounds are accidentally backfilled from before marketplace funding, invalidating the observed pair.
+    mitigation: Seller filters on observation start; buyer independently enforces first counted round strictly after both Promise freeze and BSC-testnet funding and rereads exact Chainlink round IDs.
+    status: CONTROLLED_BY_TEMPORAL_AND_SOURCE_VERIFICATION
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
+  - id: R-20
+    severity: MEDIUM
+    risk: Seller dependency drift breaks the forward runtime.
+    mitigation: Final seller removed undeclared viem import and uses native read-only JSON-RPC fetch; frozen workspace, G5 tests and TypeScript build pass in run 33845758154.
+    status: RESOLVED_IN_PREFLIGHT
+    evidence: evidence/g5-grid-forward-runner-preflight/README.md
   - id: A-01
     severity: CRITICAL
     risk: No credible live BSC agent/path exists for one or more required categories.
@@ -103,14 +114,13 @@ risks:
   - id: A-02
     severity: CRITICAL
     risk: Task-specific promises cannot be produced before activation.
-    status: RESOLVED_BY_LIVE_E2E
+    status: RESOLVED_BY_LIVE_E2E_AND_G5_FORWARD_PROMISE_PREFLIGHT
   - id: A-03
     severity: HIGH
     risk: Promise-to-actual provenance cannot be bound reliably.
-    status: RESOLVED_BY_LIVE_E2E
+    status: RESOLVED_G4_LIVE_BINDING__G5_FORWARD_BINDING_PREFLIGHT_PASS
   - id: A-06
     severity: CRITICAL
     risk: TermiX-style observed baselines cannot be collected reproducibly before deadline.
-    mitigation: Grid dry-run harness, same-window baseline, raw evidence and external Chainlink provenance all passed CI. Remaining proof is a countable forward marketplace-hired pair.
-    status: PARTIAL_DRY_RUN_PASS_FORWARD_COUNTABLE_PAIR_REQUIRED
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
+    mitigation: Historical harness proved reproducibility; forward marketplace runner now passes full preflight with same-window baseline, exact round verification and transaction-tape design.
+    status: PARTIAL_FIRST_COUNTABLE_PAIR_EXECUTION_STILL_REQUIRED

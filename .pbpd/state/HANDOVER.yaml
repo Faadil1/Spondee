@@ -11,19 +11,17 @@ handover:
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime and risk ledgers. Canonical GitHub state outranks chat memory.
     G4 is closed 4/4 PASS. Jobs 949, 954, 955 and 957 MUST NOT be rerun.
-    Existing G3/G4 receipts are SIMULATION. The G5 historical Grid dry-run is structurally OBSERVED
-    but non-countable. The forward Grid runner preflight is PASS and the protected execution gate is now
-    explicitly authorized for exactly one new zero-price Grid G5 BSC-testnet job.
+    The first authorized G5 Grid forward execution attempt failed before any BSC-testnet write because
+    the signed on-chain description exceeded the MegaFuel 1600-byte limit. Progress was empty, no job
+    was created, and the one-new-job authorization was not consumed. Compact V2 wire remediation is CI PASS.
 
-  current_milestone: G5_GRID_FORWARD_EXECUTION_HUMAN_GO_OPEN
-  lifecycle_status: G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_AUTHORIZED_NOT_YET_RUN
+  current_milestone: G5_GRID_FORWARD_PREWRITE_SIZE_REMEDIATED
+  lifecycle_status: G5_GRID_FORWARD_EXECUTION_AUTHORIZED_RETRY_READY_ZERO_WRITES_SO_FAR
 
   authority:
     project: PROJECT_AUTHORIZED
-    completed_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_RUNNER_AND_PREFLIGHT_REQUIRED
-    completed_gate_status: PASS_RUN_33845758154
     current_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
-    current_gate_status: HUMAN_GO_RECORDED_2026_09_04
+    current_gate_status: AUTHORIZED_RETRY_AFTER_PREWRITE_FAIL_NO_JOB_CREATED
     current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE_PLUS_READ_ONLY_MAINNET_DATA
     production_owner: PBPD
     protected_external_action_owner: HUMAN_LOCAL_RUNTIME
@@ -38,7 +36,6 @@ handover:
       grid: '954'
       rebalancing: '955'
       yield: '957'
-    receipts: SIMULATION_ONLY
     observed_pairs_contributed: 0
 
   g5_observed_evidence_contract:
@@ -48,28 +45,21 @@ handover:
     required_pairs: 3
     countable_pairs: 0
     grid_pair_required: true
-    simulation_to_observed_promotion: FORBIDDEN
     historical_replay_countable: false
     countable_pair_requires_marketplace_activation: true
 
   g5_grid_dry_run:
     status: PASS_STRUCTURAL_OBSERVED_NOT_COUNTABLE
-    evidence: evidence/g5-grid-observed-pair-dry-run/README.md
     ci_run: 33843581388
     pair_id: g5-grid-dry-55340232221132058579
     result: GRID_UNDERPERFORMED_BASELINE_ON_THIS_WINDOW
     countable_for_final_report: false
-    paired_run_count_after: 0
-    wallet_used: false
-    chain_write_attempted: false
-    realized_mainnet_pnl_claimed: false
 
   g5_grid_forward_runner:
-    status: PREFLIGHT_PASS_EXECUTION_AUTHORIZED_NOT_RUN
-    evidence: evidence/g5-grid-forward-runner-preflight/README.md
-    human_go_evidence: evidence/g5-grid-forward-execution-human-go/README.md
-    authoritative_ci_run: 33845758154
-    validated_head: c59725553793e6927479077205d4e4a91a7e78bb
+    status: PREWRITE_SIZE_REMEDIATED_EXECUTION_AUTHORIZED_NOT_RUN
+    original_preflight_ci_run: 33845758154
+    remediation_ci_run: 33859221865
+    remediation_validated_head: e608c81f34ef2e8442d53efbe946ab84f1515829
     runner: scripts/g5-grid-forward-observed-pair.ps1
     execution_switch: '-Execute'
     exact_human_gate_env: SPONDEE_G5_GRID_FORWARD_HUMAN_GATE=SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
@@ -77,33 +67,43 @@ handover:
     service_price_raw: '0'
     megafuel_required: true
     mainnet_mode: READ_ONLY_CHAINLINK_ONLY
-    first_round_rule: STRICTLY_AFTER_PROMISE_FREEZE_AND_BSC_TESTNET_FUNDING
-    independent_round_verification: EXACT_CHAINLINK_ROUND_ID_REREAD
-    same_window_baseline: STATIC_50_50_BUY_AND_HOLD
     target_future_rounds: 8
     max_wait_seconds: 480
+    wire_format: SG5F2_COMPACT
+    compact_task_budget: LESS_THAN_500_BYTES_CI_ENFORCED
+    legacy_v1_decode_supported: true
+    first_attempt:
+      conclusion: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_FAIL_CLOSED
+      error: ONCHAIN_DESCRIPTION_2288_GT_1600
+      progress_count: 0
+      transaction_attempted: false
+      job_created: false
+      mainnet_value_moved: false
     execution_gate_open: true
-    execution_completed: false
+    authorization_consumed: false
     countable_pairs_before_execution: 0
+    evidence:
+      - evidence/g5-grid-forward-runner-preflight/README.md
+      - evidence/g5-grid-forward-execution-human-go/README.md
+      - evidence/g5-grid-forward-prewrite-size-failclosed-remediation/README.md
 
   exact_next_gate: SPONDEE_G5_GRID_FORWARD_OBSERVED_PAIR_EXECUTION_REQUIRED
   exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   exact_next_action: >-
-    Execute exactly one new zero-price Grid G5 BSC-testnet marketplace job using the canonical runner,
-    freeze Promise/config before the future market window, collect eight future Chainlink BNB/USD rounds
-    after the required temporal boundary, independently reread them, compute the same-window baseline,
-    and validate the first countable Agent Advantage pair.
+    Pull the remediated CI-validated head and execute the canonical Grid forward runner once more under
+    the already-recorded human GO. This retry is permitted only because the prior attempt produced zero
+    BSC-testnet writes and zero jobs. If the next attempt performs any write, no blind retry is allowed.
 
   stop_conditions:
     - do not rerun jobs 949, 954, 955, or 957
     - do not count the historical Grid dry-run
     - exactly one new G5 Grid job under this authorization
-    - no second execution or blind retry without a new human gate
+    - prior pre-write failure did not consume that one-job authorization
+    - after any BSC-testnet write, stop on failure and recover deterministically; no blind retry
     - BSC mainnet remains read-only only
     - no meaningful user/mainnet capital
     - no material paid spend
     - no realized-mainnet-PnL claim
-    - fail closed on timeout or first execution failure
     - no merge to main
     - no Project Finisher yet
     - no final submission

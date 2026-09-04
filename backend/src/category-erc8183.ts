@@ -24,6 +24,7 @@ import {
 
 const TASK_PREFIX = "SPONDEE_TASK_B64_V1:";
 const DEFAULT_PROVIDER = "0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8";
+const BOUNDED_SUBMIT_WAIT_MS = 135_000;
 
 const jobInitialisedAbi = [
   {
@@ -62,21 +63,26 @@ export function encodeSpondeeCategoryTask(task: SpondeeTask): string {
   return `${TASK_PREFIX}${Buffer.from(JSON.stringify(task), "utf8").toString("base64url")}`;
 }
 
+/**
+ * Parse the terminal result returned only by Spondee's explicit bounded
+ * `wait_for_result:true` seller extension. The default Agent Studio
+ * notify_funded contract remains asynchronous and returns status=accepted.
+ */
 export function parseNotifyFundedSubmit(
   raw: Record<string, unknown>,
   jobId: bigint,
 ): { transactionHash: Hex; deliverableUrl: string | null } {
-  if (raw.ok !== true) throw new Error("seller notify_funded did not return ok=true");
+  if (raw.ok !== true) throw new Error("bounded seller notify_funded did not return ok=true");
   if (String(raw.job_id ?? "") !== String(jobId)) {
-    throw new Error(`seller notify_funded returned wrong job id: ${String(raw.job_id ?? "missing")}`);
+    throw new Error(`bounded seller notify_funded returned wrong job id: ${String(raw.job_id ?? "missing")}`);
   }
   const txHash = raw.tx_hash;
   if (typeof txHash !== "string" || !/^0x[0-9a-fA-F]{64}$/.test(txHash)) {
-    throw new Error("seller notify_funded did not return a valid submit transaction hash");
+    throw new Error("bounded seller notify_funded did not return a valid submit transaction hash");
   }
   const deliverableUrl = raw.deliverable_url;
   if (deliverableUrl !== undefined && (typeof deliverableUrl !== "string" || deliverableUrl.length === 0)) {
-    throw new Error("seller notify_funded returned an invalid deliverable_url");
+    throw new Error("bounded seller notify_funded returned an invalid deliverable_url");
   }
   return {
     transactionHash: txHash as Hex,
@@ -84,9 +90,18 @@ export function parseNotifyFundedSubmit(
   };
 }
 
+export function boundedNotifyFundedPayload(jobId: bigint): Record<string, unknown> {
+  return {
+    skill: "notify_funded",
+    job_id: Number(jobId),
+    wait_for_result: true,
+  };
+}
+
 async function sendSkill(
   messageUrl: string,
   data: Record<string, unknown>,
+  timeoutMs = 30_000,
 ): Promise<Record<string, unknown>> {
   const response = await fetch(messageUrl, {
     method: "POST",
@@ -104,7 +119,7 @@ async function sendSkill(
         },
       },
     }),
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   if (!response.ok) throw new Error(`seller A2A HTTP ${response.status}`);
   const reply = (await response.json()) as RpcReply;
@@ -193,11 +208,11 @@ type ProgressSink = (progress: LiveActivationProgress) => Promise<void> | void;
 /**
  * Multi-category equivalent of the proven Health Factor G3 path.
  *
- * This function remains hard-gated by the same environment contract as G3 and is
- * never called by CI. It accepts all four Spondee task schemas, keeps the service
- * price at zero, verifies the signed Promise commitment before createJob, and
- * obtains the deliverable URL directly from the exact provider submit transaction
- * returned by notify_funded. It performs no JobSubmitted eth_getLogs scan.
+ * The seller's ordinary Agent Studio notify_funded contract is asynchronous.
+ * For Spondee's bounded local proof only, this buyer explicitly requests
+ * `wait_for_result:true`, receives the exact fixed-code provider submit tx,
+ * and reads that known transaction receipt directly. No JobSubmitted
+ * historical eth_getLogs scan is used.
  */
 export async function runSignedZeroPriceCategoryTestnetActivation(
   task: SpondeeTask,
@@ -226,9 +241,6 @@ export async function runSignedZeroPriceCategoryTestnetActivation(
   try {
     const taskDescription = encodeSpondeeCategoryTask(task);
 
-    // The cloned G3 seller transport intentionally retains this legacy skill id;
-    // the Agent Card label/schema is category-aware. Refactor the wire id only at
-    // a later compatibility gate, not during bounded live proof.
     const previewRaw = await sendSkill(messageUrl, {
       skill: "preview_health_factor",
       task_description: taskDescription,
@@ -298,7 +310,11 @@ export async function runSignedZeroPriceCategoryTestnetActivation(
     const funded = await client.fund(jobId, 0n);
     await onProgress({ stage: "FUND", job_id: String(jobId), transaction_hash: funded.transactionHash });
 
-    const notifyFundedRaw = await sendSkill(messageUrl, { skill: "notify_funded", job_id: Number(jobId) });
+    const notifyFundedRaw = await sendSkill(
+      messageUrl,
+      boundedNotifyFundedPayload(jobId),
+      BOUNDED_SUBMIT_WAIT_MS,
+    );
     const submit = parseNotifyFundedSubmit(notifyFundedRaw, jobId);
     const submitReceipt = await client.publicClient.getTransactionReceipt({ hash: submit.transactionHash });
     if (submitReceipt.status !== "success") {
@@ -322,7 +338,7 @@ export async function runSignedZeroPriceCategoryTestnetActivation(
       job.deliverable,
     );
     if (submit.deliverableUrl !== null && submit.deliverableUrl !== deliverableUrl) {
-      throw new Error("seller notify_funded deliverable_url differs from known submit receipt");
+      throw new Error("bounded seller deliverable_url differs from known submit receipt");
     }
     await onProgress({
       stage: "SUBMIT_OBSERVED",

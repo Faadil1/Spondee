@@ -11,17 +11,17 @@ handover:
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER and the requirements,
     evidence, runtime, risk and activity ledgers. Canonical GitHub state outranks chat memory.
     Health Factor G3 is complete. Grid, Rebalancing and Yield controlled Agent Studio paths have passed
-    build/test/bag-scan CI. The human explicitly opened the sequential G4 live-testnet gate. Execute Grid
-    first, then Rebalancing only after Grid PASS, then Yield only after Rebalancing PASS. Stop on the first
-    failure and never retry blindly after a partial chain write.
+    build/test/bag-scan CI and the dedicated sequential live preflight is PASS. The human explicitly opened
+    the sequential G4 live-testnet gate. Execute Grid first, then Rebalancing only after Grid PASS, then Yield
+    only after Rebalancing PASS. Stop on the first failure and never retry blindly after a partial chain write.
 
-  current_milestone: G4_THREE_REFERENCE_AGENTS_AND_MULTI_CATEGORY_DRIVER_CI_PASS__SEQUENTIAL_LIVE_AUTHORIZED
-  lifecycle_status: G4_SEQUENTIAL_LIVE_TESTNET_E2E_AUTHORIZED__GRID_FIRST
+  current_milestone: G4_SEQUENTIAL_LIVE_PREFLIGHT_PASS__GRID_EXECUTION_READY
+  lifecycle_status: G4_GRID_LOCAL_LIVE_TESTNET_E2E_READY
 
   authority:
     project: PROJECT_AUTHORIZED
     current_gate: SPONDEE_G4_THREE_CATEGORY_SEQUENTIAL_LIVE_TESTNET_E2E_REQUIRED
-    gate_status: HUMAN_AUTHORIZED_2026_09_04
+    gate_status: HUMAN_AUTHORIZED_AND_PREFLIGHT_PASS
     current_action_class: BOUNDED_BSC_TESTNET_CHAIN_WRITE
     production_owner: PBPD
     local_runtime_owner: HUMAN
@@ -42,14 +42,9 @@ handover:
     status: PASS
     evidence: evidence/g4-three-reference-agents-ci/README.md
     authoritative_run: 33826331454
-    head: c537f2a7c70012c8712e91257a17390549885cda
     grid: PASS
     rebalancing: PASS
     yield: PASS
-    artifacts:
-      grid: 9920092070
-      rebalancing: 9920091773
-      yield: 9920093946
 
   g4_multi_category_buyer:
     status: CI_PASS
@@ -67,14 +62,30 @@ handover:
       - post-submit URL decoded from known submit receipt
       - simulation receipt excluded from observed Agent Advantage
 
+  g4_sequential_preflight:
+    status: PASS
+    evidence: evidence/g4-sequential-live-preflight/README.md
+    authoritative_run: 33827625957
+    validated_head: 01050a567bbd4a670a0663702c5a581e8c9dbe96
+    backend_tests: PASS_31_OF_31
+    backend_typescript: PASS
+    scenarios: PASS_GRID_REBALANCING_YIELD
+    credential_free_fail_closed: PASS
+    grid_agent: PASS
+    rebalancing_agent: PASS
+    yield_agent: PASS
+    windows_runner_parse_and_safety: PASS
+    g4_chain_write_attempted: false
+
   g4_candidate_qualification:
     status: PASS
     evidence: evidence/g4-four-category-live-path-qualification/README.md
     external_candidates_remain_discovery_only: true
 
   g4_sequential_live_gate:
-    evidence: evidence/g4-sequential-live-gate/README.md
-    status: AUTHORIZED
+    authorization_evidence: evidence/g4-sequential-live-gate/README.md
+    preflight_evidence: evidence/g4-sequential-live-preflight/README.md
+    status: AUTHORIZED_AND_PREFLIGHT_PASS
     network: bsc-testnet
     chain_id: 97
     provider: '0x3CC4d66BD9f872d803c1Ce063c1426fB7aec38A8'
@@ -86,7 +97,7 @@ handover:
     sequence:
       - category: grid
         task: reference-agents/grid/demo/g4-live-scenario.json
-        status: READY_AFTER_PREFLIGHT
+        status: READY_NOW
       - category: rebalancing
         task: reference-agents/rebalancing/demo/g4-live-scenario.json
         status: BLOCKED_UNTIL_GRID_PASS
@@ -100,11 +111,10 @@ handover:
   exact_next_gate: SPONDEE_G4_GRID_LIVE_TESTNET_E2E_EXECUTION_REQUIRED
   exact_next_owner: HUMAN_LOCAL_RUNTIME_WITH_PBPD_ASSURANCE
   exact_next_action: >-
-    After the G4 Sequential Live Preflight workflow is PASS, locally fetch/check out
-    build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
-    .\scripts\g4-sequential-live-e2e-localstorage.ps1. Enter the existing seller wallet password only
-    into the masked local prompt. Return only the public PASS/FAIL evidence. Grid is the only category
-    permitted to begin; the runner unlocks Rebalancing and Yield only after the prior category passes.
+    Locally fetch/check out build/g4-sequential-live-e2e and run powershell -ExecutionPolicy Bypass -File
+    .\scripts\g4-sequential-live-e2e-localstorage.ps1. Enter the existing seller wallet password only into
+    the masked local prompt. Return only the public PASS/FAIL evidence. Grid is the only category permitted
+    to begin; the runner unlocks Rebalancing and Yield only after the prior category passes.
 
   stop_conditions:
     - stop immediately on any category failure

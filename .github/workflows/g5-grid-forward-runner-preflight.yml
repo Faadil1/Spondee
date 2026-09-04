@@ -11,6 +11,8 @@ on:
       - 'backend/src/live-g5-grid-forward.ts'
       - 'reference-agents/grid/app/agent/src/g5ForwardObserved.ts'
       - 'reference-agents/grid/app/agent/src/g5ForwardObserved.test.ts'
+      - 'reference-agents/grid/app/agent/src/g5ForwardWire.ts'
+      - 'reference-agents/grid/app/agent/src/g5ForwardWire.test.ts'
       - 'reference-agents/grid/app/agent/src/g5ForwardServer.ts'
       - 'scripts/g5-grid-forward-observed-pair.ps1'
       - '.github/workflows/g5-grid-forward-runner-preflight.yml'
@@ -44,6 +46,7 @@ jobs:
           grep -F 'G5 Grid forward execution gate is closed' backend/src/g5-grid-forward-erc8183.ts
           grep -F 'mainnet_value_moved: false' backend/src/live-g5-grid-forward.ts
           grep -F 'countable_for_final_report: true' backend/src/live-g5-grid-forward.ts
+          grep -F 'G5_GRID_TASK_PREFIX_V2 = "SG5F2:"' backend/src/g5-grid-forward.ts
           test -z "$(grep -E 'mainnet.*writeContract|mainnet.*sendTransaction|MAINNET_PRIVATE_KEY' backend/src/g5-grid-forward-erc8183.ts backend/src/live-g5-grid-forward.ts || true)"
       - name: Live CLI must fail before wallet/network writes without gate
         working-directory: backend
@@ -58,13 +61,14 @@ jobs:
       - name: Run read-only forward preflight against live Chainlink source
         working-directory: backend
         run: npx tsx src/g5-grid-forward-preflight.ts | tee /tmp/g5-grid-forward-preflight.json
-      - name: Validate preflight truth boundary
+      - name: Validate preflight truth boundary and compact byte budget
         shell: bash
         run: |
           grep -F '"conclusion": "SPONDEE_G5_GRID_FORWARD_RUNNER_PREFLIGHT_PASS"' /tmp/g5-grid-forward-preflight.json
           grep -F '"wallet_used": false' /tmp/g5-grid-forward-preflight.json
           grep -F '"chain_write_attempted": false' /tmp/g5-grid-forward-preflight.json
           grep -F '"execution_gate_open": false' /tmp/g5-grid-forward-preflight.json
+          node -e "const fs=require('fs');const x=JSON.parse(fs.readFileSync('/tmp/g5-grid-forward-preflight.json','utf8'));if(!(x.encoded_task_bytes<500))throw new Error('encoded task byte budget regression: '+x.encoded_task_bytes);console.log('compact encoded_task_bytes='+x.encoded_task_bytes)"
 
   grid-forward-seller:
     runs-on: ubuntu-latest
@@ -84,7 +88,7 @@ jobs:
         run: pnpm test
       - name: G5 forward seller tests
         working-directory: reference-agents/grid/app/agent
-        run: pnpm exec node --import tsx --test src/g5ForwardObserved.test.ts
+        run: pnpm exec node --import tsx --test src/g5ForwardObserved.test.ts src/g5ForwardWire.test.ts
       - name: Strict Grid TypeScript build
         working-directory: reference-agents/grid/app/agent
         run: pnpm build
@@ -95,7 +99,8 @@ jobs:
           grep -F 'Date.parse(r.updated_at) <= Date.parse(observationStartedAt)' reference-agents/grid/app/agent/src/g5ForwardObserved.ts
           grep -F 'mainnet_chain_write_attempted: false' reference-agents/grid/app/agent/src/g5ForwardObserved.ts
           grep -F 'wait_for_result !== true' reference-agents/grid/app/agent/src/g5ForwardServer.ts
-          test -z "$(grep -E 'settle\(|wallet:create|mainnet.*submit' reference-agents/grid/app/agent/src/g5ForwardObserved.ts reference-agents/grid/app/agent/src/g5ForwardServer.ts || true)"
+          grep -F 'G5_GRID_TASK_PREFIX_V2 = "SG5F2:"' reference-agents/grid/app/agent/src/g5ForwardWire.ts
+          test -z "$(grep -E 'settle\(|wallet:create|mainnet.*submit' reference-agents/grid/app/agent/src/g5ForwardObserved.ts reference-agents/grid/app/agent/src/g5ForwardServer.ts reference-agents/grid/app/agent/src/g5ForwardWire.ts || true)"
 
   windows-runner-safety:
     runs-on: windows-latest

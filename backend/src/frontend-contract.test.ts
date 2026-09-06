@@ -33,7 +33,21 @@ test("frontend bootstrap exposes stable product, four categories and verified Sp
       schema: string;
       product: { name: string; tagline: string; primary_path: string[] };
       categories: Array<{ reference_agent: { readiness: string; activatable: boolean; activation_proof: { status: string; job_id: string | null } } }>;
-      backend_capabilities: { first_countable_observed_grid_pair: string; observed_pair_requirement: string };
+      backend_capabilities: {
+        canonical_observed_agent_advantage: string;
+        canonical_observed_pair_jobs: string;
+        first_countable_observed_grid_pair: string;
+        observed_pair_requirement: string;
+        runtime_evidence_source: string;
+      };
+      evidence: {
+        agent_advantage_report: {
+          observed_run_count: number;
+          paired_run_count: number;
+          excluded_simulation_count: number;
+          status: string;
+        };
+      };
       endpoints: Record<string, string>;
     };
     assert.equal(body.schema, "spondee.frontend-bootstrap.v1");
@@ -44,8 +58,16 @@ test("frontend bootstrap exposes stable product, four categories and verified Sp
     assert.ok(body.categories.every((entry) => entry.reference_agent.readiness === "LIVE_TESTNET_VERIFIED"));
     assert.ok(body.categories.every((entry) => entry.reference_agent.activatable === true));
     assert.ok(body.categories.every((entry) => entry.reference_agent.activation_proof.status === "VERIFIED_LIVE_TESTNET"));
-    assert.equal(body.backend_capabilities.first_countable_observed_grid_pair, "VERIFIED_JOB_962");
-    assert.equal(body.backend_capabilities.observed_pair_requirement, "PARTIAL_1_OF_3");
+    assert.equal(body.backend_capabilities.canonical_observed_agent_advantage, "READY_3_OF_3_PRESERVED_EVIDENCE");
+    assert.equal(body.backend_capabilities.canonical_observed_pair_jobs, "GRID_962_HEALTH_971_REBALANCING_973");
+    assert.equal(body.backend_capabilities.first_countable_observed_grid_pair, "GRID_JOB_962_CLOSED_COUNTABLE");
+    assert.equal(body.backend_capabilities.observed_pair_requirement, "CANONICAL_READY_3_OF_3_RUNTIME_STORE_DEPENDENT");
+    assert.equal(body.backend_capabilities.runtime_evidence_source, "STORE_LIST_EVIDENCE_NOT_REPOSITORY_AUTO_SEED");
+    assert.notEqual(body.backend_capabilities.observed_pair_requirement, "PARTIAL_1_OF_3");
+    assert.equal(body.evidence.agent_advantage_report.observed_run_count, 0);
+    assert.equal(body.evidence.agent_advantage_report.paired_run_count, 0);
+    assert.equal(body.evidence.agent_advantage_report.excluded_simulation_count, 0);
+    assert.equal(body.evidence.agent_advantage_report.status, "INSUFFICIENT_OBSERVED_EVIDENCE");
     assert.equal(body.endpoints.receipts, "/v1/receipts");
   });
 });

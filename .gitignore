@@ -1,0 +1,28 @@
+backend/dist/
+backend/node_modules/
+frontend/.next/
+frontend/node_modules/
+frontend/tsconfig.tsbuildinfo
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Build outputs and caches
+backend/build/
+frontend/out/
+coverage/
+.turbo/
+
+# Logs, OS and editor files
+*.log
+.DS_Store
+.idea/
+.vscode/

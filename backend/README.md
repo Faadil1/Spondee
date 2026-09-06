@@ -223,11 +223,10 @@ Verified controlled live BSC-testnet transport jobs:
 - Rebalancing: `955`
 - Yield: `957`
 
-First countable observed Agent Advantage pair:
+Canonical countable observed Agent Advantage pairs:
 
-- Grid job `962`
-- agent terminal equity `$9,996.660009`
-- baseline `$9,999.160009`
-- measured delta `-$2.50`
+- Grid job `962`: agent terminal equity `$9,996.660009`, baseline `$9,999.160009`, measured delta `-$2.50`.
+- Health Factor job `971`: warning lead `95.829 s`, response latency `0 ms`, no liquidation-prevention claim.
+- Rebalancing job `973`: neutral result, agent and baseline both `$10,002.727008`.
 
-This negative result is intentionally preserved. Backend code completion does **not** mean submission evidence is complete: two more countable observed pairs, the Health Factor observed event tape and public deployment remain separate evidence/runtime workstreams.
+These results are intentionally preserved as mixed evidence: one negative, one timing-focused and one neutral. A fresh runtime store still reports only records present in that store; repository evidence summaries are not auto-ingested.

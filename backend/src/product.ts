@@ -65,7 +65,7 @@ export const CATEGORY_PRESENTATION: Record<Category, {
 
 export const BACKEND_CAPABILITY_MATRIX = {
   schema: "spondee.backend-capability-matrix.v1",
-  backend_code_completion: "COMPLETE_PASS_RUN_33866229883",
+  backend_code_completion: "COMPLETE_PASS_RUN_33867168666",
   marketplace_catalog: "IMPLEMENTED",
   dynamic_8004scan_discovery: "IMPLEMENTED_SERVER_SIDE_READ_ONLY",
   promise_preview: "IMPLEMENTED",
@@ -80,11 +80,15 @@ export const BACKEND_CAPABILITY_MATRIX = {
   decision_replay: "IMPLEMENTED_READ_ONLY",
   deployment_readiness_contract: "IMPLEMENTED",
   agent_advantage_schema: "IMPLEMENTED",
-  first_countable_observed_grid_pair: "VERIFIED_JOB_962",
-  observed_pair_requirement: "PARTIAL_1_OF_3",
-  health_factor_observed_event_tape: "PENDING_EVIDENCE_WORKSTREAM_NOT_BACKEND_CODE",
+  canonical_observed_agent_advantage: "READY_3_OF_3_PRESERVED_EVIDENCE",
+  canonical_observed_pair_jobs: "GRID_962_HEALTH_971_REBALANCING_973",
+  runtime_evidence_source: "STORE_LIST_EVIDENCE_NOT_REPOSITORY_AUTO_SEED",
+  first_countable_observed_grid_pair: "GRID_JOB_962_CLOSED_COUNTABLE",
+  observed_pair_requirement: "CANONICAL_READY_3_OF_3_RUNTIME_STORE_DEPENDENT",
+  health_factor_observed_event_tape: "CLOSED_PASS_JOB_971",
+  rebalancing_observed_pair: "CLOSED_PASS_JOB_973",
   public_judge_deployment: "PENDING_RUNTIME_DEPLOYMENT_NOT_BACKEND_CODE",
-  winner_intelligence_ui_enhancements: "POST_V1_NON_BLOCKING",
+  winner_intelligence_ui_enhancements: "M1_UI_HARDENING_COMPLETE_M2_REVIEW_PENDING",
 } as const;
 
-export const CLOSED_LIVE_JOBS = ["949", "954", "955", "957", "962"] as const;
+export const CLOSED_LIVE_JOBS = ["949", "954", "955", "957", "962", "971", "973"] as const;

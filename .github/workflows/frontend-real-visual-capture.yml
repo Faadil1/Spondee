@@ -102,24 +102,31 @@ jobs:
                 if (msg.type() === 'error') errors.push(`console:${msg.text()}`);
               });
               page.on('pageerror', (err) => errors.push(`pageerror:${err.message}`));
-              const response = await page.goto(url, { waitUntil: 'networkidle' });
-              const status = response?.status() ?? null;
-              const title = await page.title();
-              const h1 = await page.locator('h1').first().textContent().catch(() => null);
+              let status = null;
+              let title = null;
+              let h1 = null;
+              let navigationError = null;
               const file = `visual-capture/${device}-${name}.png`;
-              await page.screenshot({ path: file, fullPage: true });
-              manifest.push({ device, viewport, name, route, status, title, h1, errors, file });
+              try {
+                const response = await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+                status = response?.status() ?? null;
+                title = await page.title();
+                h1 = await page.locator('h1').first().textContent().catch(() => null);
+              } catch (error) {
+                navigationError = error instanceof Error ? error.message : String(error);
+              }
+              await page.screenshot({ path: file, fullPage: true }).catch((error) => {
+                errors.push(`screenshot:${error instanceof Error ? error.message : String(error)}`);
+              });
+              manifest.push({ device, viewport, name, route, status, title, h1, navigationError, errors, file });
               await page.close();
             }
             await context.close();
           }
           await browser.close();
-          fs.writeFileSync('visual-capture/manifest.json', JSON.stringify(manifest, null, 2));
-          if (manifest.some((item) => item.status !== 200 || item.errors.length > 0)) {
-            console.error(JSON.stringify(manifest, null, 2));
-            process.exit(1);
-          }
-          console.log(JSON.stringify(manifest, null, 2));
+          const pass = manifest.every((item) => item.status === 200 && !item.navigationError && item.errors.length === 0);
+          fs.writeFileSync('visual-capture/manifest.json', JSON.stringify({ pass, manifest }, null, 2));
+          console.log(JSON.stringify({ pass, manifest }, null, 2));
           EOF
           node /tmp/spondee-visual-tools/capture.mjs
 
@@ -131,7 +138,12 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Summary
+      - name: Validate capture
         run: |
-          echo 'SPONDEE REAL VISUAL CAPTURE: PASS'
-          cat visual-capture/manifest.json
+          node -e "const x=require('./visual-capture/manifest.json'); if(!x.pass){console.error(JSON.stringify(x,null,2)); process.exit(1)}"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo 'SPONDEE REAL VISUAL CAPTURE MANIFEST'
+          cat visual-capture/manifest.json || true

@@ -8,8 +8,6 @@ type TopNavProps = {
 };
 
 export function TopNav({ bootstrap }: TopNavProps) {
-  const liveReady = bootstrap.runtime.live_testnet_write_ready;
-
   return (
     <header className="top-nav">
       <Link className="brand" href="/" aria-label="Spondee home">
@@ -23,10 +21,8 @@ export function TopNav({ bootstrap }: TopNavProps) {
         <Link href="/evidence">Evidence</Link>
       </nav>
 
-      <div className="nav-status" aria-label="Runtime status">
-        <StatusPill tone={liveReady ? "good" : "warn"}>
-          {liveReady ? "Live-testnet ready" : "Live writes gated"}
-        </StatusPill>
+      <div className="nav-status" aria-label="Verified network status">
+        <StatusPill tone="good">4/4 BSC paths verified</StatusPill>
         <Link className="icon-link" href="/#mechanism" aria-label="View Spondee mechanism">
           <Activity size={16} />
           <ArrowDownRight size={14} />

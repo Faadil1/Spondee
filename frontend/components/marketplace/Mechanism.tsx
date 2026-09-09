@@ -5,7 +5,7 @@ const steps = [
   { label: "Configure", icon: SlidersHorizontal },
   { label: "Promise", icon: FileCheck },
   { label: "Activate", icon: Play },
-  { label: "Measure", icon: TimerReset },
+  { label: "Receipt", icon: TimerReset },
   { label: "Compare", icon: CheckSquare },
 ];
 
@@ -14,8 +14,8 @@ export function Mechanism() {
     <section className="mechanism-section" id="mechanism">
       <SectionHeader
         eyebrow="Mechanism"
-        title="The agent commits before the user grants authority"
-        copy="Spondee keeps the decision path explicit: configure the job, record the promise, activate within a boundary, measure the result, then compare against runtime evidence when it exists."
+        title="Promise first. Authority second. Evidence after."
+        copy="Configure the task, freeze the agent's Promise, grant only the bounded activation path, inspect the Outcome Receipt, then compare against the same-window without-agent baseline when observed evidence exists."
       />
 
       <ol className="mechanism-flow">

@@ -1,0 +1,139 @@
+name: Frontend Real Visual Capture
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/frontend-finalization']
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+      - '.github/workflows/frontend-real-visual-capture.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install backend
+        working-directory: backend
+        run: npm ci --no-audit --no-fund
+
+      - name: Install frontend
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Start backend in memory mode
+        working-directory: backend
+        run: |
+          nohup npm run dev > /tmp/spondee-backend.log 2>&1 &
+          echo $! > /tmp/spondee-backend.pid
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:8787/healthz >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/spondee-backend.log
+          exit 1
+
+      - name: Start frontend against local backend
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_SPONDEE_BACKEND_URL: http://127.0.0.1:8787
+        run: |
+          nohup npm run dev -- --hostname 0.0.0.0 --port 3000 > /tmp/spondee-frontend.log 2>&1 &
+          echo $! > /tmp/spondee-frontend.pid
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/spondee-frontend.log
+          exit 1
+
+      - name: Install Playwright Chromium
+        run: |
+          mkdir -p /tmp/spondee-visual-tools
+          cd /tmp/spondee-visual-tools
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Capture desktop and mobile judge-path visuals
+        run: |
+          mkdir -p visual-capture
+          cat > /tmp/spondee-visual-tools/capture.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+
+          const base = 'http://127.0.0.1:3000';
+          const routes = [
+            ['home', '/'],
+            ['health-category', '/category/health-factor-monitoring'],
+            ['health-agent', '/agent/spondee-health-factor'],
+            ['evidence', '/evidence'],
+          ];
+          const viewports = [
+            ['desktop', { width: 1440, height: 1000 }],
+            ['mobile', { width: 390, height: 844 }],
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const manifest = [];
+          for (const [device, viewport] of viewports) {
+            const context = await browser.newContext({ viewportSize: viewport, reducedMotion: 'reduce' });
+            for (const [name, route] of routes) {
+              const page = await context.newPage();
+              const url = `${base}${route}`;
+              const errors = [];
+              page.on('console', (msg) => {
+                if (msg.type() === 'error') errors.push(`console:${msg.text()}`);
+              });
+              page.on('pageerror', (err) => errors.push(`pageerror:${err.message}`));
+              const response = await page.goto(url, { waitUntil: 'networkidle' });
+              const status = response?.status() ?? null;
+              const title = await page.title();
+              const h1 = await page.locator('h1').first().textContent().catch(() => null);
+              const file = `visual-capture/${device}-${name}.png`;
+              await page.screenshot({ path: file, fullPage: true });
+              manifest.push({ device, viewport, name, route, status, title, h1, errors, file });
+              await page.close();
+            }
+            await context.close();
+          }
+          await browser.close();
+          fs.writeFileSync('visual-capture/manifest.json', JSON.stringify(manifest, null, 2));
+          if (manifest.some((item) => item.status !== 200 || item.errors.length > 0)) {
+            console.error(JSON.stringify(manifest, null, 2));
+            process.exit(1);
+          }
+          console.log(JSON.stringify(manifest, null, 2));
+          EOF
+          NODE_PATH=/tmp/spondee-visual-tools/node_modules node /tmp/spondee-visual-tools/capture.mjs
+
+      - name: Upload immutable visual capture
+        uses: actions/upload-artifact@v4
+        with:
+          name: spondee-real-visual-${{ github.sha }}
+          path: visual-capture/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Summary
+        run: |
+          echo 'SPONDEE REAL VISUAL CAPTURE: PASS'
+          cat visual-capture/manifest.json

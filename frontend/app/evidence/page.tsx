@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { TopNav } from "@/components/layout/TopNav";
+import { CanonicalEvidencePanel } from "@/components/evidence/CanonicalEvidencePanel";
 import { EvidenceDashboard } from "@/components/evidence/EvidenceDashboard";
 import { BackendUnavailableState, MalformedState } from "@/components/marketplace/StateScreens";
 import { getProductBootstrap } from "@/lib/api/bootstrap";
@@ -78,6 +79,7 @@ export default async function EvidencePage() {
     <>
       <TopNav bootstrap={bootstrap.data} />
       <main className="detail-main">
+        <CanonicalEvidencePanel />
         <EvidenceDashboard
           report={reportResult.report}
           runs={runsResult.evidence}

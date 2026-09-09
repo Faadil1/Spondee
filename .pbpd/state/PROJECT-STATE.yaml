@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R041-CANONICAL-EVIDENCE-JUDGE-SURFACING-PASS__VISUAL-TRACE-REVIEW-NEXT
+revision: STATE-R042-REAL-VISUAL-CAPTURE-PASS__DESIGN-DIRECTION-SELECTION-NEXT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -7,15 +7,13 @@ source_of_truth: GITHUB
 authority:
   project_authority: PROJECT_AUTHORIZED
   production_owner: PBPD
-  frontend_previous_owner: Benita
   frontend_current_owner: PBPD
-  takeover_reason: USER_REQUESTED_FINALIZATION_AFTER_BENITA_PUSH
   merge_to_main: NOT_AUTHORIZED
   final_submission: HUMAN_ONLY
   mainnet_or_meaningful_user_capital: HUMAN_ONLY
 lifecycle:
   phase: FRONTEND_FINALIZATION_AND_PUBLIC_DEPLOYMENT
-  status: FRONTEND_TECHNICAL_AND_EVIDENCE_JUDGE_BASELINE_PASS__VISUAL_REVIEW_NEXT
+  status: TECHNICAL_BASELINE_PASS__CANONICAL_EVIDENCE_SURFACING_PASS__REAL_VISUAL_CAPTURE_PASS__DESIGN_REFINEMENT_NEXT
 product:
   tagline: Agents, measured by what they deliver.
   concept: Calibrated Outcome Marketplace + Intervention Advantage
@@ -24,75 +22,90 @@ backend:
   status: CODE_COMPLETE_FOR_FRONTEND_V1
   authoritative_ci_run: 33867168666
   stable_contract: spondee.frontend-bootstrap.v1
-  primary_endpoint: /v1/product/bootstrap
 observed_evidence:
   canonical_status: READY_3_OF_3
   jobs: ['962','971','973']
   trading_requirement_satisfied: true
   health_event_tape: CLOSED_PASS
-  runtime_store_on_fresh_postgres: MAY_START_0_OF_3_UNTIL_INITIALIZED
   judge_surfacing: PASS_SEPARATE_CANONICAL_FROM_RUNTIME
   truth_boundaries:
     - GRID_962_NEGATIVE_RESULT_MUST_REMAIN_VISIBLE
     - HEALTH_971_NO_LIQUIDATION_PREVENTION_CLAIM
     - REBALANCING_973_NEUTRAL_RESULT_MUST_REMAIN_VISIBLE
 closed_jobs: ['949','954','955','957','962','971','973']
-frontend_takeover:
-  canonical_work_branch: build/frontend-finalization
-  source_handoff_branch: build/frontend-handoff-ready
-  pre_benita_head: 768cd601c8157bf1c4411a4d866ee78b725e2b49
-  received_head: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-  evidence_repair_validated_head: 66c2846f37b6bac39a43b5992805133dc07e0aa4
-  implemented_surfaces:
-    - LANDING_MARKETPLACE
-    - CATEGORY_DETAIL
-    - AGENT_DETAIL
-    - TASK_CONFIGURATOR
-    - PROMISE_CARD
-    - ACTIVATION_LAUNCHER_AND_PROGRESS
-    - OUTCOME_RECEIPT
-    - DECISION_REPLAY
-    - EVIDENCE_DASHBOARD
-    - AGENT_ADVANTAGE
 frontend_validation:
-  status: PASS_TECHNICAL_AND_EVIDENCE_JUDGE_BASELINE
   received_code_ci_run: 34364535081
   canonical_evidence_repair_ci_run: 34365582522
+  winner_intelligence_code_review_ci_run: 34366183845
+  real_visual_capture_run: 34368828214
+  real_visual_capture_head: 21768baeef3a75c38c171d4db1184ddf1c4c4a80
+  real_visual_artifact_id: 10111061617
+  real_visual_artifact_sha256: 524e240ac753d90292324a153aceb8dcd6f455559b0be21629050a7e2f97768e
+  captured_routes:
+    - /
+    - /category/health-factor
+    - /agent/spondee-health-factor
+    - /evidence
+  captured_viewports:
+    - DESKTOP_1440x1000
+    - MOBILE_390x844
   typecheck: PASS
   lint: PASS
   production_build: PASS
-  judge_path_surface_presence: PASS
-  browser_secret_boundary: PASS
-  public_backend_url_boundary: PASS
-  canonical_evidence_judge_surfacing: PASS
-  runtime_evidence_truth_separation: PASS
-  public_deployment: PENDING
-  responsive_accessibility_visual_review: PENDING
-critical_frontend_blind_spot:
-  id: RUNTIME_EVIDENCE_ZERO_ON_FRESH_DEPLOYMENT
-  status: RESOLVED_FOR_JUDGE_PRESENTATION
-  resolution: >-
-    Frontend now contains a structured repository-preserved canonical evidence summary for verified jobs 962/971/973.
-    Landing and Evidence pages present canonical 3/3 separately from current runtime-store counts. No runtime EvidenceRun
-    was reconstructed from README prose and fresh runtime state remains labeled truthfully.
-  remaining_runtime_initialization: OPTIONAL_FOR_DEMO_DEPTH_NOT_REQUIRED_FOR_CANONICAL_3_OF_3_VISIBILITY
-winner_intelligence_trace:
-  status: READY_FOR_FRONTEND_VISUAL_AND_JUDGE_PATH_REVIEW
+  production_visual_navigation: PASS
+  console_errors: NONE
+  responsive_layout: PASS_BASELINE
+  reduced_motion: PASS_CODE_AND_CAPTURE
+real_visual_findings:
+  overall: FUNCTIONAL_POLISHED_BUT_VISUAL_SIGNATURE_CAN_BE_STRONGER
+  strengths:
+    - first_view_now_names_BNB_Chain_and_product_model
+    - canonical_3_of_3_is_visible_above_fold
+    - Health_Factor_CTA_is_primary
+    - Promise_Authority_Receipt_Baseline_story_is_legible
+    - negative_Grid_and_neutral_Rebalancing_are_visible
+    - mobile_layout_is_stable_and_readable
+  high_value_gaps:
+    - CURRENT_NEAR_BLACK_CARD_SYSTEM_CAN_READ_AS_GENERIC_DEFI_OR_AI_DASHBOARD
+    - EVIDENCE_PAGE_RUNTIME_SECTION_STILL_VISUALLY_COMPETES_WITH_CANONICAL_3_OF_3
+    - HEALTH_AGENT_PRE_PROMISE_RIGHT_COLUMN_FEELS_EMPTY_BEFORE_GENERATION
+    - MOBILE_PATH_IS_LONG_AND_INFORMATION_DENSE
+  rejected_findings:
+    - CATEGORY_NOT_FOUND_FROM_PRIOR_CAPTURE_WAS_HARNESS_WRONG_SLUG_NOT_PRODUCT_BUG
+    - HMR_WEBSOCKET_ERRORS_FROM_PRIOR_CAPTURE_WERE_DEV_ONLY_NOT_PRODUCTION_ERRORS
+design_directions_to_explore:
+  A_PROOF_LEDGER:
+    thesis: Warm financial evidence ledger with receipt-like modules, visible provenance rails and strong Promise-vs-Actual pairing.
+    risk: Avoid becoming plain ivory document UI.
+  B_BNB_EXECUTION_TAPE:
+    thesis: Exchange execution language with BNB yellow, market-tape rhythm, bounded-authority rails and compact transaction proof.
+    risk: Avoid generic crypto trading terminal aesthetics.
+  C_SPONDEE_TWO_BEAT:
+    thesis: Build a unique Spondee signature from the two-beat concept: PROMISE / ACTUAL as paired visual units repeated through the judge path.
+    risk: Keep metaphor subordinate to product clarity.
+  preferred_direction: HYBRID_A_PLUS_C_WITH_BNB_EXECUTION_DETAILS
+  rationale: Distinct from generic black AI dashboards while reinforcing the product's proof-before-authority and promise-versus-actual mechanics.
+public_deployment:
+  status: BLOCKED_ON_VERCEL_ACCOUNT_SCOPE_DISCOVERY
+  connector_team_discovery: ZERO_TEAMS_RETURNED
+  deploy_attempt: NOT_PERFORMED
+  reason: Do not create or target an unknown Vercel project/account scope blindly.
 current_gate:
-  id: SPONDEE_FRONTEND_WINNER_INTELLIGENCE_TRACE_CODE_AND_VISUAL_REVIEW_REQUIRED
-  action_class: FRONTEND_REVIEW_AND_REPAIR_NO_CHAIN_WRITE
+  id: SPONDEE_REAL_VISUAL_REFINEMENT_AND_DEPLOYMENT_SCOPE_RESOLUTION_REQUIRED
+  action_class: FRONTEND_VISUAL_REFINEMENT_PLUS_DEPLOYMENT_PREFLIGHT_NO_CHAIN_WRITE
   chain_write_allowed: false
   wallet_unlock_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
 next_action:
   owner: PBPD_TRACE
-  primary: Review landing and core judge path for first-5-second clarity, sponsor-native necessity, action-to-consequence, evidence surfacing, wait/failure states, responsive/accessibility and domain-native visual quality; patch high-value gaps before public deployment.
+  primary: Apply the highest-value judge-facing refinement using the preferred Proof Ledger + Two-Beat direction, re-capture desktop/mobile, then resolve explicit Vercel project/account scope before public deployment.
   constraints:
     - preserve canonical-vs-runtime evidence distinction
-    - preserve negative Grid, Health limitation and neutral Rebalancing outcomes
+    - preserve observed negative and neutral results
+    - no runtime evidence fabrication
     - never expose protected server tokens in browser code
     - no rerun or mutation of closed jobs
     - no merge to main
     - no final submission
-next_gate: SPONDEE_FRONTEND_WINNER_INTELLIGENCE_TRACE_CODE_AND_VISUAL_REVIEW_REQUIRED
+next_gate: SPONDEE_REAL_VISUAL_REFINEMENT_AND_DEPLOYMENT_SCOPE_RESOLUTION_REQUIRED

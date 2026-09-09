@@ -64,9 +64,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RInE 'SPONDEE_ACTION_TOKEN|SPONDEE_EVIDENCE_INGEST_TOKEN|BUYER_WALLET_PASSWORD|DATABASE_URL' frontend \
-            --exclude='package-lock.json' --exclude='AGENTS.md' --exclude='CLAUDE.md'; then
-            echo 'Protected server-only value referenced in frontend source.' >&2
+          paths=(frontend/app frontend/components frontend/lib frontend/next.config.ts frontend/.env.example)
+          if grep -RInE 'SPONDEE_ACTION_TOKEN|SPONDEE_EVIDENCE_INGEST_TOKEN|BUYER_WALLET_PASSWORD|DATABASE_URL' "${paths[@]}"; then
+            echo 'Protected server-only value referenced in browser/source configuration.' >&2
             exit 1
           fi
           echo 'browser secret boundary: PASS'

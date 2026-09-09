@@ -9,16 +9,15 @@ handover:
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, FRONTEND-HANDOFF,
-    RUNTIME-STATUS, REQUIREMENTS-LEDGER, RISK-REGISTER and EVIDENCE-LEDGER. The backend is complete,
-    observed Agent Advantage is 3/3 countable, and the received Next.js frontend has now passed
-    authoritative CI (typecheck, lint, production build, judge-path surface checks and browser secret
-    boundary). PBPD owns frontend finalization. The next critical issue is judge-facing evidence:
-    a fresh PostgreSQL runtime may report 0/3 until exact runtime evidence payloads are initialized,
-    while canonical repository evidence is already verified 3/3. Do not fabricate runtime records.
+    RUNTIME-STATUS, REQUIREMENTS-LEDGER, RISK-REGISTER and EVIDENCE-LEDGER. Backend is complete,
+    observed Agent Advantage is 3/3 countable, and the received Next.js frontend passed authoritative
+    CI. The critical fresh-runtime evidence presentation gap has also been repaired: canonical verified
+    3/3 evidence is now surfaced separately from the current runtime-store count, so a fresh DB can
+    truthfully show 0 runtime pairs without hiding the preserved 3/3 project record. PBPD owns finalization.
     Jobs 949, 954, 955, 957, 962, 971 and 973 remain CLOSED.
 
-  current_milestone: FRONTEND_TECHNICAL_BASELINE_PASS__CANONICAL_EVIDENCE_SURFACING_NEXT
-  lifecycle_status: FRONTEND_JUDGE_PATH_REPAIR_AND_PUBLIC_DEPLOYMENT
+  current_milestone: CANONICAL_EVIDENCE_JUDGE_SURFACING_PASS__VISUAL_TRACE_REVIEW_NEXT
+  lifecycle_status: FRONTEND_VISUAL_JUDGE_PATH_REVIEW_AND_PUBLIC_DEPLOYMENT
 
   authority:
     project: PROJECT_AUTHORIZED
@@ -34,11 +33,13 @@ handover:
     observed_agent_advantage: READY_3_OF_3
     health_factor_event_tape: CLOSED_PASS
     frontend_received_ci: PASS_RUN_34364535081
+    canonical_evidence_surfacing_ci: PASS_RUN_34365582522
     frontend_typecheck: PASS
     frontend_lint: PASS
     frontend_production_build: PASS
     browser_secret_boundary: PASS
     judge_path_surface_presence: PASS
+    canonical_vs_runtime_evidence_separation: PASS
     stable_frontend_contract: spondee.frontend-bootstrap.v1
     closed_jobs: ['949','954','955','957','962','971','973']
 
@@ -62,26 +63,23 @@ handover:
       - docs/DEPLOYMENT-RUNBOOK.md
       - scripts/smoke-public.mjs
 
-  critical_gap:
-    id: RUNTIME_EVIDENCE_ZERO_ON_FRESH_DEPLOYMENT
-    severity: CRITICAL_JUDGE_PATH
-    canonical_repository_evidence: READY_3_OF_3
-    fresh_runtime_store: MAY_REPORT_0_OF_3
-    impact: Hero and evidence dashboard can understate verified project evidence on a fresh public deployment.
-    prohibited_fix: RECONSTRUCT_RUNTIME_EVIDENCE_FROM_README_PROSE
-    chosen_fix: ADDITIVE_CANONICAL_PRESERVED_EVIDENCE_SUMMARY_SEPARATE_FROM_RUNTIME_COUNTS
+  evidence_presentation:
+    canonical_preserved_summary: READY_3_OF_3
+    runtime_store: SEPARATE_MAY_START_EMPTY
+    hero_primary_proof: CANONICAL_3_OF_3
+    evidence_page_primary_proof: CANONICAL_3_OF_3_WITH_NEGATIVE_HEALTH_LIMITATION_AND_NEUTRAL_RESULTS
+    runtime_initialization_required_for_truthful_canonical_visibility: false
+    runtime_evidence_reconstruction_from_readme: FORBIDDEN
 
-  exact_current_gate: SPONDEE_CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR_REQUIRED
-  exact_current_owner: PBPD
+  exact_current_gate: SPONDEE_FRONTEND_WINNER_INTELLIGENCE_TRACE_CODE_AND_VISUAL_REVIEW_REQUIRED
+  exact_current_owner: PBPD_TRACE
   exact_current_action: >-
-    Add a canonical preserved-evidence summary to the additive bootstrap contract and surface it in the
-    hero/evidence UI while keeping runtime-store counts separately labeled and truthful. Re-run backend
-    and frontend CI after the additive contract change.
+    Review the landing and core judge path for first-5-second clarity, sponsor-native necessity,
+    action-to-consequence, evidence surfacing, waiting/failure states, responsive/accessibility and
+    domain-native visual quality. Patch only high-value demonstrated gaps, then re-run CI before deployment.
 
   expected_sequence:
-    - CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR
-    - FRONTEND_VISUAL_AND_JUDGE_PATH_REVIEW
-    - WINNER_INTELLIGENCE_AND_TRACE_REVIEW
+    - FRONTEND_WINNER_INTELLIGENCE_TRACE_REVIEW_AND_REPAIR
     - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
     - PUBLIC_SMOKE_AND_JUDGE_PATH
     - PROJECT_FINISHER
@@ -91,7 +89,7 @@ handover:
     - Grid job 962 negative result stays visible
     - Health job 971 warning lead does not prove liquidation prevention or safety
     - Rebalancing job 973 neutral result stays visible
-    - runtime store evidence and canonical preserved evidence must be labeled separately
+    - runtime store evidence and canonical preserved evidence remain labeled separately
     - SIMULATION must never be presented as OBSERVED
     - protected server tokens must never be exposed in browser code
 

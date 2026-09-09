@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R039-FRONTEND-PUSH-RECEIVED__PBPD-TAKEOVER__AUDIT-IN-PROGRESS
+revision: STATE-R040-FRONTEND-RECEIVED-CI-PASS__RUNTIME-EVIDENCE-PRESENTATION-GAP-NEXT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -15,7 +15,7 @@ authority:
   mainnet_or_meaningful_user_capital: HUMAN_ONLY
 lifecycle:
   phase: FRONTEND_FINALIZATION_AND_PUBLIC_DEPLOYMENT
-  status: FRONTEND_PUSH_RECEIVED__AUDIT_AND_COMPLETION_IN_PROGRESS
+  status: FRONTEND_TECHNICAL_BASELINE_PASS__JUDGE_PATH_REPAIR_IN_PROGRESS
 product:
   tagline: Agents, measured by what they deliver.
   concept: Calibrated Outcome Marketplace + Intervention Advantage
@@ -26,10 +26,11 @@ backend:
   stable_contract: spondee.frontend-bootstrap.v1
   primary_endpoint: /v1/product/bootstrap
 observed_evidence:
-  status: READY_3_OF_3
+  canonical_status: READY_3_OF_3
   jobs: ['962','971','973']
   trading_requirement_satisfied: true
   health_event_tape: CLOSED_PASS
+  runtime_store_on_fresh_postgres: MAY_START_0_OF_3_UNTIL_INITIALIZED
   truth_boundaries:
     - GRID_962_NEGATIVE_RESULT_MUST_REMAIN_VISIBLE
     - HEALTH_971_NO_LIQUIDATION_PREVENTION_CLAIM
@@ -40,18 +41,8 @@ frontend_takeover:
   source_handoff_branch: build/frontend-handoff-ready
   pre_benita_head: 768cd601c8157bf1c4411a4d866ee78b725e2b49
   received_head: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-  commits_received:
-    - sha: 4a46d7ba61223f69e1023cb8c1f69658d1d5b745
-      message: chore: checkpoint frontend and metadata readiness
-    - sha: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-      message: docs: prepare backend deployment execution
-  delta:
-    commits: 2
-    frontend_application_added: true
-    deployment_runbook_added: true
-    public_smoke_script_added: true
-    ci_on_received_head: NONE
-  implemented_surfaces_detected:
+  current_head_after_canonical_and_ci: 8fd2efa75c625c2e4539ae1e9eaed9258cb23501
+  implemented_surfaces:
     - LANDING_MARKETPLACE
     - CATEGORY_DETAIL
     - AGENT_DETAIL
@@ -62,38 +53,48 @@ frontend_takeover:
     - DECISION_REPLAY
     - EVIDENCE_DASHBOARD
     - AGENT_ADVANTAGE
-  deployment_topology_proposed:
-    backend: VERCEL_ROOT_PROJECT
-    frontend: VERCEL_FRONTEND_SUBPROJECT
-    database: MANAGED_POSTGRES
-    protected_server_tokens_browser_safe: false
 frontend_validation:
-  status: NOT_YET_PROVEN
-  typecheck: PENDING
-  lint: PENDING
-  production_build: PENDING
-  api_contract_alignment: AUDIT_IN_PROGRESS
-  truth_boundary_review: AUDIT_IN_PROGRESS
-  responsive_accessibility_review: PENDING
+  status: PASS_TECHNICAL_BASELINE
+  authoritative_ci_run: 34364535081
+  typecheck: PASS
+  lint: PASS
+  production_build: PASS
+  judge_path_surface_presence: PASS
+  browser_secret_boundary: PASS
+  public_backend_url_boundary: PASS
   public_deployment: PENDING
+  responsive_accessibility_visual_review: PENDING
+critical_frontend_blind_spot:
+  id: RUNTIME_EVIDENCE_ZERO_ON_FRESH_DEPLOYMENT
+  severity: CRITICAL_JUDGE_PATH
+  finding: >-
+    Canonical repository evidence is 3/3, but the runtime evidence API reads only the configured store.
+    A fresh PostgreSQL deployment can therefore report 0/3 until exact evidence payloads are initialized.
+    The current hero and evidence dashboard consume runtime counts directly, so a judge could see 0 observed pairs.
+  source: docs/EVIDENCE-INITIALIZATION-GAP.md
+  remediation_strategy: >-
+    Preserve runtime/store truth separately while surfacing an additive canonical preserved-evidence summary in the
+    frontend/bootstrap so the judge sees the verified 3/3 record without pretending the fresh runtime DB is seeded.
+  reconstruct_runtime_payloads_from_readme: FORBIDDEN
 winner_intelligence_trace:
-  status: DEFERRED_UNTIL_FUNCTIONAL_FRONTEND_BASELINE
-  required_after_frontend_ci: true
+  status: CODE_LEVEL_REVIEW_CAN_BEGIN_AFTER_CRITICAL_GAP_REPAIR
 current_gate:
-  id: SPONDEE_FRONTEND_RECEIVED_CODE_AUDIT_AND_CI_REQUIRED
-  action_class: CODE_REVIEW_AND_CI_NO_CHAIN_WRITE
+  id: SPONDEE_CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR_REQUIRED
+  action_class: BACKEND_ADDITIVE_CONTRACT_PLUS_FRONTEND_REPAIR_NO_CHAIN_WRITE
   chain_write_allowed: false
   wallet_unlock_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
 next_action:
   owner: PBPD
-  primary: Add authoritative frontend CI, validate the received Next.js app, then fix functional/UX/judge-path gaps on build/frontend-finalization.
+  primary: Add an explicit canonical preserved-evidence 3/3 summary to the additive bootstrap contract and update hero/evidence UI to distinguish canonical evidence from fresh runtime-store evidence.
   constraints:
-    - preserve backend contract spondee.frontend-bootstrap.v1 unless explicitly versioned
-    - preserve observed evidence 3/3 truth boundaries
+    - do not fabricate or reconstruct runtime EvidenceRun payloads from README prose
+    - keep runtime evidence counts truthful
+    - preserve backend contract compatibility via additive fields only
+    - preserve negative Grid, Health limitation and neutral Rebalancing outcomes
     - never expose protected server tokens in browser code
     - no rerun or mutation of closed jobs
     - no merge to main
     - no final submission
-next_gate: SPONDEE_FRONTEND_RECEIVED_CODE_AUDIT_AND_CI_REQUIRED
+next_gate: SPONDEE_CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR_REQUIRED

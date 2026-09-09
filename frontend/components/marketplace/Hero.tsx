@@ -14,19 +14,22 @@ export function Hero({ bootstrap }: HeroProps) {
   return (
     <section className="hero" id="top">
       <div className="hero-copy">
-        <p className="eyebrow">Measured agent marketplace</p>
+        <p className="eyebrow">BNB Chain agent outcome marketplace</p>
         <h1>Agents, measured by what they deliver.</h1>
         <p className="hero-lede">
-          Pick a financial agent by the task-specific promise it makes before activation, then inspect
-          the receipt, replay and baseline evidence after the run.
+          Make the agent commit to a task-specific Promise before bounded activation, then inspect the Outcome Receipt
+          and compare measured evidence against a without-agent baseline.
         </p>
         <div className="hero-actions">
-          <a className="button-primary" href="#marketplace">
-            Explore marketplace
+          <Link className="button-primary" href="/category/health-factor">
+            Start Health Factor path
             <ArrowDown aria-hidden="true" size={18} />
+          </Link>
+          <a className="button-secondary" href="#marketplace">
+            Explore marketplace
           </a>
           <Link className="button-secondary" href="/evidence">
-            View evidence
+            Inspect 3/3 evidence
             <FileSearch aria-hidden="true" size={18} />
           </Link>
         </div>
@@ -53,8 +56,8 @@ export function Hero({ bootstrap }: HeroProps) {
         </div>
         <div>
           <ShieldCheck aria-hidden="true" size={20} />
-          <span>Truth boundary</span>
-          <strong>Canonical proof and runtime state stay separate</strong>
+          <span>Authority model</span>
+          <strong>ERC-8183 bounded BSC-testnet activation</strong>
         </div>
       </div>
     </section>

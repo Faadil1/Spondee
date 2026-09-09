@@ -23,13 +23,11 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-          cache-dependency-path: |
-            backend/package-lock.json
-            frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install backend
         working-directory: backend
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
 
       - name: Install frontend
         working-directory: frontend
@@ -95,7 +93,7 @@ jobs:
           const browser = await chromium.launch({ headless: true });
           const manifest = [];
           for (const [device, viewport] of viewports) {
-            const context = await browser.newContext({ viewportSize: viewport, reducedMotion: 'reduce' });
+            const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
             for (const [name, route] of routes) {
               const page = await context.newPage();
               const url = `${base}${route}`;
@@ -123,7 +121,7 @@ jobs:
           }
           console.log(JSON.stringify(manifest, null, 2));
           EOF
-          NODE_PATH=/tmp/spondee-visual-tools/node_modules node /tmp/spondee-visual-tools/capture.mjs
+          node /tmp/spondee-visual-tools/capture.mjs
 
       - name: Upload immutable visual capture
         uses: actions/upload-artifact@v4

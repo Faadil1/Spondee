@@ -1,0 +1,92 @@
+name: Frontend Finalization CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/frontend-finalization']
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-finalization-ci.yml'
+      - '.pbpd/state/PROJECT-STATE.yaml'
+      - '.pbpd/state/HANDOVER.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frozen frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Production build
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_SPONDEE_BACKEND_URL: https://backend.example.invalid
+        run: npm run build
+
+      - name: Required judge-path surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f frontend/app/page.tsx
+          test -f frontend/app/category/'[slug]'/page.tsx
+          test -f frontend/app/agent/'[id]'/page.tsx
+          test -f frontend/app/activation/'[id]'/page.tsx
+          test -f frontend/app/receipt/'[id]'/page.tsx
+          test -f frontend/app/evidence/page.tsx
+          test -f frontend/app/activation/'[id]'/replay/page.tsx
+          test -f frontend/components/promise/PromiseCard.tsx
+          test -f frontend/components/comparison/PromiseActualComparison.tsx
+          test -f frontend/components/evidence/EvidenceDashboard.tsx
+          echo 'judge-path surfaces: PASS'
+
+      - name: Browser secret boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInE 'SPONDEE_ACTION_TOKEN|SPONDEE_EVIDENCE_INGEST_TOKEN|BUYER_WALLET_PASSWORD|DATABASE_URL' frontend \
+            --exclude='package-lock.json' --exclude='AGENTS.md' --exclude='CLAUDE.md'; then
+            echo 'Protected server-only value referenced in frontend source.' >&2
+            exit 1
+          fi
+          echo 'browser secret boundary: PASS'
+
+      - name: Public backend URL boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -RIn 'NEXT_PUBLIC_SPONDEE_BACKEND_URL' frontend/lib frontend/.env.example
+          echo 'public backend URL boundary: PASS'
+
+      - name: Build summary
+        shell: bash
+        run: |
+          cat <<'EOF'
+          SPONDEE FRONTEND RECEIVED CODE CI: PASS
+          - npm ci
+          - TypeScript
+          - ESLint
+          - Next.js production build
+          - judge-path surface presence
+          - protected server-token browser boundary
+          EOF

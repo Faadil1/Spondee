@@ -1,7 +1,7 @@
-import { FileSearch, MinusCircle, TrendingDown, Timer } from "lucide-react";
+import { BadgeCheck, FileSearch, MinusCircle, Radio, Timer } from "lucide-react";
 import Link from "next/link";
 import type { BootstrapResponse } from "@/lib/api/types";
-import { stringifyMetric } from "@/lib/utils/format";
+import { CANONICAL_EVIDENCE_SUMMARY } from "@/lib/canonical-evidence";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { StatusPill } from "@/components/ui/StatusPill";
 
@@ -10,45 +10,51 @@ type EvidenceTeaserProps = {
 };
 
 export function EvidenceTeaser({ bootstrap }: EvidenceTeaserProps) {
-  const report = bootstrap.evidence.agent_advantage_report;
-  const pairTone = report.status === "READY" ? "good" : "warn";
+  const runtimeReport = bootstrap.evidence.agent_advantage_report;
 
   return (
     <section className="content-section" id="evidence">
       <SectionHeader
         eyebrow="Evidence"
-        title="Negative and neutral outcomes stay visible"
-        copy="Agent Advantage is computed from runtime evidence only. Simulation runs, repository summaries and registry identity never become observed performance by presentation."
+        title="Three verified pairs. Negative and neutral outcomes stay visible."
+        copy="Spondee separates repository-preserved canonical evidence from whatever evidence is currently loaded in the runtime database. A fresh deployment can start with an empty runtime store without erasing the verified 3/3 record."
       />
 
       <div className="evidence-layout">
         <article className="evidence-summary">
-          <FileSearch aria-hidden="true" size={28} />
+          <BadgeCheck aria-hidden="true" size={28} />
           <div>
-            <span>Agent Advantage</span>
-            <strong>{report.paired_run_count} paired observed runs</strong>
-            <StatusPill tone={pairTone}>{report.status}</StatusPill>
+            <span>Canonical Agent Advantage</span>
+            <strong>
+              {CANONICAL_EVIDENCE_SUMMARY.countable_pairs} / {CANONICAL_EVIDENCE_SUMMARY.required_pairs} countable observed pairs
+            </strong>
+            <StatusPill tone="good">{CANONICAL_EVIDENCE_SUMMARY.status}</StatusPill>
           </div>
           <Link className="text-link" href="/evidence">
-            Open evidence
+            Inspect all evidence
           </Link>
         </article>
 
         <div className="evidence-metrics">
           <div>
+            <FileSearch aria-hidden="true" size={20} />
+            <span>Runtime paired runs loaded</span>
+            <strong>{runtimeReport.paired_run_count}</strong>
+          </div>
+          <div>
             <Timer aria-hidden="true" size={20} />
-            <span>Observed runs</span>
-            <strong>{report.observed_run_count}</strong>
+            <span>Runtime observed runs</span>
+            <strong>{runtimeReport.observed_run_count}</strong>
           </div>
           <div>
             <MinusCircle aria-hidden="true" size={20} />
-            <span>Simulation excluded</span>
-            <strong>{report.excluded_simulation_count}</strong>
+            <span>Runtime simulation excluded</span>
+            <strong>{runtimeReport.excluded_simulation_count}</strong>
           </div>
           <div>
-            <TrendingDown aria-hidden="true" size={20} />
-            <span>Latest delta sample</span>
-            <strong>{stringifyMetric(report.pairs[0]?.advantage_delta)}</strong>
+            <Radio aria-hidden="true" size={20} />
+            <span>Runtime status</span>
+            <strong>{runtimeReport.status}</strong>
           </div>
         </div>
       </div>

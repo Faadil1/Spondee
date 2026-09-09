@@ -1,5 +1,5 @@
 schema: PBPD-PROJECT-STATE-v0.1
-revision: STATE-R040-FRONTEND-RECEIVED-CI-PASS__RUNTIME-EVIDENCE-PRESENTATION-GAP-NEXT
+revision: STATE-R041-CANONICAL-EVIDENCE-JUDGE-SURFACING-PASS__VISUAL-TRACE-REVIEW-NEXT
 identity:
   project_id: bnb_agent_studio_build_the_era_2026
   name: Spondee
@@ -15,7 +15,7 @@ authority:
   mainnet_or_meaningful_user_capital: HUMAN_ONLY
 lifecycle:
   phase: FRONTEND_FINALIZATION_AND_PUBLIC_DEPLOYMENT
-  status: FRONTEND_TECHNICAL_BASELINE_PASS__JUDGE_PATH_REPAIR_IN_PROGRESS
+  status: FRONTEND_TECHNICAL_AND_EVIDENCE_JUDGE_BASELINE_PASS__VISUAL_REVIEW_NEXT
 product:
   tagline: Agents, measured by what they deliver.
   concept: Calibrated Outcome Marketplace + Intervention Advantage
@@ -31,6 +31,7 @@ observed_evidence:
   trading_requirement_satisfied: true
   health_event_tape: CLOSED_PASS
   runtime_store_on_fresh_postgres: MAY_START_0_OF_3_UNTIL_INITIALIZED
+  judge_surfacing: PASS_SEPARATE_CANONICAL_FROM_RUNTIME
   truth_boundaries:
     - GRID_962_NEGATIVE_RESULT_MUST_REMAIN_VISIBLE
     - HEALTH_971_NO_LIQUIDATION_PREVENTION_CLAIM
@@ -41,7 +42,7 @@ frontend_takeover:
   source_handoff_branch: build/frontend-handoff-ready
   pre_benita_head: 768cd601c8157bf1c4411a4d866ee78b725e2b49
   received_head: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-  current_head_after_canonical_and_ci: 8fd2efa75c625c2e4539ae1e9eaed9258cb23501
+  evidence_repair_validated_head: 66c2846f37b6bac39a43b5992805133dc07e0aa4
   implemented_surfaces:
     - LANDING_MARKETPLACE
     - CATEGORY_DETAIL
@@ -54,47 +55,44 @@ frontend_takeover:
     - EVIDENCE_DASHBOARD
     - AGENT_ADVANTAGE
 frontend_validation:
-  status: PASS_TECHNICAL_BASELINE
-  authoritative_ci_run: 34364535081
+  status: PASS_TECHNICAL_AND_EVIDENCE_JUDGE_BASELINE
+  received_code_ci_run: 34364535081
+  canonical_evidence_repair_ci_run: 34365582522
   typecheck: PASS
   lint: PASS
   production_build: PASS
   judge_path_surface_presence: PASS
   browser_secret_boundary: PASS
   public_backend_url_boundary: PASS
+  canonical_evidence_judge_surfacing: PASS
+  runtime_evidence_truth_separation: PASS
   public_deployment: PENDING
   responsive_accessibility_visual_review: PENDING
 critical_frontend_blind_spot:
   id: RUNTIME_EVIDENCE_ZERO_ON_FRESH_DEPLOYMENT
-  severity: CRITICAL_JUDGE_PATH
-  finding: >-
-    Canonical repository evidence is 3/3, but the runtime evidence API reads only the configured store.
-    A fresh PostgreSQL deployment can therefore report 0/3 until exact evidence payloads are initialized.
-    The current hero and evidence dashboard consume runtime counts directly, so a judge could see 0 observed pairs.
-  source: docs/EVIDENCE-INITIALIZATION-GAP.md
-  remediation_strategy: >-
-    Preserve runtime/store truth separately while surfacing an additive canonical preserved-evidence summary in the
-    frontend/bootstrap so the judge sees the verified 3/3 record without pretending the fresh runtime DB is seeded.
-  reconstruct_runtime_payloads_from_readme: FORBIDDEN
+  status: RESOLVED_FOR_JUDGE_PRESENTATION
+  resolution: >-
+    Frontend now contains a structured repository-preserved canonical evidence summary for verified jobs 962/971/973.
+    Landing and Evidence pages present canonical 3/3 separately from current runtime-store counts. No runtime EvidenceRun
+    was reconstructed from README prose and fresh runtime state remains labeled truthfully.
+  remaining_runtime_initialization: OPTIONAL_FOR_DEMO_DEPTH_NOT_REQUIRED_FOR_CANONICAL_3_OF_3_VISIBILITY
 winner_intelligence_trace:
-  status: CODE_LEVEL_REVIEW_CAN_BEGIN_AFTER_CRITICAL_GAP_REPAIR
+  status: READY_FOR_FRONTEND_VISUAL_AND_JUDGE_PATH_REVIEW
 current_gate:
-  id: SPONDEE_CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR_REQUIRED
-  action_class: BACKEND_ADDITIVE_CONTRACT_PLUS_FRONTEND_REPAIR_NO_CHAIN_WRITE
+  id: SPONDEE_FRONTEND_WINNER_INTELLIGENCE_TRACE_CODE_AND_VISUAL_REVIEW_REQUIRED
+  action_class: FRONTEND_REVIEW_AND_REPAIR_NO_CHAIN_WRITE
   chain_write_allowed: false
   wallet_unlock_allowed: false
   merge_main_allowed: false
   final_submission_allowed: false
 next_action:
-  owner: PBPD
-  primary: Add an explicit canonical preserved-evidence 3/3 summary to the additive bootstrap contract and update hero/evidence UI to distinguish canonical evidence from fresh runtime-store evidence.
+  owner: PBPD_TRACE
+  primary: Review landing and core judge path for first-5-second clarity, sponsor-native necessity, action-to-consequence, evidence surfacing, wait/failure states, responsive/accessibility and domain-native visual quality; patch high-value gaps before public deployment.
   constraints:
-    - do not fabricate or reconstruct runtime EvidenceRun payloads from README prose
-    - keep runtime evidence counts truthful
-    - preserve backend contract compatibility via additive fields only
+    - preserve canonical-vs-runtime evidence distinction
     - preserve negative Grid, Health limitation and neutral Rebalancing outcomes
     - never expose protected server tokens in browser code
     - no rerun or mutation of closed jobs
     - no merge to main
     - no final submission
-next_gate: SPONDEE_CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR_REQUIRED
+next_gate: SPONDEE_FRONTEND_WINNER_INTELLIGENCE_TRACE_CODE_AND_VISUAL_REVIEW_REQUIRED

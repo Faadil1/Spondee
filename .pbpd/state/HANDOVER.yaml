@@ -9,19 +9,20 @@ handover:
 
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, FRONTEND-HANDOFF,
-    RUNTIME-STATUS, REQUIREMENTS-LEDGER, RISK-REGISTER and EVIDENCE-LEDGER. The backend is complete
-    and observed Agent Advantage is 3/3 countable. Benita pushed a substantial Next.js frontend plus
-    deployment preparation on top of the prior handoff. The user has now asked PBPD to take the lead
-    and finish the frontend. Canonical work continues on build/frontend-finalization. Jobs 949, 954,
-    955, 957, 962, 971 and 973 are CLOSED and must never be rerun or mutated.
+    RUNTIME-STATUS, REQUIREMENTS-LEDGER, RISK-REGISTER and EVIDENCE-LEDGER. The backend is complete,
+    observed Agent Advantage is 3/3 countable, and the received Next.js frontend has now passed
+    authoritative CI (typecheck, lint, production build, judge-path surface checks and browser secret
+    boundary). PBPD owns frontend finalization. The next critical issue is judge-facing evidence:
+    a fresh PostgreSQL runtime may report 0/3 until exact runtime evidence payloads are initialized,
+    while canonical repository evidence is already verified 3/3. Do not fabricate runtime records.
+    Jobs 949, 954, 955, 957, 962, 971 and 973 remain CLOSED.
 
-  current_milestone: FRONTEND_PUSH_RECEIVED__PBPD_TAKEOVER__AUDIT_IN_PROGRESS
-  lifecycle_status: FRONTEND_FINALIZATION_AND_PUBLIC_DEPLOYMENT
+  current_milestone: FRONTEND_TECHNICAL_BASELINE_PASS__CANONICAL_EVIDENCE_SURFACING_NEXT
+  lifecycle_status: FRONTEND_JUDGE_PATH_REPAIR_AND_PUBLIC_DEPLOYMENT
 
   authority:
     project: PROJECT_AUTHORIZED
     production_owner: PBPD
-    frontend_previous_owner: Benita
     frontend_current_owner: PBPD
     merge_to_main: NOT_AUTHORIZED
     final_submission: HUMAN_ONLY
@@ -30,20 +31,21 @@ handover:
   completed_foundation:
     backend_code: COMPLETE_FOR_FRONTEND_V1
     backend_ci: PASS_RUN_33867168666
-    stable_frontend_contract: spondee.frontend-bootstrap.v1
     observed_agent_advantage: READY_3_OF_3
     health_factor_event_tape: CLOSED_PASS
+    frontend_received_ci: PASS_RUN_34364535081
+    frontend_typecheck: PASS
+    frontend_lint: PASS
+    frontend_production_build: PASS
+    browser_secret_boundary: PASS
+    judge_path_surface_presence: PASS
+    stable_frontend_contract: spondee.frontend-bootstrap.v1
     closed_jobs: ['949','954','955','957','962','971','973']
 
   received_frontend:
     pre_push_head: 768cd601c8157bf1c4411a4d866ee78b725e2b49
     received_head: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-    commits:
-      - sha: 4a46d7ba61223f69e1023cb8c1f69658d1d5b745
-        message: chore: checkpoint frontend and metadata readiness
-      - sha: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-        message: docs: prepare backend deployment execution
-    delta: 2_COMMITS_AHEAD_OF_PRIOR_HANDOFF
+    canonical_work_branch: build/frontend-finalization
     major_surfaces_present:
       - landing marketplace
       - category detail
@@ -59,27 +61,26 @@ handover:
       - vercel.json
       - docs/DEPLOYMENT-RUNBOOK.md
       - scripts/smoke-public.mjs
-    proposed_topology: TWO_VERCEL_PROJECTS_BACKEND_ROOT_PLUS_FRONTEND_SUBDIR
 
-  current_validation:
-    received_head_has_ci: false
-    frontend_typecheck: PENDING
-    frontend_lint: PENDING
-    frontend_production_build: PENDING
-    api_contract_alignment: AUDIT_IN_PROGRESS
-    truth_boundary_review: AUDIT_IN_PROGRESS
-    responsive_accessibility_review: PENDING
-    public_deployment: PENDING
+  critical_gap:
+    id: RUNTIME_EVIDENCE_ZERO_ON_FRESH_DEPLOYMENT
+    severity: CRITICAL_JUDGE_PATH
+    canonical_repository_evidence: READY_3_OF_3
+    fresh_runtime_store: MAY_REPORT_0_OF_3
+    impact: Hero and evidence dashboard can understate verified project evidence on a fresh public deployment.
+    prohibited_fix: RECONSTRUCT_RUNTIME_EVIDENCE_FROM_README_PROSE
+    chosen_fix: ADDITIVE_CANONICAL_PRESERVED_EVIDENCE_SUMMARY_SEPARATE_FROM_RUNTIME_COUNTS
 
-  exact_current_gate: SPONDEE_FRONTEND_RECEIVED_CODE_AUDIT_AND_CI_REQUIRED
+  exact_current_gate: SPONDEE_CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR_REQUIRED
   exact_current_owner: PBPD
   exact_current_action: >-
-    Add authoritative CI for the received frontend; run typecheck, lint and production build; then fix
-    functional, integration, visual and judge-path gaps without breaking the stable backend contract.
+    Add a canonical preserved-evidence summary to the additive bootstrap contract and surface it in the
+    hero/evidence UI while keeping runtime-store counts separately labeled and truthful. Re-run backend
+    and frontend CI after the additive contract change.
 
   expected_sequence:
-    - FRONTEND_CI_AND_FUNCTIONAL_AUDIT
-    - FRONTEND_REPAIR_AND_COMPLETION
+    - CANONICAL_EVIDENCE_JUDGE_SURFACING_REPAIR
+    - FRONTEND_VISUAL_AND_JUDGE_PATH_REVIEW
     - WINNER_INTELLIGENCE_AND_TRACE_REVIEW
     - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
     - PUBLIC_SMOKE_AND_JUDGE_PATH
@@ -87,9 +88,10 @@ handover:
     - HUMAN_MERGE_AND_SUBMISSION
 
   truth_boundaries:
-    - Grid job 962 negative result must remain visible and must not be reframed as a win
+    - Grid job 962 negative result stays visible
     - Health job 971 warning lead does not prove liquidation prevention or safety
-    - Rebalancing job 973 neutral result must remain visible
+    - Rebalancing job 973 neutral result stays visible
+    - runtime store evidence and canonical preserved evidence must be labeled separately
     - SIMULATION must never be presented as OBSERVED
     - protected server tokens must never be exposed in browser code
 

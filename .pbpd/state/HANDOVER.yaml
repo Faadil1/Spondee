@@ -10,14 +10,13 @@ handover:
   resume_rule: >-
     Read .pbpd/state/PROJECT-STATE.yaml first, then this HANDOVER, FRONTEND-HANDOFF,
     RUNTIME-STATUS, REQUIREMENTS-LEDGER, RISK-REGISTER and EVIDENCE-LEDGER. Backend is complete,
-    observed Agent Advantage is 3/3 countable, and the received Next.js frontend passed authoritative
-    CI. The critical fresh-runtime evidence presentation gap has also been repaired: canonical verified
-    3/3 evidence is now surfaced separately from the current runtime-store count, so a fresh DB can
-    truthfully show 0 runtime pairs without hiding the preserved 3/3 project record. PBPD owns finalization.
-    Jobs 949, 954, 955, 957, 962, 971 and 973 remain CLOSED.
+    observed Agent Advantage is 3/3 countable, canonical-vs-runtime evidence surfacing is repaired,
+    the received Next.js frontend passes technical CI, and a deterministic production visual capture
+    has now passed on desktop and mobile for home, Health category, Health agent and Evidence routes.
+    PBPD owns finalization. Jobs 949, 954, 955, 957, 962, 971 and 973 remain CLOSED and must never be rerun or mutated.
 
-  current_milestone: CANONICAL_EVIDENCE_JUDGE_SURFACING_PASS__VISUAL_TRACE_REVIEW_NEXT
-  lifecycle_status: FRONTEND_VISUAL_JUDGE_PATH_REVIEW_AND_PUBLIC_DEPLOYMENT
+  current_milestone: REAL_VISUAL_CAPTURE_PASS__DESIGN_REFINEMENT_AND_DEPLOYMENT_SCOPE_NEXT
+  lifecycle_status: FRONTEND_VISUAL_REFINEMENT_AND_PUBLIC_DEPLOYMENT
 
   authority:
     project: PROJECT_AUTHORIZED
@@ -34,56 +33,64 @@ handover:
     health_factor_event_tape: CLOSED_PASS
     frontend_received_ci: PASS_RUN_34364535081
     canonical_evidence_surfacing_ci: PASS_RUN_34365582522
-    frontend_typecheck: PASS
-    frontend_lint: PASS
-    frontend_production_build: PASS
-    browser_secret_boundary: PASS
-    judge_path_surface_presence: PASS
-    canonical_vs_runtime_evidence_separation: PASS
+    winner_intelligence_code_review_ci: PASS_RUN_34366183845
+    frontend_real_visual_capture: PASS_RUN_34368828214
+    real_visual_head: 21768baeef3a75c38c171d4db1184ddf1c4c4a80
+    real_visual_artifact_id: 10111061617
+    real_visual_artifact_digest: sha256:524e240ac753d90292324a153aceb8dcd6f455559b0be21629050a7e2f97768e
     stable_frontend_contract: spondee.frontend-bootstrap.v1
     closed_jobs: ['949','954','955','957','962','971','973']
 
-  received_frontend:
-    pre_push_head: 768cd601c8157bf1c4411a4d866ee78b725e2b49
-    received_head: 6fbf90f0130ac58ec53e75869d4d27cdeb147bdf
-    canonical_work_branch: build/frontend-finalization
-    major_surfaces_present:
-      - landing marketplace
-      - category detail
-      - agent detail
-      - task configurator
-      - Promise Card
-      - activation launcher/progress
-      - Outcome Receipt
-      - Decision Replay
-      - evidence dashboard / Agent Advantage
-    deployment_assets_present:
-      - api/index.mjs
-      - vercel.json
-      - docs/DEPLOYMENT-RUNBOOK.md
-      - scripts/smoke-public.mjs
+  real_visual_capture:
+    production_build_used: true
+    viewports:
+      - 1440x1000 desktop
+      - 390x844 mobile
+    routes:
+      - /
+      - /category/health-factor
+      - /agent/spondee-health-factor
+      - /evidence
+    navigation: PASS
+    console_errors: NONE
+    reduced_motion: ENABLED_IN_CAPTURE
+    responsive_baseline: PASS
+    prior_failed_capture_notes:
+      wrong_health_slug: HARNESS_ONLY_FIXED
+      hmr_websocket_errors: DEV_ONLY_REMOVED_BY_PRODUCTION_CAPTURE
 
-  evidence_presentation:
-    canonical_preserved_summary: READY_3_OF_3
-    runtime_store: SEPARATE_MAY_START_EMPTY
-    hero_primary_proof: CANONICAL_3_OF_3
-    evidence_page_primary_proof: CANONICAL_3_OF_3_WITH_NEGATIVE_HEALTH_LIMITATION_AND_NEUTRAL_RESULTS
-    runtime_initialization_required_for_truthful_canonical_visibility: false
-    runtime_evidence_reconstruction_from_readme: FORBIDDEN
+  visual_review:
+    strengths:
+      - BNB Chain is named in the first view
+      - primary CTA starts Health Factor path
+      - canonical 3/3 proof is above fold and separate from runtime store
+      - 4/4 BSC-testnet paths and ERC-8183 authority are visible
+      - negative Grid and neutral Rebalancing evidence remain visible
+      - mobile layout is stable
+    gaps:
+      - near-black card system risks generic DeFi/AI-dashboard feel
+      - runtime evidence section visually competes with canonical evidence on Evidence page
+      - pre-Promise right column on Health agent page reads empty before generation
+      - mobile judge path is long and information dense
 
-  exact_current_gate: SPONDEE_FRONTEND_WINNER_INTELLIGENCE_TRACE_CODE_AND_VISUAL_REVIEW_REQUIRED
+  design_directions:
+    A_PROOF_LEDGER: warm evidence-ledger language, receipt modules, provenance rails, Promise-vs-Actual pairing
+    B_BNB_EXECUTION_TAPE: BNB yellow + exchange execution rhythm + bounded-authority/transaction tape details
+    C_SPONDEE_TWO_BEAT: distinctive paired Promise/Actual visual motif inspired by Spondee's two-beat structure
+    preferred: HYBRID_PROOF_LEDGER_PLUS_TWO_BEAT_WITH_BNB_EXECUTION_DETAILS
+    reason: strongest product-specific signature without sacrificing judge clarity or truth boundaries
+
+  deployment:
+    current_status: PREFLIGHT_BLOCKED_ON_EXPLICIT_VERCEL_SCOPE
+    vercel_connector_team_discovery: ZERO_TEAMS_RETURNED
+    public_deployment_attempted: false
+    rule: Do not create or target an unknown Vercel project/account scope blindly.
+
+  exact_current_gate: SPONDEE_REAL_VISUAL_REFINEMENT_AND_DEPLOYMENT_SCOPE_RESOLUTION_REQUIRED
   exact_current_owner: PBPD_TRACE
   exact_current_action: >-
-    Review the landing and core judge path for first-5-second clarity, sponsor-native necessity,
-    action-to-consequence, evidence surfacing, waiting/failure states, responsive/accessibility and
-    domain-native visual quality. Patch only high-value demonstrated gaps, then re-run CI before deployment.
-
-  expected_sequence:
-    - FRONTEND_WINNER_INTELLIGENCE_TRACE_REVIEW_AND_REPAIR
-    - PUBLIC_BACKEND_FRONTEND_DEPLOYMENT
-    - PUBLIC_SMOKE_AND_JUDGE_PATH
-    - PROJECT_FINISHER
-    - HUMAN_MERGE_AND_SUBMISSION
+    Apply a bounded judge-facing refinement using the Proof Ledger + Two-Beat direction, re-run technical CI and
+    production visual capture, then resolve the exact Vercel account/project scope and continue to public deployment/smoke.
 
   truth_boundaries:
     - Grid job 962 negative result stays visible

@@ -6,6 +6,23 @@ identity:
 authority:
   project_authority: PROJECT_AUTHORIZED
   source: incoming/CHIEF-OF-STAFF-AUTHORIZATION.yaml
+canonical_baseline_reconciliation:
+  status: ALIGNED
+  canonical_baseline_version: 0.1.56-canonical-baseline-drift-tripwire-promoted
+  canonical_baseline_commit: 8a7e8a4ff5461641c595e2cf052a95fdc32a6340
+  project_state_commit_at_reconciliation_start: 1a90cc3367c57e13c91f4145cdd3767522ad229d
+  last_canonical_reconciliation_at: 2026-10-04
+  baseline_delta_status: NON_MATERIAL_DELTA
+  delta_reason: >-
+    The project is still pre-live-slice and BUILD_READY. The central baseline adds active-project pinning,
+    Product Reality v1.5 drift tripwires and Winning Intelligence v2 routing, but no current delta requires
+    reopening the already authorized Spondee concept or changing G3. These controls become binding at subsequent
+    material touches and the first live vertical slice.
+  first_live_slice_proven: false
+  material_user_capability_delta_since_previous_milestone: NONE
+  material_user_capability_delta_reason: pre_slice_governance_reconciliation_only
+  affected_transition_blocked: false
+  next_reconciliation_trigger: NEXT_MATERIAL_PROJECT_TOUCH_OR_CENTRAL_CANONICAL_BASELINE_ADVANCE
 lifecycle:
   phase: BUILD_READY
   status: PRD_READY

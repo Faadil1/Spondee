@@ -16,6 +16,21 @@ handover:
   current_milestone: PRD_READY__SPEC_KIT_FIRST_PILOT_ACTIVE__PBPD_POINTER_VALIDATED
   lifecycle_status: BUILD_READY__G3_IMPLEMENTATION_NOT_YET_EXECUTED
 
+  canonical_baseline:
+    status: ALIGNED
+    version: 0.1.56-canonical-baseline-drift-tripwire-promoted
+    commit: 8a7e8a4ff5461641c595e2cf052a95fdc32a6340
+    project_state_commit_at_reconciliation_start: 1a90cc3367c57e13c91f4145cdd3767522ad229d
+    delta_status: NON_MATERIAL_DELTA
+    first_live_slice_proven: false
+    material_user_capability_delta_since_previous_milestone: NONE
+    affected_transition_blocked: false
+    rule: >-
+      Re-resolve the current central version and exact merged-main commit at the next material touch. Do not
+      reinterpret Spec Kit convergence, testnet setup, receipts or demo progress as product-depth completion.
+      When G3 proves the first live vertical slice, activate Product Exploitation and record the first real
+      user-capability delta before any demo/submission packaging can become primary.
+
   authority:
     project: PROJECT_AUTHORIZED
     production_owner: PBPD

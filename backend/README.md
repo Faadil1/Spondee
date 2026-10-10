@@ -6,6 +6,21 @@ This service is the shared marketplace/evidence backend behind Spondee. It gives
 
 `Task -> Promise Card -> Activation -> Outcome Receipt -> Evidence / Calibration`
 
+## User-facing Task Decision Studio (build candidate)
+
+Open **http://localhost:8787/workbench** after `npm run dev`. This is an actual browser-to-backend journey, not a static story or seeded receipt page:
+
+1. Select Health Factor, Grid Trading, Rebalancing or Yield Optimisation and **edit the task JSON** with your own scenario/economic assumptions.
+2. Create a new task-specific Promise Card through `POST /v1/promises/preview`. Review expected outcome, downside, zero-priced service, and the honest **NOT CALIBRATED** confidence state.
+3. Consent to a **SIMULATION** of that exact task and submit it through the same backend used by agents. The immutable Promise ID is recomputed from the full task, agent and quoted price at activation, so changing even a same-scenario risk or cost parameter after preview is rejected with HTTP 409.
+4. Inspect the actual persisted `SIMULATED` activation and Outcome Receipt and reopen it from session history. When `DATABASE_URL` is configured, backend Promise/activation/receipt objects persist in Postgres; the browser history itself is only a local session list.
+
+The first web surface deliberately has **no live-wallet button**. A mock outcome, an internally stored receipt and the current empty observed-performance history do **not** prove an agent earned profit, avoided liquidation or executed on BSC. This provides authentic exploratory user input and backend state transitions while a genuinely deployed four-category marketplace remains unverified.
+
+### Live activation negative path
+
+The existing `POST /v1/activations/:id/live-testnet` remains backend-only, explicitly gated and restricted to the proven Health Factor seller. It cannot be called twice for one prepared activation: a one-use atomic Memory/Postgres claim transitions the job to `LIVE_IN_FLIGHT`; any ambiguous post-claim failure becomes `CHAIN_UNKNOWN` rather than a misleading terminal failure or unsafe blind retry. Recovery must inspect the existing chain job under the previously authorized owner. **No live write was made by this code change.**
+
 ## Four first-class categories
 
 - Health Factor Monitoring
@@ -27,6 +42,9 @@ All current built-in scenario engines are deterministic. Until real observed run
 
 | Method | Route | Purpose |
 | --- | --- | --- |
+| GET | `/workbench` | self-serve four-category task and Promise/activation/outcome workbench — simulation only |
+| GET | `/workbench-assets/workbench.js` | workbench browser controller |
+| GET | `/v1/scenario-starters` | editable sample inputs, explicitly not observed market data |
 | GET | `/healthz` | service health |
 | GET | `/v1/categories` | four category surfaces + reference agents |
 | GET | `/v1/agents?category=` | marketplace catalog |

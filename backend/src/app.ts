@@ -8,7 +8,7 @@ import {
   type OutcomeReceipt,
 } from "./contracts.js";
 import { getAgent, listAgents, referenceAgentForCategory } from "./catalog.js";
-import { buildPromiseCard, buildSimulationReceipt, taskCategory } from "./engines.js";
+import { buildPromiseCard, buildSimulationReceipt, taskCategory, taskMatchesPromise } from "./engines.js";
 import { buildAgentAdvantageReport, calibrationSummary } from "./evidence.js";
 import {
   liveGateStatus,
@@ -122,11 +122,10 @@ export function createApp(store: SpondeeStore) {
       if (!parsedTask.success) {
         return res.status(400).json({ error: "invalid task", details: parsedTask.error.flatten() });
       }
-      if (
-        promise.scenario_id !== parsedTask.data.scenario_id ||
-        promise.category !== taskCategory(parsedTask.data)
-      ) {
-        return res.status(409).json({ error: "task does not match stored Promise Card" });
+      if (!taskMatchesPromise(parsedTask.data, promise)) {
+        return res.status(409).json({
+          error: "the activation task differs from the full user-approved Promise Card; create a new preview before activation",
+        });
       }
       const mode = req.body?.mode === "LIVE_TESTNET" ? "LIVE_TESTNET" : "SIMULATION";
       const now = new Date().toISOString();
@@ -186,25 +185,44 @@ export function createApp(store: SpondeeStore) {
       if (activation.mode !== "LIVE_TESTNET") {
         return res.status(409).json({ error: "activation was not prepared for LIVE_TESTNET" });
       }
+      if (activation.task.schema !== "spondee.health-factor.task.v1") {
+        return res.status(409).json({
+          error: "other categories require their own deployed, verified seller before live activation",
+        });
+      }
+      if (!taskMatchesPromise(activation.task, activation.promise)) {
+        return res.status(409).json({ error: "stored task differs from committed Promise Card" });
+      }
+      if (!liveGateStatus().ready_for_live_write) {
+        return res.status(409).json({
+          error: "live activation gate remains disabled; no chain job attempted",
+        });
+      }
+      const claimed = await store.claimLiveActivation(activation.activation_id);
+      if (!claimed) {
+        return res.status(409).json({
+          error: "activation already started, completed or blocked; inspect existing job, never blindly resubmit",
+        });
+      }
 
       const onProgress = async (progress: LiveActivationProgress) => {
-        activation.chain.job_id = progress.job_id;
-        appendTx(activation, progress.transaction_hash);
-        if (progress.deliverable_url) activation.chain.deliverable_url = progress.deliverable_url;
-        if (progress.stage === "FUND") activation.status = "CHAIN_FUNDED";
+        claimed.chain.job_id = progress.job_id;
+        appendTx(claimed, progress.transaction_hash);
+        if (progress.deliverable_url) claimed.chain.deliverable_url = progress.deliverable_url;
+        if (progress.stage === "FUND") claimed.status = "CHAIN_FUNDED";
         if (progress.stage === "SUBMIT_OBSERVED" || progress.stage === "DELIVERABLE_VERIFIED") {
-          activation.status = "CHAIN_SUBMITTED";
+          claimed.status = "CHAIN_SUBMITTED";
         }
-        activation.updated_at = new Date().toISOString();
-        await store.putActivation(activation);
+        claimed.updated_at = new Date().toISOString();
+        await store.putActivation(claimed);
       };
 
       const result = await runSignedZeroPriceTestnetActivation(
-        activation.task,
+        claimed.task,
         process.env,
         onProgress,
       );
-      if (result.promise_id !== activation.promise_id) {
+      if (result.promise_id !== claimed.promise_id) {
         throw new Error("live signed Promise Card does not match the stored activation Promise Card");
       }
 
@@ -213,10 +231,10 @@ export function createApp(store: SpondeeStore) {
       const receipt: OutcomeReceipt = {
         schema: "spondee.outcome-receipt.v1",
         receipt_id: `sr_chain_${result.job_id}`,
-        category: activation.category,
-        promise_id: activation.promise_id,
-        scenario_id: activation.scenario_id,
-        agent_id: activation.agent_id,
+        category: claimed.category,
+        promise_id: claimed.promise_id,
+        scenario_id: claimed.scenario_id,
+        agent_id: claimed.agent_id,
         evidence_class: "SIMULATION",
         actual_outcome: objectOrEmpty(rawReceipt.outcome),
         actual_cost: { currency: "raw_erc8183_wei", amount: "0" },
@@ -238,19 +256,25 @@ export function createApp(store: SpondeeStore) {
       }
 
       await store.putReceipt(receipt);
-      activation.receipt_id = receipt.receipt_id;
-      activation.status = result.status === "COMPLETED" ? "COMPLETED" : "CHAIN_SUBMITTED";
-      activation.chain.job_id = result.job_id;
-      activation.chain.tx_hashes = receipt.tx_hashes;
-      activation.chain.deliverable_url = result.deliverable.url;
-      activation.updated_at = new Date().toISOString();
-      activation.failure_reason = null;
-      await store.putActivation(activation);
-      return res.json({ activation, receipt, live_result: result });
+      claimed.receipt_id = receipt.receipt_id;
+      claimed.status = result.status === "COMPLETED" ? "COMPLETED" : "CHAIN_SUBMITTED";
+      claimed.chain.job_id = result.job_id;
+      claimed.chain.tx_hashes = receipt.tx_hashes;
+      claimed.chain.deliverable_url = result.deliverable.url;
+      claimed.updated_at = new Date().toISOString();
+      claimed.failure_reason = null;
+      await store.putActivation(claimed);
+      return res.json({ activation: claimed, receipt, live_result: result });
     } catch (error) {
       const activation = await store.getActivation(req.params.id).catch(() => null);
-      if (activation) {
-        activation.status = "FAILED";
+      if (activation && activation.mode === "LIVE_TESTNET" &&
+          (activation.status === "LIVE_IN_FLIGHT" ||
+           activation.status === "CHAIN_FUNDED" ||
+           activation.status === "CHAIN_SUBMITTED")) {
+        // If a chain stage or durable claim may already exist, do not
+        // downgrade the outcome to FAILED or permit another blind send.
+        // Human/operator reconciliation must inspect the existing job.
+        activation.status = "CHAIN_UNKNOWN";
         activation.failure_reason = errorMessage(error);
         activation.updated_at = new Date().toISOString();
         await store.putActivation(activation).catch(() => undefined);

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import express, { type NextFunction, type Request, type Response } from "express";
 import {
   CategorySchema,
@@ -8,6 +9,7 @@ import {
   type OutcomeReceipt,
 } from "./contracts.js";
 import { getAgent, listAgents, referenceAgentForCategory } from "./catalog.js";
+import { DEMO_TASKS } from "./examples.js";
 import { buildPromiseCard, buildSimulationReceipt, taskCategory, taskMatchesPromise } from "./engines.js";
 import { buildAgentAdvantageReport, calibrationSummary } from "./evidence.js";
 import {
@@ -38,9 +40,22 @@ export function createApp(store: SpondeeStore) {
   const app = express();
   app.disable("x-powered-by");
   app.use(express.json({ limit: "256kb" }));
+  const workbenchDir = fileURLToPath(new URL("../public/", import.meta.url));
+  app.use("/workbench-assets", express.static(workbenchDir, { index: false, dotfiles: "deny" }));
+  app.get("/workbench", (_req, res) => {
+    res.set("Cache-Control", "no-store");
+    return res.sendFile(fileURLToPath(new URL("../public/workbench.html", import.meta.url)));
+  });
 
   app.get("/healthz", (_req, res) => {
     res.json({ ok: true, service: "spondee-backend", version: "0.1.0" });
+  });
+
+  app.get("/v1/scenario-starters", (_req, res) => {
+    res.json({
+      classification: "EDITABLE_SIMULATION_STARTERS_NOT_LIVE_MARKET_OBSERVATIONS",
+      tasks: DEMO_TASKS,
+    });
   });
 
   app.get("/v1/categories", (_req, res) => {

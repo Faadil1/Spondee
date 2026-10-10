@@ -196,7 +196,9 @@ test("real self-service workbench serves four-category task editing and truthful
 test("unseen user-authored Grid task follows real backend Promise → activation → persisted outcome", async () => {
   await withServer(async (base, store) => {
     const task = structuredClone(DEMO_TASKS.find((entry) => entry.schema === "spondee.grid.task.v1")!);
-    assert.equal(task.schema, "spondee.grid.task.v1");
+    if (task.schema !== "spondee.grid.task.v1") {
+      throw new Error("Grid starter schema unexpectedly changed");
+    }
     // Not the preseeded scenario: change the economic inputs and risk boundary.
     task.scenario_id = "user-specified-grid-range-2026";
     task.upper_price = 119;

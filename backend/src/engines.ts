@@ -359,13 +359,29 @@ export function buildPromiseCard(
   };
 }
 
+/**
+ * A signed or persisted Promise Card must be bound to the ENTIRE task
+ * the user saw, not only its reusable scenario label and category.
+ * The existing promise_id is a deterministic commitment to task, agent and
+ * price; no new receipt schema or proof-only artifact is introduced.
+ */
+export function taskMatchesPromise(task: SpondeeTask, promise: PromiseCard): boolean {
+  if (promise.category !== taskCategory(task) || promise.scenario_id !== task.scenario_id) {
+    return false;
+  }
+  const amount = promise.expected_cost?.amount;
+  if (typeof amount !== "string" || !/^\\d+$/.test(amount)) return false;
+  return promise.promise_id ===
+    `sp_${digest({ task, agent_id: promise.agent_id, price_wei: amount }).slice(0, 24)}`;
+}
+
 export function buildSimulationReceipt(
   task: SpondeeTask,
   promise: PromiseCard,
   now = new Date(),
 ): OutcomeReceipt {
-  if (promise.scenario_id !== task.scenario_id || promise.category !== taskCategory(task)) {
-    throw new Error("Promise Card does not match the task scenario/category.");
+  if (!taskMatchesPromise(task, promise)) {
+    throw new Error("Promise Card commitment does not match the full task parameters.");
   }
   const actualOutcome = analyzeTask(task);
   return {

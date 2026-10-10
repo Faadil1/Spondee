@@ -370,7 +370,7 @@ export function taskMatchesPromise(task: SpondeeTask, promise: PromiseCard): boo
     return false;
   }
   const amount = promise.expected_cost?.amount;
-  if (typeof amount !== "string" || !/^\\d+$/.test(amount)) return false;
+  if (typeof amount !== "string" || !/^[0-9]+$/.test(amount)) return false;
   return promise.promise_id ===
     `sp_${digest({ task, agent_id: promise.agent_id, price_wei: amount }).slice(0, 24)}`;
 }

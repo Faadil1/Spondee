@@ -150,6 +150,8 @@ export interface OutcomeReceipt {
 export type ActivationMode = "SIMULATION" | "LIVE_TESTNET";
 export type ActivationStatus =
   | "PREPARED"
+  | "LIVE_IN_FLIGHT"
+  | "CHAIN_UNKNOWN"
   | "SIMULATED"
   | "BLOCKED_LIVE_GATE"
   | "CHAIN_FUNDED"

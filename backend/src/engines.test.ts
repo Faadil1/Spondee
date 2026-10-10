@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { referenceAgentForCategory } from "./catalog.js";
 import { DEMO_TASKS } from "./examples.js";
-import { buildPromiseCard, buildSimulationReceipt, taskCategory } from "./engines.js";
+import { buildPromiseCard, buildSimulationReceipt, taskCategory, taskMatchesPromise } from "./engines.js";
 
 const now = new Date("2026-09-03T20:00:00.000Z");
 
@@ -64,4 +64,23 @@ test("Yield engine rejects the higher-APR candidate when it violates the declare
   assert.equal(receipt.actual_outcome.selected_option_id, "candidate-a");
   assert.equal(receipt.actual_outcome.eligible_candidate_count, 1);
   assert.equal(promise.expected_downside.yield_not_guaranteed, true);
+});
+
+
+test("Promise commitment rejects changed decision parameters even under the same scenario label", () => {
+  for (const original of DEMO_TASKS) {
+    const task = structuredClone(original);
+    const promise = buildPromiseCard(task, "spondee-" + taskCategory(task).toLowerCase().replaceAll(" ", "-"), "0.1.0", 0n, now);
+    assert.equal(taskMatchesPromise(task, promise), true);
+    const altered = structuredClone(task);
+    switch (altered.schema) {
+      case "spondee.health-factor.task.v1": altered.hf_floor *= 0.98; break;
+      case "spondee.grid.task.v1": altered.slippage_bps += 1; break;
+      case "spondee.rebalancing.task.v1": altered.estimated_reset_cost_usd += 1; break;
+      case "spondee.yield.task.v1": altered.horizon_days += 1; break;
+    }
+    assert.equal(altered.scenario_id, task.scenario_id);
+    assert.equal(taskMatchesPromise(altered, promise), false);
+    assert.throws(() => buildSimulationReceipt(altered, promise, now), /commitment does not match/i);
+  }
 });

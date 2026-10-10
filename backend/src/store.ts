@@ -14,6 +14,8 @@ export interface SpondeeStore {
   getPromise(id: string): Promise<PromiseCard | null>;
   putActivation(value: ActivationRecord): Promise<void>;
   getActivation(id: string): Promise<ActivationRecord | null>;
+  /** Atomic one-use claim before any external wallet/chain operation. */
+  claimLiveActivation(id: string): Promise<ActivationRecord | null>;
   putReceipt(value: OutcomeReceipt): Promise<void>;
   getReceipt(id: string): Promise<OutcomeReceipt | null>;
   putEvidence(value: EvidenceRun): Promise<void>;
@@ -43,6 +45,17 @@ export class MemoryStore implements SpondeeStore {
   async getActivation(id: string): Promise<ActivationRecord | null> {
     const value = this.activations.get(id);
     return value ? structuredClone(value) : null;
+  }
+
+  async claimLiveActivation(id: string): Promise<ActivationRecord | null> {
+    const current = this.activations.get(id);
+    if (!current || current.mode !== "LIVE_TESTNET" || current.status !== "PREPARED") return null;
+    const claimed: ActivationRecord = {
+      ...current, status: "LIVE_IN_FLIGHT", updated_at: new Date().toISOString(),
+    };
+    // No await between reading and claiming the same in-memory activation.
+    this.activations.set(id, structuredClone(claimed));
+    return structuredClone(claimed);
   }
   async putReceipt(value: OutcomeReceipt): Promise<void> {
     this.receipts.set(value.receipt_id, structuredClone(value));
@@ -155,6 +168,23 @@ export class PostgresStore implements SpondeeStore {
   async getActivation(id: string): Promise<ActivationRecord | null> {
     const result = await this.pool.query<{ payload: ActivationRecord }>(
       "SELECT payload FROM spondee_activations WHERE activation_id=$1",
+      [id],
+    );
+    return result.rows[0]?.payload ?? null;
+  }
+
+  async claimLiveActivation(id: string): Promise<ActivationRecord | null> {
+    // Shared Postgres CAS: duplicate requests across processes cannot both
+    // cross this point. An interrupted job remains explicitly non-retriable.
+    const result = await this.pool.query<{ payload: ActivationRecord }>(
+      `UPDATE spondee_activations
+          SET status='LIVE_IN_FLIGHT',
+              payload=jsonb_set(jsonb_set(payload, '{status}', '"LIVE_IN_FLIGHT"'::jsonb),
+                                '{updated_at}', to_jsonb(NOW()::text)),
+              updated_at=NOW()
+        WHERE activation_id=$1 AND status='PREPARED'
+          AND payload->>'mode'='LIVE_TESTNET'
+        RETURNING payload`,
       [id],
     );
     return result.rows[0]?.payload ?? null;

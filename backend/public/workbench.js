@@ -47,6 +47,69 @@
       !state.previewSnapshot || !$("consent").checked ||
       $("task-json").value.trim() !== state.previewSnapshot;
   }
+  const quickControls = {
+    "spondee.health-factor.task.v1": [
+      ["position.collateral_usd", "Collateral (USD)"], ["position.debt_usd", "Debt (USD)"],
+      ["hf_floor", "Health factor floor"], ["desired_warning_lead_seconds", "Warning lead (seconds)"],
+    ],
+    "spondee.grid.task.v1": [
+      ["capital_usd", "Capital (USD)"], ["lower_price", "Grid lower price"],
+      ["upper_price", "Grid upper price"], ["fee_bps", "Fee basis points"],
+      ["slippage_bps", "Slippage basis points"],
+    ],
+    "spondee.rebalancing.task.v1": [
+      ["position.capital_usd", "Capital (USD)"], ["position.lower_price", "LP lower price"],
+      ["position.upper_price", "LP upper price"], ["reset_latency_seconds", "Reset latency (s)"],
+      ["estimated_reset_cost_usd", "Estimated reset cost (USD)"],
+    ],
+    "spondee.yield.task.v1": [
+      ["capital_usd", "Capital (USD)"], ["horizon_days", "Horizon (days)"],
+      ["max_risk_score", "Risk limit (0–100)"], ["current.gross_apr_pct", "Current gross APR (%)"],
+    ],
+  };
+  function renderControls() {
+    const region = $("quick-fields");
+    region.replaceChildren();
+    let task;
+    try { task = JSON.parse($("task-json").value); }
+    catch { return; }
+    const list = quickControls[task?.schema] ?? [];
+    for (const [path, label] of list) {
+      const parts = path.split(".");
+      const value = parts.reduce((obj, key) => obj?.[key], task);
+      if (typeof value !== "number" || !Number.isFinite(value)) continue;
+      const wrapper = document.createElement("label");
+      wrapper.className = "control-field";
+      const name = document.createElement("span");
+      name.textContent = label;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.step = "any";
+      input.value = String(value);
+      input.setAttribute("aria-label", label);
+      input.addEventListener("change", () => {
+        const next = Number(input.value);
+        if (!Number.isFinite(next) || input.value.trim() === "") {
+          status("Enter a finite number before updating the task.", true);
+          return;
+        }
+        let edited;
+        try { edited = JSON.parse($("task-json").value); }
+        catch { status("The JSON is invalid; restore it first.", true); return; }
+        let cursor = edited;
+        for (const key of parts.slice(0, -1)) cursor = cursor?.[key];
+        if (!cursor) return;
+        cursor[parts.at(-1)] = next;
+        $("task-json").value = JSON.stringify(edited, null, 2);
+        invalidate();
+        renderControls();
+        setBusy(false);
+        status("The actual task changed. The previous Promise is invalid; preview the new inputs.");
+      });
+      wrapper.append(name, input);
+      region.appendChild(wrapper);
+    }
+  }
   function chosenStarter() {
     const selected = $("category").value;
     return state.tasks.find((t) => t.schema === selected) ?? null;
@@ -56,6 +119,7 @@
     if (!template) return;
     $("task-json").value = JSON.stringify(template, null, 2);
     invalidate();
+    renderControls();
     status("Change the sample inputs to represent your own scenario. Nothing has executed.");
     setBusy(false);
   }
@@ -201,6 +265,7 @@
   $("restore").addEventListener("click", restore);
   $("task-json").addEventListener("input", () => {
     invalidate();
+    renderControls();
     setBusy(false);
     status("Task changed. The earlier Promise no longer authorizes activation; preview again.");
   });
